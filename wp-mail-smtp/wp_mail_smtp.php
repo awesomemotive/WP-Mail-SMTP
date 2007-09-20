@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.3.1
+Version: 0.3.2
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,14 +22,12 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.3.2 - Changed to use register_activation_hook for greater compatability
  * 0.3.1 - Added readme for WP-Plugins.org compatability
  * 0.3 - Various bugfixes and added From options
  * 0.2 - Reworked approach as suggested by westi, added options page
  * 0.1 - Initial approach, copying the wp_mail function and replacing it
  */
-
-// Some simple config
-$wpms_thisfile = "wp-mail-smtp/wp_mail_smtp.php"; // If you rename this file for any reason, change this variable
 
 // Array of options and their default values
 $wpms_options = array (
@@ -231,7 +229,7 @@ add_action('phpmailer_init','phpmailer_init_smtp');
 // Add the create pages options
 add_action('admin_menu','wp_mail_smtp_menus');
 // Add an activation hook for this plugin
-add_action('activate_' . $wpms_thisfile,'wp_mail_smtp_activate');
+register_activation_hook(__FILE__,'wp_mail_smtp_activate');
 // Add a filter to replace the mail from address
 add_filter('wp_mail_from','wp_mail_smtp_mail_from');
 

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.4.1
+Version: 0.4.2
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,6 +22,7 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.4.2 - Fixed a bug in 0.4.1 and added more debugging output
  * 0.4.1 - Added $phpmailer->ErroInfo to the test mail output
  * 0.4 - Added the test email feature and cleaned up some other bits and pieces
  * 0.3.2 - Changed to use register_activation_hook for greater compatability
@@ -103,7 +104,7 @@ if (!function_exists('wp_mail_smtp_options_page')) {
 	function wp_mail_smtp_options_page() {
 		
 		// Load the options
-		global $wpms_options;
+		global $wpms_options, $phpmailer;
 		
 		// Send a test mail if necessary
 		if (isset($_POST['wpms_action']) && $_POST['wpms_action'] == __('Send Test') && isset($_POST['to'])) {
@@ -121,8 +122,10 @@ if (!function_exists('wp_mail_smtp_options_page')) {
 <div id="message" class="updated fade"><p><strong><?php _e('Test Message Sent'); ?></strong></p>
 <p><?php _e('The result was:'); ?></p>
 <pre><?php var_dump($result); ?></pre>
-<p><?php _e('The last error message (if any) was:'); ?></p>
-<pre><?php print($phpmailer->ErrorInfo); ?></pre>
+<?php if ($result != true) { ?>
+<p><?php _e('The full debugging output is shown below:'); ?></p>
+<pre><?php var_dump($phpmailer); ?></pre>
+<?php } ?>
 </div>
 			<?php
 			

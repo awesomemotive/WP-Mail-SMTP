@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.5.0
+Version: 0.5.1
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,6 +22,7 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.5.1 - Added a check to display a warning on versions prior to 2.3
  * 0.5.0 - Upgraded to match 2.3 filters which add a second filter for from name
  * 0.4.2 - Fixed a bug in 0.4.1 and added more debugging output
  * 0.4.1 - Added $phpmailer->ErroInfo to the test mail output
@@ -145,7 +146,7 @@ if (!function_exists('wp_mail_smtp_options_page')) {
 <tr valign="top">
 <th scope="row"><?php _e('From Email:'); ?> </th>
 <td><p><input name="mail_from" type="text" id="mail_from" value="<?php print(get_option('mail_from')); ?>" size="40" class="code" /><br />
-<?php _e('You can specify the email address that emails should be sent from. If you leave this blank, the admin email will be used.'); ?></p></td>
+<?php _e('You can specify the email address that emails should be sent from. If you leave this blank, the admin email will be used.'); if(get_option('db_version') < 6124) { print('<br /><span style="color: red;">'); _e('<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field.'); print('</span>'); } ?></p></td>
 </tr>
 <tr valign="top">
 <th scope="row"><?php _e('From Name:'); ?> </th>

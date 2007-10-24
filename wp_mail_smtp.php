@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.4.2
+Version: 0.5.0
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,6 +22,7 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.5.0 - Upgraded to match 2.3 filters which add a second filter for from name
  * 0.4.2 - Fixed a bug in 0.4.1 and added more debugging output
  * 0.4.1 - Added $phpmailer->ErroInfo to the test mail output
  * 0.4 - Added the test email feature and cleaned up some other bits and pieces
@@ -35,6 +36,7 @@ Author URI: http://www.callum-macdonald.com/
 // Array of options and their default values
 $wpms_options = array (
 	'mail_from' => '',
+	'mail_from_name' => '',
 	'mailer' => 'smtp',
 	'smtp_host' => 'localhost',
 	'smtp_auth' => false,
@@ -141,9 +143,14 @@ if (!function_exists('wp_mail_smtp_options_page')) {
 <legend><?php _e('From'); ?></legend>
 <table class="optiontable">
 <tr valign="top">
-<th scope="row"><?php _e('From:'); ?> </th>
+<th scope="row"><?php _e('From Email:'); ?> </th>
 <td><p><input name="mail_from" type="text" id="mail_from" value="<?php print(get_option('mail_from')); ?>" size="40" class="code" /><br />
-<?php _e('You can specify just an email address or a name and email address in the form &quot;Name&lt;email@example.com&gt;&quot;. If this is left blank or does not contain an @ symbol, the admin email will be used.'); ?></p></td>
+<?php _e('You can specify the email address that emails should be sent from. If you leave this blank, the admin email will be used.'); ?></p></td>
+</tr>
+<tr valign="top">
+<th scope="row"><?php _e('From Name:'); ?> </th>
+<td><p><input name="mail_from_name" type="text" id="mail_from_name" value="<?php print(get_option('mail_from_name')); ?>" size="40" class="code" /><br />
+<?php _e('You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress.'); ?></p></td>
 </tr>
 </table>
 
@@ -231,16 +238,11 @@ if (!function_exists('wp_mail_smtp_menus')) {
 }
 
 /**
- * This function sets who the mail is from
+ * This function sets the from email value
  */
 if (!function_exists('wp_mail_smtp_mail_from')) {
 	
 	function wp_mail_smtp_mail_from ($orig) {
-		
-		/**
-		 * //// CHMAC TODO
-		 * Does this work or does it fail if a name is supplied? Testing required.
-		 */
 		
 		// If we can, use the is_email function to verify the email
 		if ( function_exists('is_email') ) {
@@ -264,13 +266,32 @@ if (!function_exists('wp_mail_smtp_mail_from')) {
 	
 }
 
+/**
+ * This function sets the from name value
+ */
+if (!function_exists('wp_mail_smtp_mail_from_name')) {
+	
+	function wp_mail_smtp_mail_from_name ($orig) {
+		
+		if (get_option('mail_from_name') != "" && is_string(get_option('mail_from_name'))) {
+			return get_option('mail_from_name');
+		}
+		else {
+			return $orig;
+		}
+		
+	} // End of wp_mail_smtp_mail_from_name() function definition
+	
+}
+
 // Add an action on phpmailer_init
 add_action('phpmailer_init','phpmailer_init_smtp');
 // Add the create pages options
 add_action('admin_menu','wp_mail_smtp_menus');
 // Add an activation hook for this plugin
 register_activation_hook(__FILE__,'wp_mail_smtp_activate');
-// Add a filter to replace the mail from address
+// Add filters to replace the mail from name and emailaddress
 add_filter('wp_mail_from','wp_mail_smtp_mail_from');
+add_filter('wp_mail_from_name','wp_mail_smtp_mail_from_name');
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.5.1
+Version: 0.5.2
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,6 +22,7 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.5.2 - Fixed a pre 2.3 bug to do with mail from
  * 0.5.1 - Added a check to display a warning on versions prior to 2.3
  * 0.5.0 - Upgraded to match 2.3 filters which add a second filter for from name
  * 0.4.2 - Fixed a bug in 0.4.1 and added more debugging output
@@ -246,7 +247,7 @@ if (!function_exists('wp_mail_smtp_mail_from')) {
 	function wp_mail_smtp_mail_from ($orig) {
 		
 		// If we can, use the is_email function to verify the email
-		if ( function_exists('is_email') ) {
+		if ( function_exists('is_email') && get_option('db_version') >= 6124 ) {
 			if ( is_email( get_option('mail_from') ) ) {
 				return(get_option('mail_from'));
 			}

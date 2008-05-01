@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.6
+Version: 0.7
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage host, username, password, etc.
 Author: Callum Macdonald
@@ -22,6 +22,7 @@ Author URI: http://www.callum-macdonald.com/
  * 
  * CHANGELOG
  * 
+ * 0.7 - Added checks to only override the default from name / email
  * 0.6 - Added additional SMTP debugging output
  * 0.5.2 - Fixed a pre 2.3 bug to do with mail from
  * 0.5.1 - Added a check to display a warning on versions prior to 2.3
@@ -267,6 +268,11 @@ if (!function_exists('wp_mail_smtp_mail_from')) {
 	
 	function wp_mail_smtp_mail_from ($orig) {
 		
+		// If the from email is not the default, return it unchanged
+		if ( $orig != 'wordpress@' . str_replace('www.','',strtolower($_SERVER['SERVER_NAME'])) ) {
+			return $orig;
+		}
+		
 		// If we can, use the is_email function to verify the email
 		if ( function_exists('is_email') && get_option('db_version') >= 6124 ) {
 			if ( is_email( get_option('mail_from') ) ) {
@@ -296,7 +302,7 @@ if (!function_exists('wp_mail_smtp_mail_from_name')) {
 	
 	function wp_mail_smtp_mail_from_name ($orig) {
 		
-		if (get_option('mail_from_name') != "" && is_string(get_option('mail_from_name'))) {
+		if ($orig == 'WordPress' && get_option('mail_from_name') != "" && is_string(get_option('mail_from_name'))) {
 			return get_option('mail_from_name');
 		}
 		else {

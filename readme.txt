@@ -3,8 +3,8 @@ Contributors: chmac
 Donate link: http://www.callum-macdonald.com/code/donate/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
-Tested up to: 2.7
-Stable tag: 0.8.2
+Tested up to: 2.9.2
+Stable tag: 0.8.3
 
 Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 
@@ -58,6 +58,64 @@ By all means please contact me to discuss features or options you'd like to see 
 == Screenshots ==
 
 1. Screenshot of the Options > Email panel.
+
+== Changelog ==
+
+= 0.8.3 =
+* Bugfix, return WPMS_MAIL_FROM_NAME, props nacin.
+
+= 0.8.2 =
+* Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
+
+= 0.8.1 =
+* Internationalisation improvements.
+
+= 0.8 =
+* Added port, SSL/TLS, option whitelisting, validate_email(), and constant options.
+
+= 0.7 =
+* Added checks to only override the default from name / email
+
+= 0.6 =
+* Added additional SMTP debugging output
+
+= 0.5.2 =
+* Fixed a pre 2.3 bug to do with mail from
+
+= 0.5.1 =
+* Added a check to display a warning on versions prior to 2.3
+
+= 0.5.0 =
+* Upgraded to match 2.3 filters which add a second filter for from name
+
+= 0.4.2 =
+* Fixed a bug in 0.4.1 and added more debugging output
+
+= 0.4.1 =
+* Added $phpmailer->ErroInfo to the test mail output
+
+= 0.4 =
+* Added the test email feature and cleaned up some other bits and pieces
+
+= 0.3.2 =
+* Changed to use register_activation_hook for greater compatability
+
+= 0.3.1 =
+* Added readme for WP-Plugins.org compatability
+
+= 0.3 =
+* Various bugfixes and added From options
+
+= 0.2 =
+* Reworked approach as suggested by westi, added options page
+
+= 0.1 =
+* Initial approach, copying the wp_mail function and replacing it
+
+== Upgrade Notice ==
+
+= 0.8.3 =
+Minor bugfix for users using constants. Very low priority upgrade.
 
 == Support Questions ==
 

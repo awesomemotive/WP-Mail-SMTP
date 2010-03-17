@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.8.2
+Version: 0.8.3
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -42,6 +42,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
  * 
  * CHANGELOG
  * 
+ * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin.
  * 0.8.2 - Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
  * 0.8.1 - Internationalisation improvements.
  * 0.8 - Added port, SSL/TLS, option whitelisting, validate_email(), and constant options.
@@ -204,7 +205,7 @@ function wp_mail_smtp_options_page() {
 		
 		// Start output buffering to grab smtp debugging output
 		ob_start();
-		
+
 		// Send the test mail
 		$result = wp_mail($to,$subject,$message);
 		
@@ -224,7 +225,7 @@ function wp_mail_smtp_options_page() {
 <pre><?php echo $smtp_debug ?></pre>
 </div>
 		<?php
-		
+
 	}
 	
 	?>
@@ -413,7 +414,7 @@ function wp_mail_smtp_mail_from_name ($orig) {
 	// Only filter if the from name is the default
 	if ($orig == 'WordPress') {
 		if (defined('WPMS_ON') && WPMS_ON)
-			return WPMS_MAIL_FROM;
+			return WPMS_MAIL_FROM_NAME;
 		elseif ( get_option('mail_from_name') != "" && is_string(get_option('mail_from_name')) )
 			return get_option('mail_from_name');
 	}
@@ -424,6 +425,20 @@ function wp_mail_smtp_mail_from_name ($orig) {
 } // End of wp_mail_smtp_mail_from_name() function definition
 endif;
 
+function wp_mail_plugin_action_links( $links, $file ) {
+	if ( $file != plugin_basename( __FILE__ ))
+		return $links;
+
+	$settings_link = '<a href="plugins.php?page=wp-mail-smtp/wp_mail_smtp.php">' . esc_html( __( 'Settings', 'wp_mail_smtp' ) ) . '</a>';
+
+	array_unshift( $links, $settings_link );
+
+	return $links;
+}
+
+function add_tabs() {
+    add_submenu_page('plugins.php', __('WP Mail Options', 'wp_mail_smtp'), __('WP Mail Options', 'wp_mail_smtp'), 'manage_options', __FILE__,'wp_mail_smtp_options_page');
+}
 
 // Add an action on phpmailer_init
 add_action('phpmailer_init','phpmailer_init_smtp');
@@ -438,6 +453,12 @@ if (!defined('WPMS_ON') || !WPMS_ON) {
 // Add filters to replace the mail from name and emailaddress
 add_filter('wp_mail_from','wp_mail_smtp_mail_from');
 add_filter('wp_mail_from_name','wp_mail_smtp_mail_from_name');
+
+// admin options
+add_action('admin_menu', 'add_tabs',1);
+
+// adds "Settings" link to the plugin action page
+add_filter( 'plugin_action_links', 'wp_mail_plugin_action_links',10,2);
 
 load_plugin_textdomain('wp_mail_smtp', false, dirname(plugin_basename(__FILE__)) . '/langs');
 

@@ -36,10 +36,6 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 */
 
 /**
- * TODO
- * 
- * + Add WPMU compatability options (hardcode values, disable admin page)
- * 
  * CHANGELOG
  * 
  * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin.

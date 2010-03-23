@@ -63,6 +63,7 @@ By all means please contact me to discuss features or options you'd like to see 
 
 = 0.8.3 =
 * Bugfix, return WPMS_MAIL_FROM_NAME, props nacin.
+* Add Settings link, props Mike Challis http://profiles.wordpress.org/MikeChallis/
 
 = 0.8.2 =
 * Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.

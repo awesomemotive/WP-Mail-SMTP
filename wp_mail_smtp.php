@@ -38,7 +38,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 /**
  * CHANGELOG
  * 
- * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin.
+ * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin. Add Settings link, props MikeChallis.
  * 0.8.2 - Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
  * 0.8.1 - Internationalisation improvements.
  * 0.8 - Added port, SSL/TLS, option whitelisting, validate_email(), and constant options.

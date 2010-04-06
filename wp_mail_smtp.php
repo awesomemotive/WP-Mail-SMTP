@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.8.3
+Version: 0.8.4
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -38,6 +38,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 /**
  * CHANGELOG
  * 
+ * 0.8.4 - Minor bugfix, remove use of esc_html() to improve backwards compatibility.
  * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin. Add Settings link, props MikeChallis.
  * 0.8.2 - Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
  * 0.8.1 - Internationalisation improvements.
@@ -425,7 +426,7 @@ function wp_mail_plugin_action_links( $links, $file ) {
 	if ( $file != plugin_basename( __FILE__ ))
 		return $links;
 
-	$settings_link = '<a href="plugins.php?page=wp-mail-smtp/wp_mail_smtp.php">' . esc_html( __( 'Settings', 'wp_mail_smtp' ) ) . '</a>';
+	$settings_link = '<a href="plugins.php?page=wp-mail-smtp/wp_mail_smtp.php">' . __( 'Settings', 'wp_mail_smtp' ) . '</a>';
 
 	array_unshift( $links, $settings_link );
 

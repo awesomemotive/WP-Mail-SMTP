@@ -38,7 +38,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 /**
  * CHANGELOG
  * 
- * 0.8.4 - Minor bugfix, remove use of esc_html() to improve backwards compatibility.
+ * 0.8.4 - Minor bugfix, remove use of esc_html() to improve backwards compatibility. Removed second options page menu props ovidiu.
  * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin. Add Settings link, props MikeChallis.
  * 0.8.2 - Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
  * 0.8.1 - Internationalisation improvements.
@@ -433,12 +433,9 @@ function wp_mail_plugin_action_links( $links, $file ) {
 	return $links;
 }
 
-function add_tabs() {
-    add_submenu_page('plugins.php', __('WP Mail Options', 'wp_mail_smtp'), __('WP Mail Options', 'wp_mail_smtp'), 'manage_options', __FILE__,'wp_mail_smtp_options_page');
-}
-
 // Add an action on phpmailer_init
 add_action('phpmailer_init','phpmailer_init_smtp');
+
 if (!defined('WPMS_ON') || !WPMS_ON) {
 	// Whitelist our options
 	add_filter('whitelist_options', 'wp_mail_smtp_whitelist_options');
@@ -446,16 +443,13 @@ if (!defined('WPMS_ON') || !WPMS_ON) {
 	add_action('admin_menu','wp_mail_smtp_menus');
 	// Add an activation hook for this plugin
 	register_activation_hook(__FILE__,'wp_mail_smtp_activate');
+	// Adds "Settings" link to the plugin action page
+	add_filter( 'plugin_action_links', 'wp_mail_plugin_action_links',10,2);
 }
+
 // Add filters to replace the mail from name and emailaddress
 add_filter('wp_mail_from','wp_mail_smtp_mail_from');
 add_filter('wp_mail_from_name','wp_mail_smtp_mail_from_name');
-
-// admin options
-add_action('admin_menu', 'add_tabs',1);
-
-// adds "Settings" link to the plugin action page
-add_filter( 'plugin_action_links', 'wp_mail_plugin_action_links',10,2);
 
 load_plugin_textdomain('wp_mail_smtp', false, dirname(plugin_basename(__FILE__)) . '/langs');
 

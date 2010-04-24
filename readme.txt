@@ -4,7 +4,7 @@ Donate link: http://www.callum-macdonald.com/code/donate/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
 Tested up to: 2.9.2
-Stable tag: 0.8.4
+Stable tag: 0.8.5
 
 Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 
@@ -60,6 +60,9 @@ By all means please contact me to discuss features or options you'd like to see 
 1. Screenshot of the Options > Email panel.
 
 == Changelog ==
+
+= 0.8.5 =
+* Bugfix, the settings link on the Plugin page was broken by 0.8.4.
 
 = 0.8.4 =
 * Minor bugfix, remove use of esc_html() to improve backwards compatibility.
@@ -118,6 +121,9 @@ By all means please contact me to discuss features or options you'd like to see 
 * Initial approach, copying the wp_mail function and replacing it
 
 == Upgrade Notice ==
+
+= 0.8.5 =
+Minor bugfix correctingn the Settings link bug introduced in 0.8.4. Very low priority update.
 
 = 0.8.4 =
 Minor bugfix for users using constants. Another very low priority upgrade. Apologies for the version creep.

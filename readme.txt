@@ -61,6 +61,11 @@ By all means please contact me to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= next =
+* Typo in the From email description.
+* Removed changelog from plugin file, no need to duplicate it.
+* Set $phpmailer->Sender from from email, helps with sendmail / mail().
+
 = 0.8.6 =
 * The Settings link really does work this time, promise. Apologies for the unnecessary updates.
 
@@ -139,5 +144,5 @@ Minor bugfix for users using constants. Very low priority upgrade.
 
 == Support Questions ==
 
-If you have support questions not covered in this readme, you can contact me here:
-<http://www.callum-macdonald.com/contact/>
+If you have support questions not covered in this readme, ask here:
+<http://www.callum-macdonald.com/code-wp-mail-smtp/>

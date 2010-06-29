@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.8.6
+Version: 0.8.6-next
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -34,31 +34,6 @@ define('WPMS_SMTP_AUTH', true); // True turns on SMTP authentication, false turn
 define('WPMS_SMTP_USER', 'username'); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true
 define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true
 */
-
-/**
- * CHANGELOG
- * 
- * 0.8.6 - The Settings link really does work this time, promise. Apologies for the unnecessary updates.
- * 0.8.5 - Bugfix, the settings link on the Plugin page was broken by 0.8.4.
- * 0.8.4 - Minor bugfix, remove use of esc_html() to improve backwards compatibility. Removed second options page menu props ovidiu.
- * 0.8.3 - Bugfix, return WPMS_MAIL_FROM_NAME, props nacin. Add Settings link, props MikeChallis.
- * 0.8.2 - Bugfix, call phpmailer_init_smtp() correctly, props Sinklar.
- * 0.8.1 - Internationalisation improvements.
- * 0.8 - Added port, SSL/TLS, option whitelisting, validate_email(), and constant options.
- * 0.7 - Added checks to only override the default from name / email
- * 0.6 - Added additional SMTP debugging output
- * 0.5.2 - Fixed a pre 2.3 bug to do with mail from
- * 0.5.1 - Added a check to display a warning on versions prior to 2.3
- * 0.5.0 - Upgraded to match 2.3 filters which add a second filter for from name
- * 0.4.2 - Fixed a bug in 0.4.1 and added more debugging output
- * 0.4.1 - Added $phpmailer->ErroInfo to the test mail output
- * 0.4 - Added the test email feature and cleaned up some other bits and pieces
- * 0.3.2 - Changed to use register_activation_hook for greater compatability
- * 0.3.1 - Added readme for WP-Plugins.org compatability
- * 0.3 - Various bugfixes and added From options
- * 0.2 - Reworked approach as suggested by westi, added options page
- * 0.1 - Initial approach, copying the wp_mail function and replacing it
- */
 
 // Array of options and their default values
 $wpms_options = array (
@@ -239,7 +214,7 @@ function wp_mail_smtp_options_page() {
 <tr valign="top">
 <th scope="row"><?php _e('From Email:', 'wp_mail_smtp'); ?> </th>
 <td><p><input name="mail_from" type="text" id="mail_from" value="<?php print(get_option('mail_from')); ?>" size="40" class="code" /><br />
-<?php _e('You can specify the email address that emails should be sent from. If you leave this blank, the admin email will be used.', 'wp_mail_smtp'); if(get_option('db_version') < 6124) { print('<br /><span style="color: red;">'); _e('<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field.', 'wp_mail_smtp'); print('</span>'); } ?></p></td>
+<?php _e('You can specify the email address that emails should be sent from. If you leave this blank, the default email will be used.', 'wp_mail_smtp'); if(get_option('db_version') < 6124) { print('<br /><span style="color: red;">'); _e('<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field.', 'wp_mail_smtp'); print('</span>'); } ?></p></td>
 </tr>
 <tr valign="top">
 <th scope="row"><?php _e('From Name:', 'wp_mail_smtp'); ?> </th>
@@ -403,6 +378,17 @@ function wp_mail_smtp_mail_from ($orig) {
 } // End of wp_mail_smtp_mail_from() function definition
 endif;
 
+/**
+ * This function grabs the from email value and sets it as Sender
+ */
+if (!function_exists('wp_mail_smtp_set_sender')) :
+function wp_mail_smtp_set_sender($from_email) {
+	global $phpmailer;
+	$phpmailer->Sender = $from_email;
+	return $from_email;
+}
+endif;
+
 
 /**
  * This function sets the from name value
@@ -451,6 +437,7 @@ if (!defined('WPMS_ON') || !WPMS_ON) {
 
 // Add filters to replace the mail from name and emailaddress
 add_filter('wp_mail_from','wp_mail_smtp_mail_from');
+add_filter('wp_mail_from','wp_mail_smtp_set_sender', 99);
 add_filter('wp_mail_from_name','wp_mail_smtp_mail_from_name');
 
 load_plugin_textdomain('wp_mail_smtp', false, dirname(plugin_basename(__FILE__)) . '/langs');

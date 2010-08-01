@@ -3,7 +3,7 @@ Contributors: chmac
 Donate link: http://www.callum-macdonald.com/code/donate/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
-Tested up to: 2.9.2
+Tested up to: 3.0.1
 Stable tag: 0.8.6
 
 Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.

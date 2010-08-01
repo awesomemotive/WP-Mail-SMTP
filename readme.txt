@@ -53,7 +53,7 @@ Password: your mail password
 Short answer: maybe.
 
 By all means please contact me to discuss features or options you'd like to see added to the plugin. I can't guarantee to add all of them, but I will consider all sensible requests. I can be contacted here:
-<http://www.callum-macdonald.com/contact/>
+<http://www.callum-macdonald.com/code/wp-mail-smtp/>
 
 == Screenshots ==
 
@@ -141,8 +141,3 @@ Minor bugfix for users using constants. Another very low priority upgrade. Apolo
 
 = 0.8.3 =
 Minor bugfix for users using constants. Very low priority upgrade.
-
-== Support Questions ==
-
-If you have support questions not covered in this readme, ask here:
-<http://www.callum-macdonald.com/code-wp-mail-smtp/>

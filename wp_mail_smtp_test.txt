@@ -8,6 +8,12 @@ Author: Callum Macdonald
 Author URI: http://www.callum-macdonald.com/
 */
 
+/**
+ * If you've enabled WPMS_ON in your wp-config.php file, you lose the ability
+ * to send test emails. If you want to do that, rename this file from .txt to
+ * .php and then go to plugins and activate it.
+ */
+
 // Add the create pages options
 add_action('admin_menu','wp_mail_smtp_menus_test');
 
@@ -72,7 +78,6 @@ function wp_mail_smtp_options_page_test() {
 <?php //if ($result != true) { ?>
 <p><?php _e('The full debugging output is shown below:', 'wp_mail_smtp'); ?></p>
 <pre><?php var_dump($phpmailer); ?></pre>
-<pre><?php foreach (array_keys($wpms_options) as $opt_name) { $opts[$opt_name] = get_option($opt_name); } var_dump($opts); ?></pre>
 <?php //} ?>
 <p><?php _e('The SMTP debugging output is shown below:', 'wp_mail_smtp'); ?></p>
 <pre><?php echo $smtp_debug ?></pre>

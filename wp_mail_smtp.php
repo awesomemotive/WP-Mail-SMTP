@@ -36,6 +36,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 */
 
 // Array of options and their default values
+global $wpms_options; // This is horrible, should be cleaned up at some point
 $wpms_options = array (
 	'mail_from' => '',
 	'mail_from_name' => '',
@@ -191,10 +192,8 @@ function wp_mail_smtp_options_page() {
 <div id="message" class="updated fade"><p><strong><?php _e('Test Message Sent', 'wp_mail_smtp'); ?></strong></p>
 <p><?php _e('The result was:', 'wp_mail_smtp'); ?></p>
 <pre><?php var_dump($result); ?></pre>
-<?php if ($result != true) { ?>
 <p><?php _e('The full debugging output is shown below:', 'wp_mail_smtp'); ?></p>
 <pre><?php var_dump($phpmailer); ?></pre>
-<?php } ?>
 <p><?php _e('The SMTP debugging output is shown below:', 'wp_mail_smtp'); ?></p>
 <pre><?php echo $smtp_debug ?></pre>
 </div>
@@ -207,7 +206,7 @@ function wp_mail_smtp_options_page() {
 <h2><?php _e('Advanced Email Options', 'wp_mail_smtp'); ?></h2>
 <form method="post" action="options.php">
 <?php wp_nonce_field('email-options'); ?>
-<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options &raquo;', 'wp_mail_smtp'); ?>" />
+<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options &raquo;', 'wp_mail_smtp'); ?>" /></p>
 <fieldset class="options">
 <legend><?php _e('From', 'wp_mail_smtp'); ?></legend>
 <table class="optiontable">

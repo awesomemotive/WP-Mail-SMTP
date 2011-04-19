@@ -3,8 +3,8 @@ Contributors: chmac
 Donate link: http://www.callum-macdonald.com/code/donate/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
-Tested up to: 3.0.1
-Stable tag: 0.8.7
+Tested up to: 3.1.1
+Stable tag: 0.9.0
 
 Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 
@@ -62,10 +62,10 @@ By all means please contact me to discuss features or options you'd like to see 
 
 == Changelog ==
 
-= next =
+= 0.9.0 =
 * Typo in the From email description.
 * Removed changelog from plugin file, no need to duplicate it.
-* Set $phpmailer->Sender from from email, helps with sendmail / mail().
+* Optionally set $phpmailer->Sender from from email, helps with sendmail / mail().
 
 = 0.8.7 =
 * Fix for a long standing bug that caused an error during plugin activation.
@@ -133,6 +133,9 @@ By all means please contact me to discuss features or options you'd like to see 
 * Initial approach, copying the wp_mail function and replacing it
 
 == Upgrade Notice ==
+
+= 0.9.0 =
+Low priority upgrade. Improves the appearance of the options page.
 
 = 0.8.7 =
 Very low priority update. Fixes a bug that causes a spurious error during activation.

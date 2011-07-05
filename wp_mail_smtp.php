@@ -194,7 +194,8 @@ function wp_mail_smtp_options_page() {
 		$result = wp_mail($to,$subject,$message);
 		
 		// Strip out the language strings which confuse users
-		unset($phpmailer->language);
+		//unset($phpmailer->language);
+		// This property became protected in WP 3.2
 		
 		// Grab the smtp debugging output
 		$smtp_debug = ob_get_clean();

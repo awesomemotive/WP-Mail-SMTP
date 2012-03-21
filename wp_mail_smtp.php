@@ -106,6 +106,7 @@ function phpmailer_init_smtp($phpmailer) {
 		}
 		
 		// If you're using contstants, set any custom options here
+		$phpmailer = do_action('wp_mail_smtp_custom_options', $phpmailer);
 		
 	}
 	else {
@@ -145,7 +146,7 @@ function phpmailer_init_smtp($phpmailer) {
 		
 		// You can add your own options here, see the phpmailer documentation for more info:
 		// http://phpmailer.sourceforge.net/docs/
-		
+		$phpmailer = do_action('wp_mail_smtp_custom_options', $phpmailer);
 		
 		
 		// STOP adding options here.
@@ -311,7 +312,7 @@ function wp_mail_smtp_options_page() {
 
 <h3><?php _e('Send a Test Email', 'wp_mail_smtp'); ?></h3>
 
-<form method="POST">
+<form method="POST" action="options-general.php?page=<?php echo plugin_basename(__FILE__); ?>">
 <table class="optiontable form-table">
 <tr valign="top">
 <th scope="row"><label for="to"><?php _e('To:', 'wp_mail_smtp'); ?></label></th>
@@ -390,8 +391,10 @@ function wp_mail_smtp_mail_from ($orig) {
 		return $orig;
 	}
 	
-	if (defined('WPMS_ON') && WPMS_ON)
-		return WPMS_MAIL_FROM;
+	if (defined('WPMS_ON') && WPMS_ON) {
+		if (defined('WPMS_MAIL_FROM') && WPMS_MAIL_FROM != false)
+			return WPMS_MAIL_FROM;
+	}
 	elseif (validate_email(get_option('mail_from'), false))
 		return get_option('mail_from');
 	
@@ -410,8 +413,10 @@ function wp_mail_smtp_mail_from_name ($orig) {
 	
 	// Only filter if the from name is the default
 	if ($orig == 'WordPress') {
-		if (defined('WPMS_ON') && WPMS_ON)
-			return WPMS_MAIL_FROM_NAME;
+		if (defined('WPMS_ON') && WPMS_ON) {
+			if (defined('WPMS_MAIL_FROM_NAME') && WPMS_MAIL_FROM_NAME != false)
+				return WPMS_MAIL_FROM_NAME;
+		}
 		elseif ( get_option('mail_from_name') != "" && is_string(get_option('mail_from_name')) )
 			return get_option('mail_from_name');
 	}
@@ -426,7 +431,7 @@ function wp_mail_plugin_action_links( $links, $file ) {
 	if ( $file != plugin_basename( __FILE__ ))
 		return $links;
 
-	$settings_link = '<a href="options-general.php?page=wp-mail-smtp/wp_mail_smtp.php">' . __( 'Settings', 'wp_mail_smtp' ) . '</a>';
+	$settings_link = '<a href="options-general.php?page=' . plugin_basename(__FILE__) . '">' . __( 'Settings', 'wp_mail_smtp' ) . '</a>';
 
 	array_unshift( $links, $settings_link );
 

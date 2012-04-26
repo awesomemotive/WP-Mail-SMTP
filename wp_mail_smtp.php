@@ -241,7 +241,7 @@ function wp_mail_smtp_options_page() {
 <table class="optiontable form-table">
 <tr valign="top">
 <th scope="row"><?php _e('Mailer', 'wp_mail_smtp'); ?> </th>
-<td><fieldset><legend class="screen-reader-text"><span><?php _e('Mailer', 'wp_mail_smtp'); ?></legend>
+<td><fieldset><legend class="screen-reader-text"><span><?php _e('Mailer', 'wp_mail_smtp'); ?></span></legend>
 <p><input id="mailer_smtp" type="radio" name="mailer" value="smtp" <?php checked('smtp', get_option('mailer')); ?> />
 <label for="mailer_smtp"><?php _e('Send all WordPress emails via SMTP.', 'wp_mail_smtp'); ?></label></p>
 <p><input id="mailer_mail" type="radio" name="mailer" value="mail" <?php checked('mail', get_option('mailer')); ?> />

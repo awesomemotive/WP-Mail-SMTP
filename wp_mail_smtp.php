@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.9.1
+Version: 0.9.2
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -345,30 +345,6 @@ endif;
 
 
 /**
- * This is copied directly from WPMU wp-includes/wpmu-functions.php
- */
-if (!function_exists('validate_email')) :
-function validate_email( $email, $check_domain = true) {
-    if (ereg('^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'.'@'.
-        '[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.'.
-        '[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$', $email))
-    {
-        if ($check_domain && function_exists('checkdnsrr')) {
-            list (, $domain)  = explode('@', $email);
-
-            if (checkdnsrr($domain.'.', 'MX') || checkdnsrr($domain.'.', 'A')) {
-                return true;
-            }
-            return false;
-        }
-        return true;
-    }
-    return false;
-} // End of validate_email() function definition
-endif;
-
-
-/**
  * This function sets the from email value
  */
 if (!function_exists('wp_mail_smtp_mail_from')) :
@@ -395,7 +371,7 @@ function wp_mail_smtp_mail_from ($orig) {
 		if (defined('WPMS_MAIL_FROM') && WPMS_MAIL_FROM != false)
 			return WPMS_MAIL_FROM;
 	}
-	elseif (validate_email(get_option('mail_from'), false))
+	elseif (is_email(get_option('mail_from'), false))
 		return get_option('mail_from');
 	
 	// If in doubt, return the original value

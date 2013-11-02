@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.9.2
+Version: 0.9.3
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -106,7 +106,7 @@ function phpmailer_init_smtp($phpmailer) {
 		}
 		
 		// If you're using contstants, set any custom options here
-		$phpmailer = apply_filters('wp_mail_smtp_custom_options', &$phpmailer);
+		$phpmailer = apply_filters('wp_mail_smtp_custom_options', $phpmailer);
 		
 	}
 	else {
@@ -146,7 +146,7 @@ function phpmailer_init_smtp($phpmailer) {
 		
 		// You can add your own options here, see the phpmailer documentation for more info:
 		// http://phpmailer.sourceforge.net/docs/
-		$phpmailer = apply_filters('wp_mail_smtp_custom_options', &$phpmailer);
+		$phpmailer = apply_filters('wp_mail_smtp_custom_options', $phpmailer);
 		
 		
 		// STOP adding options here.

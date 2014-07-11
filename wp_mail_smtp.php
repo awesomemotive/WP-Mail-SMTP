@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Mail-SMTP
-Version: 0.9.4
+Version: 0.9.5
 Plugin URI: http://www.callum-macdonald.com/code/wp-mail-smtp/
 Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
 Author: Callum Macdonald
@@ -180,6 +180,8 @@ function wp_mail_smtp_options_page() {
 	// Send a test mail if necessary
 	if (isset($_POST['wpms_action']) && $_POST['wpms_action'] == __('Send Test', 'wp_mail_smtp') && isset($_POST['to'])) {
 		
+		check_admin_referer('test-email');
+		
 		// Set up the mail variables
 		$to = $_POST['to'];
 		$subject = 'WP Mail SMTP: ' . __('Test mail to ', 'wp_mail_smtp') . $to;
@@ -313,6 +315,7 @@ function wp_mail_smtp_options_page() {
 <h3><?php _e('Send a Test Email', 'wp_mail_smtp'); ?></h3>
 
 <form method="POST" action="options-general.php?page=<?php echo plugin_basename(__FILE__); ?>">
+<?php wp_nonce_field('test-email'); ?>
 <table class="optiontable form-table">
 <tr valign="top">
 <th scope="row"><label for="to"><?php _e('To:', 'wp_mail_smtp'); ?></label></th>

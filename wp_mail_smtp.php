@@ -178,7 +178,7 @@ function wp_mail_smtp_options_page() {
 	}
 
 	// Send a test mail if necessary
-	if (isset($_POST['wpms_action']) && $_POST['wpms_action'] == __('Send Test', 'wp_mail_smtp') && isset($_POST['to'])) {
+	if (isset($_POST['wpms_action']) && $_POST['wpms_action'] == __('Send Test', 'wp_mail_smtp') && is_email($_POST['to'])) {
 		
 		check_admin_referer('test-email');
 		

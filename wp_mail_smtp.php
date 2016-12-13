@@ -48,7 +48,9 @@ $wpms_options = array (
 	'smtp_ssl' => 'none',
 	'smtp_auth' => false,
 	'smtp_user' => '',
-	'smtp_pass' => ''
+	'smtp_pass' => '',
+	'pepipost_user' => '',
+	'pepipost_pass' => ''
 );
 
 

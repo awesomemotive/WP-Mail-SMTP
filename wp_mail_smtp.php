@@ -118,6 +118,11 @@ function phpmailer_init_smtp($phpmailer) {
 			return;
 		}
 
+    // If the mailer is pepipost, make sure we have a username and password
+    if (get_option('mailer') == 'pepipost' && (! get_option('pepipost_user') && ! get_option('pepipost_pass'))) {
+      return;
+    }
+
 		// Set the mailer type as per config above, this overrides the already called isMail method
 		$phpmailer->Mailer = get_option('mailer');
 

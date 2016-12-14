@@ -22,6 +22,8 @@ You can set the following options:
 * Choose to use SMTP authentication or not (defaults to not).
 * Specify an SMTP username and password.
 
+The plugin includes integrated support for <a href="http://www.pepipost.com/">Pepipost</a>.
+
 == Installation ==
 
 1. Download

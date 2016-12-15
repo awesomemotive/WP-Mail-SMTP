@@ -265,7 +265,7 @@ function wp_mail_smtp_options_page() {
 <p><input id="mailer_smtp" class="wpms_mailer" type="radio" name="mailer" value="smtp" <?php checked('smtp', get_option('mailer')); ?> />
 <label for="mailer_smtp"><?php _e('Send all WordPress emails via SMTP.', 'wp_mail_smtp'); ?></label></p>
 <p><input id="mailer_pepipost" class="wpms_mailer" type="radio" name="mailer" value="pepipost" <?php checked('pepipost', get_option('mailer')); ?> />
-<label for="mailer_pepipost"><?php _e('Use Pepipost to send emails.', 'wp_mail_smtp'); ?></label></p>
+<label for="mailer_pepipost"><?php _e('Use Pepipost SMTP to send emails.', 'wp_mail_smtp'); ?></label></p>
 <p><input id="mailer_mail" class="wpms_mailer" type="radio" name="mailer" value="mail" <?php checked('mail', get_option('mailer')); ?> />
 <label for="mailer_mail"><?php _e('Use the PHP mail() function to send emails.', 'wp_mail_smtp'); ?></label></p>
 </fieldset>
@@ -344,7 +344,8 @@ function wp_mail_smtp_options_page() {
 </div><!-- #wpms_section_smtp -->
 
 <div id="wpms_section_pepipost" class="wpms_section">
-  <h3><?php _e('Pepipost Options', 'wp_mail_smtp'); ?></h3>
+  <h3><?php _e('Pepipost SMTP Options', 'wp_mail_smtp'); ?></h3>
+  <p>You need to signup on <a href="http://support.pepipost.com/knowledge_base/topics/wp-mail-smtp?utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic" target="_blank">Pepipost</a> to get the SMTP username/password. Refer this <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">doc</a> for more help.</p>
   <table class="optiontable form-table">
     <tr valign="top">
       <th scope="row"><label for="pepipost_user"><?php _e('Username', 'wp_mail_smtp'); ?></label></th>

@@ -26,7 +26,7 @@ You can set the following options:
 * Choose to use SMTP authentication or not (defaults to not).
 * Specify an SMTP username and password.
 
-The plugin includes integrated support for <a href="http://www.pepipost.com/">Pepipost</a>.
+The plugin includes integrated support for <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp_webpage&utm_term=organic&code=WP-MAIL-SMTP">Pepipost</a>.
 
 == Installation ==
 

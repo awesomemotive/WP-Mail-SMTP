@@ -50,7 +50,9 @@ $wpms_options = array (
 	'smtp_user' => '',
 	'smtp_pass' => '',
 	'pepipost_user' => '',
-	'pepipost_pass' => ''
+	'pepipost_pass' => '',
+	'pepipost_port' => '2525',
+	'pepipost_ssl' => 'none'
 );
 
 

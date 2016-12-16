@@ -269,7 +269,7 @@ function wp_mail_smtp_options_page() {
 <p><input id="mailer_mail" class="wpms_mailer" type="radio" name="mailer" value="mail" <?php checked('mail', get_option('mailer')); ?> />
 <label for="mailer_mail"><?php _e('Use the PHP mail() function to send emails.', 'wp_mail_smtp'); ?></label></p>
 </fieldset>
-<p class="description">Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP">here</a>.</p>
+<p class="description">Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">here</a>.</p>
 </td>
 </tr>
 </table>

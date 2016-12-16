@@ -155,8 +155,8 @@ function phpmailer_init_smtp($phpmailer) {
       // Set the Pepipost settings
       $phpmailer->Mailer = 'smtp';
       $phpmailer->Host = 'smtp.pepipost.com';
-      $phpmailer->Port = '2525';
-      $phpmailer->SMTPSecure = '';
+      $phpmailer->Port = get_option('pepipost_port');
+      $phpmailer->SMTPSecure = get_option('pepipost_ssl') == 'none' ? '' : get_option('pepipost_ssl');;
       $phpmailer->SMTPAuth = TRUE;
       $phpmailer->Username = get_option('pepipost_user');
       $phpmailer->Password = get_option('pepipost_pass');

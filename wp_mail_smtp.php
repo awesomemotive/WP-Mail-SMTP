@@ -357,6 +357,27 @@ function wp_mail_smtp_options_page() {
       <th scope="row"><label for="pepipost_pass"><?php _e('Password', 'wp_mail_smtp'); ?></label></th>
       <td><input name="pepipost_pass" type="text" id="pepipost_pass" value="<?php print(get_option('pepipost_pass')); ?>" size="40" class="code" /></td>
     </tr>
+		<tr valign="top">
+			<th scope="row"><label for="pepipost_port"><?php _e('SMTP Port', 'wp_mail_smtp'); ?></label></th>
+			<td><input name="pepipost_port" type="text" id="pepipost_port" value="<?php print(get_option('pepipost_port')); ?>" size="6" class="regular-text" /></td>
+		</tr>
+		<tr valign="top">
+			<th scope="row"><?php _e('Encryption', 'wp_mail_smtp'); ?> </th>
+			<td>
+			  <fieldset>
+			    <legend class="screen-reader-text">
+						<span>
+							<?php _e('Encryption', 'wp_mail_smtp'); ?>
+						</span>
+					</legend>
+				<input id="pepipost_ssl_none" type="radio" name="pepipost_ssl" value="none" <?php checked('none', get_option('pepipost_ssl')); ?> />
+				<label for="pepipost_ssl_none"><span><?php _e('No encryption.', 'wp_mail_smtp'); ?></span></label><br />
+				<input id="pepipost_ssl_ssl" type="radio" name="pepipost_ssl" value="ssl" <?php checked('ssl', get_option('pepipost_ssl')); ?> />
+				<label for="pepipost_ssl_ssl"><span><?php _e('Use SSL encryption.', 'wp_mail_smtp'); ?></span></label><br />
+				<input id="pepipost_ssl_tls" type="radio" name="pepipost_ssl" value="tls" <?php checked('tls', get_option('pepipost_ssl')); ?> />
+				<label for="pepipost_ssl_tls"><span><?php _e('Use TLS encryption.', 'wp_mail_smtp'); ?></span></label>
+			</td>
+		</tr>
   </table>
 
   <p class="submit"><input type="submit" name="submit" id="submit" class="button-primary" value="<?php _e('Save Changes'); ?>" /></p>

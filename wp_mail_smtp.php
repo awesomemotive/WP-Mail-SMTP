@@ -345,7 +345,7 @@ function wp_mail_smtp_options_page() {
 
 <div id="wpms_section_pepipost" class="wpms_section">
   <h3><?php _e('Pepipost SMTP Options', 'wp_mail_smtp'); ?></h3>
-  <p>You need to signup on <a href="http://support.pepipost.com/knowledge_base/topics/wp-mail-smtp?utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic" target="_blank">Pepipost</a> to get the SMTP username/password. Refer this <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">doc</a> for more help.</p>
+  <p>You need to signup on <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">Pepipost</a> to get the SMTP username/password. Refer this <a href="http://support.pepipost.com/knowledge_base/topics/wp-mail-smtp?utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic" target="_blank">doc</a> for more help.</p>
   <table class="optiontable form-table">
     <tr valign="top">
       <th scope="row"><label for="pepipost_user"><?php _e('Username', 'wp_mail_smtp'); ?></label></th>

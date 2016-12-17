@@ -6,7 +6,7 @@ Requires at least: 2.7
 Tested up to: 4.7
 Stable tag: 0.10.0
 
-The most popular SMTP plugin on WordPress.org. Trusted by over 500k sites.
+The most popular SMTP plugin on WordPress.org. Trusted by over 500'000 sites.
 
 == Description ==
 

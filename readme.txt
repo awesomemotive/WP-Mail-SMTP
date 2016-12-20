@@ -60,7 +60,10 @@ By all means please contact me to discuss features or options you'd like to see 
 
 == Screenshots ==
 
-1. Screenshot of the Options > Email panel.
+1. Advanced Email Options
+2. SMTP Options
+3. Pepipost SMTP Options
+4. Send a Test Email
 
 == Changelog ==
 

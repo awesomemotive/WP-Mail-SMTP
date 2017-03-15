@@ -6,9 +6,11 @@ Requires at least: 2.7
 Tested up to: 4.7
 Stable tag: 0.10.1
 
-The most popular SMTP plugin on WordPress.org. Trusted by over 500'000 sites.
+The most popular SMTP plugin on WordPress.org. Trusted by over 600k sites.
 
 == Description ==
+
+> Like my plugin? Got 30 seconds to help me out? Would love your feedback on WordPress, <a href="http://bit.ly/wpmailsmtpsurvey" title="3 question, 30 second WordPress survey">click here to answer my 3 question survey</a>.
 
 This plugin reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page that allows you to specify various options.
 

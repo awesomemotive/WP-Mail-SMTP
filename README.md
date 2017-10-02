@@ -1,6 +1,4 @@
-New Maintainer
+WP Mail SMTP
 ---
-
-This plugin has a new maintainer, please contact them.
 
 https://wordpress.org/plugins/wp-mail-smtp/

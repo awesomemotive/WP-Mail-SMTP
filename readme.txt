@@ -1,6 +1,6 @@
-=== WP Mail SMTP ===
-Contributors: chmac
-Donate link: http://www.callum-macdonald.com/code/donate/
+=== WP Mail SMTP by WPForms ===
+Contributors: wpforms, smub, jaredatch
+Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
 Tested up to: 4.7
@@ -9,8 +9,6 @@ Stable tag: 0.10.1
 The most popular SMTP plugin on WordPress.org. Trusted by over 600k sites.
 
 == Description ==
-
-> Like my plugin? Got 30 seconds to help me out? Would love your feedback on WordPress, <a href="http://bit.ly/wpmailsmtpsurvey" title="3 question, 30 second WordPress survey">click here to answer my 3 question survey</a>.
 
 This plugin reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page that allows you to specify various options.
 
@@ -24,13 +22,42 @@ You can set the following options:
 * Choose to use SMTP authentication or not (defaults to not).
 * Specify an SMTP username and password.
 
-The plugin includes integrated support for <a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp_webpage&utm_term=organic&code=WP-MAIL-SMTP">Pepipost</a>.
+WP Mail SMTP plugin works with all major email services such as Gmail, Yahoo, Outlook, Microsoft Live, and any other email sending service that offers SMTP.
+
+= Why WP Mail SMTP =
+
+The goal of WP Mail SMTP plugin is to help fix the common "WordPress not sending an email issue".
+
+Often times an email sent out by your WordPress site either lands in the spam folder or get completely rejected by popular email providers. 
+
+SMTP (Simple Mail Transfer Protocol) is the industry standard for sending emails. WP Mail SMTP helps you use proper authentication which increases email deliverability.
+
+= Credits =
+
+WP Mail SMTP plugin was originally created by Callum Macdonald. It is now owned and maintained by the team behind <a href="https://wpforms.com/" rel="friend">WPForms</a> - the best drag & drop form builder for WordPress.
+
+You can try the <a href="https://wordpress.org/plugins/wpforms-lite/" rel="friend">free version of WPForms plugin</a> to see why it's the best in the market.
+
+= What's Next =
+
+If you like this plugin, then consider checking out our other projects:
+
+* <a href="http://optinmonster.com/" rel="friend" title="OptinMonster">OptinMonster</a> - Get More Email Subscribers
+* <a href="http://soliloquywp.com/" rel="friend" title="Soliloquy">Soliloquy</a> - Best WordPress Slider Plugin
+* <a href="http://enviragallery.com/" rel="friend" title="Envira Gallery">Envira Gallery</a> - Best WordPress Gallery Plugin
+* <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - Best Google Analytics Plugin for WordPress
+
+Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
+
+
+
 
 == Installation ==
 
-1. Download
-2. Upload to your `/wp-contents/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Install WP Mail SMTP by WPForms either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
+2. Activate WP Mail SMTP by WPForms.
+3. Navigate to the Settings area of WP Mail SMTP in the WordPress admin.
+4. Want to support us? Consider trying <a href="https://wpforms.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend" title="WPForms">WPForms Pro</a> - the best WordPress contact form plugin!
 
 == Frequently Asked Questions ==
 
@@ -57,8 +84,8 @@ Password: your mail password
 
 Short answer: maybe.
 
-By all means please contact me to discuss features or options you'd like to see added to the plugin. I can't guarantee to add all of them, but I will consider all sensible requests. I can be contacted here:
-<http://www.callum-macdonald.com/code/wp-mail-smtp/>
+By all means please contact us to discuss features or options you'd like to see added to the plugin. We can't guarantee to add all of them, but we will consider all sensible requests. We can be contacted here:
+<a href="https://wpforms.com/contact/" rel="friend">https://wpforms.com/contact/</a>
 
 == Screenshots ==
 

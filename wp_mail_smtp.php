@@ -263,9 +263,11 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 				<table class="optiontable form-table">
 					<tr valign="top">
-						<th scope="row"><label for="mail_from"><?php _e( 'From Email', 'wp-mail-smtp' ); ?></label></th>
+						<th scope="row">
+							<label for="mail_from"><?php _e( 'From Email', 'wp-mail-smtp' ); ?></label>
+						</th>
 						<td>
-							<input name="mail_from" type="text" id="mail_from" value="<?php print( get_option( 'mail_from' ) ); ?>" size="40" class="regular-text"/>
+							<input name="mail_from" type="email" id="mail_from" value="<?php print( get_option( 'mail_from' ) ); ?>" size="40" class="regular-text"/>
 							<p class="description">
 								<?php
 								_e( 'You can specify the email address that emails should be sent from. If you leave this blank, the default email will be used.', 'wp-mail-smtp' );
@@ -479,8 +481,11 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 				<?php wp_nonce_field( 'test-email' ); ?>
 				<table class="optiontable form-table">
 					<tr valign="top">
-						<th scope="row"><label for="to"><?php _e( 'To', 'wp-mail-smtp' ); ?></label></th>
-						<td><input name="to" type="text" id="to" value="" size="40" class="code"/>
+						<th scope="row">
+							<label for="to"><?php _e( 'To', 'wp-mail-smtp' ); ?></label>
+						</th>
+						<td>
+							<input name="to" type="email" id="to" value="" size="40" class="code"/>
 							<p class="description"><?php _e( 'Type an email address here and then click Send Test to generate a test email.', 'wp-mail-smtp' ); ?></p>
 						</td>
 					</tr>

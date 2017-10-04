@@ -241,7 +241,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 				<p><?php _e( 'The result was:', 'wp-mail-smtp' ); ?></p>
 				<pre><?php var_dump( $result ); ?></pre>
 				<p><?php _e( 'The full debugging output is shown below:', 'wp-mail-smtp' ); ?></p>
-				<pre><?php var_dump( $phpmailer ); ?></pre>
+				<pre><?php print_r( $phpmailer ); ?></pre>
 				<p><?php _e( 'The SMTP debugging output is shown below:', 'wp-mail-smtp' ); ?></p>
 				<pre><?php echo $smtp_debug; ?></pre>
 			</div>

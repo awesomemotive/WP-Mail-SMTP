@@ -9,21 +9,24 @@
 	<arg name="extensions" value="php"/>
     <file>.</file>
 	<rule ref="WordPress">
-		<!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->
-		<!--<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>-->
-		<!--<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>-->
-		<!--<exclude name="Squiz.Commenting.InlineComment.SpacingAfter"/>-->
-		<!--<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>-->
-		<!--<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>-->
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
+        <exclude name="WordPress.XSS.EscapeOutput.UnsafePrintingFunction"/>
+        <exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+        <exclude name="WordPress.VIP"/>
+
+        <!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->
+        <!--<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>-->
+        <!--<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>-->
+        <!--<exclude name="Squiz.Commenting.InlineComment.SpacingAfter"/>-->
 		<!--<exclude name="Squiz.Commenting.FileComment.Missing"/>-->
 		<!--<exclude name="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket"/>-->
 		<!--<exclude name="WordPress.Classes.ClassInstantiation.MissingParenthesis"/>-->
 		<!--<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>-->
 		<!--<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.SpaceBeforeArrayCloser"/>-->
 		<!--<exclude name="WordPress.CSRF.NonceVerification"/>-->
-		<!--<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>-->
-		<!--<exclude name="WordPress.XSS.EscapeOutput.UnsafePrintingFunction"/>-->
-		<!--<exclude name="WordPress.VIP"/>-->
-		<!--<exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>-->
 	</rule>
 </ruleset>

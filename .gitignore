@@ -1,1 +1,3 @@
-.sync-config.cson
+/build/
+/node_modules/
+/vendor/

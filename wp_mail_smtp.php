@@ -237,11 +237,13 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 			// Output the response.
 			?>
-			<div id="message" class="updated fade"><p><strong><?php _e( 'Test Message Sent', 'wp-mail-smtp' ); ?></strong></p>
+			<div id="message" class="updated notice is-dismissible"><p><strong><?php _e( 'Test Message Sent', 'wp-mail-smtp' ); ?></strong></p>
 				<p><?php _e( 'The result was:', 'wp-mail-smtp' ); ?></p>
 				<pre><?php var_dump( $result ); ?></pre>
+
 				<p><?php _e( 'The full debugging output is shown below:', 'wp-mail-smtp' ); ?></p>
 				<pre><?php print_r( $phpmailer ); ?></pre>
+
 				<p><?php _e( 'The SMTP debugging output is shown below:', 'wp-mail-smtp' ); ?></p>
 				<pre><?php echo $smtp_debug; ?></pre>
 			</div>
@@ -268,6 +270,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 						</th>
 						<td>
 							<input name="mail_from" type="email" id="mail_from" value="<?php print( get_option( 'mail_from' ) ); ?>" size="40" class="regular-text"/>
+
 							<p class="description">
 								<?php
 								_e( 'You can specify the email address that emails should be sent from. If you leave this blank, the default email will be used.', 'wp-mail-smtp' );
@@ -281,9 +284,12 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 						</td>
 					</tr>
 					<tr valign="top">
-						<th scope="row"><label for="mail_from_name"><?php _e( 'From Name', 'wp-mail-smtp' ); ?></label></th>
+						<th scope="row">
+							<label for="mail_from_name"><?php _e( 'From Name', 'wp-mail-smtp' ); ?></label>
+						</th>
 						<td>
 							<input name="mail_from_name" type="text" id="mail_from_name" value="<?php print( get_option( 'mail_from_name' ) ); ?>" size="40" class="regular-text"/>
+
 							<p class="description">
 								<?php _e( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress.', 'wp-mail-smtp' ); ?>
 							</p>
@@ -293,10 +299,15 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 				<table class="optiontable form-table">
 					<tr valign="top">
-						<th scope="row"><?php _e( 'Mailer', 'wp-mail-smtp' ); ?> </th>
+						<th scope="row">
+							<?php _e( 'Mailer', 'wp-mail-smtp' ); ?>
+						</th>
 						<td>
 							<fieldset>
-								<legend class="screen-reader-text"><span><?php _e( 'Mailer', 'wp-mail-smtp' ); ?></span></legend>
+								<legend class="screen-reader-text">
+									<span><?php _e( 'Mailer', 'wp-mail-smtp' ); ?></span>
+								</legend>
+
 								<p>
 									<input id="mailer_smtp" class="wpms_mailer" type="radio" name="mailer" value="smtp" <?php checked( 'smtp', get_option( 'mailer' ) ); ?> />
 									<label for="mailer_smtp"><?php _e( 'Send all WordPress emails via SMTP.', 'wp-mail-smtp' ); ?></label>
@@ -309,27 +320,33 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<input id="mailer_mail" class="wpms_mailer" type="radio" name="mailer" value="mail" <?php checked( 'mail', get_option( 'mailer' ) ); ?> />
 									<label for="mailer_mail"><?php _e( 'Use the PHP mail() function to send emails.', 'wp-mail-smtp' ); ?></label>
 								</p>
+
+								<p class="description">
+									<?php
+									printf(
+										/* translators: %1$s - link start; %2$s - link end. */
+										__( 'Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s.', 'wp-mail-smtp' ),
+										'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">',
+										'</a>'
+									);
+									?>
+								</p>
 							</fieldset>
-							<p class="description">
-								<?php
-								printf(
-									/* translators: %1$s - link start; %2$s - link end. */
-									__( 'Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s.', 'wp-mail-smtp' ),
-									'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">',
-									'</a>'
-								);
-								?>
-							</p>
 						</td>
 					</tr>
 				</table>
 
 				<table class="optiontable form-table">
 					<tr valign="top">
-						<th scope="row"><?php _e( 'Return Path', 'wp-mail-smtp' ); ?> </th>
+						<th scope="row">
+							<?php _e( 'Return Path', 'wp-mail-smtp' ); ?>
+						</th>
 						<td>
 							<fieldset>
-								<legend class="screen-reader-text"><span><?php _e( 'Return Path', 'wp-mail-smtp' ); ?></span></legend>
+								<legend class="screen-reader-text">
+									<span><?php _e( 'Return Path', 'wp-mail-smtp' ); ?></span>
+								</legend>
+
 								<label for="mail_set_return_path">
 									<input name="mail_set_return_path" type="checkbox" id="mail_set_return_path" value="true" <?php checked( 'true', get_option( 'mail_set_return_path' ) ); ?> />
 									<?php _e( 'Set the return-path to match the From Email' ); ?>
@@ -344,18 +361,24 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 				</p>
 
 				<div id="wpms_section_smtp" class="wpms_section">
-					<h3><?php _e( 'SMTP Options', 'wp-mail-smtp' ); ?></h3>
+					<h3>
+						<?php _e( 'SMTP Options', 'wp-mail-smtp' ); ?>
+					</h3>
 					<p><?php _e( 'These options only apply if you have chosen to send mail by SMTP above.', 'wp-mail-smtp' ); ?></p>
 
 					<table class="optiontable form-table">
 						<tr valign="top">
-							<th scope="row"><label for="smtp_host"><?php _e( 'SMTP Host', 'wp-mail-smtp' ); ?></label></th>
+							<th scope="row">
+								<label for="smtp_host"><?php _e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
+							</th>
 							<td>
 								<input name="smtp_host" type="text" id="smtp_host" value="<?php print( get_option( 'smtp_host' ) ); ?>" size="40" class="regular-text"/>
 							</td>
 						</tr>
 						<tr valign="top">
-							<th scope="row"><label for="smtp_port"><?php _e( 'SMTP Port', 'wp-mail-smtp' ); ?></label></th>
+							<th scope="row">
+								<label for="smtp_port"><?php _e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
+							</th>
 							<td>
 								<input name="smtp_port" type="text" id="smtp_port" value="<?php print( get_option( 'smtp_port' ) ); ?>" size="6" class="regular-text"/>
 							</td>
@@ -364,38 +387,68 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 							<th scope="row"><?php _e( 'Encryption', 'wp-mail-smtp' ); ?> </th>
 							<td>
 								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Encryption', 'wp-mail-smtp' ); ?></span></legend>
+									<legend class="screen-reader-text">
+										<span><?php _e( 'Encryption', 'wp-mail-smtp' ); ?></span>
+									</legend>
+
 									<input id="smtp_ssl_none" type="radio" name="smtp_ssl" value="none" <?php checked( 'none', get_option( 'smtp_ssl' ) ); ?> />
-									<label for="smtp_ssl_none"><span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span></label><br/>
+									<label for="smtp_ssl_none">
+										<span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
 									<input id="smtp_ssl_ssl" type="radio" name="smtp_ssl" value="ssl" <?php checked( 'ssl', get_option( 'smtp_ssl' ) ); ?> />
-									<label for="smtp_ssl_ssl"><span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span></label><br/>
+									<label for="smtp_ssl_ssl">
+										<span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
 									<input id="smtp_ssl_tls" type="radio" name="smtp_ssl" value="tls" <?php checked( 'tls', get_option( 'smtp_ssl' ) ); ?> />
-									<label for="smtp_ssl_tls"><span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span></label>
+									<label for="smtp_ssl_tls">
+										<span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span>
+									</label>
+
 									<p class="description"><?php esc_html_e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?></p>
+								</fieldset>
 							</td>
 						</tr>
 						<tr valign="top">
 							<th scope="row"><?php _e( 'Authentication', 'wp-mail-smtp' ); ?> </th>
 							<td>
 								<fieldset>
-									<legend class="screen-reader-text"><span><?php _e( 'Authentication', 'wp-mail-smtp' ); ?></span></legend>
+									<legend class="screen-reader-text">
+										<span><?php _e( 'Authentication', 'wp-mail-smtp' ); ?></span>
+									</legend>
+
 									<input id="smtp_auth_false" type="radio" name="smtp_auth" value="false" <?php checked( 'false', get_option( 'smtp_auth' ) ); ?> />
-									<label for="smtp_auth_false"><span><?php _e( 'No: Do not use SMTP authentication.', 'wp-mail-smtp' ); ?></span></label><br/>
+									<label for="smtp_auth_false">
+										<span><?php _e( 'No: Do not use SMTP authentication.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
 									<input id="smtp_auth_true" type="radio" name="smtp_auth" value="true" <?php checked( 'true', get_option( 'smtp_auth' ) ); ?> />
-									<label for="smtp_auth_true"><span><?php _e( 'Yes: Use SMTP authentication.', 'wp-mail-smtp' ); ?></span></label><br/>
-									<p class="description"><?php _e( 'If this is set to no, the values below are ignored.', 'wp-mail-smtp' ); ?></p>
+									<label for="smtp_auth_true">
+										<span><?php _e( 'Yes: Use SMTP authentication.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
+									<p class="description">
+										<?php _e( 'If this is set to no, the values below are ignored.', 'wp-mail-smtp' ); ?>
+									</p>
 								</fieldset>
 							</td>
 						</tr>
 						<tr valign="top">
-							<th scope="row"><label for="smtp_user"><?php _e( 'Username', 'wp-mail-smtp' ); ?></label></th>
-							<td><input name="smtp_user" type="text" id="smtp_user" value="<?php print( get_option( 'smtp_user' ) ); ?>" size="40" class="code"/>
+							<th scope="row">
+								<label for="smtp_user"><?php _e( 'Username', 'wp-mail-smtp' ); ?></label>
+							</th>
+							<td>
+								<input name="smtp_user" type="text" id="smtp_user" value="<?php print( get_option( 'smtp_user' ) ); ?>" size="40" class="code"/>
 							</td>
 						</tr>
 						<tr valign="top">
-							<th scope="row"><label for="smtp_pass"><?php _e( 'Password', 'wp-mail-smtp' ); ?></label></th>
+							<th scope="row">
+								<label for="smtp_pass"><?php _e( 'Password', 'wp-mail-smtp' ); ?></label>
+							</th>
 							<td>
 								<input name="smtp_pass" type="text" id="smtp_pass" value="<?php print( get_option( 'smtp_pass' ) ); ?>" size="40" class="code"/>
+
 								<p class="description">
 									<?php esc_html_e( 'This is in plain text because it must not be stored encrypted.', 'wp-mail-smtp' ); ?>
 								</p>
@@ -409,7 +462,9 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 				</div><!-- #wpms_section_smtp -->
 
 				<div id="wpms_section_pepipost" class="wpms_section">
-					<h3><?php _e( 'Pepipost SMTP Options', 'wp-mail-smtp' ); ?></h3>
+					<h3>
+						<?php _e( 'Pepipost SMTP Options', 'wp-mail-smtp' ); ?>
+					</h3>
 					<p>
 						<?php
 						printf(
@@ -456,12 +511,22 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 											<?php _e( 'Encryption', 'wp-mail-smtp' ); ?>
 										</span>
 									</legend>
+
 									<input id="pepipost_ssl_none" type="radio" name="pepipost_ssl" value="none" <?php checked( 'none', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_none"><span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span></label><br/>
+									<label for="pepipost_ssl_none">
+										<span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
 									<input id="pepipost_ssl_ssl" type="radio" name="pepipost_ssl" value="ssl" <?php checked( 'ssl', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_ssl"><span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span></label><br/>
+									<label for="pepipost_ssl_ssl">
+										<span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span>
+									</label><br/>
+
 									<input id="pepipost_ssl_tls" type="radio" name="pepipost_ssl" value="tls" <?php checked( 'tls', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_tls"><span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span></label>
+									<label for="pepipost_ssl_tls">
+										<span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span>
+									</label>
+								</fieldset>
 							</td>
 						</tr>
 					</table>
@@ -479,6 +544,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 			<form method="POST" action="options-general.php?page=<?php echo plugin_basename( __FILE__ ); ?>">
 				<?php wp_nonce_field( 'test-email' ); ?>
+
 				<table class="optiontable form-table">
 					<tr valign="top">
 						<th scope="row">
@@ -490,6 +556,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 						</td>
 					</tr>
 				</table>
+
 				<p class="submit">
 					<input type="submit" name="wpms_action" id="wpms_action" class="button-primary" value="<?php _e( 'Send Test', 'wp-mail-smtp' ); ?>"/>
 				</p>

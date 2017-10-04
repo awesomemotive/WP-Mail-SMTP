@@ -1,0 +1,20 @@
+{
+    "name": "awesomemotive/wp-mail-smtp",
+    "description": "Reconfigures the wp_mail() function to use SMTP instead of mail().",
+    "type": "wordpress-plugin",
+    "keywords": [
+      "mail",
+      "smtp",
+      "wp_mail",
+      "mailer",
+      "phpmailer"
+    ],
+    "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
+    "license": "GPLv3",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+      "composer/installers": "~1.0",
+      "php": ">=5.2.4"
+    }
+}

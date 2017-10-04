@@ -175,7 +175,7 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 				$phpmailer->Mailer     = 'smtp';
 				$phpmailer->Host       = 'smtp.pepipost.com';
 				$phpmailer->Port       = get_option( 'pepipost_port' );
-				$phpmailer->SMTPSecure = get_option( 'pepipost_ssl' ) == 'none' ? '' : get_option( 'pepipost_ssl' );
+				$phpmailer->SMTPSecure = get_option( 'pepipost_ssl' ) === 'none' ? '' : get_option( 'pepipost_ssl' );
 				$phpmailer->SMTPAuth   = true;
 				$phpmailer->Username   = get_option( 'pepipost_user' );
 				$phpmailer->Password   = get_option( 'pepipost_pass' );
@@ -184,9 +184,6 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 			// You can add your own options here, see the phpmailer documentation for more info:
 			// http://phpmailer.sourceforge.net/docs/.
 			$phpmailer = apply_filters( 'wp_mail_smtp_custom_options', $phpmailer );
-
-
-			// STOP adding options here.
 		}
 
 	} // End of phpmailer_init_smtp() function definition
@@ -542,7 +539,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 			<h3><?php _e( 'Send a Test Email', 'wp-mail-smtp' ); ?></h3>
 
-			<form method="POST" action="options-general.php?page=<?php echo plugin_basename( __FILE__ ); ?>">
+			<form method="POST" action="">
 				<?php wp_nonce_field( 'test-email' ); ?>
 
 				<table class="optiontable form-table">
@@ -563,6 +560,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 			</form>
 
 			<script type="text/javascript">
+				/* globals jQuery */
 				var wpmsOnMailerChange = function ( mailer ) {
 					// Hide all the mailer forms.
 					jQuery( '.wpms_section' ).hide();
@@ -629,11 +627,14 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from' ) ) :
 			return $orig;
 		}
 
-		if ( defined( 'WPMS_ON' ) && WPMS_ON ) {
-			if ( defined( 'WPMS_MAIL_FROM' ) && WPMS_MAIL_FROM !== false ) {
-				return WPMS_MAIL_FROM;
-			}
-		} elseif ( is_email( get_option( 'mail_from' ), false ) ) {
+		if (
+			defined( 'WPMS_ON' ) && WPMS_ON &&
+			defined( 'WPMS_MAIL_FROM' ) && ! empty( WPMS_MAIL_FROM )
+		) {
+			return WPMS_MAIL_FROM;
+		}
+
+		if ( is_email( get_option( 'mail_from' ), false ) ) {
 			return get_option( 'mail_from' );
 		}
 
@@ -654,11 +655,15 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from_name' ) ) :
 
 		// Only filter if the from name is the default.
 		if ( 'WordPress' === $orig ) {
-			if ( defined( 'WPMS_ON' ) && WPMS_ON ) {
-				if ( defined( 'WPMS_MAIL_FROM_NAME' ) && WPMS_MAIL_FROM_NAME !== false ) {
-					return WPMS_MAIL_FROM_NAME;
-				}
-			} elseif ( get_option( 'mail_from_name' ) !== '' && is_string( get_option( 'mail_from_name' ) ) ) {
+			if (
+				defined( 'WPMS_ON' ) && WPMS_ON &&
+				defined( 'WPMS_MAIL_FROM_NAME' ) && ! empty( WPMS_MAIL_FROM_NAME )
+			) {
+				return WPMS_MAIL_FROM_NAME;
+			}
+
+			$mail_from = get_option( 'mail_from_name' );
+			if ( ! empty( $mail_from ) && is_string( $mail_from ) ) {
 				return get_option( 'mail_from_name' );
 			}
 		}
@@ -699,7 +704,7 @@ if ( ! defined( 'WPMS_ON' ) || ! WPMS_ON ) {
 	add_action( 'admin_menu', 'wp_mail_smtp_menus' );
 	// Add an activation hook for this plugin.
 	register_activation_hook( __FILE__, 'wp_mail_smtp_activate' );
-	// Adds "Settings" link to the plugin action page.
+	// Adds "Settings" link to the Plugins page.
 	add_filter( 'plugin_action_links', 'wp_mail_plugin_action_links', 10, 2 );
 }
 

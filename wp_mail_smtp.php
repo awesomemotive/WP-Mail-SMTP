@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 0.10.1
+ * Version: 0.11
  * Plugin URI: https://wpforms.com/
  * Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
  * Author: WPForms
@@ -14,6 +14,9 @@
  * This code is released under the GPL licence version 3 or later, available here
  * http://www.gnu.org/licenses/gpl.txt
  */
+
+define( 'WPMS_PLUGIN_SLUG', 'wp-mail-smtp' );
+define( 'WPMS_PLUGIN_VER', '0.11' );
 
 /**
  * Setting options in wp-config.php
@@ -693,6 +696,20 @@ function wp_mail_plugin_action_links( $links, $file ) {
 
 	return $links;
 }
+
+/**
+ * Awesome Motive Notifications.
+ */
+function wp_mail_smtp_am_notifications() {
+
+	if ( ! class_exists( 'WPMS_AM_Notification' ) ) {
+		require_once 'src/class-wpms-am-notification.php';
+	}
+
+	new WPMS_AM_Notification( WPMS_PLUGIN_SLUG, WPMS_PLUGIN_VER );
+}
+
+add_action( 'admin_init', 'wp_mail_smtp_am_notifications' );
 
 // Add an action on phpmailer_init.
 add_action( 'phpmailer_init', 'phpmailer_init_smtp' );

@@ -16,6 +16,7 @@
         <exclude name="WordPress.XSS.EscapeOutput.UnsafePrintingFunction"/>
         <exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
         <exclude name="WordPress.VIP"/>
 
         <!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->

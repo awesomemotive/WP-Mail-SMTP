@@ -6,6 +6,8 @@
  * Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
  * Author: WPForms
  * Author URI: https://wpforms.com/
+ * Text Domain: wp-mail-smtp
+ * Domain Path: /languages
  */
 
 /**

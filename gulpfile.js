@@ -41,7 +41,8 @@ var plugin = {
 		'!composer.json',
 		'!composer.lock',
 		'!phpunit.xml',
-		'!README.md'
+		'!README.md',
+		'!LICENSE'
 	],
 	php: '**/*.php',
 	sass: [

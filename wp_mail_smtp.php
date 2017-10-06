@@ -107,49 +107,65 @@ endif;
  */
 if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 	/**
-	 * This code is copied, from wp-includes/pluggable.php as at version 2.2.2
+	 * This code is copied, from wp-includes/pluggable.php as at version 2.2.2.
 	 *
-	 * @param PHPMailer $phpmailer
+	 * @param PHPMailer $phpmailer It's passed by reference, so no need to return anything.
 	 */
 	function phpmailer_init_smtp( $phpmailer ) {
-
-		// If constants are defined, apply those options.
-		if ( defined( 'WPMS_ON' ) && WPMS_ON ) {
-
+		/*
+		 * If constants are defined, apply them.
+		 * We should have defined all required constants before using them.
+		 */
+		if (
+			defined( 'WPMS_ON' ) && WPMS_ON &&
+			defined( 'WPMS_MAILER' )
+		) {
 			$phpmailer->Mailer = WPMS_MAILER;
 
-			if ( WPMS_SET_RETURN_PATH ) {
+			if ( defined( 'WPMS_SET_RETURN_PATH' ) && WPMS_SET_RETURN_PATH ) {
 				$phpmailer->Sender = $phpmailer->From;
 			}
 
-			if ( WPMS_MAILER === 'smtp' ) {
+			if (
+				WPMS_MAILER === 'smtp' &&
+				defined( 'WPMS_SSL' ) &&
+				defined( 'WPMS_SMTP_HOST' ) &&
+				defined( 'WPMS_SMTP_PORT' )
+			) {
 				$phpmailer->SMTPSecure = WPMS_SSL;
 				$phpmailer->Host       = WPMS_SMTP_HOST;
 				$phpmailer->Port       = WPMS_SMTP_PORT;
-				if ( WPMS_SMTP_AUTH ) {
+
+				if (
+					defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH &&
+					defined( 'WPMS_SMTP_USER' ) &&
+					defined( 'WPMS_SMTP_PASS' )
+				) {
 					$phpmailer->SMTPAuth = true;
 					$phpmailer->Username = WPMS_SMTP_USER;
 					$phpmailer->Password = WPMS_SMTP_PASS;
 				}
 			}
-
-			// If you're using constants, set any custom options here.
-			$phpmailer = apply_filters( 'wp_mail_smtp_custom_options', $phpmailer );
-
 		} else {
+			$option_mailer    = get_option( 'mailer' );
+			$option_smtp_host = get_option( 'smtp_host' );
+			$option_smtp_ssl  = get_option( 'smtp_ssl' );
 
 			// Check that mailer is not blank, and if mailer=smtp, host is not blank.
-			if ( ! get_option( 'mailer' ) || ( get_option( 'mailer' ) === 'smtp' && ! get_option( 'smtp_host' ) ) ) {
+			if (
+				! $option_mailer ||
+				( 'smtp' === $option_mailer && ! $option_smtp_host )
+			) {
 				return;
 			}
 
 			// If the mailer is pepipost, make sure we have a username and password.
-			if ( get_option( 'mailer' ) === 'pepipost' && ( ! get_option( 'pepipost_user' ) && ! get_option( 'pepipost_pass' ) ) ) {
+			if ( 'pepipost' === $option_mailer && ( ! get_option( 'pepipost_user' ) && ! get_option( 'pepipost_pass' ) ) ) {
 				return;
 			}
 
 			// Set the mailer type as per config above, this overrides the already called isMail method.
-			$phpmailer->Mailer = get_option( 'mailer' );
+			$phpmailer->Mailer = $option_mailer;
 
 			// Set the Sender (return-path) if required.
 			if ( get_option( 'mail_set_return_path' ) ) {
@@ -157,16 +173,16 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 			}
 
 			// Set the SMTPSecure value, if set to none, leave this blank.
-			$phpmailer->SMTPSecure = get_option( 'smtp_ssl' ) === 'none' ? '' : get_option( 'smtp_ssl' );
+			$phpmailer->SMTPSecure = 'none' === $option_smtp_ssl ? '' : $option_smtp_ssl;
 
 			// If we're sending via SMTP, set the host.
-			if ( get_option( 'mailer' ) === 'smtp' ) {
+			if ( 'smtp' === $option_mailer ) {
 
 				// Set the SMTPSecure value, if set to none, leave this blank.
-				$phpmailer->SMTPSecure = get_option( 'smtp_ssl' ) === 'none' ? '' : get_option( 'smtp_ssl' );
+				$phpmailer->SMTPSecure = 'none' === $option_smtp_ssl ? '' : $option_smtp_ssl;
 
 				// Set the other options.
-				$phpmailer->Host = get_option( 'smtp_host' );
+				$phpmailer->Host = $option_smtp_host;
 				$phpmailer->Port = get_option( 'smtp_port' );
 
 				// If we're using smtp auth, set the username & password.
@@ -175,7 +191,7 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 					$phpmailer->Username = get_option( 'smtp_user' );
 					$phpmailer->Password = get_option( 'smtp_pass' );
 				}
-			} elseif ( get_option( 'mailer' ) === 'pepipost' ) {
+			} elseif ( 'pepipost' === $option_mailer ) {
 				// Set the Pepipost settings.
 				$phpmailer->Mailer     = 'smtp';
 				$phpmailer->Host       = 'smtp.pepipost.com';
@@ -185,13 +201,12 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 				$phpmailer->Username   = get_option( 'pepipost_user' );
 				$phpmailer->Password   = get_option( 'pepipost_pass' );
 			}
-
-			// You can add your own options here, see the phpmailer documentation for more info:
-			// http://phpmailer.sourceforge.net/docs/.
-			$phpmailer = apply_filters( 'wp_mail_smtp_custom_options', $phpmailer );
 		}
 
-	} // End of phpmailer_init_smtp() function definition
+		// You can add your own options here, see the phpmailer documentation for more info: http://phpmailer.sourceforge.net/docs/.
+		/** @noinspection PhpUnusedLocalVariableInspection It's passed by reference. */
+		$phpmailer = apply_filters( 'wp_mail_smtp_custom_options', $phpmailer );
+	}
 endif;
 
 if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :

@@ -173,14 +173,14 @@ if ( ! function_exists( 'phpmailer_init_smtp' ) ) :
 			}
 
 			// Set the SMTPSecure value, if set to none, leave this blank.
-			$phpmailer->SMTPSecure = 'none' === $option_smtp_ssl ? '' : $option_smtp_ssl;
+			$phpmailer->SMTPSecure = $option_smtp_ssl;
+			if ( 'none' === $option_smtp_ssl ) {
+				$phpmailer->SMTPSecure  = '';
+				$phpmailer->SMTPAutoTLS = false;
+			}
 
 			// If we're sending via SMTP, set the host.
 			if ( 'smtp' === $option_mailer ) {
-
-				// Set the SMTPSecure value, if set to none, leave this blank.
-				$phpmailer->SMTPSecure = 'none' === $option_smtp_ssl ? '' : $option_smtp_ssl;
-
 				// Set the other options.
 				$phpmailer->Host = $option_smtp_host;
 				$phpmailer->Port = get_option( 'smtp_port' );

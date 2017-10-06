@@ -368,6 +368,10 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<input name="mail_set_return_path" type="checkbox" id="mail_set_return_path" value="true" <?php checked( 'true', get_option( 'mail_set_return_path' ) ); ?> />
 									<?php _e( 'Set the return-path to match the From Email' ); ?>
 								</label>
+
+								<p class="description">
+									<?php _e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?>
+								</p>
 							</fieldset>
 						</td>
 					</tr>

@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: wp_mail_smtp.php:240
-msgid "Test mail to "
+msgid "Test mail to %s"
 msgstr ""
 
 #: wp_mail_smtp.php:241
@@ -38,7 +38,7 @@ msgstr ""
 msgid "The SMTP debugging output is shown below:"
 msgstr ""
 
-#: wp_mail_smtp.php:232, wp_mail_smtp.php:582
+#: wp_mail_smtp.php:231, wp_mail_smtp.php:582
 msgid "Send Test"
 msgstr ""
 

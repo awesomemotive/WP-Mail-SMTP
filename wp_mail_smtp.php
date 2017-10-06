@@ -222,7 +222,6 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 		// (Re)create it, if it's gone missing.
 		if ( ! is_object( $phpmailer ) || ! is_a( $phpmailer, 'PHPMailer' ) ) {
 			require_once ABSPATH . WPINC . '/class-phpmailer.php';
-			require_once ABSPATH . WPINC . '/class-smtp.php';
 			$phpmailer = new PHPMailer( true );
 		}
 

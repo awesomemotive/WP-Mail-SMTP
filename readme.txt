@@ -1,5 +1,5 @@
 === WP Mail SMTP by WPForms ===
-Contributors: wpforms, smub, jaredatch
+Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
@@ -28,7 +28,7 @@ WP Mail SMTP plugin works with all major email services such as Gmail, Yahoo, Ou
 
 The goal of WP Mail SMTP plugin is to help fix the common "WordPress not sending an email issue".
 
-Often times an email sent out by your WordPress site either lands in the spam folder or get completely rejected by popular email providers. 
+Often times an email sent out by your WordPress site either lands in the spam folder or get completely rejected by popular email providers.
 
 SMTP (Simple Mail Transfer Protocol) is the industry standard for sending emails. WP Mail SMTP helps you use proper authentication which increases email deliverability.
 

@@ -330,24 +330,26 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<label for="mailer_smtp"><?php _e( 'Send all WordPress emails via SMTP.', 'wp-mail-smtp' ); ?></label>
 								</p>
 								<p>
-									<input id="mailer_pepipost" class="wpms_mailer" type="radio" name="mailer" value="pepipost" <?php checked( 'pepipost', get_option( 'mailer' ) ); ?> />
-									<label for="mailer_pepipost"><?php _e( 'Use Pepipost SMTP to send emails.', 'wp-mail-smtp' ); ?></label>
-								</p>
-								<p>
 									<input id="mailer_mail" class="wpms_mailer" type="radio" name="mailer" value="mail" <?php checked( 'mail', get_option( 'mailer' ) ); ?> />
 									<label for="mailer_mail"><?php _e( 'Use the PHP mail() function to send emails.', 'wp-mail-smtp' ); ?></label>
 								</p>
 
-								<p class="description">
-									<?php
-									printf(
-										/* translators: %1$s - link start; %2$s - link end. */
-										__( 'Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s.', 'wp-mail-smtp' ),
-										'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">',
-										'</a>'
-									);
-									?>
-								</p>
+								<?php if ( wp_mail_smtp_is_pepipost_active() ) : ?>
+									<p>
+										<input id="mailer_pepipost" class="wpms_mailer" type="radio" name="mailer" value="pepipost" <?php checked( 'pepipost', get_option( 'mailer' ) ); ?> />
+										<label for="mailer_pepipost"><?php _e( 'Use Pepipost SMTP to send emails.', 'wp-mail-smtp' ); ?></label>
+									</p>
+									<p class="description">
+										<?php
+										printf(
+											/* translators: %1$s - link start; %2$s - link end. */
+											__( 'Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s.', 'wp-mail-smtp' ),
+											'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">',
+											'</a>'
+										);
+										?>
+									</p>
+								<?php endif; ?>
 							</fieldset>
 						</td>
 					</tr>
@@ -482,80 +484,82 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 					</p>
 				</div><!-- #wpms_section_smtp -->
 
-				<div id="wpms_section_pepipost" class="wpms_section">
-					<h3>
-						<?php _e( 'Pepipost SMTP Options', 'wp-mail-smtp' ); ?>
-					</h3>
-					<p>
-						<?php
-						printf(
-							/* translators: %s - Pepipost registration URL. */
-							__( 'You need to signup on %s to get the SMTP username/password.', 'wp-mail-smtp' ),
-							'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">Pepipost</a>',
-							''
-						);
-						?>
-					</p>
-					<table class="optiontable form-table">
-						<tr valign="top">
-							<th scope="row">
-								<label for="pepipost_user"><?php _e( 'Username', 'wp-mail-smtp' ); ?></label>
-							</th>
-							<td>
-								<input name="pepipost_user" type="text" id="pepipost_user" value="<?php print( get_option( 'pepipost_user' ) ); ?>" size="40" class="code"/>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row">
-								<label for="pepipost_pass"><?php _e( 'Password', 'wp-mail-smtp' ); ?></label>
-							</th>
-							<td>
-								<input name="pepipost_pass" type="text" id="pepipost_pass" value="<?php print( get_option( 'pepipost_pass' ) ); ?>" size="40" class="code"/>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row">
-								<label for="pepipost_port"><?php _e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
-							</th>
-							<td>
-								<input name="pepipost_port" type="text" id="pepipost_port" value="<?php print( get_option( 'pepipost_port' ) ); ?>" size="6" class="regular-text"/>
-							</td>
-						</tr>
-						<tr valign="top">
-							<th scope="row">
-								<?php _e( 'Encryption', 'wp-mail-smtp' ); ?>
-							</th>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text">
-										<span>
-											<?php _e( 'Encryption', 'wp-mail-smtp' ); ?>
-										</span>
-									</legend>
+				<?php if ( wp_mail_smtp_is_pepipost_active() ) : ?>
+					<div id="wpms_section_pepipost" class="wpms_section">
+						<h3>
+							<?php _e( 'Pepipost SMTP Options', 'wp-mail-smtp' ); ?>
+						</h3>
+						<p>
+							<?php
+							printf(
+								/* translators: %s - Pepipost registration URL. */
+								__( 'You need to signup on %s to get the SMTP username/password.', 'wp-mail-smtp' ),
+								'<a href="https://app1.pepipost.com/index.php/login/wp_mail_smtp?page=signup&utm_source=WordPress&utm_campaign=Plugins&utm_medium=wp_mail_smtp&utm_term=organic&code=WP-MAIL-SMTP" target="_blank">Pepipost</a>',
+								''
+							);
+							?>
+						</p>
+						<table class="optiontable form-table">
+							<tr valign="top">
+								<th scope="row">
+									<label for="pepipost_user"><?php _e( 'Username', 'wp-mail-smtp' ); ?></label>
+								</th>
+								<td>
+									<input name="pepipost_user" type="text" id="pepipost_user" value="<?php print( get_option( 'pepipost_user' ) ); ?>" size="40" class="code"/>
+								</td>
+							</tr>
+							<tr valign="top">
+								<th scope="row">
+									<label for="pepipost_pass"><?php _e( 'Password', 'wp-mail-smtp' ); ?></label>
+								</th>
+								<td>
+									<input name="pepipost_pass" type="text" id="pepipost_pass" value="<?php print( get_option( 'pepipost_pass' ) ); ?>" size="40" class="code"/>
+								</td>
+							</tr>
+							<tr valign="top">
+								<th scope="row">
+									<label for="pepipost_port"><?php _e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
+								</th>
+								<td>
+									<input name="pepipost_port" type="text" id="pepipost_port" value="<?php print( get_option( 'pepipost_port' ) ); ?>" size="6" class="regular-text"/>
+								</td>
+							</tr>
+							<tr valign="top">
+								<th scope="row">
+									<?php _e( 'Encryption', 'wp-mail-smtp' ); ?>
+								</th>
+								<td>
+									<fieldset>
+										<legend class="screen-reader-text">
+											<span>
+												<?php _e( 'Encryption', 'wp-mail-smtp' ); ?>
+											</span>
+										</legend>
 
-									<input id="pepipost_ssl_none" type="radio" name="pepipost_ssl" value="none" <?php checked( 'none', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_none">
-										<span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span>
-									</label><br/>
+										<input id="pepipost_ssl_none" type="radio" name="pepipost_ssl" value="none" <?php checked( 'none', get_option( 'pepipost_ssl' ) ); ?> />
+										<label for="pepipost_ssl_none">
+											<span><?php _e( 'No encryption.', 'wp-mail-smtp' ); ?></span>
+										</label><br/>
 
-									<input id="pepipost_ssl_ssl" type="radio" name="pepipost_ssl" value="ssl" <?php checked( 'ssl', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_ssl">
-										<span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span>
-									</label><br/>
+										<input id="pepipost_ssl_ssl" type="radio" name="pepipost_ssl" value="ssl" <?php checked( 'ssl', get_option( 'pepipost_ssl' ) ); ?> />
+										<label for="pepipost_ssl_ssl">
+											<span><?php _e( 'Use SSL encryption.', 'wp-mail-smtp' ); ?></span>
+										</label><br/>
 
-									<input id="pepipost_ssl_tls" type="radio" name="pepipost_ssl" value="tls" <?php checked( 'tls', get_option( 'pepipost_ssl' ) ); ?> />
-									<label for="pepipost_ssl_tls">
-										<span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span>
-									</label>
-								</fieldset>
-							</td>
-						</tr>
-					</table>
+										<input id="pepipost_ssl_tls" type="radio" name="pepipost_ssl" value="tls" <?php checked( 'tls', get_option( 'pepipost_ssl' ) ); ?> />
+										<label for="pepipost_ssl_tls">
+											<span><?php _e( 'Use TLS encryption.', 'wp-mail-smtp' ); ?></span>
+										</label>
+									</fieldset>
+								</td>
+							</tr>
+						</table>
 
-					<p class="submit">
-						<input type="submit" name="submit" id="submit" class="button-primary" value="<?php _e( 'Save Changes', 'wp-mail-smtp' ); ?>"/>
-					</p>
-				</div><!-- #wpms_section_pepipost -->
+						<p class="submit">
+							<input type="submit" name="submit" id="submit" class="button-primary" value="<?php _e( 'Save Changes', 'wp-mail-smtp' ); ?>"/>
+						</p>
+					</div><!-- #wpms_section_pepipost -->
+				<?php endif; ?>
 
 				<input type="hidden" name="action" value="update"/>
 				<input type="hidden" name="option_page" value="email">
@@ -731,6 +735,15 @@ function wp_mail_smtp_am_notifications() {
 }
 
 add_action( 'admin_init', 'wp_mail_smtp_am_notifications' );
+
+/**
+ * Check whether the site is using Pepipost or not.
+ *
+ * @return bool
+ */
+function wp_mail_smtp_is_pepipost_active() {
+	return apply_filters( 'wp_mail_smtp_is_pepipost_active', 'pepipost' === get_option( 'mailer' ) );
+}
 
 // Add an action on phpmailer_init.
 add_action( 'phpmailer_init', 'phpmailer_init_smtp' );

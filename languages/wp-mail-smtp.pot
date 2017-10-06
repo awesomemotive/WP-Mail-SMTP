@@ -38,11 +38,11 @@ msgstr ""
 msgid "The SMTP debugging output is shown below:"
 msgstr ""
 
-#: wp_mail_smtp.php:231, wp_mail_smtp.php:582
+#: wp_mail_smtp.php:231, wp_mail_smtp.php:586
 msgid "Send Test"
 msgstr ""
 
-#: wp_mail_smtp.php:277, wp_mail_smtp.php:618
+#: wp_mail_smtp.php:277, wp_mail_smtp.php:622
 msgid "Advanced Email Options"
 msgstr ""
 
@@ -75,117 +75,117 @@ msgid "Send all WordPress emails via SMTP."
 msgstr ""
 
 #: wp_mail_smtp.php:334
-msgid "Use Pepipost SMTP to send emails."
-msgstr ""
-
-#: wp_mail_smtp.php:338
 msgid "Use the PHP mail() function to send emails."
 msgstr ""
 
-#: wp_mail_smtp.php:345
+#: wp_mail_smtp.php:340
+msgid "Use Pepipost SMTP to send emails."
+msgstr ""
+
+#: wp_mail_smtp.php:346
 msgid "Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s."
 msgstr ""
 
-#: wp_mail_smtp.php:359, wp_mail_smtp.php:364
+#: wp_mail_smtp.php:361, wp_mail_smtp.php:366
 msgid "Return Path"
 msgstr ""
 
-#: wp_mail_smtp.php:373
+#: wp_mail_smtp.php:375
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
-#: wp_mail_smtp.php:381, wp_mail_smtp.php:481, wp_mail_smtp.php:556
+#: wp_mail_smtp.php:383, wp_mail_smtp.php:483, wp_mail_smtp.php:559
 msgid "Save Changes"
 msgstr ""
 
-#: wp_mail_smtp.php:386
+#: wp_mail_smtp.php:388
 msgid "SMTP Options"
 msgstr ""
 
-#: wp_mail_smtp.php:388
+#: wp_mail_smtp.php:390
 msgid "These options only apply if you have chosen to send mail by SMTP above."
 msgstr ""
 
-#: wp_mail_smtp.php:393
+#: wp_mail_smtp.php:395
 msgid "SMTP Host"
 msgstr ""
 
-#: wp_mail_smtp.php:401, wp_mail_smtp.php:518
+#: wp_mail_smtp.php:403, wp_mail_smtp.php:521
 msgid "SMTP Port"
 msgstr ""
 
-#: wp_mail_smtp.php:408, wp_mail_smtp.php:412, wp_mail_smtp.php:526, wp_mail_smtp.php:532
+#: wp_mail_smtp.php:410, wp_mail_smtp.php:414, wp_mail_smtp.php:529, wp_mail_smtp.php:535
 msgid "Encryption"
 msgstr ""
 
-#: wp_mail_smtp.php:417, wp_mail_smtp.php:538
+#: wp_mail_smtp.php:419, wp_mail_smtp.php:541
 msgid "No encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:422, wp_mail_smtp.php:543
+#: wp_mail_smtp.php:424, wp_mail_smtp.php:546
 msgid "Use SSL encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:427, wp_mail_smtp.php:548
+#: wp_mail_smtp.php:429, wp_mail_smtp.php:551
 msgid "Use TLS encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:430
+#: wp_mail_smtp.php:432
 msgid "TLS is not the same as STARTTLS. For most servers SSL is the recommended option."
 msgstr ""
 
-#: wp_mail_smtp.php:435, wp_mail_smtp.php:439
+#: wp_mail_smtp.php:437, wp_mail_smtp.php:441
 msgid "Authentication"
 msgstr ""
 
-#: wp_mail_smtp.php:444
+#: wp_mail_smtp.php:446
 msgid "No: Do not use SMTP authentication."
 msgstr ""
 
-#: wp_mail_smtp.php:449
+#: wp_mail_smtp.php:451
 msgid "Yes: Use SMTP authentication."
 msgstr ""
 
-#: wp_mail_smtp.php:453
+#: wp_mail_smtp.php:455
 msgid "If this is set to no, the values below are ignored."
 msgstr ""
 
-#: wp_mail_smtp.php:460, wp_mail_smtp.php:502
+#: wp_mail_smtp.php:462, wp_mail_smtp.php:505
 msgid "Username"
 msgstr ""
 
-#: wp_mail_smtp.php:468, wp_mail_smtp.php:510
+#: wp_mail_smtp.php:470, wp_mail_smtp.php:513
 msgid "Password"
 msgstr ""
 
-#: wp_mail_smtp.php:474
+#: wp_mail_smtp.php:476
 msgid "This is in plain text because it must not be stored encrypted."
 msgstr ""
 
-#: wp_mail_smtp.php:487
+#: wp_mail_smtp.php:490
 msgid "Pepipost SMTP Options"
 msgstr ""
 
-#: wp_mail_smtp.php:493
+#: wp_mail_smtp.php:496
 msgid "You need to signup on %s to get the SMTP username/password."
 msgstr ""
 
-#: wp_mail_smtp.php:564
+#: wp_mail_smtp.php:568
 msgid "Send a Test Email"
 msgstr ""
 
-#: wp_mail_smtp.php:572
+#: wp_mail_smtp.php:576
 msgid "To"
 msgstr ""
 
-#: wp_mail_smtp.php:576
+#: wp_mail_smtp.php:580
 msgid "Type an email address here and then click Send Test to generate a test email."
 msgstr ""
 
-#: wp_mail_smtp.php:618
+#: wp_mail_smtp.php:622
 msgid "Email"
 msgstr ""
 
-#: wp_mail_smtp.php:714
+#: wp_mail_smtp.php:718
 msgid "Settings"
 msgstr ""

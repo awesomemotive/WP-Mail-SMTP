@@ -638,8 +638,11 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from' ) ) :
 		 * http://trac.wordpress.org/browser/branches/2.7/wp-includes/pluggable.php#L348.
 		 */
 
+		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
+		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : sanitize_key( php_uname( 'n' ) );
+
 		// Get the site domain and get rid of www.
-		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
+		$sitename = strtolower( $server_name );
 		if ( substr( $sitename, 0, 4 ) === 'www.' ) {
 			$sitename = substr( $sitename, 4 );
 		}

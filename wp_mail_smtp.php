@@ -17,7 +17,6 @@
  * http://www.gnu.org/licenses/gpl.txt
  */
 
-define( 'WPMS_PLUGIN_SLUG', 'wp-mail-smtp' );
 define( 'WPMS_PLUGIN_VER', '0.11' );
 
 /**
@@ -734,7 +733,7 @@ function wp_mail_smtp_am_notifications() {
 		require_once 'src/class-wpms-am-notification.php';
 	}
 
-	new WPMS_AM_Notification( WPMS_PLUGIN_SLUG, WPMS_PLUGIN_VER );
+	new WPMS_AM_Notification( 'smtp', WPMS_PLUGIN_VER );
 }
 
 add_action( 'admin_init', 'wp_mail_smtp_am_notifications' );

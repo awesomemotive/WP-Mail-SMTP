@@ -72,7 +72,7 @@ class WPMS_AM_Notification {
 		$this->plugin_version = $version;
 
 		add_action( 'init', array( $this, 'custom_post_type' ) );
-		add_action( 'init', array( $this, 'get_remote_notifications' ), 100 );
+		add_action( 'admin_init', array( $this, 'get_remote_notifications' ), 100 );
 		add_action( 'admin_notices', array( $this, 'display_notifications' ) );
 		add_action( 'wp_ajax_am_notification_dismiss', array( $this, 'dismiss_notification' ) );
 	}
@@ -94,13 +94,16 @@ class WPMS_AM_Notification {
 	 * @since 1.0.0
 	 */
 	public function get_remote_notifications() {
+		if ( ! current_user_can( apply_filters( 'am_notifications_display', 'manage_options' ) ) ) {
+			return;
+		}
+
 		$last_checked = get_option( '_amn_' . $this->plugin . '_last_checked', strtotime( '-1 week' ) );
 
 		if ( $last_checked < strtotime( 'today midnight' ) ) {
-
 			$plugin_notifications = $this->get_plugin_notifications( 1 );
+			$notification_id 	  = null;
 
-			$notification_id = null;
 			if ( ! empty( $plugin_notifications ) ) {
 				// Unset it from the array.
 				$notification    = $plugin_notifications[0];
@@ -120,8 +123,8 @@ class WPMS_AM_Notification {
 			$data = json_decode( $response );
 
 			if ( ! empty( $data->id ) ) {
-
 				$notifications = array();
+
 				foreach ( (array) $data->slugs as $slug ) {
 					$notifications = array_merge(
 						$notifications,
@@ -137,21 +140,27 @@ class WPMS_AM_Notification {
 				}
 
 				if ( empty( $notifications ) ) {
-
 					$new_notification_id = wp_insert_post( array(
-						'post_content' => $data->content,
-						'post_type'    => 'amn_' . $this->plugin,
-					) );
+						                                       'post_content' => wp_kses_post( $data->content ),
+						                                       'post_type'    => 'amn_' . $this->plugin,
+					                                       ) );
 
-					update_post_meta( $new_notification_id, 'notification_id', $data->id );
-					update_post_meta( $new_notification_id, 'type', $data->type );
+					update_post_meta( $new_notification_id, 'notification_id', absint( $data->id ) );
+					update_post_meta( $new_notification_id, 'type', sanitize_text_field( trim( $data->type ) ) );
 					update_post_meta( $new_notification_id, 'dismissable', (bool) $data->dismissible ? 1 : 0 );
-					update_post_meta( $new_notification_id, 'location', wp_json_encode( $data->location ) );
-					update_post_meta( $new_notification_id, 'plugins', wp_json_encode( $data->plugins ) );
-					update_post_meta( $new_notification_id, 'theme', $data->theme );
-					update_post_meta( $new_notification_id, 'version', $data->version );
+					update_post_meta( $new_notification_id, 'location', function_exists( 'wp_json_encode' ) ? wp_json_encode( $data->location ) : json_encode( $data->location ) );
+					update_post_meta( $new_notification_id, 'plugins', function_exists( 'wp_json_encode' ) ? wp_json_encode( $data->plugins ) : json_encode( $data->plugins ) );
+					update_post_meta( $new_notification_id, 'theme', sanitize_text_field( trim( $data->theme ) ) );
+					update_post_meta( $new_notification_id, 'version', sanitize_text_field( trim( $data->version ) ) );
 					update_post_meta( $new_notification_id, 'viewed', 0 );
+					update_post_meta( $new_notification_id, 'expiration', $data->expiration ? absint( $data->expiration ) : false );
+					update_post_meta( $new_notification_id, 'plans', function_exists( 'wp_json_encode' ) ? wp_json_encode( $data->plans ) : json_encode( $data->plans ) );
 				}
+			}
+
+			// Possibly revoke notifications.
+			if ( ! empty( $data->revoked ) ) {
+				$this->revoke_notifications( $data->revoked );
 			}
 
 			// Set the option now so we can't run this again until after 24 hours.
@@ -169,7 +178,7 @@ class WPMS_AM_Notification {
 	 *
 	 * @return WP_Post[] WP_Post that match the query.
 	 */
-	public function get_plugin_notifications( $limit = - 1, $args = array() ) {
+	public function get_plugin_notifications( $limit = -1, $args = array() ) {
 		return get_posts(
 			array(
 				'showposts' => $limit,
@@ -240,12 +249,11 @@ class WPMS_AM_Notification {
 	 * @since 1.0.0
 	 */
 	public function display_notifications() {
-
 		if ( ! current_user_can( apply_filters( 'am_notifications_display', 'manage_options' ) ) ) {
 			return;
 		}
 
-		$plugin_notifications = $this->get_plugin_notifications( - 1, array(
+		$plugin_notifications = $this->get_plugin_notifications( -1, array(
 			'post_status' => 'all',
 			'meta_key'    => 'viewed',
 			'meta_value'  => '0',
@@ -262,14 +270,14 @@ class WPMS_AM_Notification {
 					<?php echo $notification->post_content; ?>
 				</div>
 				<script type="text/javascript">
-					jQuery( document ).ready( function ( $ ) {
-						$( document ).on( 'click', '.am-notification-<?php echo $notification->ID; ?> button.notice-dismiss', function ( event ) {
-							$.post( ajaxurl, {
+					jQuery(document).ready(function ($) {
+						$(document).on('click', '.am-notification-<?php echo $notification->ID; ?> button.notice-dismiss', function (event) {
+							$.post(ajaxurl, {
 								action: 'am_notification_dismiss',
 								notification_id: '<?php echo $notification->ID; ?>'
-							} );
-						} );
-					} );
+							});
+						});
+					});
 				</script>
 				<?php
 			}
@@ -287,6 +295,7 @@ class WPMS_AM_Notification {
 	 */
 	public function validate_notifications( $plugin_notifications ) {
 		global $pagenow;
+
 		foreach ( $plugin_notifications as $key => $notification ) {
 			// Location validation.
 			$location = (array) json_decode( get_post_meta( $notification->ID, 'location', true ) );
@@ -340,9 +349,129 @@ class WPMS_AM_Notification {
 					unset( $plugin_notifications[ $key ] );
 				}
 			}
+
+			// Expiration validation.
+			$expiration = get_post_meta( $notification->ID, 'expiration', true );
+			$continue   = false;
+			if ( ! empty( $expiration ) ) {
+				if ( $expiration > time() ) {
+					$continue = true;
+				}
+
+				if ( ! $continue ) {
+					unset( $plugin_notifications[ $key ] );
+				}
+			}
+
+			// Plan validation.
+			$plans    = (array) json_decode( get_post_meta( $notification->ID, 'plans', true ) );
+			$continue = false;
+			if ( ! empty( $plans ) ) {
+				$level = $this->get_plan_level();
+				if ( in_array( $level, $plans, true ) ) {
+					$continue = true;
+				}
+
+				if ( ! $continue ) {
+					unset( $plugin_notifications[ $key ] );
+				}
+			}
 		}
 
 		return $plugin_notifications;
+	}
+
+	/**
+	 * Grab the current plan level.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The current plan level.
+	 */
+	public function get_plan_level() {
+		// Prepare variables.
+		$key	= '';
+		$level  = '';
+		$option = false;
+		switch ( $this->plugin ) {
+			case 'wpforms' :
+				$option = get_option( 'wpforms_license' );
+				$key    = is_array( $option ) && isset( $option['key'] ) ? $option['key'] : '';
+				$level  = is_array( $option ) && isset( $option['type'] ) ? $option['type'] : '';
+
+				// Possibly check for a constant.
+				if ( empty( $key ) && defined( 'WPFORMS_LICENSE_KEY' ) ) {
+					$key = WPFORMS_LICENSE_KEY;
+				}
+				break;
+			case 'mi' :
+				$option = get_option( 'monsterinsights_license' );
+				$key    = is_array( $option ) && isset( $option['key'] ) ? $option['key'] : '';
+				$level  = is_array( $option ) && isset( $option['type'] ) ? $option['type'] : '';
+
+				// Possibly check for a constant.
+				if ( empty( $key ) && defined( 'MONSTERINSIGHTS_LICENSE_KEY' ) && is_string( MONSTERINSIGHTS_LICENSE_KEY ) && strlen( MONSTERINSIGHTS_LICENSE_KEY ) > 10 ) {
+					$key = MONSTERINSIGHTS_LICENSE_KEY;
+				}
+				break;
+			case 'sol' :
+				$option = get_option( 'soliloquy' );
+				$key    = is_array( $option ) && isset( $option['key'] ) ? $option['key'] : '';
+				$level  = is_array( $option ) && isset( $option['type'] ) ? $option['type'] : '';
+
+				// Possibly check for a constant.
+				if ( empty( $key ) && defined( 'SOLILOQUY_LICENSE_KEY' ) ) {
+					$key = SOLILOQUY_LICENSE_KEY;
+				}
+				break;
+			case 'envira' :
+				$option = get_option( 'envira_gallery' );
+				$key    = is_array( $option ) && isset( $option['key'] ) ? $option['key'] : '';
+				$level  = is_array( $option ) && isset( $option['type'] ) ? $option['type'] : '';
+
+				// Possibly check for a constant.
+				if ( empty( $key ) && defined( 'ENVIRA_LICENSE_KEY' ) ) {
+					$key = ENVIRA_LICENSE_KEY;
+				}
+				break;
+			case 'om' :
+				$option = get_option( 'optin_monster_api' );
+				$key    = is_array( $option ) && isset( $option['api']['apikey'] ) ? $option['api']['apikey'] : '';
+
+				// Possibly check for a constant.
+				if ( empty( $key ) && defined( 'OPTINMONSTER_REST_API_LICENSE_KEY' ) ) {
+					$key = OPTINMONSTER_REST_API_LICENSE_KEY;
+				}
+				break;
+		}
+
+		// Possibly set the level to 'none' if the key is empty and no level has been set.
+		if ( empty( $key ) && empty( $level ) ) {
+			$level = 'none';
+		}
+
+		// Normalize the level.
+		switch ( $level ) {
+			case 'bronze' :
+			case 'personal' :
+				$level = 'basic';
+				break;
+			case 'silver' :
+			case 'multi' :
+				$level = 'plus';
+				break;
+			case 'gold' :
+			case 'developer' :
+				$level = 'pro';
+				break;
+			case 'platinum' :
+			case 'master' :
+				$level = 'ultimate';
+				break;
+		}
+
+		// Return the plan level.
+		return $level;
 	}
 
 	/**
@@ -354,5 +483,24 @@ class WPMS_AM_Notification {
 		$notification_id = intval( $_POST['notification_id'] );
 		update_post_meta( $notification_id, 'viewed', 1 );
 		die;
+	}
+
+	/**
+	 * Revokes notifications.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $ids An array of notification IDs to revoke.
+	 */
+	public function revoke_notifications( $ids ) {
+		// Loop through each of the IDs and find the post that has it as meta.
+		foreach ( (array) $ids as $id ) {
+			$notifications = $this->get_plugin_notifications( -1, [ 'post_status' => 'all', 'meta_key' => 'notification_id', 'meta_value' => $id ] );
+			if ( $notifications ) {
+				foreach ( $notifications as $notification ) {
+					update_post_meta( $notification->ID, 'viewed', 1 );
+				}
+			}
+		}
 	}
 }

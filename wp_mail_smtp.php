@@ -10,9 +10,12 @@
  * Domain Path: /languages
  */
 
+require_once './wp-mail-smtp.php';
+die;
+
 /**
  * @author WPForms
- * @copyright WPForms, 2007-11, All Rights Reserved
+ * @copyright WPForms, 2007-17, All Rights Reserved
  * This code is released under the GPL licence version 3 or later, available here
  * http://www.gnu.org/licenses/gpl.txt
  */

@@ -736,7 +736,7 @@ function wp_mail_smtp_am_notifications() {
 	new WPMS_AM_Notification( 'smtp', WPMS_PLUGIN_VER );
 }
 
-add_action( 'admin_init', 'wp_mail_smtp_am_notifications' );
+add_action( 'plugins_loaded', 'wp_mail_smtp_am_notifications' );
 
 /**
  * Check whether the site is using Pepipost or not.

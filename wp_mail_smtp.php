@@ -10,9 +10,6 @@
  * Domain Path: /languages
  */
 
-require_once './wp-mail-smtp.php';
-die;
-
 /**
  * @author WPForms
  * @copyright WPForms, 2007-17, All Rights Reserved
@@ -21,6 +18,9 @@ die;
  */
 
 define( 'WPMS_PLUGIN_VER', '0.11' );
+
+require_once './wp-mail-smtp.php';
+return;
 
 /**
  * Setting options in wp-config.php

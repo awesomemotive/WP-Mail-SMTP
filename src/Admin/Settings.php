@@ -13,12 +13,6 @@ class Settings extends PageAbstract {
 	public $slug = 'settings';
 
 	/**
-	 * Settings constructor.
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * @inheritdoc
 	 */
 	public function get_label() {

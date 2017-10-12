@@ -76,8 +76,6 @@ class Area {
 			return;
 		}
 
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.min' : '';
-
 		wp_enqueue_style(
 			'wp-mail-smtp-admin',
 			wp_mail_smtp()->plugin_url . '/assets/css/smtp-admin.min.css'
@@ -96,15 +94,17 @@ class Area {
 	 */
 	public function display_admin_header() {
 
-		// Bail if we're not on a plugin screen or page.
+		// Bail if we're not on a plugin page.
 		if ( ! $this->is_admin_page() ) {
 			return;
 		}
 		?>
 
 		<div id="wp-mail-smtp-header">
+			<!--suppress HtmlUnknownTarget -->
 			<img class="wp-mail-smtp-header-logo" src="<?php echo wp_mail_smtp()->plugin_url; ?>/assets/images/logo.png" alt="WP Mail SMTP Logo"/>
 		</div>
+
 		<?php
 	}
 

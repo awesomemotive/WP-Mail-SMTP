@@ -15,12 +15,6 @@ class Test extends PageAbstract {
 	public $slug = 'test';
 
 	/**
-	 * Test constructor.
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * @inheritdoc
 	 */
 	public function get_label() {
@@ -80,7 +74,7 @@ class Test extends PageAbstract {
 			empty( $data['test_email'] )
 		) {
 			WP::add_admin_notice(
-				__( 'Test failed. Please complete the form and try to resend the test email.', 'wp-mail-smtp' ),
+				__( 'Test failed. Please use a valid email address and try to resend the test email.', 'wp-mail-smtp' ),
 				WP::ADMIN_NOTICE_WARNING
 			);
 			return;

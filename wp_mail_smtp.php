@@ -19,9 +19,6 @@
 
 define( 'WPMS_PLUGIN_VER', '0.11' );
 
-require_once './wp-mail-smtp.php';
-return;
-
 /**
  * Setting options in wp-config.php
  *
@@ -43,6 +40,15 @@ define('WPMS_SMTP_AUTH', true); // True turns on SMTP authentication, false turn
 define('WPMS_SMTP_USER', 'username'); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true
 define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true
 */
+
+/**
+ * Newer PHP version 5.3+ will be handled a lot differently,
+ * with better code and newer logic.
+ */
+if ( version_compare( phpversion(), '5.3', '>' ) ) {
+	require_once dirname( __FILE__ ) . './wp-mail-smtp.php';
+	return;
+}
 
 /**
  * Array of options and their default values.

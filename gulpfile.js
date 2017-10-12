@@ -52,8 +52,8 @@ var plugin = {
 		'assets/js/*.js',
 		'!assets/js/*.min.js'
 	],
-	img: [
-		'assets/img/**/*',
+	images: [
+		'assets/images/**/*',
 		'assets/wporg/**/*'
 	]
 };
@@ -74,20 +74,13 @@ gulp.task('process-sass', function() {
 		// UnMinified file.
 		.pipe(cached('processSASS'))
 		.pipe(sourcemaps.init())
-		.pipe(sass({outputStyle: 'expanded'}).on('error',sass.logError))
-		.pipe(rename(function(path){
-			path.dirname = '/assets/css';
-			path.extname = '.css';
-		}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('.'))
-		.pipe(debug({title: '[sass]'}))
 		// Minified file.
 		.pipe(sass({outputStyle: 'compressed'}).on('error',sass.logError))
 		.pipe(rename(function(path){
 			path.dirname = '/assets/css';
 			path.extname = '.min.css';
 		}))
+	    .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('.'))
 		.pipe(debug({title: '[sass]'}));
 });
@@ -127,7 +120,7 @@ gulp.task('process-img', function () {
 		gutil.colors.gray(' ======')
 	);
 
-	return gulp.src(plugin.img)
+	return gulp.src(plugin.images)
 		.pipe(cached('processIMG'))
 		.pipe(imagemin())
 		.pipe(gulp.dest(function (file) {

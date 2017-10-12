@@ -1,9 +1,11 @@
 <?php
 
+namespace WPMailSMTP;
+
 /**
  * Class WPMS_Processor modifies the behaviour of wp_mail() function.
  */
-class WPMS_Processor {
+class Processor {
 
 	public function __construct() {
 

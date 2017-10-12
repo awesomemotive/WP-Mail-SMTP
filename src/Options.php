@@ -1,9 +1,11 @@
 <?php
 
+namespace WPMailSMTP;
+
 /**
  * Class WPMS_Options to handle all options management.
  */
-class WPMS_Options {
+class Options {
 
 	public static function get( ) {
 	}

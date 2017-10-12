@@ -17,6 +17,10 @@
         <exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
         <exclude name="Squiz.Commenting.FileComment.Missing"/>
+        <exclude name="WordPress.CSRF.NonceVerification"/>
+        <exclude name="Squiz.PHP.CommentedOutCode.Found"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
         <exclude name="WordPress.VIP"/>
 
         <!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->
@@ -28,6 +32,5 @@
 		<!--<exclude name="WordPress.Classes.ClassInstantiation.MissingParenthesis"/>-->
 		<!--<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>-->
 		<!--<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.SpaceBeforeArrayCloser"/>-->
-		<!--<exclude name="WordPress.CSRF.NonceVerification"/>-->
 	</rule>
 </ruleset>

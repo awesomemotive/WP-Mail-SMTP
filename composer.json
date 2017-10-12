@@ -16,5 +16,10 @@
     "require": {
       "composer/installers": "~1.0",
       "php": ">=5.2.4"
+    },
+    "autoload": {
+      "psr-4": {
+        "WPMailSMTP\\": "src/"
+      }
     }
 }

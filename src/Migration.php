@@ -1,9 +1,11 @@
 <?php
 
+namespace WPMailSMTP;
+
 /**
- * Class WPMS_Migration helps migrate all plugin options saved into DB to a new storage location.
+ * Class Migration helps migrate all plugin options saved into DB to a new storage location.
  */
-class WPMS_Migration {
+class Migration {
 
 	public function init() {
 	}

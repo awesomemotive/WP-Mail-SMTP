@@ -31,8 +31,6 @@ class Core {
 	 */
 	public function hooks() {
 		add_action( 'plugins_loaded', array( $this, 'get_processor' ) );
-		add_action( 'init', array( $this, 'get_admin' ) );
-		add_action( 'plugins_loaded', array( $this, 'get_migration' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
 		add_action( 'admin_notices', array( 'WPMailSMTP\WP', 'display_admin_notices' ) );

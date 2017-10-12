@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 /**
- * Class WPMS_Admin_Page
+ * Class PageAbstract
  */
 abstract class PageAbstract implements PageInterface {
 

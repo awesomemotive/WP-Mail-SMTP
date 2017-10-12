@@ -3,7 +3,7 @@
 namespace WPMailSMTP;
 
 /**
- * Class WPMS_Processor modifies the behaviour of wp_mail() function.
+ * Class Processor modifies the behaviour of wp_mail() function.
  */
 class Processor {
 

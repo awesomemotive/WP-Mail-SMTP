@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 /**
- * Class WPMS_Admin_Area registers and process all wp-admin display functionality.
+ * Class Area registers and process all wp-admin display functionality.
  */
 class Area {
 
@@ -23,7 +23,7 @@ class Area {
 	private $pages;
 
 	/**
-	 * WPMS_Admin constructor.
+	 * Area constructor.
 	 */
 	public function __construct() {
 		$this->hooks();
@@ -46,7 +46,7 @@ class Area {
 		add_action( 'admin_init', array( $this, 'process_actions' ) );
 
 		// Outputs the plugin admin header.
-		add_action( 'in_admin_header', array( $this, 'admin_header' ), 100 );
+		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Area {
 	/**
 	 * Outputs the plugin admin header.
 	 */
-	public function admin_header() {
+	public function display_admin_header() {
 
 		// Bail if we're not on a plugin screen or page.
 		if ( ! $this->is_admin_page() ) {
@@ -95,17 +95,6 @@ class Area {
 			<img class="wp-mail-smtp-header-logo" src="<?php echo wp_mail_smtp()->plugin_url; ?>/assets/images/logo.png" alt="WP Mail SMTP Logo"/>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Check whether we are on an admin page.
-	 *
-	 * @return bool
-	 */
-	protected function is_admin_page() {
-		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
-
-		return self::SLUG === $page;
 	}
 
 	/**
@@ -132,7 +121,29 @@ class Area {
 			</div>
 
 		</div>
+
 		<?php
+	}
+
+	/**
+	 * Get the current subpage title.
+	 */
+	public function display_current_subpage_content() {
+
+		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
+			return;
+		}
+
+		$this->pages[ $this->get_current_subpage() ]->display();
+	}
+
+	/**
+	 * Get the current admin area subpage.
+	 *
+	 * @return string
+	 */
+	protected function get_current_subpage() {
+		return ! empty( $_GET['subpage'] ) ? sanitize_key( $_GET['subpage'] ) : 'settings';
 	}
 
 	/**
@@ -160,29 +171,19 @@ class Area {
 		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
 			return '';
 		}
-pvar($this->get_current_subpage());
+
 		return $this->pages[ $this->get_current_subpage() ]->get_page_title();
 	}
 
 	/**
-	 * Get the current subpage title.
-	 */
-	public function display_current_subpage_content() {
-
-		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
-			return;
-		}
-
-		$this->pages[ $this->get_current_subpage() ]->display();
-	}
-
-	/**
-	 * Get the current admin area subpage.
+	 * Check whether we are on an admin page.
 	 *
-	 * @return string
+	 * @return bool
 	 */
-	protected function get_current_subpage() {
-		return ! empty( $_GET['subpage'] ) ? sanitize_key( $_GET['subpage'] ) : 'settings';
+	protected function is_admin_page() {
+		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+		return self::SLUG === $page;
 	}
 
 	/**

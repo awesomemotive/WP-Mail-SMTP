@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 /**
- * Class WPMS_Admin_Page
+ * Class PageInterface defines what should be in each page class.
  */
 interface PageInterface {
 

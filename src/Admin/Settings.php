@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 /**
- * Class WPMS_Admin_Settings is part of WPMS_Admin_Area, displays general settings of the plugin.
+ * Class Settings is part of Area, displays general settings of the plugin.
  */
 class Settings extends PageAbstract {
 
@@ -13,10 +13,9 @@ class Settings extends PageAbstract {
 	public $slug = 'settings';
 
 	/**
-	 * WPMS_Admin constructor.
+	 * Settings constructor.
 	 */
 	public function __construct() {
-
 	}
 
 	/**

@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 /**
- * Class WPMS_Admin_Test is part of WPMS_Admin_Area, displays email testing page of the plugin.
+ * Class Test is part of Area, displays email testing page of the plugin.
  */
 class Test extends PageAbstract {
 
@@ -13,7 +13,7 @@ class Test extends PageAbstract {
 	public $slug = 'test';
 
 	/**
-	 * WPMS_Admin constructor.
+	 * Test constructor.
 	 */
 	public function __construct() {
 	}

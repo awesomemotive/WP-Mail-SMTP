@@ -3,7 +3,7 @@
 namespace WPMailSMTP;
 
 /**
- * Class WPMS_Options to handle all options management.
+ * Class Options to handle all options management.
  */
 class Options {
 

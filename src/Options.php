@@ -8,6 +8,8 @@ namespace WPMailSMTP;
 class Options {
 
 	/**
+	 * Where plugins options are saved in wp_options table.
+	 *
 	 * @var string
 	 */
 	const META_KEY = 'wp_mail_smtp';
@@ -16,8 +18,8 @@ class Options {
 	 * Get a value by a group and a key or values by group only:
 	 *
 	 * Options::get()               - will return all options.
-	 * Options::get('smtp')         - will return only SMTP options.
-	 * Options::get('smtp', 'host') - will return only SMTP 'host' option.
+	 * Options::get('smtp')         - will return only SMTP options (array).
+	 * Options::get('smtp', 'host') - will return only SMTP 'host' option (string).
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -34,6 +36,7 @@ class Options {
 
 		// Get the options group.
 		if ( array_key_exists( $group, $options ) ) {
+
 			// Get the options key of a group.
 			if ( array_key_exists( $key, $options[ $group ] ) ) {
 				return $options[ $group ][ $key ];

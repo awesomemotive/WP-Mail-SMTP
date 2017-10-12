@@ -13,20 +13,16 @@ abstract class PageAbstract implements PageInterface {
 	public $slug;
 
 	/**
-	 * Page content.
-	 *
-	 * @overwrite
+	 * @inheritdoc
 	 */
 	public function display() {
 		echo get_called_class();
 	}
 
 	/**
-	 * URL to a page.
-	 *
-	 * @return string
+	 * @inheritdoc
 	 */
-	public function get_page_link() {
+	public function get_link() {
 		return esc_url(
 			add_query_arg(
 				'subpage',

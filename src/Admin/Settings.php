@@ -19,11 +19,16 @@ class Settings extends PageAbstract {
 	}
 
 	/**
-	 * Page title.
-	 *
-	 * @return string
+	 * @inheritdoc
 	 */
-	public function get_page_title() {
+	public function get_label() {
 		return __( 'Settings', 'wp-mail-smtp' );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_title() {
+		return $this->get_label();
 	}
 }

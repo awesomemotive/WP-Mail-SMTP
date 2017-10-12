@@ -19,11 +19,16 @@ class Test extends PageAbstract {
 	}
 
 	/**
-	 * Page title.
-	 *
-	 * @return string
+	 * @inheritdoc
 	 */
-	public function get_page_title() {
+	public function get_label() {
 		return __( 'Email Test', 'wp-mail-smtp' );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_title() {
+		return __( 'Send a Test Email', 'wp-mail-smtp' );
 	}
 }

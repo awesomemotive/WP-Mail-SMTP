@@ -74,9 +74,18 @@ class Area {
 			return;
 		}
 
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.min' : '';
+
 		wp_enqueue_style(
 			'wp-mail-smtp-admin',
 			wp_mail_smtp()->plugin_url . '/assets/css/smtp-admin.min.css'
+		);
+
+		wp_enqueue_script(
+			'wp-mail-smtp-admin',
+			wp_mail_smtp()->plugin_url . '/assets/js/smtp-admin' . $min . '.js',
+			array( 'jquery' ),
+			WPMS_PLUGIN_VER
 		);
 	}
 
@@ -108,7 +117,7 @@ class Area {
 			<div class="wp-mail-smtp-page-title">
 				<?php foreach ( $this->get_pages() as $page_slug => $page ) : ?>
 					<?php $class = $page_slug === $this->get_current_subpage() ? 'class="active"' : ''; ?>
-					<a href="<?php echo $page->get_page_link(); ?>" <?php echo $class; ?>><?php echo $page->get_page_title(); ?></a>
+					<a href="<?php echo $page->get_link(); ?>" <?php echo $class; ?>><?php echo $page->get_label(); ?></a>
 				<?php endforeach; ?>
 			</div>
 
@@ -172,7 +181,7 @@ class Area {
 			return '';
 		}
 
-		return $this->pages[ $this->get_current_subpage() ]->get_page_title();
+		return $this->pages[ $this->get_current_subpage() ]->get_title();
 	}
 
 	/**

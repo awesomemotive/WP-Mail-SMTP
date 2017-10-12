@@ -8,11 +8,6 @@ namespace WPMailSMTP\Admin;
 interface PageInterface {
 
 	/**
-	 * Subpage content.
-	 */
-	public function display();
-
-	/**
 	 * URL to a subpage.
 	 *
 	 * @return string
@@ -32,4 +27,16 @@ interface PageInterface {
 	 * @return string
 	 */
 	public function get_label();
+
+	/**
+	 * Subpage content.
+	 */
+	public function display();
+
+	/**
+	 * Process subpage form submission.
+	 *
+	 * @param array $data $_POST data specific for the plugin.
+	 */
+	public function process( $data );
 }

@@ -15,13 +15,6 @@ abstract class PageAbstract implements PageInterface {
 	/**
 	 * @inheritdoc
 	 */
-	public function display() {
-		echo get_called_class();
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_link() {
 		return esc_url(
 			add_query_arg(

@@ -35,6 +35,8 @@ class Core {
 		add_action( 'plugins_loaded', array( $this, 'get_migration' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
+		add_action( 'admin_notices', array( 'WPMailSMTP\WP', 'display_admin_notices' ) );
+
 		add_action( 'init', array( $this, 'init' ) );
 	}
 
@@ -52,7 +54,7 @@ class Core {
 		 * Do not wait for the `admin_init` hook, because some actions are already done
 		 * on `plugins_loaded`, so migration has to be done before.
 		 */
-		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		if ( WP::in_wp_admin() ) {
 			$this->get_migration();
 			$this->get_admin();
 		}

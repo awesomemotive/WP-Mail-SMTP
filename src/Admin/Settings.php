@@ -31,4 +31,17 @@ class Settings extends PageAbstract {
 	public function get_title() {
 		return $this->get_label();
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function display() {
+		pvar( get_called_class() );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function process( $data ) {
+	}
 }

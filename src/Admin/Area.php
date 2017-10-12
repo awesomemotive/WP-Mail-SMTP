@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\WP;
+
 /**
  * Class Area registers and process all wp-admin display functionality.
  */
@@ -83,7 +85,7 @@ class Area {
 
 		wp_enqueue_script(
 			'wp-mail-smtp-admin',
-			wp_mail_smtp()->plugin_url . '/assets/js/smtp-admin' . $min . '.js',
+			wp_mail_smtp()->plugin_url . '/assets/js/smtp-admin' . WP::asset_min() . '.js',
 			array( 'jquery' ),
 			WPMS_PLUGIN_VER
 		);
@@ -122,9 +124,7 @@ class Area {
 			</div>
 
 			<div class="wp-mail-smtp-page">
-				<h1>
-					<?php echo $this->get_current_subpage_title(); ?>
-				</h1>
+				<h1><?php echo $this->get_current_subpage_title(); ?></h1>
 
 				<?php $this->display_current_subpage_content(); ?>
 			</div>
@@ -163,7 +163,7 @@ class Area {
 		if ( empty( $this->pages ) ) {
 			$this->pages = array(
 				'settings' => new Settings(),
-				'test'    => new Test(),
+				'test'     => new Test(),
 			);
 		}
 
@@ -200,13 +200,15 @@ class Area {
 	 */
 	public function process_actions() {
 
-		if ( empty( $_POST ) ) {
+		if ( empty( $_POST['wp-mail-smtp'] ) ) {
 			return;
 		}
 
-		check_admin_referer( 'wp-mail-smtp' );
+		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
+			return;
+		}
 
-		pvar( $_POST, 1 );
+		$this->pages[ $this->get_current_subpage() ]->process( $_POST['wp-mail-smtp'] );
 	}
 
 	/**

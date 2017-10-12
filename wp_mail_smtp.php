@@ -45,7 +45,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
  * Newer PHP version 5.3+ will be handled a lot differently,
  * with better code and newer logic.
  */
-if ( version_compare( phpversion(), '5.3', '>' ) ) {
+if ( version_compare( phpversion(), '5.3', '>=' ) ) {
 	require_once dirname( __FILE__ ) . './wp-mail-smtp.php';
 	return;
 }
@@ -627,7 +627,7 @@ if ( ! function_exists( 'wp_mail_smtp_menus' ) ) :
 	function wp_mail_smtp_menus() {
 
 		if ( function_exists( 'add_submenu_page' ) ) {
-			add_options_page( __( 'Advanced Email Options', 'wp-mail-smtp' ), __( 'Email', 'wp-mail-smtp' ), 'manage_options', __FILE__, 'wp_mail_smtp_options_page' );
+			add_options_page( __( 'Advanced Email Options', 'wp-mail-smtp' ), __( 'WP Mail SMTP', 'wp-mail-smtp' ), 'manage_options', __FILE__, 'wp_mail_smtp_options_page' );
 		}
 	} // End of wp_mail_smtp_menus() function definition.
 endif;
@@ -739,7 +739,7 @@ function wp_mail_plugin_action_links( $links, $file ) {
 function wp_mail_smtp_am_notifications() {
 
 	if ( ! class_exists( 'WPMS_AM_Notification' ) ) {
-		require_once 'src/class-wpms-am-notification.php';
+		require_once dirname( __FILE__ ) . '/class-wpms-am-notification.php';
 	}
 
 	new WPMS_AM_Notification( 'smtp', WPMS_PLUGIN_VER );

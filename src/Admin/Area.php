@@ -117,8 +117,9 @@ class Area {
 		<div class="wrap" id="wp-mail-smtp">
 
 			<div class="wp-mail-smtp-page-title">
-				<?php foreach ( $this->get_pages() as $page ) : ?>
-					<a href="<?php echo $page->get_page_link(); ?>"><?php echo $page->get_page_title(); ?></a>
+				<?php foreach ( $this->get_pages() as $page_slug => $page ) : ?>
+					<?php $class = $page_slug === $this->get_current_subpage() ? 'class="active"' : ''; ?>
+					<a href="<?php echo $page->get_page_link(); ?>" <?php echo $class; ?>><?php echo $page->get_page_title(); ?></a>
 				<?php endforeach; ?>
 			</div>
 
@@ -159,7 +160,7 @@ class Area {
 		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
 			return '';
 		}
-
+pvar($this->get_current_subpage());
 		return $this->pages[ $this->get_current_subpage() ]->get_page_title();
 	}
 
@@ -181,7 +182,7 @@ class Area {
 	 * @return string
 	 */
 	protected function get_current_subpage() {
-		return ! empty( $key ) ? sanitize_key( $_GET['subpage'] ) : 'settings';
+		return ! empty( $_GET['subpage'] ) ? sanitize_key( $_GET['subpage'] ) : 'settings';
 	}
 
 	/**

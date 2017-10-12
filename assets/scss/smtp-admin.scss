@@ -38,6 +38,10 @@
 			margin-right: $content-padding;
 			text-decoration: none;
 			font-size: 125%;
+
+			&.active {
+				border-bottom: 1px solid $orange;
+			}
 		}
 	}
 

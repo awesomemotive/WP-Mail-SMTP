@@ -22,6 +22,7 @@ class Core {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+
 		$this->plugin_url  = trim( plugin_dir_url( dirname( __FILE__ ) ), '/\\' );
 		$this->plugin_path = trim( plugin_dir_path( dirname( __FILE__ ) ) , '/\\' );
 
@@ -34,6 +35,7 @@ class Core {
 	 * @since 1.0.0
 	 */
 	public function hooks() {
+
 		add_action( 'plugins_loaded', array( $this, 'get_processor' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
@@ -48,9 +50,8 @@ class Core {
 	 * @since 1.0.0
 	 */
 	public function init() {
-		/*
-		 * Load translations just in case.
-		 */
+
+		// Load translations just in case.
 		load_plugin_textdomain( 'wp-mail-smtp', false, wp_mail_smtp()->plugin_path . '/languages' );
 
 		/*
@@ -72,6 +73,7 @@ class Core {
 	 * @return Processor
 	 */
 	public function get_processor() {
+
 		static $processor;
 
 		if ( ! isset( $processor ) ) {
@@ -89,6 +91,7 @@ class Core {
 	 * @return Admin\Area
 	 */
 	public function get_admin() {
+
 		static $admin;
 
 		if ( ! isset( $admin ) ) {
@@ -106,6 +109,7 @@ class Core {
 	 * @return Migration
 	 */
 	public function get_migration() {
+
 		static $migration;
 
 		if ( ! isset( $migration ) ) {
@@ -123,6 +127,7 @@ class Core {
 	 * @return AM_Notification
 	 */
 	public function init_notifications() {
+
 		static $notification;
 
 		if ( ! isset( $notification ) ) {

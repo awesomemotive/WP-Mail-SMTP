@@ -1,6 +1,8 @@
 <?php
 
-namespace WPMailSMTP\Admin;
+namespace WPMailSMTP\Admin\Pages;
+
+use WPMailSMTP\Admin\PageAbstract;
 
 /**
  * Class Settings is part of Area, displays general settings of the plugin.
@@ -10,7 +12,7 @@ class Settings extends PageAbstract {
 	/**
 	 * @var string Slug of a subpage.
 	 */
-	public $slug = 'settings';
+	protected $slug = 'settings';
 
 	/**
 	 * @inheritdoc

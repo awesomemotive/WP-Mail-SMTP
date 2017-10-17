@@ -40,6 +40,7 @@ class Area {
 	 */
 	protected function hooks() {
 
+		// Add the Settings link to a plugin on Plugins page.
 		add_filter( 'plugin_action_links', array( $this, 'add_plugin_action_link' ), 10, 2 );
 
 		// Add the options page.
@@ -172,7 +173,7 @@ class Area {
 	}
 
 	/**
-	 * Get the array of registered subpages for plugin admin area.
+	 * Get the array of default registered subpages for plugin admin area.
 	 *
 	 * @since 1.0.0
 	 *
@@ -182,8 +183,8 @@ class Area {
 
 		if ( empty( $this->pages ) ) {
 			$this->pages = array(
-				'settings' => new Settings(),
-				'test'     => new Test(),
+				'settings' => new Pages\Settings(),
+				'test'     => new Pages\Test(),
 			);
 		}
 

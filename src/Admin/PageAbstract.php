@@ -10,7 +10,7 @@ abstract class PageAbstract implements PageInterface {
 	/**
 	 * @var string Slug of a subpage.
 	 */
-	public $slug;
+	protected $slug;
 
 	/**
 	 * @inheritdoc

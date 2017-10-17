@@ -1,8 +1,9 @@
 <?php
 
-namespace WPMailSMTP\Admin;
+namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\WP;
+use WPMailSMTP\Admin\PageAbstract;
 
 /**
  * Class Test is part of Area, displays email testing page of the plugin.
@@ -12,7 +13,7 @@ class Test extends PageAbstract {
 	/**
 	 * @var string Slug of a subpage.
 	 */
-	public $slug = 'test';
+	protected $slug = 'test';
 
 	/**
 	 * @inheritdoc

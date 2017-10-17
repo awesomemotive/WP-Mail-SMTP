@@ -4,18 +4,20 @@ namespace WPMailSMTP;
 
 /**
  * Class Options to handle all options management.
+ * WordPress does all the heavy work for caching get_option() data,
+ * so we don't have to do that.
  */
 class Options {
 
 	/**
-	 * Where plugins options are saved in wp_options table.
+	 * That's where plugin options are saved in wp_options table.
 	 *
 	 * @var string
 	 */
 	const META_KEY = 'wp_mail_smtp';
 
 	/**
-	 * Get a value by a group and a key or values by group only:
+	 * Get options by a group and a key or by group only:
 	 *
 	 * Options::get()               - will return all options.
 	 * Options::get('smtp')         - will return only SMTP options (array).
@@ -55,7 +57,7 @@ class Options {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $options
+	 * @param array $options Data to save, already processed.
 	 */
 	public static function set( $options ) {
 		update_option( self::META_KEY, $options );

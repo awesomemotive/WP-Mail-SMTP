@@ -21,6 +21,7 @@
         <exclude name="Squiz.PHP.CommentedOutCode.Found"/>
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
         <exclude name="WordPress.VIP"/>
 
         <!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->

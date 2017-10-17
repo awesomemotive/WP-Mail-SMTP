@@ -647,7 +647,7 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from' ) ) :
 		 */
 
 		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
-		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : sanitize_key( php_uname( 'n' ) );
+		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
 
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( $server_name );
@@ -701,15 +701,14 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from_name' ) ) :
 				return WPMS_MAIL_FROM_NAME;
 			}
 
-			$mail_from = get_option( 'mail_from_name' );
-			if ( ! empty( $mail_from ) && is_string( $mail_from ) ) {
-				return get_option( 'mail_from_name' );
+			$from_name = get_option( 'mail_from_name' );
+			if ( ! empty( $from_name ) && is_string( $from_name ) ) {
+				return $from_name;
 			}
 		}
 
-		// If in doubt, return the original value.
 		return $orig;
-	} // End of wp_mail_smtp_mail_from_name() function definition.
+	}
 endif;
 
 /**

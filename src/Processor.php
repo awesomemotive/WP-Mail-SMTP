@@ -9,6 +9,8 @@ class Processor {
 
 	/**
 	 * Processor constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->hooks();
@@ -16,6 +18,8 @@ class Processor {
 
 	/**
 	 * Assign all hooks to proper places.
+	 *
+	 * @since 1.0.0
 	 */
 	public function hooks() {
 		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
@@ -26,6 +30,8 @@ class Processor {
 
 	/**
 	 * Redefine certain PHPMailer options with our custom ones.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param \PHPMailer $phpmailer It's passed by reference, so no need to return anything.
 	 */
@@ -96,6 +102,8 @@ class Processor {
 	/**
 	 * Modify the email address that is used for sending emails.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $email
 	 *
 	 * @return string
@@ -129,6 +137,8 @@ class Processor {
 
 	/**
 	 * Modify the sender name that is used for sending emails.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $name
 	 *

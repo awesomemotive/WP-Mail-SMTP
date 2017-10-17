@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Global function-holder. Works similar to a singleton's instance().
  *
+ * @since 1.0.0
+ *
  * @return WPMailSMTP\Core;
  */
 function wp_mail_smtp() {

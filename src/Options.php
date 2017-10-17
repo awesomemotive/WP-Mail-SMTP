@@ -21,6 +21,8 @@ class Options {
 	 * Options::get('smtp')         - will return only SMTP options (array).
 	 * Options::get('smtp', 'host') - will return only SMTP 'host' option (string).
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $group
 	 * @param string $key
 	 *
@@ -50,6 +52,8 @@ class Options {
 
 	/**
 	 * Set plugin options, all at once.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $options
 	 */

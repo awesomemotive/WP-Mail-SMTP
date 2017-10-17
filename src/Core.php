@@ -18,6 +18,8 @@ class Core {
 
 	/**
 	 * Core constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->plugin_url  = trim( plugin_dir_url( dirname( __FILE__ ) ), '/\\' );
@@ -28,6 +30,8 @@ class Core {
 
 	/**
 	 * Assign all hooks to proper places.
+	 *
+	 * @since 1.0.0
 	 */
 	public function hooks() {
 		add_action( 'plugins_loaded', array( $this, 'get_processor' ) );
@@ -40,6 +44,8 @@ class Core {
 
 	/**
 	 * Initial plugin actions.
+	 *
+	 * @since 1.0.0
 	 */
 	public function init() {
 		/*
@@ -61,6 +67,8 @@ class Core {
 	/**
 	 * Load the plugin core processor.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return Processor
 	 */
 	public function get_processor() {
@@ -75,6 +83,8 @@ class Core {
 
 	/**
 	 * Load the plugin admin area.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return Admin\Area
 	 */
@@ -91,6 +101,8 @@ class Core {
 	/**
 	 * Load the plugin option migrator.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return Migration
 	 */
 	public function get_migration() {
@@ -105,6 +117,10 @@ class Core {
 
 	/**
 	 * Awesome Motive Notifications.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return AM_Notification
 	 */
 	public function init_notifications() {
 		static $notification;

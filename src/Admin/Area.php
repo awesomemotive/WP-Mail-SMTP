@@ -26,6 +26,8 @@ class Area {
 
 	/**
 	 * Area constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->hooks();
@@ -33,6 +35,8 @@ class Area {
 
 	/**
 	 * Assign all hooks to proper places.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function hooks() {
 
@@ -53,6 +57,8 @@ class Area {
 
 	/**
 	 * Add admin area menu item.
+	 *
+	 * @since 1.0.0
 	 */
 	public function add_admin_options_page() {
 
@@ -67,6 +73,8 @@ class Area {
 
 	/**
 	 * Enqueue admin area scripts and styles.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $hook
 	 */
@@ -91,6 +99,8 @@ class Area {
 
 	/**
 	 * Outputs the plugin admin header.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display_admin_header() {
 
@@ -110,6 +120,8 @@ class Area {
 
 	/**
 	 * Display content of the admin area page.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display() {
 		?>
@@ -136,6 +148,8 @@ class Area {
 
 	/**
 	 * Get the current subpage title.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display_current_subpage_content() {
 
@@ -149,6 +163,8 @@ class Area {
 	/**
 	 * Get the current admin area subpage.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return string
 	 */
 	protected function get_current_subpage() {
@@ -156,6 +172,10 @@ class Area {
 	}
 
 	/**
+	 * Get the array of registered subpages for plugin admin area.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return PageAbstract[]
 	 */
 	public function get_pages() {
@@ -173,6 +193,8 @@ class Area {
 	/**
 	 * Get the current subpage title.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return string
 	 */
 	public function get_current_subpage_title() {
@@ -187,9 +209,12 @@ class Area {
 	/**
 	 * Check whether we are on an admin page.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	protected function is_admin_page() {
+
 		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
 
 		return self::SLUG === $page;
@@ -197,6 +222,8 @@ class Area {
 
 	/**
 	 * All possible plugin forms manipulation will be done here.
+	 *
+	 * @since 1.0.0
 	 */
 	public function process_actions() {
 
@@ -213,6 +240,8 @@ class Area {
 
 	/**
 	 * Add a link to Settings page of a plugin on Plugins page.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $links
 	 * @param string $file

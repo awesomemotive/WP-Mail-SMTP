@@ -44,6 +44,8 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
 /**
  * Newer PHP version 5.3+ will be handled a lot differently,
  * with better code and newer logic.
+ *
+ * @since 1.0.0
  */
 if ( version_compare( phpversion(), '5.3', '>=' ) ) {
 	require_once dirname( __FILE__ ) . './wp-mail-smtp.php';

@@ -33,6 +33,8 @@ class WP {
 	/**
 	 * True is WP is processing an AJAX call.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public static function is_doing_ajax() {
@@ -47,6 +49,8 @@ class WP {
 	/**
 	 * True if I am in the Admin Panel, not doing AJAX.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public static function in_wp_admin() {
@@ -55,6 +59,8 @@ class WP {
 
 	/**
 	 * Add a notice to the "queue of notices".
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $message Message text (HTML is OK).
 	 * @param string $class Display class (severity).
@@ -69,6 +75,8 @@ class WP {
 
 	/**
 	 * Display all notices.
+	 *
+	 * @since 1.0.0
 	 */
 	public static function display_admin_notices() {
 
@@ -85,6 +93,10 @@ class WP {
 	}
 
 	/**
+	 * Check whether WP_DEBUG is active.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public static function is_debug() {
@@ -93,6 +105,8 @@ class WP {
 
 	/**
 	 * Shortcut to global $wpdb.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return \wpdb
 	 */
@@ -106,6 +120,8 @@ class WP {
 	/**
 	 * Get the postfix for assets files - ".min" or empty.
 	 * ".min" if in production mode.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */

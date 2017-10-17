@@ -45,8 +45,11 @@ class Migration {
 
 	/**
 	 * Migration constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
+
 		if ( $this->is_migrated() ) {
 			return;
 		}
@@ -61,6 +64,8 @@ class Migration {
 
 	/**
 	 * Whether we already migrated or not.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return bool
 	 */
@@ -79,6 +84,8 @@ class Migration {
 	/**
 	 * Get all old values from DB.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return array
 	 */
 	protected function get_old_values() {
@@ -94,6 +101,8 @@ class Migration {
 
 	/**
 	 * Convert old values from key=>value to a multidimensional array of data.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function get_converted_options() {
 
@@ -150,6 +159,8 @@ class Migration {
 	 * We need to prioritize them and reapply data to options.
 	 * Use only those that are actually defined.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param array $converted
 	 *
 	 * @return array
@@ -204,6 +215,8 @@ class Migration {
 
 	/**
 	 * Delete all old values that are stored separately each.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function clean_deprecated_data() {
 

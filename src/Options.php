@@ -17,11 +17,54 @@ class Options {
 	const META_KEY = 'wp_mail_smtp';
 
 	/**
+	 * All the plugin options.
+	 *
+	 * @var array
+	 */
+	private $options = array();
+
+	/**
+	 * Init the Options class.
+	 */
+	public function __construct() {
+		$this->populate_options();
+	}
+
+	/**
+	 * Initialize all the options, used for chaining.
+	 *
+	 * Options::init()->get('smtp', 'host');
+	 * Options::init()->is_pepipost_active();
+	 * OR
+	 * $options = new Options();
+	 * $options->get('smtp', 'host');
+	 *
+	 * @return Options
+	 */
+	public static function init() {
+
+		static $instance;
+
+		if ( ! $instance ) {
+			$instance = new self();
+		}
+
+		return $instance;
+	}
+
+	/**
+	 * Retrieve all options of the plugin.
+	 */
+	protected function populate_options() {
+		$this->options = get_option( self::META_KEY, array() );
+	}
+
+	/**
 	 * Get options by a group and a key or by group only:
 	 *
-	 * Options::get()               - will return all options.
-	 * Options::get('smtp')         - will return only SMTP options (array).
-	 * Options::get('smtp', 'host') - will return only SMTP 'host' option (string).
+	 * Options::init()->get()               - will return all options.
+	 * Options::init()->get('smtp')         - will return only SMTP options (array).
+	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option (string).
 	 *
 	 * @since 1.0.0
 	 *
@@ -30,26 +73,24 @@ class Options {
 	 *
 	 * @return array|string
 	 */
-	public static function get( $group = '', $key = '' ) {
+	public function get( $group = '', $key = '' ) {
 
 		// Just to feel safe.
 		$group = sanitize_key( $group );
 		$key   = sanitize_key( $key );
 
-		$options = get_option( self::META_KEY, array() );
-
 		// Get the options group.
-		if ( array_key_exists( $group, $options ) ) {
+		if ( array_key_exists( $group, $this->options ) ) {
 
 			// Get the options key of a group.
-			if ( array_key_exists( $key, $options[ $group ] ) ) {
-				return $options[ $group ][ $key ];
+			if ( array_key_exists( $key, $this->options[ $group ] ) ) {
+				return $this->options[ $group ][ $key ];
 			}
 
-			return $options[ $group ];
+			return $this->options[ $group ];
 		}
 
-		return $options;
+		return $this->options;
 	}
 
 	/**
@@ -59,7 +100,20 @@ class Options {
 	 *
 	 * @param array $options Data to save, already processed.
 	 */
-	public static function set( $options ) {
+	public function set( $options ) {
+
 		update_option( self::META_KEY, $options );
+
+		// Now we need to re-cache values.
+		$this->populate_options();
+	}
+
+	/**
+	 * Check whether the site is using Pepipost or not.
+	 *
+	 * @return bool
+	 */
+	public function is_pepipost_active() {
+		return apply_filters( 'wp_mail_smtp_is_pepipost_active', 'pepipost' === $this->get( 'mail', 'mailer' ) );
 	}
 }

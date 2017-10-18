@@ -57,7 +57,7 @@ class Migration {
 		$this->old_values = $this->get_old_values();
 		$this->new_values = $this->get_converted_options();
 
-		Options::set( $this->new_values );
+		Options::init()->set( $this->new_values );
 
 		$this->clean_deprecated_data();
 	}
@@ -141,7 +141,7 @@ class Migration {
 					$converted['mail']['from_name'] = $this->old_values[ $old_key ];
 					break;
 				case 'mail_set_return_path':
-					$converted['mail']['return_path'] = $this->old_values[ $old_key ];
+					$converted['mail']['return_path'] = ( $this->old_values[ $old_key ] === 'true' );
 					break;
 				case 'mailer':
 					$converted['mail']['mailer'] = $this->old_values[ $old_key ];

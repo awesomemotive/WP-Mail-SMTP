@@ -24,4 +24,19 @@ abstract class PageAbstract implements PageInterface {
 			)
 		);
 	}
+
+	/**
+	 * Print the nonce field for specific subpage.
+	 */
+	public function wp_nonce_field() {
+		wp_nonce_field( Area::SLUG . '-' . $this->slug );
+	}
+
+	/**
+	 * Makes sure that a user was referred from another admin page.
+	 * To avoid security exploits.
+	 */
+	public function check_admin_referer() {
+		check_admin_referer( Area::SLUG . '-' . $this->slug );
+	}
 }

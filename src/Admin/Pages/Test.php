@@ -36,7 +36,7 @@ class Test extends PageAbstract {
 		?>
 
 		<form method="POST" action="">
-			<?php wp_nonce_field( 'wp-mail-smtp-test' ); ?>
+			<?php $this->wp_nonce_field(); ?>
 
 			<table class="form-table">
 				<tr>
@@ -63,7 +63,7 @@ class Test extends PageAbstract {
 	 */
 	public function process( $data ) {
 
-		check_admin_referer( 'wp-mail-smtp-test' );
+		$this->check_admin_referer();
 
 		if ( isset( $data['test_email'] ) ) {
 			$data['test_email'] = filter_var( $data['test_email'], FILTER_VALIDATE_EMAIL );

@@ -119,7 +119,11 @@ class Migration {
 					if ( 'pepipost' === $this->old_values['mailer'] ) {
 						$shortcut = explode( '_', $old_key );
 
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+						if ( $old_key === 'pepipost_ssl' ) {
+							$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+						} else {
+							$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+						}
 					}
 					break;
 
@@ -131,7 +135,12 @@ class Migration {
 				case 'smtp_pass':
 					$shortcut = explode( '_', $old_key );
 
-					$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+					if ( $old_key === 'smtp_ssl' ) {
+						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+					} else {
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+					}
+
 					break;
 
 				case 'mail_from':

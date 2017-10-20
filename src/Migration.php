@@ -137,6 +137,8 @@ class Migration {
 
 					if ( $old_key === 'smtp_ssl' ) {
 						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+					} elseif ( $old_key === 'smtp_auth' ) {
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' );
 					} else {
 						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
 					}

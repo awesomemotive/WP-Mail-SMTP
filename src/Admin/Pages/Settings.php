@@ -121,7 +121,7 @@ class Settings extends PageAbstract {
 
 			<div class="wp-mail-smtp-mailer-options">
 
-				<div class="wp-mail-smtp-mailer-options-mail <?php echo $mailer === 'mail' ? 'active' : 'hidden'; ?>">
+				<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-mail <?php echo $mailer === 'mail' ? 'active' : 'hidden'; ?>">
 					<h2><?php _e( 'Default (none)', 'wp-mail-smtp' ); ?></h2>
 
 					<p>
@@ -129,7 +129,7 @@ class Settings extends PageAbstract {
 					</p>
 				</div>
 
-				<div class="wp-mail-smtp-mailer-options-smtp <?php echo $mailer === 'smtp' ? 'active' : 'hidden'; ?>">
+				<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-smtp <?php echo $mailer === 'smtp' ? 'active' : 'hidden'; ?>">
 					<h2><?php _e( 'Other SMTP', 'wp-mail-smtp' ); ?></h2>
 
 					<table class="form-table">

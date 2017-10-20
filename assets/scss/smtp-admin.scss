@@ -103,11 +103,12 @@
 				.wp-mail-smtp-mailer-image {
 					background: #fff;
 					text-align: center;
-					border: 1px solid #E5E5E5;
+					border: 2px solid #E5E5E5;
 					border-radius: $border-radius;
 					height: 76px;
 					position: relative;
 					margin-bottom: 10px;
+					cursor: pointer;
 
 					img {
 						display: block;
@@ -127,7 +128,7 @@
 
 		.wp-mail-smtp-mailer-options {
 
-			.wp-mail-smtp-mailer-options-mail {
+			.wp-mail-smtp-mailer-option-mail {
 				p {
 					background: #E5E5E5;
 					border-radius: $border-radius;

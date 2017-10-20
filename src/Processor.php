@@ -37,7 +37,7 @@ class Processor {
 	 */
 	public function phpmailer_init( $phpmailer ) {
 
-		$options = Options::get();
+		$options = Options::init()->get();
 
 		// Check that mailer is not blank, and if mailer=smtp, host is not blank.
 		if (
@@ -64,8 +64,8 @@ class Processor {
 		}
 
 		// Set the SMTPSecure value, if set to none, leave this blank.
-		$phpmailer->SMTPSecure = $options['smtp']['ssl'];
-		if ( 'none' === $options['smtp']['ssl'] ) {
+		$phpmailer->SMTPSecure = $options['smtp']['encryption'];
+		if ( 'none' === $options['smtp']['encryption'] ) {
 			$phpmailer->SMTPSecure  = '';
 			$phpmailer->SMTPAutoTLS = false;
 		}
@@ -77,7 +77,7 @@ class Processor {
 			$phpmailer->Port = $options['smtp']['port'];
 
 			// If we're using smtp auth, set the username & password.
-			if ( $options['smtp']['auth'] === 'true' ) {
+			if ( $options['smtp']['auth'] ) {
 				$phpmailer->SMTPAuth = true;
 				$phpmailer->Username = $options['smtp']['user'];
 				$phpmailer->Password = $options['smtp']['pass'];
@@ -87,7 +87,7 @@ class Processor {
 			$phpmailer->Mailer     = 'smtp';
 			$phpmailer->Host       = 'smtp.pepipost.com';
 			$phpmailer->Port       = $options['pepipost']['port'];
-			$phpmailer->SMTPSecure = $options['pepipost']['ssl'] === 'none' ? '' : $options['pepipost']['ssl'];
+			$phpmailer->SMTPSecure = $options['pepipost']['encryption'] === 'none' ? '' : $options['pepipost']['encryption'];
 			$phpmailer->SMTPAuth   = true;
 			$phpmailer->Username   = $options['pepipost']['user'];
 			$phpmailer->Password   = $options['pepipost']['pass'];
@@ -126,7 +126,7 @@ class Processor {
 			return $email;
 		}
 
-		$from_email = Options::get( 'mail', 'from_email' );
+		$from_email = Options::init()->get( 'mail', 'from_email' );
 
 		if ( ! empty( $from_email ) ) {
 			return $from_email;
@@ -147,7 +147,7 @@ class Processor {
 	public function filter_mail_from_name( $name ) {
 
 		if ( 'WordPress' === $name ) {
-			$name = Options::get( 'mail', 'from_name' );
+			$name = Options::init()->get( 'mail', 'from_name' );
 		}
 
 		return $name;

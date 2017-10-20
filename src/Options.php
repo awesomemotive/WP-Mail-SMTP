@@ -71,7 +71,7 @@ class Options {
 	 * @param string $group
 	 * @param string $key
 	 *
-	 * @return array|string
+	 * @return mixed
 	 */
 	public function get( $group = '', $key = '' ) {
 
@@ -84,13 +84,70 @@ class Options {
 
 			// Get the options key of a group.
 			if ( array_key_exists( $key, $this->_options[ $group ] ) ) {
-				return $this->_options[ $group ][ $key ];
+				return $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
 			}
 
 			return $this->_options[ $group ];
 		}
 
 		return $this->_options;
+	}
+
+	/**
+	 * Process the options values through the constants check.
+	 * If we have defined associated constant - use it instead of a DB value.
+	 * Backward compatibility is hard.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $group
+	 * @param string $key
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	protected function get_const_value( $group, $key, $value ) {
+
+		if ( ! defined( 'WPMS_ON' ) || ! WPMS_ON ) {
+			return $value;
+		}
+
+		switch ( $group ) {
+			case 'mail':
+				switch ( $key ) {
+					case 'from_name':
+						return defined( 'WPMS_MAIL_FROM_NAME' ) && WPMS_MAIL_FROM_NAME ? WPMS_MAIL_FROM_NAME : $value;
+					case 'from_email':
+						return defined( 'WPMS_MAIL_FROM' ) && WPMS_MAIL_FROM ? WPMS_MAIL_FROM : $value;
+					case 'mailer':
+						return defined( 'WPMS_MAILER' ) && WPMS_MAILER ? WPMS_MAILER : $value;
+					case 'return_path':
+						return defined( 'WPMS_SET_RETURN_PATH' ) && WPMS_SET_RETURN_PATH === 'false' ? false : $value;
+				}
+
+				break;
+
+			case 'smtp':
+				switch ( $key ) {
+					case 'host':
+						return defined( 'WPMS_SMTP_HOST' ) && WPMS_SMTP_HOST ? WPMS_SMTP_HOST : $value;
+					case 'port':
+						return defined( 'WPMS_SMTP_PORT' ) && WPMS_SMTP_PORT ? WPMS_SMTP_PORT : $value;
+					case 'encryption':
+						return defined( 'WPMS_SSL' ) && WPMS_SSL ? WPMS_SSL : $value;
+					case 'auth':
+						return defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH === true ? WPMS_SMTP_AUTH : $value;
+					case 'user':
+						return defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER ? WPMS_SMTP_USER : $value;
+					case 'pass':
+						return defined( 'WPMS_SMTP_PASS' ) && WPMS_SMTP_PASS ? WPMS_SMTP_PASS : $value;
+				}
+
+				break;
+		}
+
+		// Always return the default value if nothing form above matches the request.
+		return $value;
 	}
 
 	/**

@@ -378,7 +378,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 								<label for="mail_set_return_path">
 									<input name="mail_set_return_path" type="checkbox" id="mail_set_return_path" value="true" <?php checked( 'true', get_option( 'mail_set_return_path' ) ); ?> />
-									<?php _e( 'Set the return-path to match the From Email' ); ?>
+									<?php _e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?>
 								</label>
 
 								<p class="description">

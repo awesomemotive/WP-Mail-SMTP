@@ -42,7 +42,7 @@
 	.wp-mail-smtp-page {
 		padding: 0 $content-padding;
 
-		h1 {
+		h1, h2 {
 			font-weight: bold;
 			border-bottom: 1px solid $border-color;
 			margin-bottom: $content-padding;
@@ -51,15 +51,109 @@
 			padding-top: 0;
 		}
 
-		.button-primary {
-			background: $orange;
-			border: none;
-			box-shadow: 0 1px 0 darken($orange, 10%);
-			text-shadow: 0 -1px 1px darken($orange, 10%), 1px 0 1px darken($orange, 10%), 0 1px 1px darken($orange, 10%), -1px 0 1px darken($orange, 10%);
+		$bg: #F1F1F1;
+		$fg: #BDBDBD;
+		$borderWidth: 1px;
 
-			&:active, &:hover, &:focus {
-				outline: none;
-				background: darken($orange, 10%);
+		.wp-mail-smtp-inline-radios {
+			border: solid $borderWidth $fg;
+			display: inline-block;
+			border-radius: 10px;
+			overflow: hidden;
+
+			input[type=radio] {
+				position: absolute;
+				visibility: hidden;
+				display: none;
+			}
+
+			label {
+				color: #929292;
+				display: inline-block;
+				cursor: pointer;
+				font-weight: bold;
+				padding: 5px 20px;
+				margin-right: -0.25em;
+			}
+
+			input[type=radio]:checked + label{
+				color: #000;
+				background: $fg;
+			}
+
+			label + input[type=radio] + label {
+				border-left: solid $borderWidth $fg;
+			}
+
+			label:last-child {
+				margin-right: 0;
+			}
+		}
+
+		.wp-mail-smtp-mailers {
+			.wp-mail-smtp-mailer {
+				display: inline-block;
+				width: 140px;
+				margin-right: 10px;
+
+				&:last-child {
+					margin-right: 0;
+				}
+
+				.wp-mail-smtp-mailer-image {
+					background: #fff;
+					text-align: center;
+					border: 1px solid #E5E5E5;
+					border-radius: $border-radius;
+					height: 76px;
+					position: relative;
+					margin-bottom: 10px;
+
+					img {
+						display: block;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						transform: translate(-50%, -50%);
+					}
+
+					&.active {
+						border: 2px solid $orange;
+					}
+				}
+				.wp-mail-smtp-mailer-text{}
+			}
+		}
+
+		.wp-mail-smtp-mailer-options {
+
+			.wp-mail-smtp-mailer-options-mail {
+				p {
+					background: #E5E5E5;
+					border-radius: $border-radius;
+					color: #929292;
+					margin-bottom: 20px;
+					padding: 15px;
+
+				}
+			}
+
+		}
+
+		.wp-mail-smtp-submit {
+			border-top: 1px solid $border-color;
+			padding-top: 20px;
+
+			.button-primary {
+				background: $orange;
+				border: none;
+				box-shadow: 0 1px 0 darken($orange, 10%);
+				text-shadow: 0 -1px 1px darken($orange, 10%), 1px 0 1px darken($orange, 10%), 0 1px 1px darken($orange, 10%), -1px 0 1px darken($orange, 10%);
+
+				&:active, &:hover, &:focus {
+					outline: none;
+					background: darken($orange, 10%);
+				}
 			}
 		}
 	}

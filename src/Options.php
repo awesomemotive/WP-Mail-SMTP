@@ -21,7 +21,7 @@ class Options {
 	 *
 	 * @var array
 	 */
-	private $options = array();
+	private $_options = array();
 
 	/**
 	 * Init the Options class.
@@ -56,7 +56,7 @@ class Options {
 	 * Retrieve all options of the plugin.
 	 */
 	protected function populate_options() {
-		$this->options = get_option( self::META_KEY, array() );
+		$this->_options = get_option( self::META_KEY, array() );
 	}
 
 	/**
@@ -80,17 +80,17 @@ class Options {
 		$key   = sanitize_key( $key );
 
 		// Get the options group.
-		if ( array_key_exists( $group, $this->options ) ) {
+		if ( array_key_exists( $group, $this->_options ) ) {
 
 			// Get the options key of a group.
-			if ( array_key_exists( $key, $this->options[ $group ] ) ) {
-				return $this->options[ $group ][ $key ];
+			if ( array_key_exists( $key, $this->_options[ $group ] ) ) {
+				return $this->_options[ $group ][ $key ];
 			}
 
-			return $this->options[ $group ];
+			return $this->_options[ $group ];
 		}
 
-		return $this->options;
+		return $this->_options;
 	}
 
 	/**

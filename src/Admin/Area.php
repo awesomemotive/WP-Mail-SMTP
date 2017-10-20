@@ -46,6 +46,9 @@ class Area {
 		// Add the options page.
 		add_action( 'admin_menu', array( $this, 'add_admin_options_page' ) );
 
+		// Admin footer text.
+		add_filter( 'admin_footer_text', array( $this, 'get_admin_footer' ), 1, 2 );
+
 		// Enqueue admin area scripts and styles.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
@@ -117,6 +120,31 @@ class Area {
 		</div>
 
 		<?php
+	}
+
+	/**
+	 * Display a text to ask users to review the plugin on WP.org.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 */
+	public function get_admin_footer( $text ) {
+
+		if ( $this->is_admin_page() ) {
+			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post';
+
+			$text = sprintf(
+				/* translators: %1$s - WP.org link; %2$s - WP.org link. */
+				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
+				$url,
+				$url
+			);
+		}
+
+		return $text;
 	}
 
 	/**

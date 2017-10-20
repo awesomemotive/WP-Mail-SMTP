@@ -80,7 +80,7 @@ class Settings extends PageAbstract {
 								</div>
 							</div>
 
-							<?php do_action( 'wp_mail_smtp_admin_settings_mailer', $options ); ?>
+							<?php do_action( 'wp_mail_smtp_admin_settings_mailer_selector', $options ); ?>
 
 							<div class="wp-mail-smtp-mailer">
 								<div class="wp-mail-smtp-mailer-image <?php echo $mailer === 'smtp' ? 'active' : ''; ?>">
@@ -209,6 +209,8 @@ class Settings extends PageAbstract {
 						</tr>
 					</table>
 				</div>
+
+				<?php do_action( 'wp_mail_smtp_admin_settings_mailer_settings', $options ); ?>
 
 			</div>
 

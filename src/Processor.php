@@ -110,19 +110,8 @@ class Processor {
 	 */
 	public function filter_mail_from_email( $email ) {
 
-		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
-		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
-
-		// Get the site domain and get rid of www.
-		$sitename = strtolower( $server_name );
-		if ( substr( $sitename, 0, 4 ) === 'www.' ) {
-			$sitename = substr( $sitename, 4 );
-		}
-
-		$default_from_email = 'wordpress@' . $sitename;
-
 		// If the from email is not the default, return it unchanged.
-		if ( $email !== $default_from_email ) {
+		if ( $email !== $this->get_default_email() ) {
 			return $email;
 		}
 
@@ -151,5 +140,24 @@ class Processor {
 		}
 
 		return $name;
+	}
+
+	/**
+	 * Get the default email address based on domain name.
+	 *
+	 * @return string
+	 */
+	public function get_default_email() {
+
+		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
+		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
+
+		// Get the site domain and get rid of www.
+		$sitename = strtolower( $server_name );
+		if ( substr( $sitename, 0, 4 ) === 'www.' ) {
+			$sitename = substr( $sitename, 4 );
+		}
+
+		return 'wordpress@' . $sitename;
 	}
 }

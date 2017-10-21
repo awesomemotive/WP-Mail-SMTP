@@ -117,11 +117,12 @@
 						left: 50%;
 						transform: translate(-50%, -50%);
 					}
-
-					&.active {
-						border: 2px solid $orange;
-					}
 				}
+
+				&.active .wp-mail-smtp-mailer-image {
+					border: 2px solid $orange;
+				}
+
 				.wp-mail-smtp-mailer-text{}
 			}
 		}

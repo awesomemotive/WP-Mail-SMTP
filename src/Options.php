@@ -5,7 +5,8 @@ namespace WPMailSMTP;
 /**
  * Class Options to handle all options management.
  * WordPress does all the heavy work for caching get_option() data,
- * so we don't have to do that.
+ * so we don't have to do that. But we want to minimize cyclomatic complexity
+ * of calling a bunch of WP functions, thus we will cache them in a class as well.
  */
 class Options {
 
@@ -33,11 +34,13 @@ class Options {
 	/**
 	 * Initialize all the options, used for chaining.
 	 *
-	 * Options::init()->get('smtp', 'host');
-	 * Options::init()->is_pepipost_active();
-	 * OR
-	 * $options = new Options();
-	 * $options->get('smtp', 'host');
+	 * One-liner:
+	 *      Options::init()->get('smtp', 'host');
+	 *      Options::init()->is_pepipost_active();
+	 *
+	 * Or multiple-usage:
+	 *      $options = new Options();
+	 *      $options->get('smtp', 'host');
 	 *
 	 * @return Options
 	 */
@@ -108,7 +111,7 @@ class Options {
 	 */
 	protected function get_const_value( $group, $key, $value ) {
 
-		if ( ! defined( 'WPMS_ON' ) || ! WPMS_ON ) {
+		if ( ! $this->is_const_enabled() ) {
 			return $value;
 		}
 
@@ -116,13 +119,16 @@ class Options {
 			case 'mail':
 				switch ( $key ) {
 					case 'from_name':
-						return defined( 'WPMS_MAIL_FROM_NAME' ) && WPMS_MAIL_FROM_NAME ? WPMS_MAIL_FROM_NAME : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAIL_FROM_NAME : $value;
 					case 'from_email':
-						return defined( 'WPMS_MAIL_FROM' ) && WPMS_MAIL_FROM ? WPMS_MAIL_FROM : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAIL_FROM : $value;
 					case 'mailer':
-						return defined( 'WPMS_MAILER' ) && WPMS_MAILER ? WPMS_MAILER : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAILER : $value;
 					case 'return_path':
-						return defined( 'WPMS_SET_RETURN_PATH' ) && WPMS_SET_RETURN_PATH === 'false' ? false : $value;
+						return $this->is_const_defined( $group, $key ) ? true : $value;
 				}
 
 				break;
@@ -130,17 +136,25 @@ class Options {
 			case 'smtp':
 				switch ( $key ) {
 					case 'host':
-						return defined( 'WPMS_SMTP_HOST' ) && WPMS_SMTP_HOST ? WPMS_SMTP_HOST : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_HOST : $value;
 					case 'port':
-						return defined( 'WPMS_SMTP_PORT' ) && WPMS_SMTP_PORT ? WPMS_SMTP_PORT : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_PORT : $value;
 					case 'encryption':
-						return defined( 'WPMS_SSL' ) && WPMS_SSL ? WPMS_SSL : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key )
+							? ( WPMS_SSL === '' ? 'none' : WPMS_SSL )
+							: $value;
 					case 'auth':
-						return defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH === true ? WPMS_SMTP_AUTH : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTH : $value;
 					case 'user':
-						return defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER ? WPMS_SMTP_USER : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_USER : $value;
 					case 'pass':
-						return defined( 'WPMS_SMTP_PASS' ) && WPMS_SMTP_PASS ? WPMS_SMTP_PASS : $value;
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_PASS : $value;
 				}
 
 				break;
@@ -148,6 +162,72 @@ class Options {
 
 		// Always return the default value if nothing form above matches the request.
 		return $value;
+	}
+
+	/**
+	 * Whether constants redefinition is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public function is_const_enabled() {
+		return defined( 'WPMS_ON' ) && WPMS_ON === true;
+	}
+
+	/**
+	 * We need this check to reuse later in admin area,
+	 * to distinguish settings fields that were redefined,
+	 * and display them differently.
+	 *
+	 * @param string $group
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	public function is_const_defined( $group, $key ) {
+
+		if ( ! $this->is_const_enabled() ) {
+			return false;
+		}
+
+		// Just to feel safe.
+		$group = sanitize_key( $group );
+		$key   = sanitize_key( $key );
+
+		switch ( $group ) {
+			case 'mail':
+				switch ( $key ) {
+					case 'from_name':
+						return defined( 'WPMS_MAIL_FROM_NAME' ) && WPMS_MAIL_FROM_NAME;
+					case 'from_email':
+						return defined( 'WPMS_MAIL_FROM' ) && WPMS_MAIL_FROM;
+					case 'mailer':
+						return defined( 'WPMS_MAILER' ) && WPMS_MAILER;
+					case 'return_path':
+						return defined( 'WPMS_SET_RETURN_PATH' ) && ( WPMS_SET_RETURN_PATH === 'true' || WPMS_SET_RETURN_PATH === true );
+				}
+
+				break;
+
+			case 'smtp':
+				switch ( $key ) {
+					case 'host':
+						return defined( 'WPMS_SMTP_HOST' ) && WPMS_SMTP_HOST;
+					case 'port':
+						return defined( 'WPMS_SMTP_PORT' ) && WPMS_SMTP_PORT;
+					case 'encryption':
+						return defined( 'WPMS_SSL' );
+					case 'auth':
+						return defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH;
+					case 'user':
+						return defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER;
+					case 'pass':
+						return defined( 'WPMS_SMTP_PASS' ) && WPMS_SMTP_PASS;
+				}
+
+				break;
+		}
+
+		return false;
 	}
 
 	/**

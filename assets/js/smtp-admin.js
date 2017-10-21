@@ -1,6 +1,13 @@
 /* globals jQuery */
 jQuery( document ).ready( function ( $ ) {
 
+	$('.wp-mail-smtp-help-tooltip').tooltipster({
+		contentAsHTML: true,
+		position: 'right',
+		maxWidth: 300,
+		multiple: true
+	});
+
 	$( '.wp-mail-smtp-mailer input' ).click( function () {
 		if ( $( this ).prop( 'disabled' ) ) {
 			return false;

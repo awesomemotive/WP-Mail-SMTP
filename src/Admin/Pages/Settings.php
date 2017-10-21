@@ -46,6 +46,7 @@ class Settings extends PageAbstract {
 				<tr>
 					<th scope="row">
 						<label for="wp-mail-smtp-setting-from-email"><?php _e( 'From Email', 'wp-mail-smtp' ); ?></label>
+						<span class="wp-mail-smtp-help-tooltip" title="From Email">?</span>
 					</th>
 					<td>
 						<input name="wp-mail-smtp[mail][from_email]" type="email"

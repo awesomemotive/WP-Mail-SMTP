@@ -46,7 +46,6 @@ class Settings extends PageAbstract {
 				<tr>
 					<th scope="row">
 						<label for="wp-mail-smtp-setting-from-email"><?php _e( 'From Email', 'wp-mail-smtp' ); ?></label>
-						<span class="wp-mail-smtp-help-tooltip" title="From Email">?</span>
 					</th>
 					<td>
 						<input name="wp-mail-smtp[mail][from_email]" type="email"
@@ -54,7 +53,23 @@ class Settings extends PageAbstract {
 							<?php echo $options->is_const_defined( 'mail', 'from_email' ) ? 'disabled' : ''; ?>
 							id="wp-mail-smtp-setting-from-email" class="regular-text" spellcheck="false"
 						/>
-						<p class="description"><?php _e( 'You can specify the email address that emails should be sent from. If you leave this blank, the default email will be used.', 'wp-mail-smtp' ); ?></p>
+
+						<?php $this->display_helper_icon(); ?>
+
+						<div class="wp-mail-smtp-code-helper-text">
+							<?php $this->display_helper_text(); ?>
+							<code>define( 'WPMS_MAIL_FROM', '<?php echo esc_attr( $options->get( 'mail', 'from_email' ) ); ?>' );</code>
+						</div>
+
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s - default email address. */
+								__( 'You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s', 'wp-mail-smtp' ),
+								'<code>' . wp_mail_smtp()->get_processor()->get_default_email() . '</code>'
+							);
+							?>
+						</p>
 					</td>
 				</tr>
 				<!-- From Name -->
@@ -68,8 +83,15 @@ class Settings extends PageAbstract {
 							<?php echo $options->is_const_defined( 'mail', 'from_name' ) ? 'disabled' : ''; ?>
 							id="wp-mail-smtp-setting-from-name" class="regular-text" spellcheck="false"
 						/>
+
 						<p class="description">
-							<?php _e( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress.', 'wp-mail-smtp' ); ?>
+							<?php
+							printf(
+								/* translators: %s - WordPress. */
+								__( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s.', 'wp-mail-smtp' ),
+								'<code>WordPress</code>'
+							);
+							?>
 						</p>
 					</td>
 				</tr>
@@ -88,11 +110,11 @@ class Settings extends PageAbstract {
 								</div>
 
 								<div class="wp-mail-smtp-mailer-text">
-									<input id="mailer_mail" type="radio" name="wp-mail-smtp[mail][mailer]" value="mail"
+									<input id="wp-mail-smtp-setting-mailer-mail" type="radio" name="wp-mail-smtp[mail][mailer]" value="mail"
 										<?php checked( 'mail', $mailer ); ?>
 										<?php echo $options->is_const_defined( 'mail', 'mailer' ) ? 'disabled' : ''; ?>
 									/>
-									<label for="mailer_mail"><?php _e( 'Default (none)', 'wp-mail-smtp' ); ?></label>
+									<label for="wp-mail-smtp-setting-mailer-mail"><?php _e( 'Default (none)', 'wp-mail-smtp' ); ?></label>
 								</div>
 							</div>
 
@@ -105,11 +127,11 @@ class Settings extends PageAbstract {
 								</div>
 
 								<div class="wp-mail-smtp-mailer-text">
-									<input id="mailer_smtp" type="radio" name="wp-mail-smtp[mail][mailer]" value="smtp"
+									<input id="wp-mail-smtp-setting-mailer-smtp" type="radio" name="wp-mail-smtp[mail][mailer]" value="smtp"
 										<?php checked( 'smtp', $mailer ); ?>
 										<?php echo $options->is_const_defined( 'mail', 'mailer' ) ? 'disabled' : ''; ?>
 									/>
-									<label for="mailer_smtp"><?php _e( 'Other SMTP', 'wp-mail-smtp' ); ?></label>
+									<label for="wp-mail-smtp-setting-mailer-smtp"><?php _e( 'Other SMTP', 'wp-mail-smtp' ); ?></label>
 								</div>
 							</div>
 
@@ -120,14 +142,15 @@ class Settings extends PageAbstract {
 											alt="<?php esc_attr_e( 'Other SMTP', 'wp-mail-smtp' ); ?>">
 									</div>
 									<div class="wp-mail-smtp-mailer-text">
-										<input id="mailer_pepipost" type="radio" name="wp-mail-smtp[mail][mailer]"
+										<input id="wp-mail-smtp-setting-mailer-pepipost" type="radio" name="wp-mail-smtp[mail][mailer]"
 											value="pepipost" <?php checked( 'pepipost', $mailer ); ?>
 											<?php echo $options->is_const_defined( 'mail', 'mailer' ) ? 'disabled' : ''; ?>
 										/>
-										<label for="mailer_pepipost"><?php _e( 'Pepipost', 'wp-mail-smtp' ); ?></label>
+										<label for="wp-mail-smtp-setting-mailer-pepipost"><?php _e( 'Pepipost', 'wp-mail-smtp' ); ?></label>
 									</div>
 								</div>
 							<?php endif; ?>
+
 						</div>
 					</td>
 				</tr>
@@ -197,27 +220,25 @@ class Settings extends PageAbstract {
 								<label for="wp-mail-smtp-setting-smtp-port"><?php _e( 'Encryption', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<?php $encryption = $options->get( 'smtp', 'encryption' ); ?>
-
 								<div class="wp-mail-smtp-inline-radios">
 									<input type="radio" id="wp-mail-smtp-setting-smtp-enc-none"
 										name="wp-mail-smtp[smtp][encryption]" value="none"
 										<?php echo $options->is_const_defined( 'smtp', 'encryption' ) ? 'disabled' : ''; ?>
-										<?php checked( 'none', $encryption ); ?>
+										<?php checked( 'none', $options->get( 'smtp', 'encryption' ) ); ?>
 									/>
 									<label for="wp-mail-smtp-setting-smtp-enc-none"><?php _e( 'None', 'wp-mail-smtp' ); ?></label>
 
 									<input type="radio" id="wp-mail-smtp-setting-smtp-enc-ssl"
 										name="wp-mail-smtp[smtp][encryption]" value="ssl"
 										<?php echo $options->is_const_defined( 'smtp', 'encryption' ) ? 'disabled' : ''; ?>
-										<?php checked( 'ssl', $encryption ); ?>
+										<?php checked( 'ssl', $options->get( 'smtp', 'encryption' ) ); ?>
 									/>
 									<label for="wp-mail-smtp-setting-smtp-enc-ssl"><?php _e( 'SSL', 'wp-mail-smtp' ); ?></label>
 
 									<input type="radio" id="wp-mail-smtp-setting-smtp-enc-tls"
 										name="wp-mail-smtp[smtp][encryption]" value="tls"
 										<?php echo $options->is_const_defined( 'smtp', 'encryption' ) ? 'disabled' : ''; ?>
-										<?php checked( 'tls', $encryption ); ?>
+										<?php checked( 'tls', $options->get( 'smtp', 'encryption' ) ); ?>
 									/>
 									<label for="wp-mail-smtp-setting-smtp-enc-tls"><?php _e( 'TLS', 'wp-mail-smtp' ); ?></label>
 								</div>
@@ -233,20 +254,18 @@ class Settings extends PageAbstract {
 								<label for="wp-mail-smtp-setting-smtp-port"><?php _e( 'Authentication', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<?php $auth = $options->get( 'smtp', 'auth' ); ?>
-
 								<div class="wp-mail-smtp-inline-radios">
 									<input type="radio" id="wp-mail-smtp-setting-smtp-auth-no"
 										name="wp-mail-smtp[smtp][auth]" value="no"
 										<?php echo $options->is_const_defined( 'smtp', 'auth' ) ? 'disabled' : ''; ?>
-										<?php checked( false, $auth ); ?>
+										<?php checked( false, $options->get( 'smtp', 'auth' ) ); ?>
 									/>
 									<label for="wp-mail-smtp-setting-smtp-auth-no"><?php _e( 'No', 'wp-mail-smtp' ); ?></label>
 
 									<input type="radio" id="wp-mail-smtp-setting-smtp-auth-yes"
 										name="wp-mail-smtp[smtp][auth]" value="yes"
 										<?php echo $options->is_const_defined( 'smtp', 'auth' ) ? 'disabled' : ''; ?>
-										<?php checked( true, $auth ); ?>
+										<?php checked( true, $options->get( 'smtp', 'auth' ) ); ?>
 									/>
 									<label for="wp-mail-smtp-setting-smtp-auth-yes"><?php _e( 'Yes', 'wp-mail-smtp' ); ?></label>
 								</div>
@@ -292,6 +311,38 @@ class Settings extends PageAbstract {
 				<input type="submit" name="wp-mail-smtp[setting_submit]" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'wp-mail-smtp' ); ?>"/>
 			</p>
 		</form>
+
+		<?php
+	}
+
+	/**
+	 * Helper icon to open or close code section.
+	 */
+	protected function display_helper_icon() {
+		?>
+
+		<span class="wp-mail-smtp-code-helper js-wp-mail-smtp-code-helper">
+			<span class="dashicons dashicons-arrow-down-alt2"></span>
+		</span>
+
+		<?php
+	}
+
+	/**
+	 * Helper generic text, that is the same for all fields.
+	 */
+	protected function display_helper_text() {
+		?>
+
+		<p>
+			<?php
+			printf(
+				/* translators: %s - wp-config.php. */
+				__( 'To redefine this value in %s use this code:', 'wp-mail-smtp' ),
+				'<code>wp-config.php</code>'
+			);
+			?>
+		</p>
 
 		<?php
 	}

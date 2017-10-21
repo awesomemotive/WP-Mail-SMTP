@@ -94,24 +94,12 @@ class Area {
 			false,
 			WPMS_PLUGIN_VER
 		);
-		wp_enqueue_style(
-			'wp-mail-smtp-tooltipster',
-			wp_mail_smtp()->plugin_url . '/assets/css/tooltipster.bundle.min.css',
-			'',
-			'4.2.5'
-		);
 
 		wp_enqueue_script(
 			'wp-mail-smtp-admin',
 			wp_mail_smtp()->plugin_url . '/assets/js/smtp-admin' . WP::asset_min() . '.js',
 			array( 'jquery' ),
 			WPMS_PLUGIN_VER
-		);
-		wp_enqueue_script(
-			'wp-mail-smtp-tooltipster',
-			wp_mail_smtp()->plugin_url . '/assets/js/tooltipster.bundle' . WP::asset_min() . '.js',
-			array( 'jquery' ),
-			'4.2.5'
 		);
 	}
 

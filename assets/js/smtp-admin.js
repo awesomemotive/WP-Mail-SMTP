@@ -1,12 +1,26 @@
 /* globals jQuery */
 jQuery( document ).ready( function ( $ ) {
 
-	$('.wp-mail-smtp-help-tooltip').tooltipster({
-		contentAsHTML: true,
-		position: 'right',
-		maxWidth: 300,
-		multiple: true
-	});
+	$( '.js-wp-mail-smtp-code-helper' ).click( function () {
+
+		$( this ).siblings( '.wp-mail-smtp-code-helper-text' ).slideToggle( 'fast', function () {
+
+			if ( $( this ).is( ':visible' ) ) {
+				$( this )
+					.siblings('.wp-mail-smtp-code-helper')
+					.find( '.dashicons' )
+					.removeClass( 'dashicons-arrow-down-alt2' )
+					.addClass( 'dashicons-arrow-up-alt2' );
+			} else {
+				$( this )
+					.siblings('.wp-mail-smtp-code-helper')
+					.find( '.dashicons' )
+					.removeClass( 'dashicons-arrow-up-alt2' )
+					.addClass( 'dashicons-arrow-down-alt2' );
+			}
+		} );
+
+	} );
 
 	$( '.wp-mail-smtp-mailer input' ).click( function () {
 		if ( $( this ).prop( 'disabled' ) ) {

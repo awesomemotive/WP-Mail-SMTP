@@ -139,7 +139,6 @@
 
 				}
 			}
-
 		}
 
 		.wp-mail-smtp-submit {
@@ -160,12 +159,27 @@
 		}
 	}
 
-	.wp-mail-smtp-help-tooltip {
-		padding: 1px 7px;
-		border-radius: 14px;
-		border: 1px solid #bdbdbd;
-		background: #bdbdbd;
-		color: #ffffff;
-		font-weight: bold;
+	.wp-mail-smtp-code-helper {
+		background: rgba(0,0,0,.07);
+		cursor: pointer;
+		padding: 4px;
+
+		.dashicons {
+			line-height: 1.5;
+		}
+	}
+
+	.wp-mail-smtp-code-helper-text {
+		display: none;
+		margin-top: 5px;
+
+		p {
+			// This will remove jumpiness.
+			margin: 0;
+		}
+
+		&.active {
+			display: block;
+		}
 	}
 }

@@ -77,7 +77,7 @@ class Core {
 		static $processor;
 
 		if ( ! isset( $processor ) ) {
-			$processor = apply_filters( 'wp_mail_smtp_get_processor', new Processor() );
+			$processor = apply_filters( 'wp_mail_smtp_core_get_processor', new Processor() );
 		}
 
 		return $processor;
@@ -95,7 +95,7 @@ class Core {
 		static $admin;
 
 		if ( ! isset( $admin ) ) {
-			$admin = apply_filters( 'wp_mail_smtp_get_admin', new Admin\Area() );
+			$admin = apply_filters( 'wp_mail_smtp_core_get_admin', new Admin\Area() );
 		}
 
 		return $admin;
@@ -113,7 +113,7 @@ class Core {
 		static $migration;
 
 		if ( ! isset( $migration ) ) {
-			$migration = apply_filters( 'wp_mail_smtp_get_migration', new Migration() );
+			$migration = apply_filters( 'wp_mail_smtp_core_get_migration', new Migration() );
 		}
 
 		return $migration;

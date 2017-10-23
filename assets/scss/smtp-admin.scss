@@ -130,13 +130,12 @@
 		.wp-mail-smtp-mailer-options {
 
 			.wp-mail-smtp-mailer-option-mail {
-				p {
+				blockquote {
 					background: #E5E5E5;
 					border-radius: $border-radius;
 					color: #929292;
 					margin-bottom: 20px;
 					padding: 15px;
-
 				}
 			}
 		}
@@ -148,12 +147,12 @@
 			.button-primary {
 				background: $orange;
 				border: none;
-				box-shadow: 0 1px 0 darken($orange, 10%);
-				text-shadow: 0 -1px 1px darken($orange, 10%), 1px 0 1px darken($orange, 10%), 0 1px 1px darken($orange, 10%), -1px 0 1px darken($orange, 10%);
+				box-shadow: 0 1px 0 $orange_dark;
+				text-shadow: 0 -1px 1px $orange_dark, 1px 0 1px $orange_dark, 0 1px 1px $orange_dark, -1px 0 1px $orange_dark;
 
 				&:active, &:hover, &:focus {
 					outline: none;
-					background: darken($orange, 10%);
+					background: $orange_dark;
 				}
 			}
 		}

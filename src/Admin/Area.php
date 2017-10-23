@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Providers\Mail;
+use WPMailSMTP\Providers\SMTP;
 use WPMailSMTP\WP;
 
 /**
@@ -54,6 +56,9 @@ class Area {
 
 		// Process the admin page forms actions.
 		add_action( 'admin_init', array( $this, 'process_actions' ) );
+
+		// Get the list of providers
+		add_action( 'admin_init', array( $this, 'get_providers' ) );
 
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
@@ -139,7 +144,7 @@ class Area {
 			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post';
 
 			$text = sprintf(
-				/* translators: %1$s - WP.org link; %2$s - WP.org link. */
+			/* translators: %1$s - WP.org link; %2$s - WP.org link. */
 				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
 				$url,
 				$url
@@ -235,6 +240,26 @@ class Area {
 		}
 
 		return $this->pages[ $this->get_current_subpage() ]->get_title();
+	}
+
+	/**
+	 * Default providers (mail/smtp) should not be redefined or removed.
+	 *
+	 * @return \WPMailSMTP\Providers\ProviderAbstract[]
+	 */
+	public function get_providers() {
+
+		$providers = array_merge(
+			array(
+				'mail' => new Mail(),
+			),
+			apply_filters( 'wp_mail_smtp_admin_get_providers', array() ),
+			array(
+				'smtp' => new SMTP(),
+			)
+		);
+
+		return $providers;
 	}
 
 	/**

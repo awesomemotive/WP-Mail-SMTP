@@ -42,6 +42,7 @@ class Settings extends PageAbstract {
 			<?php $this->wp_nonce_field(); ?>
 
 			<table class="form-table">
+
 				<!-- From Email -->
 				<tr>
 					<th scope="row">
@@ -65,6 +66,7 @@ class Settings extends PageAbstract {
 						</p>
 					</td>
 				</tr>
+
 				<!-- From Name -->
 				<tr>
 					<th scope="row">
@@ -88,6 +90,7 @@ class Settings extends PageAbstract {
 						</p>
 					</td>
 				</tr>
+
 				<!-- Mailer -->
 				<tr>
 					<th scope="row">
@@ -120,6 +123,7 @@ class Settings extends PageAbstract {
 						</div>
 					</td>
 				</tr>
+
 				<!-- Return Path -->
 				<tr>
 					<th scope="row">

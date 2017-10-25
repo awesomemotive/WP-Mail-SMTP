@@ -8,31 +8,16 @@ namespace WPMailSMTP\Providers;
 class Pepipost extends ProviderAbstract {
 
 	/**
-	 * @inheritdoc
+	 * Pepipost constructor.
 	 */
-	public function get_logo_url() {
-		return wp_mail_smtp()->plugin_url . '/assets/images/pepipost.png';
-	}
+	public function __construct() {
 
-	/**
-	 * @inheritdoc
-	 */
-	public function get_slug() {
-		return 'pepipost';
+		parent::__construct(
+			array(
+				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/pepipost.png',
+				'slug'     => 'pepipost',
+				'title'    => __( 'Pepipost', 'wp-mail-smtp' ),
+			)
+		);
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_title() {
-		return __( 'Pepipost', 'wp-mail-smtp' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_description() {
-		return '';
-	}
-
 }

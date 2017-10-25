@@ -37,7 +37,7 @@ class Processor {
 	 */
 	public function phpmailer_init( $phpmailer ) {
 
-		$options = Options::init()->get();
+		$options = Options::init()->get_all();
 
 		// Check that mailer is not blank, and if mailer=smtp, host is not blank.
 		if (

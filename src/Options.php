@@ -26,6 +26,8 @@ class Options {
 
 	/**
 	 * Init the Options class.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->populate_options();
@@ -42,6 +44,8 @@ class Options {
 	 *      $options = new Options();
 	 *      $options->get('smtp', 'host');
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return Options
 	 */
 	public static function init() {
@@ -57,16 +61,28 @@ class Options {
 
 	/**
 	 * Retrieve all options of the plugin.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function populate_options() {
 		$this->_options = get_option( self::META_KEY, array() );
 	}
 
 	/**
+	 * Get all the options.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
+	 */
+	public function get_all() {
+		return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options );
+	}
+
+	/**
 	 * Get options by a group and a key or by group only:
 	 *
-	 * Options::init()->get()               - will return all options.
-	 * Options::init()->get('smtp')         - will return only SMTP options (array).
+	 * Options::init()->get('smtp')         - will return only array of options (or empty array if no key doesn't exist).
 	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option (string).
 	 *
 	 * @since 1.0.0
@@ -76,24 +92,58 @@ class Options {
 	 *
 	 * @return mixed
 	 */
-	public function get( $group = '', $key = '' ) {
+	public function get( $group, $key = '' ) {
 
 		// Just to feel safe.
 		$group = sanitize_key( $group );
 		$key   = sanitize_key( $key );
 
 		// Get the options group.
-		if ( array_key_exists( $group, $this->_options ) ) {
+		if ( isset( $this->_options[ $group ] ) ) {
 
 			// Get the options key of a group.
 			if ( array_key_exists( $key, $this->_options[ $group ] ) ) {
-				return $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
+				$value = $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
+			} else {
+				$value = $this->_options[ $group ];
 			}
-
-			return $this->_options[ $group ];
+		} else {
+			// If no group exists, but we still request a key.
+			if ( ! empty( $key ) ) {
+				$value = $this->postprocess_key_defaults( '', $group, $key );
+			} else {
+				$value = array();
+			}
 		}
 
-		return $this->_options;
+		return apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key );
+	}
+
+	/**
+	 * Some options may be non-empty by default,
+	 * so we need to postprocess them to convert.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $value Default value, it's '' (empty string).
+	 * @param string $group
+	 * @param string $key
+	 *
+	 * @return mixed
+	 */
+	protected function postprocess_key_defaults( $value, $group, $key ) {
+
+		switch ( $key ) {
+			case 'encryption':
+				$value = empty( $value ) ? 'none' : $value;
+				break;
+
+			case 'auth':
+				$value = empty( $value ) ? false : $value;
+				break;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -167,6 +217,8 @@ class Options {
 	/**
 	 * Whether constants redefinition is enabled or not.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public function is_const_enabled() {
@@ -177,6 +229,8 @@ class Options {
 	 * We need this check to reuse later in admin area,
 	 * to distinguish settings fields that were redefined,
 	 * and display them differently.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -248,9 +302,11 @@ class Options {
 	/**
 	 * Check whether the site is using Pepipost or not.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public function is_pepipost_active() {
-		return apply_filters( 'wp_mail_smtp_is_pepipost_active', 'pepipost' === $this->get( 'mail', 'mailer' ) );
+		return apply_filters( 'wp_mail_smtp_options_is_pepipost_active', 'pepipost' === $this->get( 'mail', 'mailer' ) );
 	}
 }

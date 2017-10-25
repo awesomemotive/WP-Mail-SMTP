@@ -8,31 +8,17 @@ namespace WPMailSMTP\Providers;
 class Mail extends ProviderAbstract {
 
 	/**
-	 * @inheritdoc
+	 * Mail constructor.
 	 */
-	public function get_logo_url() {
-		return wp_mail_smtp()->plugin_url . '/assets/images/php.png';
-	}
+	public function __construct() {
 
-	/**
-	 * @inheritdoc
-	 */
-	public function get_slug() {
-		return 'mail';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_title() {
-		return __( 'Default (none)', 'wp-mail-smtp' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_description() {
-		return '';
+		parent::__construct(
+			array(
+				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/php.png',
+				'slug'     => 'mail',
+				'title'    => __( 'Default (none)', 'wp-mail-smtp' ),
+			)
+		);
 	}
 
 	/**
@@ -47,5 +33,4 @@ class Mail extends ProviderAbstract {
 
 		<?php
 	}
-
 }

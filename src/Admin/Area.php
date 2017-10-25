@@ -2,7 +2,9 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Mail;
+use WPMailSMTP\Providers\Pepipost;
 use WPMailSMTP\Providers\SMTP;
 use WPMailSMTP\WP;
 
@@ -57,11 +59,21 @@ class Area {
 		// Process the admin page forms actions.
 		add_action( 'admin_init', array( $this, 'process_actions' ) );
 
-		// Get the list of providers
+		// Get the list of providers.
 		add_action( 'admin_init', array( $this, 'get_providers' ) );
 
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
+
+		// Add the pepipost only if it's active on a site.
+		if ( Options::init()->is_pepipost_active() ) {
+			add_filter( 'wp_mail_smtp_admin_get_providers', function( $providers ) {
+
+				$providers['pepipost'] = new Pepipost();
+
+				return $providers;
+			} );
+		}
 	}
 
 	/**
@@ -123,7 +135,7 @@ class Area {
 
 		<div id="wp-mail-smtp-header">
 			<!--suppress HtmlUnknownTarget -->
-			<img class="wp-mail-smtp-header-logo" src="<?php echo wp_mail_smtp()->plugin_url; ?>/assets/images/logo.png" alt="WP Mail SMTP Logo"/>
+			<img class="wp-mail-smtp-header-logo" src="<?php echo wp_mail_smtp()->plugin_url; ?>/assets/images/logo.png" alt="WP Mail SMTP"/>
 		</div>
 
 		<?php
@@ -144,7 +156,7 @@ class Area {
 			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post';
 
 			$text = sprintf(
-			/* translators: %1$s - WP.org link; %2$s - WP.org link. */
+				/* translators: %1$s - WP.org link; %2$s - same WP.org link. */
 				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
 				$url,
 				$url
@@ -212,7 +224,7 @@ class Area {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return PageAbstract[]
+	 * @return \WPMailSMTP\Admin\PageAbstract[]
 	 */
 	public function get_pages() {
 
@@ -244,6 +256,8 @@ class Area {
 
 	/**
 	 * Default providers (mail/smtp) should not be redefined or removed.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return \WPMailSMTP\Providers\ProviderAbstract[]
 	 */

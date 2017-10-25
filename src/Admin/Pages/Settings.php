@@ -159,7 +159,7 @@ class Settings extends PageAbstract {
 			</div>
 
 			<p class="wp-mail-smtp-submit">
-				<input type="submit" name="wp-mail-smtp[setting_submit]" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'wp-mail-smtp' ); ?>"/>
+				<button type="submit" class="button-primary"><?php _e( 'Save Changes', 'wp-mail-smtp' ); ?></button>
 			</p>
 		</form>
 
@@ -172,5 +172,12 @@ class Settings extends PageAbstract {
 	public function process( $data ) {
 
 		$this->check_admin_referer();
+
+		pvar( $data, 1 );
+
+		$options = new Options();
+
+		// All the sanitization is done there.
+		$options->set( $data );
 	}
 }

@@ -270,10 +270,6 @@ class Area {
 		// Do not allow providers, that are not valid for further usage.
 		foreach ( $filtered as $key => $provider ) {
 
-			if ( empty( $key ) ) {
-				continue;
-			}
-
 			if ( ! $provider instanceof ProviderAbstract ) {
 				continue;
 			}

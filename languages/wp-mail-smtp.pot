@@ -186,19 +186,19 @@ msgstr ""
 msgid "Type an email address here and then click Send Test to generate a test email."
 msgstr ""
 
-#: wp_mail_smtp.php:632, src/Admin/Area.php:88
+#: wp_mail_smtp.php:632, src/Admin/Area.php:89
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: wp_mail_smtp.php:730, src/Admin/Area.php:327, src/Admin/Pages/Settings.php:22
+#: wp_mail_smtp.php:730, src/Admin/Area.php:349, src/Admin/Pages/Settings.php:22
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Area.php:87
+#: src/Admin/Area.php:88
 msgid "WP Mail SMTP Options"
 msgstr ""
 
-#: src/Admin/Area.php:160
+#: src/Admin/Area.php:161
 msgid "Please rate <strong>WP Mail SMTP</strong> <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href=\"%2$s\" target=\"_blank\">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!"
 msgstr ""
 

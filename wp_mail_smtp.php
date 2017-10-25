@@ -754,7 +754,7 @@ add_action( 'plugins_loaded', 'wp_mail_smtp_am_notifications' );
  * @return bool
  */
 function wp_mail_smtp_is_pepipost_active() {
-	return apply_filters( 'wp_mail_smtp_is_pepipost_active', 'pepipost' === get_option( 'mailer' ) );
+	return apply_filters( 'wp_mail_smtp_options_is_pepipost_active', 'pepipost' === get_option( 'mailer' ) );
 }
 
 // Add an action on phpmailer_init.

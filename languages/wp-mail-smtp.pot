@@ -46,11 +46,11 @@ msgstr ""
 msgid "Advanced Email Options"
 msgstr ""
 
-#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:48
+#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:49
 msgid "From Email"
 msgstr ""
 
-#: wp_mail_smtp.php:303, src/Admin/Pages/Settings.php:52
+#: wp_mail_smtp.php:303
 msgid "You can specify the email address that emails should be sent from. If you leave this blank, the default email will be used."
 msgstr ""
 
@@ -58,15 +58,15 @@ msgstr ""
 msgid "<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field."
 msgstr ""
 
-#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:58
+#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:73
 msgid "From Name"
 msgstr ""
 
-#: wp_mail_smtp.php:321, src/Admin/Pages/Settings.php:62
+#: wp_mail_smtp.php:321
 msgid "You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress."
 msgstr ""
 
-#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:68
+#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:97
 msgid "Mailer"
 msgstr ""
 
@@ -86,19 +86,19 @@ msgstr ""
 msgid "Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s."
 msgstr ""
 
-#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:112
+#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:130
 msgid "Return Path"
 msgstr ""
 
-#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:116
+#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:138
 msgid "Set the return-path to match the From Email"
 msgstr ""
 
-#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:117
+#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:141
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
-#: wp_mail_smtp.php:393, wp_mail_smtp.php:493, wp_mail_smtp.php:569, src/Admin/Pages/Settings.php:216
+#: wp_mail_smtp.php:393, wp_mail_smtp.php:493, wp_mail_smtp.php:569, src/Admin/Pages/Settings.php:162
 msgid "Save Changes"
 msgstr ""
 
@@ -110,15 +110,15 @@ msgstr ""
 msgid "These options only apply if you have chosen to send mail by SMTP above."
 msgstr ""
 
-#: wp_mail_smtp.php:405, src/Admin/Pages/Settings.php:139
+#: wp_mail_smtp.php:405, src/Providers/ProviderAbstract.php:98
 msgid "SMTP Host"
 msgstr ""
 
-#: wp_mail_smtp.php:413, wp_mail_smtp.php:531, src/Admin/Pages/Settings.php:148
+#: wp_mail_smtp.php:413, wp_mail_smtp.php:531, src/Providers/ProviderAbstract.php:112
 msgid "SMTP Port"
 msgstr ""
 
-#: wp_mail_smtp.php:420, wp_mail_smtp.php:424, wp_mail_smtp.php:539, wp_mail_smtp.php:545, src/Admin/Pages/Settings.php:157
+#: wp_mail_smtp.php:420, wp_mail_smtp.php:424, wp_mail_smtp.php:539, wp_mail_smtp.php:545, src/Providers/ProviderAbstract.php:126
 msgid "Encryption"
 msgstr ""
 
@@ -134,11 +134,11 @@ msgstr ""
 msgid "Use TLS encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:442, src/Admin/Pages/Settings.php:172
+#: wp_mail_smtp.php:442, src/Providers/ProviderAbstract.php:153
 msgid "TLS is not the same as STARTTLS. For most servers SSL is the recommended option."
 msgstr ""
 
-#: wp_mail_smtp.php:447, wp_mail_smtp.php:451, src/Admin/Pages/Settings.php:179
+#: wp_mail_smtp.php:447, wp_mail_smtp.php:451, src/Providers/ProviderAbstract.php:161
 msgid "Authentication"
 msgstr ""
 
@@ -186,60 +186,72 @@ msgstr ""
 msgid "Type an email address here and then click Send Test to generate a test email."
 msgstr ""
 
-#: wp_mail_smtp.php:632, src/Admin/Area.php:68
+#: wp_mail_smtp.php:632, src/Admin/Area.php:88
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: wp_mail_smtp.php:730, src/Admin/Area.php:258, src/Admin/Pages/Settings.php:22
+#: wp_mail_smtp.php:730, src/Admin/Area.php:327, src/Admin/Pages/Settings.php:22
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Area.php:67
+#: src/Admin/Area.php:87
 msgid "WP Mail SMTP Options"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:75, src/Admin/Pages/Settings.php:87, src/Admin/Pages/Settings.php:91, src/Admin/Pages/Settings.php:98, src/Admin/Pages/Settings.php:133
-msgid "Other SMTP"
+#: src/Admin/Area.php:160
+msgid "Please rate <strong>WP Mail SMTP</strong> <a href=\"%1$s\" target=\"_blank\" rel=\"noopener\">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href=\"%2$s\" target=\"_blank\">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:79, src/Admin/Pages/Settings.php:125
+#: src/Providers/Mail.php:19
 msgid "Default (none)"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:102
-msgid "Pepipost"
-msgstr ""
-
-#: src/Admin/Pages/Settings.php:128
+#: src/Providers/Mail.php:31
 msgid "You currently have the native WordPress option selected. Please select an SMTP above to begin setup."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:164
+#: src/Providers/Pepipost.php:19
+msgid "Pepipost"
+msgstr ""
+
+#: src/Providers/ProviderAbstract.php:135
 msgid "None"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:166
+#: src/Providers/ProviderAbstract.php:142
 msgid "SSL"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:168
+#: src/Providers/ProviderAbstract.php:149
 msgid "TLS"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:186
+#: src/Providers/ProviderAbstract.php:170
 msgid "No"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:188
+#: src/Providers/ProviderAbstract.php:177
 msgid "Yes"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:195
+#: src/Providers/ProviderAbstract.php:185
 msgid "SMTP Username"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:204
+#: src/Providers/ProviderAbstract.php:199
 msgid "SMTP Password"
+msgstr ""
+
+#: src/Providers/SMTP.php:19
+msgid "Other SMTP"
+msgstr ""
+
+#: src/Admin/Pages/Settings.php:62
+msgid "You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s"
+msgstr ""
+
+#: src/Admin/Pages/Settings.php:86
+msgid "You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s."
 msgstr ""
 
 #: src/Admin/Pages/Test.php:22

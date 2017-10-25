@@ -5,6 +5,7 @@ namespace WPMailSMTP\Admin;
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Mail;
 use WPMailSMTP\Providers\Pepipost;
+use WPMailSMTP\Providers\ProviderAbstract;
 use WPMailSMTP\Providers\SMTP;
 use WPMailSMTP\WP;
 
@@ -67,9 +68,9 @@ class Area {
 
 		// Add the pepipost only if it's active on a site.
 		if ( Options::init()->is_pepipost_active() ) {
-			add_filter( 'wp_mail_smtp_admin_get_providers', function( $providers ) {
+			add_filter( 'wp_mail_smtp_admin_get_providers', function ( $providers ) {
 
-				$providers['pepipost'] = new Pepipost();
+				$providers[] = new Pepipost();
 
 				return $providers;
 			} );
@@ -263,13 +264,38 @@ class Area {
 	 */
 	public function get_providers() {
 
+		$custom   = array();
+		$filtered = apply_filters( 'wp_mail_smtp_admin_get_providers', array() );
+
+		// Do not allow providers, that are not valid for further usage.
+		foreach ( $filtered as $key => $provider ) {
+
+			if ( empty( $key ) ) {
+				continue;
+			}
+
+			if ( ! $provider instanceof ProviderAbstract ) {
+				continue;
+			}
+
+			$slug  = $provider->get_slug();
+			$title = $provider->get_title();
+
+			if ( empty( $title ) || empty( $slug ) ) {
+				continue;
+			}
+
+			$custom[ $key ] = $provider;
+		}
+
+		// Some default providers should always be present.
 		$providers = array_merge(
 			array(
-				'mail' => new Mail(),
+				new Mail(),
 			),
-			apply_filters( 'wp_mail_smtp_admin_get_providers', array() ),
+			$custom,
 			array(
-				'smtp' => new SMTP(),
+				new SMTP(),
 			)
 		);
 

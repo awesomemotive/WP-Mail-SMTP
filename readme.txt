@@ -2,7 +2,7 @@
 Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
-Requires at least: 2.7
+Requires at least: 3.0
 Tested up to: 4.7
 Stable tag: 0.10.1
 

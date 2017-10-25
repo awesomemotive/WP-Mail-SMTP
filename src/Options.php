@@ -71,6 +71,8 @@ class Options {
 	/**
 	 * Get all the options.
 	 *
+	 * Options::init()->get_all();
+	 *
 	 * @since 1.0.0
 	 *
 	 * @return array
@@ -79,10 +81,33 @@ class Options {
 		return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options );
 	}
 
+
 	/**
-	 * Get options by a group and a key or by group only:
+	 * Get all the options for a group.
 	 *
-	 * Options::init()->get('smtp')         - will return only array of options (or empty array if no key doesn't exist).
+	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if no key doesn't exist).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $group
+	 *
+	 * @return mixed
+	 */
+	public function get_group( $group ) {
+
+		// Just to feel safe.
+		$group = sanitize_key( $group );
+
+		if ( isset( $this->_options[ $group ] ) ) {
+			return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options[ $group ] );
+		}
+
+		return array();
+	}
+
+	/**
+	 * Get options by a group and a key.
+	 *
 	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option (string).
 	 *
 	 * @since 1.0.0
@@ -92,7 +117,7 @@ class Options {
 	 *
 	 * @return mixed
 	 */
-	public function get( $group, $key = '' ) {
+	public function get( $group, $key ) {
 
 		// Just to feel safe.
 		$group = sanitize_key( $group );
@@ -102,18 +127,13 @@ class Options {
 		if ( isset( $this->_options[ $group ] ) ) {
 
 			// Get the options key of a group.
-			if ( array_key_exists( $key, $this->_options[ $group ] ) ) {
+			if ( isset( $this->_options[ $group ][ $key ] ) ) {
 				$value = $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
 			} else {
-				$value = $this->_options[ $group ];
+				$value = $this->postprocess_key_defaults( $group, $key, '' );
 			}
 		} else {
-			// If no group exists, but we still request a key.
-			if ( ! empty( $key ) ) {
-				$value = $this->postprocess_key_defaults( '', $group, $key );
-			} else {
-				$value = array();
-			}
+			$value = $this->postprocess_key_defaults( $group, $key, '' );
 		}
 
 		return apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key );
@@ -125,15 +145,19 @@ class Options {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $value Default value, it's '' (empty string).
 	 * @param string $group
 	 * @param string $key
+	 * @param mixed $value Default value, it's '' (empty string).
 	 *
 	 * @return mixed
 	 */
-	protected function postprocess_key_defaults( $value, $group, $key ) {
+	protected function postprocess_key_defaults( $group, $key, $value ) {
 
 		switch ( $key ) {
+			case 'return_path':
+				$value = empty( $value ) ? false : $value;
+				break;
+
 			case 'encryption':
 				$value = empty( $value ) ? 'none' : $value;
 				break;
@@ -289,9 +313,61 @@ class Options {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $options Data to save, already processed.
+	 * @param array $options Data to save.
 	 */
 	public function set( $options ) {
+
+		foreach ( (array) $options as $group => $keys ) {
+			foreach ( $keys as $key_name => $key_value ) {
+				switch ( $group ) {
+					case 'mail':
+						switch ( $key_name ) {
+							case 'from_name':
+							case 'mailer':
+								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, sanitize_text_field( $options[ $group ][ $key_name ] ) );
+								break;
+							case 'from_email':
+								if ( filter_var( $options[ $group ][ $key_name ], FILTER_VALIDATE_EMAIL ) ) {
+									$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, sanitize_email( $options[ $group ][ $key_name ] ) );
+								}
+								break;
+							case 'return_path':
+								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, true );
+								break;
+						}
+				}
+			}
+		}
+
+		if (
+			isset( $options[ $options['mail']['mailer'] ] ) &&
+			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp' ), true )
+		) {
+
+			$mailer = $options['mail']['mailer'];
+
+			foreach ( $options[ $mailer ] as $key_name => $key_value ) {
+				switch ( $key_name ) {
+					case 'host':
+					case 'user':
+					case 'pass':
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
+						break;
+					case 'port':
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, intval( $options[ $mailer ][ $key_name ] ) );
+						break;
+					case 'encryption':
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
+						break;
+					case 'auth':
+						$value                      = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
+						break;
+				}
+			}
+		}
+
+		$options = apply_filters( 'wp_mail_smtp_options_set', $options );
 
 		update_option( self::META_KEY, $options );
 

@@ -46,7 +46,7 @@ msgstr ""
 msgid "Advanced Email Options"
 msgstr ""
 
-#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:49
+#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:50
 msgid "From Email"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field."
 msgstr ""
 
-#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:73
+#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:74
 msgid "From Name"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 msgid "You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress."
 msgstr ""
 
-#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:97
+#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:98
 msgid "Mailer"
 msgstr ""
 
@@ -86,19 +86,19 @@ msgstr ""
 msgid "Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s."
 msgstr ""
 
-#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:130
+#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:131
 msgid "Return Path"
 msgstr ""
 
-#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:138
+#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:139
 msgid "Set the return-path to match the From Email"
 msgstr ""
 
-#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:141
+#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:142
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
-#: wp_mail_smtp.php:393, wp_mail_smtp.php:493, wp_mail_smtp.php:569, src/Admin/Pages/Settings.php:162
+#: wp_mail_smtp.php:393, wp_mail_smtp.php:493, wp_mail_smtp.php:569, src/Admin/Pages/Settings.php:163
 msgid "Save Changes"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: wp_mail_smtp.php:730, src/Admin/Area.php:349, src/Admin/Pages/Settings.php:22
+#: wp_mail_smtp.php:730, src/Admin/Area.php:349, src/Admin/Pages/Settings.php:23
 msgid "Settings"
 msgstr ""
 
@@ -246,12 +246,16 @@ msgstr ""
 msgid "Other SMTP"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:62
+#: src/Admin/Pages/Settings.php:63
 msgid "You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s"
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:86
+#: src/Admin/Pages/Settings.php:87
 msgid "You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s."
+msgstr ""
+
+#: src/Admin/Pages/Settings.php:183
+msgid "Setting were successfully saved."
 msgstr ""
 
 #: src/Admin/Pages/Test.php:22

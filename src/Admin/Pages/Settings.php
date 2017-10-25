@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Options;
+use WPMailSMTP\WP;
 
 /**
  * Class Settings is part of Area, displays general settings of the plugin.
@@ -173,11 +174,14 @@ class Settings extends PageAbstract {
 
 		$this->check_admin_referer();
 
-		pvar( $data, 1 );
-
 		$options = new Options();
 
 		// All the sanitization is done there.
 		$options->set( $data );
+
+		WP::add_admin_notice(
+			__( 'Setting were successfully saved.', 'wp-mail-smtp' ),
+			WP::ADMIN_NOTICE_SUCCESS
+		);
 	}
 }

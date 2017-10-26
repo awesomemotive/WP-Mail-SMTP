@@ -78,7 +78,6 @@ if ( ! function_exists( 'wp_mail_smtp_activate' ) ) :
 		foreach ( $wpms_options as $name => $val ) {
 			add_option( $name, $val );
 		}
-
 	}
 endif;
 

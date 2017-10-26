@@ -273,7 +273,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 		?>
 		<div class="wrap">
 			<h2>
-				<?php _e( 'Advanced Email Options', 'wp-mail-smtp' ); ?>
+				<?php _e( 'WP Mail SMTP Settings', 'wp-mail-smtp' ); ?>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -367,7 +367,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 
 								<label for="mail_set_return_path">
 									<input name="mail_set_return_path" type="checkbox" id="mail_set_return_path" value="true" <?php checked( 'true', get_option( 'mail_set_return_path' ) ); ?> />
-									<?php _e( 'Set the return-path to match the From Email' ); ?>
+									<?php _e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?>
 								</label>
 
 								<p class="description">
@@ -618,7 +618,7 @@ if ( ! function_exists( 'wp_mail_smtp_menus' ) ) :
 	function wp_mail_smtp_menus() {
 
 		if ( function_exists( 'add_submenu_page' ) ) {
-			add_options_page( __( 'Advanced Email Options', 'wp-mail-smtp' ), __( 'Email', 'wp-mail-smtp' ), 'manage_options', __FILE__, 'wp_mail_smtp_options_page' );
+			add_options_page( __( 'WP Mail SMTP Settings', 'wp-mail-smtp' ), __( 'WP Mail SMTP', 'wp-mail-smtp' ), 'manage_options', __FILE__, 'wp_mail_smtp_options_page' );
 		}
 	} // End of wp_mail_smtp_menus() function definition.
 endif;
@@ -638,7 +638,7 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from' ) ) :
 		 */
 
 		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
-		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : sanitize_key( php_uname( 'n' ) );
+		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
 
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( $server_name );
@@ -659,9 +659,13 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from' ) ) :
 
 		if (
 			defined( 'WPMS_ON' ) && WPMS_ON &&
-			defined( 'WPMS_MAIL_FROM' ) && ! empty( WPMS_MAIL_FROM )
+			defined( 'WPMS_MAIL_FROM' )
 		) {
-			return WPMS_MAIL_FROM;
+			$mail_from_email = WPMS_MAIL_FROM;
+
+			if ( ! empty( $mail_from_email ) ) {
+				return $mail_from_email;
+			}
 		}
 
 		if ( is_email( get_option( 'mail_from' ), false ) ) {
@@ -687,20 +691,23 @@ if ( ! function_exists( 'wp_mail_smtp_mail_from_name' ) ) :
 		if ( 'WordPress' === $orig ) {
 			if (
 				defined( 'WPMS_ON' ) && WPMS_ON &&
-				defined( 'WPMS_MAIL_FROM_NAME' ) && ! empty( WPMS_MAIL_FROM_NAME )
+				defined( 'WPMS_MAIL_FROM_NAME' )
 			) {
-				return WPMS_MAIL_FROM_NAME;
+				$mail_from_name = WPMS_MAIL_FROM_NAME;
+
+				if ( ! empty( $mail_from_name ) ) {
+					return $mail_from_name;
+				}
 			}
 
-			$mail_from = get_option( 'mail_from_name' );
-			if ( ! empty( $mail_from ) && is_string( $mail_from ) ) {
-				return get_option( 'mail_from_name' );
+			$from_name = get_option( 'mail_from_name' );
+			if ( ! empty( $from_name ) && is_string( $from_name ) ) {
+				return $from_name;
 			}
 		}
 
-		// If in doubt, return the original value.
 		return $orig;
-	} // End of wp_mail_smtp_mail_from_name() function definition.
+	}
 endif;
 
 /**
@@ -726,11 +733,13 @@ function wp_mail_plugin_action_links( $links, $file ) {
 
 /**
  * Awesome Motive Notifications.
+ *
+ * @since 0.11
  */
 function wp_mail_smtp_am_notifications() {
 
 	if ( ! class_exists( 'WPMS_AM_Notification' ) ) {
-		require_once 'src/class-wpms-am-notification.php';
+		require_once dirname( __FILE__ ) . '/class-wpms-am-notification.php';
 	}
 
 	new WPMS_AM_Notification( 'smtp', WPMS_PLUGIN_VER );
@@ -741,10 +750,12 @@ add_action( 'plugins_loaded', 'wp_mail_smtp_am_notifications' );
 /**
  * Check whether the site is using Pepipost or not.
  *
+ * @since 0.11
+ *
  * @return bool
  */
 function wp_mail_smtp_is_pepipost_active() {
-	return apply_filters( 'wp_mail_smtp_is_pepipost_active', 'pepipost' === get_option( 'mailer' ) );
+	return apply_filters( 'wp_mail_smtp_options_is_pepipost_active', 'pepipost' === get_option( 'mailer' ) );
 }
 
 // Add an action on phpmailer_init.

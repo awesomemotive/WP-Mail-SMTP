@@ -180,7 +180,7 @@ class Settings extends PageAbstract {
 		$options->set( $data );
 
 		WP::add_admin_notice(
-			__( 'Setting were successfully saved.', 'wp-mail-smtp' ),
+			__( 'Settings were successfully saved.', 'wp-mail-smtp' ),
 			WP::ADMIN_NOTICE_SUCCESS
 		);
 	}

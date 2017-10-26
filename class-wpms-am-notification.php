@@ -102,7 +102,7 @@ class WPMS_AM_Notification {
 
 		if ( $last_checked < strtotime( 'today midnight' ) ) {
 			$plugin_notifications = $this->get_plugin_notifications( 1 );
-			$notification_id      = null;
+			$notification_id 	  = null;
 
 			if ( ! empty( $plugin_notifications ) ) {
 				// Unset it from the array.
@@ -178,7 +178,7 @@ class WPMS_AM_Notification {
 	 *
 	 * @return WP_Post[] WP_Post that match the query.
 	 */
-	public function get_plugin_notifications( $limit = - 1, $args = array() ) {
+	public function get_plugin_notifications( $limit = -1, $args = array() ) {
 		return get_posts(
 			array(
 				'showposts' => $limit,
@@ -253,7 +253,7 @@ class WPMS_AM_Notification {
 			return;
 		}
 
-		$plugin_notifications = $this->get_plugin_notifications( - 1, array(
+		$plugin_notifications = $this->get_plugin_notifications( -1, array(
 			'post_status' => 'all',
 			'meta_key'    => 'viewed',
 			'meta_value'  => '0',
@@ -270,14 +270,14 @@ class WPMS_AM_Notification {
 					<?php echo $notification->post_content; ?>
 				</div>
 				<script type="text/javascript">
-					jQuery( document ).ready( function ( $ ) {
-						$( document ).on( 'click', '.am-notification-<?php echo $notification->ID; ?> button.notice-dismiss', function ( event ) {
-							$.post( ajaxurl, {
+					jQuery(document).ready(function ($) {
+						$(document).on('click', '.am-notification-<?php echo $notification->ID; ?> button.notice-dismiss', function (event) {
+							$.post(ajaxurl, {
 								action: 'am_notification_dismiss',
 								notification_id: '<?php echo $notification->ID; ?>'
-							} );
-						} );
-					} );
+							});
+						});
+					});
 				</script>
 				<?php
 			}
@@ -390,7 +390,7 @@ class WPMS_AM_Notification {
 	 */
 	public function get_plan_level() {
 		// Prepare variables.
-		$key    = '';
+		$key	= '';
 		$level  = '';
 		$option = false;
 		switch ( $this->plugin ) {
@@ -495,7 +495,7 @@ class WPMS_AM_Notification {
 	public function revoke_notifications( $ids ) {
 		// Loop through each of the IDs and find the post that has it as meta.
 		foreach ( (array) $ids as $id ) {
-			$notifications = $this->get_plugin_notifications( - 1, [ 'post_status' => 'all', 'meta_key' => 'notification_id', 'meta_value' => $id ] );
+			$notifications = $this->get_plugin_notifications( -1, [ 'post_status' => 'all', 'meta_key' => 'notification_id', 'meta_value' => $id ] );
 			if ( $notifications ) {
 				foreach ( $notifications as $notification ) {
 					update_post_meta( $notification->ID, 'viewed', 1 );

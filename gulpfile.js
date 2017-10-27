@@ -25,6 +25,8 @@ var plugin = {
 		'!assets/scss',
 		'!assets/wporg/**',
 		'!assets/wporg',
+		'!.github/**',
+		'!.github',
 		'!build/**',
 		'!build',
 		'!node_modules/**',

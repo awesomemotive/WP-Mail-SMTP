@@ -207,10 +207,57 @@ abstract class ProviderAbstract implements ProviderInterface {
 							value="<?php echo esc_attr( $options->get( $this->get_slug(), 'pass' ) ); ?>"
 							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" class="regular-text" spellcheck="false"
 						/>
+
+						<?php $this->display_helper_icon(); ?>
+
+						<p class="description">
+							<?php _e( 'The password is stored in plain text. For information on how to securely setup your password, please click a dropdown icon above.', 'wp-mail-smtp' ); ?>
+						</p>
+
+						<div class="wp-mail-smtp-code-helper-text">
+							<?php $this->display_helper_text(); ?>
+							<pre>
+								define( 'WPMS_ON', true );
+								define( 'WPMS_SMTP_PASS', 'your_password' );
+							</pre>
+						</div>
+
 					<?php endif; ?>
 				</td>
 			</tr>
 		</table>
+
+		<?php
+	}
+
+	/**
+	 * Helper icon to open or close code section.
+	 */
+	protected function display_helper_icon() {
+		?>
+
+		<span class="wp-mail-smtp-code-helper js-wp-mail-smtp-code-helper">
+			<span class="dashicons dashicons-arrow-down-alt2"></span>
+		</span>
+
+		<?php
+	}
+
+	/**
+	 * Helper generic text, that is the same for all fields.
+	 */
+	protected function display_helper_text() {
+		?>
+
+		<p>
+			<?php
+			printf(
+				/* translators: %s - wp-config.php. */
+				__( 'To redefine this value in %s use this code:', 'wp-mail-smtp' ),
+				'<code>wp-config.php</code>'
+			);
+			?>
+		</p>
 
 		<?php
 	}

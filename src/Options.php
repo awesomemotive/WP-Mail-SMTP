@@ -99,7 +99,7 @@ class Options {
 		$group = sanitize_key( $group );
 
 		if ( isset( $this->_options[ $group ] ) ) {
-			return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options[ $group ] );
+			return apply_filters( 'wp_mail_smtp_options_get_group', $this->_options[ $group ], $group );
 		}
 
 		return array();
@@ -155,7 +155,7 @@ class Options {
 
 		switch ( $key ) {
 			case 'return_path':
-				$value = empty( $value ) ? false : $value;
+				$value = empty( $value ) ? false : true;
 				break;
 
 			case 'encryption':
@@ -163,7 +163,7 @@ class Options {
 				break;
 
 			case 'auth':
-				$value = empty( $value ) ? false : $value;
+				$value = empty( $value ) ? false : true;
 				break;
 		}
 
@@ -234,7 +234,7 @@ class Options {
 				break;
 		}
 
-		// Always return the default value if nothing form above matches the request.
+		// Always return the default value if nothing from above matches the request.
 		return $value;
 	}
 

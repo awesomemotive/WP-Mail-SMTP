@@ -24,7 +24,7 @@ class Core {
 	public function __construct() {
 
 		$this->plugin_url  = trim( plugin_dir_url( dirname( __FILE__ ) ), '/\\' );
-		$this->plugin_path = trim( plugin_dir_path( dirname( __FILE__ ) ) , '/\\' );
+		$this->plugin_path = trim( plugin_dir_path( dirname( __FILE__ ) ), '/\\' );
 
 		$this->hooks();
 	}
@@ -35,6 +35,9 @@ class Core {
 	 * @since 1.0.0
 	 */
 	public function hooks() {
+
+		// Activation hook.
+		add_action( 'activate_wp-mail-smtp/wp_mail_smtp.php', array( $this, 'activate' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'get_processor' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
@@ -135,5 +138,22 @@ class Core {
 		}
 
 		return $notification;
+	}
+
+	/**
+	 * What to do on plugin activation.
+	 *
+	 * @since 1.0.0
+	 */
+	public function activate() {
+
+		$options['mail'] = array(
+			'from_email'  => get_option( 'admin_email' ),
+			'from_name'   => get_bloginfo( 'name' ),
+			'mailer'      => 'mail',
+			'return_path' => false,
+		);
+
+		Options::init()->set( $options );
 	}
 }

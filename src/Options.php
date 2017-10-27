@@ -332,7 +332,7 @@ class Options {
 								}
 								break;
 							case 'return_path':
-								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, true );
+								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, (bool) $options[ $group ][ $key_name ] );
 								break;
 						}
 				}
@@ -360,7 +360,7 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'auth':
-						$value                      = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
+						$value                           = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;
 				}

@@ -145,6 +145,7 @@ class Settings extends PageAbstract {
 				</tr>
 			</table>
 
+			<!-- Mailer Options -->
 			<div class="wp-mail-smtp-mailer-options">
 
 				<?php foreach ( wp_mail_smtp()->get_admin()->get_providers() as $provider ) : ?>

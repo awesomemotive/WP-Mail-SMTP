@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 0.11.1
+ * Version: 1.0.0
  * Plugin URI: https://wpforms.com/
  * Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
  * Author: WPForms
@@ -12,12 +12,12 @@
 
 /**
  * @author WPForms
- * @copyright WPForms, 2007-11, All Rights Reserved
+ * @copyright WPForms, 2007-17, All Rights Reserved
  * This code is released under the GPL licence version 3 or later, available here
  * http://www.gnu.org/licenses/gpl.txt
  */
 
-define( 'WPMS_PLUGIN_VER', '0.11.1' );
+define( 'WPMS_PLUGIN_VER', '1.0.0' );
 
 /**
  * Setting options in wp-config.php
@@ -40,6 +40,17 @@ define('WPMS_SMTP_AUTH', true); // True turns on SMTP authentication, false turn
 define('WPMS_SMTP_USER', 'username'); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true
 define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true
 */
+
+/**
+ * Newer PHP version 5.3+ will be handled a lot differently,
+ * with better code and newer logic.
+ *
+ * @since 1.0.0
+ */
+if ( version_compare( phpversion(), '5.3', '>=' ) ) {
+	require_once dirname( __FILE__ ) . './wp-mail-smtp.php';
+	return;
+}
 
 /**
  * Array of options and their default values.

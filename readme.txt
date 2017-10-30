@@ -2,7 +2,7 @@
 Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
-Requires at least: 2.7
+Requires at least: 3.0
 Tested up to: 4.8
 Stable tag: trunk
 
@@ -48,6 +48,9 @@ If you like this plugin, then consider checking out our other projects:
 * <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - Best Google Analytics Plugin for WordPress
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
+
+
+
 
 == Installation ==
 

@@ -60,6 +60,15 @@ class WPMS_AM_Notification {
 	public $theme_list = array();
 
 	/**
+	 * Flag if a notice has been registered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var bool
+	 */
+	public static $registered = false;
+
+	/**
 	 * Construct.
 	 *
 	 * @since 1.0.0
@@ -261,7 +270,7 @@ class WPMS_AM_Notification {
 
 		$plugin_notifications = $this->validate_notifications( $plugin_notifications );
 
-		if ( ! empty( $plugin_notifications ) ) {
+		if ( ! empty( $plugin_notifications ) && ! self::$registered ) {
 			foreach ( $plugin_notifications as $notification ) {
 				$dismissable = get_post_meta( $notification->ID, 'dismissable', true );
 				$type        = get_post_meta( $notification->ID, 'type', true );
@@ -281,6 +290,8 @@ class WPMS_AM_Notification {
 				</script>
 				<?php
 			}
+
+			self::$registered = true;
 		}
 	}
 
@@ -442,6 +453,11 @@ class WPMS_AM_Notification {
 				if ( empty( $key ) && defined( 'OPTINMONSTER_REST_API_LICENSE_KEY' ) ) {
 					$key = OPTINMONSTER_REST_API_LICENSE_KEY;
 				}
+
+				// If the key is still empty, check for the old legacy key.
+				if ( empty( $key ) ) {
+					$key = is_array( $option ) && isset( $option['api']['key'] ) ? $option['api']['key'] : '';
+				}
 				break;
 		}
 
@@ -480,6 +496,10 @@ class WPMS_AM_Notification {
 	 * @since 1.0.0
 	 */
 	public function dismiss_notification() {
+		if ( ! current_user_can( apply_filters( 'am_notifications_display', 'manage_options' ) ) ) {
+			die;
+		}
+
 		$notification_id = intval( $_POST['notification_id'] );
 		update_post_meta( $notification_id, 'viewed', 1 );
 		die;

@@ -6,7 +6,7 @@ Requires at least: 2.7
 Tested up to: 4.7
 Stable tag: 0.10.1
 
-The most popular SMTP plugin on WordPress.org. Trusted by over 600k sites.
+The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 700k sites.
 
 == Description ==
 
@@ -48,9 +48,6 @@ If you like this plugin, then consider checking out our other projects:
 * <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - Best Google Analytics Plugin for WordPress
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
-
-
-
 
 == Installation ==
 
@@ -97,7 +94,6 @@ By all means please contact us to discuss features or options you'd like to see 
 == Changelog ==
 
 = [0.11] - 2017-10-30 =
-* Added: AwesomeMotive notifications for important plugin-only related news.
 * Added: Helper description to Return Path option.
 * Added: Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.
 * Added: PHP 5.2 notice.

@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file.
 - Composer support.
 - PHPCS support.
 - Build system based on `gulp`.
-- AwesomeMotive notifications for important plugin-only related news.
 - Helper description to Return Path option.
 - Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.
 - PHP 5.2 notice.

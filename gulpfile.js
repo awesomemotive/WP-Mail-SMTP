@@ -40,6 +40,7 @@ var plugin = {
 		'!phpcs.xml',
 		'!gulpfile.js',
 		'!package.json',
+		'!package-lock.json',
 		'!composer.json',
 		'!composer.lock',
 		'!phpunit.xml',

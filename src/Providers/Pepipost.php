@@ -9,6 +9,8 @@ class Pepipost extends ProviderAbstract {
 
 	/**
 	 * Pepipost constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 

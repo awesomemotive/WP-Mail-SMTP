@@ -8,7 +8,9 @@ namespace WPMailSMTP\Providers;
 class SMTP extends ProviderAbstract {
 
 	/**
-	 * Pepipost constructor.
+	 * SMTP constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 

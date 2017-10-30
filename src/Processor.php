@@ -22,6 +22,7 @@ class Processor {
 	 * @since 1.0.0
 	 */
 	public function hooks() {
+
 		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
 
 		add_filter( 'wp_mail_from', array( $this, 'filter_mail_from_email' ) );
@@ -144,6 +145,8 @@ class Processor {
 
 	/**
 	 * Get the default email address based on domain name.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */

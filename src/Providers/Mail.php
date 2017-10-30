@@ -9,6 +9,8 @@ class Mail extends ProviderAbstract {
 
 	/**
 	 * Mail constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 

@@ -3,8 +3,8 @@ Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 2.7
-Tested up to: 4.7
-Stable tag: 0.10.1
+Tested up to: 4.8
+Stable tag: trunk
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 700k sites.
 

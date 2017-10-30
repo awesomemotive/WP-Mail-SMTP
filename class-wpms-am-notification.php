@@ -495,7 +495,7 @@ class WPMS_AM_Notification {
 	public function revoke_notifications( $ids ) {
 		// Loop through each of the IDs and find the post that has it as meta.
 		foreach ( (array) $ids as $id ) {
-			$notifications = $this->get_plugin_notifications( -1, [ 'post_status' => 'all', 'meta_key' => 'notification_id', 'meta_value' => $id ] );
+			$notifications = $this->get_plugin_notifications( -1, array( 'post_status' => 'all', 'meta_key' => 'notification_id', 'meta_value' => $id ) );
 			if ( $notifications ) {
 				foreach ( $notifications as $notification ) {
 					update_post_meta( $notification->ID, 'viewed', 1 );

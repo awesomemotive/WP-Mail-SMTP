@@ -44,6 +44,7 @@ var plugin = {
 		'!composer.lock',
 		'!phpunit.xml',
 		'!README.md',
+		'!CHANGELOG.md',
 		'!LICENSE'
 	],
 	php: '**/*.php',

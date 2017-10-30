@@ -96,6 +96,18 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= [0.11] - 2017-10-30 =
+* Added: AwesomeMotive notifications for important plugin-only related news.
+* Added: Helper description to Return Path option.
+* Added: Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.
+* Added: PHP 5.2 notice.
+* Changed: Localization fixes, proper locale name.
+* Changed: Code style improvements and optimizations for both HTML and PHP.
+* Changed: Inputs for emails now have a proper type `email`, instead of a generic `text`.
+* Changed: Turn off `$phpmailer->SMTPAutoTLS` when `No encryption` option is set to prevent error while sending emails.
+* Changed: Hide Pepipost for those who are not using it.
+* Changed: WP CLI support improved.
+
 = 0.10.1 =
 * Addition of Pepipost and cleanup of admin page.
 

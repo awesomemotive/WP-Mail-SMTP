@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.1] - 2017-10-30
+### Changed
+- Older PHP compatibility fix.
+
 ## [0.11] - 2017-10-30
 
 ### Added

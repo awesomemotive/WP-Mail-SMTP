@@ -93,6 +93,9 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= [0.11.1] - 2017-10-30 =
+* Older PHP compatibility fix.
+
 = [0.11] - 2017-10-30 =
 * Added: Helper description to Return Path option.
 * Added: Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.

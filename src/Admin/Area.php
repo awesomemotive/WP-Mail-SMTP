@@ -85,8 +85,8 @@ class Area {
 	public function add_admin_options_page() {
 
 		$this->hook = add_options_page(
-			__( 'WP Mail SMTP Options', 'wp-mail-smtp' ),
-			__( 'WP Mail SMTP', 'wp-mail-smtp' ),
+			esc_html__( 'WP Mail SMTP Options', 'wp-mail-smtp' ),
+			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
 			'manage_options',
 			self::SLUG,
 			array( $this, 'display' )
@@ -346,7 +346,7 @@ class Area {
 			return $links;
 		}
 
-		$settings_link = '<a href="options-general.php?page=' . self::SLUG . '">' . __( 'Settings', 'wp-mail-smtp' ) . '</a>';
+		$settings_link = '<a href="options-general.php?page=' . self::SLUG . '">' . esc_html__( 'Settings', 'wp-mail-smtp' ) . '</a>';
 
 		array_unshift( $links, $settings_link );
 

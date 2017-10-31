@@ -95,7 +95,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Host -->
 			<tr>
 				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host"><?php _e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host"><?php esc_html_e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][host]" type="text"
@@ -109,7 +109,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Port -->
 			<tr>
 				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port"><?php _e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port"><?php esc_html_e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][port]" type="number"
@@ -123,7 +123,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Encryption -->
 			<tr>
 				<th scope="row">
-					<label><?php _e( 'Encryption', 'wp-mail-smtp' ); ?></label>
+					<label><?php esc_html_e( 'Encryption', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<div class="wp-mail-smtp-inline-radios">
@@ -132,25 +132,25 @@ abstract class ProviderAbstract implements ProviderInterface {
 							<?php echo $options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
 							<?php checked( 'none', $options->get( $this->get_slug(), 'encryption' ) ); ?>
 						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none"><?php _e( 'None', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none"><?php esc_html_e( 'None', 'wp-mail-smtp' ); ?></label>
 
 						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"
 							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="ssl"
 							<?php echo $options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
 							<?php checked( 'ssl', $options->get( $this->get_slug(), 'encryption' ) ); ?>
 						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"><?php _e( 'SSL', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"><?php esc_html_e( 'SSL', 'wp-mail-smtp' ); ?></label>
 
 						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"
 							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="tls"
 							<?php echo $options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
 							<?php checked( 'tls', $options->get( $this->get_slug(), 'encryption' ) ); ?>
 						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"><?php _e( 'TLS', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"><?php esc_html_e( 'TLS', 'wp-mail-smtp' ); ?></label>
 					</div>
 
 					<p class="description">
-						<?php _e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?>
 					</p>
 				</td>
 			</tr>
@@ -158,7 +158,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Authentication -->
 			<tr>
 				<th scope="row">
-					<label><?php _e( 'Authentication', 'wp-mail-smtp' ); ?></label>
+					<label><?php esc_html_e( 'Authentication', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<div class="wp-mail-smtp-inline-radios">
@@ -167,14 +167,14 @@ abstract class ProviderAbstract implements ProviderInterface {
 							<?php echo $options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
 							<?php checked( false, $options->get( $this->get_slug(), 'auth' ) ); ?>
 						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-no"><?php _e( 'No', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-no"><?php esc_html_e( 'No', 'wp-mail-smtp' ); ?></label>
 
 						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-yes"
 							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="yes"
 							<?php echo $options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
 							<?php checked( true, $options->get( $this->get_slug(), 'auth' ) ); ?>
 						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-yes"><?php _e( 'Yes', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-yes"><?php esc_html_e( 'Yes', 'wp-mail-smtp' ); ?></label>
 					</div>
 				</td>
 			</tr>
@@ -182,7 +182,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Username -->
 			<tr>
 				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"><?php _e( 'SMTP Username', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"><?php esc_html_e( 'SMTP Username', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][user]" type="text"
@@ -196,7 +196,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<!-- SMTP Password -->
 			<tr>
 				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"><?php _e( 'SMTP Password', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"><?php esc_html_e( 'SMTP Password', 'wp-mail-smtp' ); ?></label>
 				</th>
 				<td>
 					<?php if ( $options->is_const_defined( $this->get_slug(), 'pass' ) ) : ?>
@@ -211,7 +211,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 						<?php $this->display_helper_icon(); ?>
 
 						<p class="description">
-							<?php _e( 'The password is stored in plain text. For information on how to securely setup your password, please click a dropdown icon above.', 'wp-mail-smtp' ); ?>
+							<?php esc_html_e( 'The password is stored in plain text. For information on how to securely setup your password, please click a dropdown icon above.', 'wp-mail-smtp' ); ?>
 						</p>
 
 						<div class="wp-mail-smtp-code-helper-text">
@@ -253,7 +253,7 @@ abstract class ProviderAbstract implements ProviderInterface {
 			<?php
 			printf(
 				/* translators: %s - wp-config.php. */
-				__( 'To redefine this value in %s use this code:', 'wp-mail-smtp' ),
+				esc_html__( 'To redefine this value in %s use this code:', 'wp-mail-smtp' ),
 				'<code>wp-config.php</code>'
 			);
 			?>

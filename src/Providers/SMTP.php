@@ -18,7 +18,7 @@ class SMTP extends ProviderAbstract {
 			array(
 				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/smtp.png',
 				'slug'     => 'smtp',
-				'title'    => __( 'Other SMTP', 'wp-mail-smtp' ),
+				'title'    => esc_html__( 'Other SMTP', 'wp-mail-smtp' ),
 			)
 		);
 	}

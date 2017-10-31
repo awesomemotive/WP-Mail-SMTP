@@ -18,7 +18,7 @@ class Mail extends ProviderAbstract {
 			array(
 				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/php.png',
 				'slug'     => 'mail',
-				'title'    => __( 'Default (none)', 'wp-mail-smtp' ),
+				'title'    => esc_html__( 'Default (none)', 'wp-mail-smtp' ),
 			)
 		);
 	}
@@ -30,7 +30,7 @@ class Mail extends ProviderAbstract {
 		?>
 
 		<blockquote>
-			<?php _e( 'You currently have the native WordPress option selected. Please select an SMTP above to begin setup.', 'wp-mail-smtp' ); ?>
+			<?php esc_html_e( 'You currently have the native WordPress option selected. Please select an SMTP above to begin setup.', 'wp-mail-smtp' ); ?>
 		</blockquote>
 
 		<?php

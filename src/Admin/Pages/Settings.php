@@ -20,7 +20,7 @@ class Settings extends PageAbstract {
 	 * @inheritdoc
 	 */
 	public function get_label() {
-		return __( 'Settings', 'wp-mail-smtp' );
+		return esc_html__( 'Settings', 'wp-mail-smtp' );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Settings extends PageAbstract {
 				<!-- From Email -->
 				<tr>
 					<th scope="row">
-						<label for="wp-mail-smtp-setting-from-email"><?php _e( 'From Email', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-from-email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
 					</th>
 					<td>
 						<input name="wp-mail-smtp[mail][from_email]" type="email"
@@ -60,7 +60,7 @@ class Settings extends PageAbstract {
 							<?php
 							printf(
 								/* translators: %s - default email address. */
-								__( 'You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s', 'wp-mail-smtp' ),
+								esc_html__( 'You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s', 'wp-mail-smtp' ),
 								'<code>' . wp_mail_smtp()->get_processor()->get_default_email() . '</code>'
 							);
 							?>
@@ -71,7 +71,7 @@ class Settings extends PageAbstract {
 				<!-- From Name -->
 				<tr>
 					<th scope="row">
-						<label for="wp-mail-smtp-setting-from-name"><?php _e( 'From Name', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-from-name"><?php esc_html_e( 'From Name', 'wp-mail-smtp' ); ?></label>
 					</th>
 					<td>
 						<input name="wp-mail-smtp[mail][from_name]" type="text"
@@ -84,7 +84,7 @@ class Settings extends PageAbstract {
 							<?php
 							printf(
 								/* translators: %s - WordPress. */
-								__( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s.', 'wp-mail-smtp' ),
+								esc_html__( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s.', 'wp-mail-smtp' ),
 								'<code>WordPress</code>'
 							);
 							?>
@@ -95,7 +95,7 @@ class Settings extends PageAbstract {
 				<!-- Mailer -->
 				<tr>
 					<th scope="row">
-						<label for="wp-mail-smtp-setting-from-name"><?php _e( 'Mailer', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-from-name"><?php esc_html_e( 'Mailer', 'wp-mail-smtp' ); ?></label>
 					</th>
 					<td>
 						<div class="wp-mail-smtp-mailers">
@@ -128,7 +128,7 @@ class Settings extends PageAbstract {
 				<!-- Return Path -->
 				<tr>
 					<th scope="row">
-						<label for="wp-mail-smtp-setting-return-path"><?php _e( 'Return Path', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-return-path"><?php esc_html_e( 'Return Path', 'wp-mail-smtp' ); ?></label>
 					</th>
 					<td>
 						<input name="wp-mail-smtp[mail][return_path]" type="checkbox"
@@ -136,10 +136,10 @@ class Settings extends PageAbstract {
 							<?php echo $options->is_const_defined( 'mail', 'return_path' ) ? 'disabled' : ''; ?>
 							id="wp-mail-smtp-setting-return-path"
 						/>
-						<label for="wp-mail-smtp-setting-return-path"><?php _e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?></label>
+						<label for="wp-mail-smtp-setting-return-path"><?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?></label>
 
 						<p class="description">
-							<?php _e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?>
+							<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?>
 						</p>
 					</td>
 				</tr>
@@ -161,7 +161,7 @@ class Settings extends PageAbstract {
 			</div>
 
 			<p class="wp-mail-smtp-submit">
-				<button type="submit" class="button-primary"><?php _e( 'Save Changes', 'wp-mail-smtp' ); ?></button>
+				<button type="submit" class="button-primary"><?php esc_html_e( 'Save Changes', 'wp-mail-smtp' ); ?></button>
 			</p>
 		</form>
 
@@ -181,7 +181,7 @@ class Settings extends PageAbstract {
 		$options->set( $data );
 
 		WP::add_admin_notice(
-			__( 'Settings were successfully saved.', 'wp-mail-smtp' ),
+			esc_html__( 'Settings were successfully saved.', 'wp-mail-smtp' ),
 			WP::ADMIN_NOTICE_SUCCESS
 		);
 	}

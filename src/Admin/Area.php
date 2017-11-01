@@ -4,8 +4,10 @@ namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Mail;
+use WPMailSMTP\Providers\Mailgun;
 use WPMailSMTP\Providers\Pepipost;
 use WPMailSMTP\Providers\ProviderAbstract;
+use WPMailSMTP\Providers\Sendgrid;
 use WPMailSMTP\Providers\SMTP;
 use WPMailSMTP\WP;
 
@@ -65,16 +67,6 @@ class Area {
 
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
-
-		// Add the pepipost only if it's active on a site.
-		if ( Options::init()->is_pepipost_active() ) {
-			add_filter( 'wp_mail_smtp_admin_get_providers', function ( $providers ) {
-
-				$providers[] = new Pepipost();
-
-				return $providers;
-			} );
-		}
 	}
 
 	/**
@@ -157,7 +149,7 @@ class Area {
 			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post';
 
 			$text = sprintf(
-				/* translators: %1$s - WP.org link; %2$s - same WP.org link. */
+			/* translators: %1$s - WP.org link; %2$s - same WP.org link. */
 				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
 				$url,
 				$url
@@ -264,11 +256,25 @@ class Area {
 	 */
 	public function get_providers() {
 
-		$custom   = array();
-		$filtered = apply_filters( 'wp_mail_smtp_admin_get_providers', array() );
+		$providers = array();
 
-		// Do not allow providers, that are not valid for further usage.
-		foreach ( $filtered as $key => $provider ) {
+		$default = array(
+			new Mail(),
+			new Sendgrid(),
+			new Mailgun(),
+			new SMTP(),
+		);
+
+		// Add the Pepipost only if it's active on a site.
+		if ( Options::init()->is_pepipost_active() ) {
+			array_push( $default, new Pepipost() );
+		}
+
+		// Allow to modify the list of providers.
+		$custom = apply_filters( 'wp_mail_smtp_admin_get_providers', $default );
+
+		// Do not allow providers, that are not valid, for further usage.
+		foreach ( $custom as $provider ) {
 
 			if ( ! $provider instanceof ProviderAbstract ) {
 				continue;
@@ -281,19 +287,8 @@ class Area {
 				continue;
 			}
 
-			$custom[ $key ] = $provider;
+			$providers[] = $provider;
 		}
-
-		// Some default providers should always be present.
-		$providers = array_merge(
-			array(
-				new Mail(),
-			),
-			$custom,
-			array(
-				new SMTP(),
-			)
-		);
 
 		return $providers;
 	}

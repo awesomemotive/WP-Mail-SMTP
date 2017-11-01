@@ -29,16 +29,6 @@ interface ProviderInterface {
 	public function get_title();
 
 	/**
-	 * Get the mailer provider description.
-	 * Already escaped.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string
-	 */
-	public function get_description();
-
-	/**
 	 * Get the mailer provider logo URL.
 	 * Already escaped.
 	 *

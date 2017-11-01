@@ -232,6 +232,24 @@ class Options {
 				}
 
 				break;
+
+			case 'mailgun':
+				switch ( $key ) {
+					case 'api_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAILGUN_API_KEY : $value;
+				}
+
+				break;
+
+			case 'sendgrid':
+				switch ( $key ) {
+					case 'api_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SENDGRID_API_KEY : $value;
+				}
+
+				break;
 		}
 
 		// Always return the default value if nothing from above matches the request.
@@ -303,6 +321,22 @@ class Options {
 				}
 
 				break;
+
+			case 'mailgun':
+				switch ( $key ) {
+					case 'api_key':
+						return defined( 'WPMS_MAILGUN_API_KEY' ) && WPMS_MAILGUN_API_KEY;
+				}
+
+				break;
+
+			case 'sendgrid':
+				switch ( $key ) {
+					case 'api_key':
+						return defined( 'WPMS_SENDGRID_API_KEY' ) && WPMS_SENDGRID_API_KEY;
+				}
+
+				break;
 		}
 
 		return false;
@@ -341,7 +375,7 @@ class Options {
 
 		if (
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp' ), true )
+			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp', 'sendgrid', 'mailgun' ), true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
@@ -351,6 +385,7 @@ class Options {
 					case 'host':
 					case 'user':
 					case 'pass':
+					case 'api_key':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'port':

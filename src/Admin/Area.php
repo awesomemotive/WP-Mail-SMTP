@@ -273,7 +273,7 @@ class Area {
 		// Allow to modify the list of providers.
 		$custom = apply_filters( 'wp_mail_smtp_admin_get_providers', $default );
 
-		// Do not allow providers, that are not valid, for further usage.
+		// Do not allow providers that are not valid for further usage.
 		foreach ( $custom as $provider ) {
 
 			if ( ! $provider instanceof ProviderAbstract ) {

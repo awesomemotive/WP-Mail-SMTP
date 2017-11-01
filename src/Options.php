@@ -238,6 +238,9 @@ class Options {
 					case 'api_key':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_MAILGUN_API_KEY : $value;
+					case 'domain':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAILGUN_DOMAIN : $value;
 				}
 
 				break;
@@ -326,6 +329,8 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						return defined( 'WPMS_MAILGUN_API_KEY' ) && WPMS_MAILGUN_API_KEY;
+					case 'domain':
+						return defined( 'WPMS_MAILGUN_DOMAIN' ) && WPMS_MAILGUN_DOMAIN;
 				}
 
 				break;
@@ -386,6 +391,7 @@ class Options {
 					case 'user':
 					case 'pass':
 					case 'api_key':
+					case 'domain':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'port':

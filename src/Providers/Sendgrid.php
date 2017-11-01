@@ -58,7 +58,7 @@ class Sendgrid extends ProviderAbstract {
 						<?php
 						printf(
 							/* translators: %s - Sendgrid access level. */
-							esc_html__( 'You will need only a %s access level for this API key.', 'wp-mail-smtp' ),
+							esc_html__( 'To send emails you will need only a %s access level for this API key.', 'wp-mail-smtp' ),
 							'<code>Mail Send</code>'
 						);
 						?>

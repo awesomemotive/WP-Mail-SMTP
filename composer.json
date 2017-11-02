@@ -1,25 +1,28 @@
 {
-    "name": "awesomemotive/wp-mail-smtp",
-    "description": "Reconfigures the wp_mail() function to use SMTP instead of mail().",
-    "type": "wordpress-plugin",
-    "keywords": [
-      "mail",
-      "smtp",
-      "wp_mail",
-      "mailer",
-      "phpmailer"
-    ],
-    "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
-    "license": "GPLv3",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-      "composer/installers": "~1.0",
-      "php": ">=5.2.4"
-    },
-    "autoload": {
-      "psr-4": {
-        "WPMailSMTP\\": "src/"
-      }
+  "name": "awesomemotive/wp-mail-smtp",
+  "description": "Reconfigures the wp_mail() function to use SMTP instead of mail().",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "mail",
+    "smtp",
+    "wp_mail",
+    "mailer",
+    "phpmailer"
+  ],
+  "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
+  "license": "GPLv3",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "composer/installers": "~1.0",
+    "php": ">=5.2.4",
+    "mailgun/mailgun-php": "^2.3",
+    "php-http/curl-client": "^1.7",
+    "guzzlehttp/psr7": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "WPMailSMTP\\": "src/"
     }
+  }
 }

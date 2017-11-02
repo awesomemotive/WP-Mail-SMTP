@@ -40,6 +40,7 @@ class Core {
 		add_action( 'activate_wp-mail-smtp/wp_mail_smtp.php', array( $this, 'activate' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'get_processor' ) );
+		add_action( 'plugins_loaded', array( $this, 'replace_phpmailer' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
 		add_action( 'admin_notices', array( 'WPMailSMTP\WP', 'display_admin_notices' ) );
@@ -138,6 +139,31 @@ class Core {
 		}
 
 		return $notification;
+	}
+
+	/**
+	 * Init the \PHPMailer replacement.
+	 *
+	 * @return \WPMailSMTP\MailCatcher
+	 */
+	public function replace_phpmailer() {
+		global $phpmailer;
+
+		return $this->replace_w_fake_phpmailer( $phpmailer );
+	}
+
+	/**
+	 * Overwrite default PhpMailer with out MailCatcher.
+	 *
+	 * @param null $obj
+	 *
+	 * @return \WPMailSMTP\MailCatcher
+	 */
+	protected function replace_w_fake_phpmailer( &$obj = null ) {
+
+		$obj = new MailCatcher();
+
+		return $obj;
 	}
 
 	/**

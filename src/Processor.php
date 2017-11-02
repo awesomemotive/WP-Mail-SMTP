@@ -26,7 +26,7 @@ class Processor {
 		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
 
 		add_filter( 'wp_mail_from', array( $this, 'filter_mail_from_email' ) );
-		add_filter( 'wp_mail_from_name', array( $this, 'filter_mail_from_name' ) );
+		add_filter( 'wp_mail_from_name', array( $this, 'filter_mail_from_name' ), 11 );
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Processor {
 		$phpmailer->Mailer = $options['mail']['mailer'];
 
 		// Set the Sender (return-path) if required.
-		if ( $options['mail']['return_path'] ) {
+		if ( isset( $options['mail']['return_path'] ) && $options['mail']['return_path'] ) {
 			$phpmailer->Sender = $phpmailer->From;
 		}
 

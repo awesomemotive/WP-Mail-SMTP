@@ -11,11 +11,11 @@
   ],
   "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
   "license": "GPLv3",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
     "composer/installers": "~1.0",
-    "php": ">=5.2.4",
+    "php": "^5.3|^7.0",
     "mailgun/mailgun-php": "^2.3",
     "php-http/curl-client": "^1.7",
     "guzzlehttp/psr7": "^1.4"

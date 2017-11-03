@@ -144,6 +144,8 @@ class Core {
 	/**
 	 * Init the \PHPMailer replacement.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return \WPMailSMTP\MailCatcher
 	 */
 	public function replace_phpmailer() {
@@ -154,6 +156,8 @@ class Core {
 
 	/**
 	 * Overwrite default PhpMailer with out MailCatcher.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param null $obj
 	 *

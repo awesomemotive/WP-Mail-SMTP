@@ -3,7 +3,7 @@
 namespace WPMailSMTP;
 
 // Load PHPMailer class, so we can subclass it.
-if ( ! class_exists( ABSPATH . WPINC . '/class-phpmailer.php', false ) ) {
+if ( ! class_exists( '\PHPMailer', false ) ) {
 	require_once ABSPATH . WPINC . '/class-phpmailer.php';
 }
 

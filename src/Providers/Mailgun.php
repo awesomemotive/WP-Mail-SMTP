@@ -19,6 +19,7 @@ class Mailgun extends ProviderAbstract {
 				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.png',
 				'slug'     => 'mailgun',
 				'title'    => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
+				'php'      => '5.5',
 			)
 		);
 	}
@@ -27,6 +28,12 @@ class Mailgun extends ProviderAbstract {
 	 * @inheritdoc
 	 */
 	public function display_options() {
+
+		// Do not display options if PHP version is not correct.
+		if ( ! $this->is_php_correct() ) {
+			$this->display_php_warning();
+			return;
+		}
 		?>
 
 		<table class="form-table">

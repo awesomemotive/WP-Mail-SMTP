@@ -3,7 +3,7 @@
 namespace WPMailSMTP;
 
 // Load PHPMailer class, so we can subclass it.
-if ( ! class_exists( '\PHPMailer', false ) ) {
+if ( ! class_exists( 'PHPMailer', false ) ) {
 	require_once ABSPATH . WPINC . '/class-phpmailer.php';
 }
 
@@ -27,7 +27,6 @@ class MailCatcher extends \PHPMailer {
 	 * @return bool
 	 */
 	public function send() {
-		// TODO: Sender (Return Path).
 		// TODO: attachments - $this->getAttachments()
 		// TODO: Content type.
 		// TODO: CharSet.
@@ -52,7 +51,7 @@ class MailCatcher extends \PHPMailer {
 						'subject'    => $this->Subject,
 						'text'       => $this->AltBody,
 						'html'       => $this->Body,
-						'attachment' => $this->attachment,
+						'attachment' => $this->getAttachments(),
 					);
 
 					if ( $options->get( 'mail', 'return_path' ) ) {

@@ -18,6 +18,7 @@
  */
 
 define( 'WPMS_PLUGIN_VER', '1.0.0' );
+define( 'WPMS_PHP_VER', '5.3' );
 
 /**
  * Setting options in wp-config.php
@@ -47,7 +48,7 @@ define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used
  *
  * @since 1.0.0
  */
-if ( version_compare( phpversion(), '5.3', '>=' ) ) {
+if ( version_compare( phpversion(), WPMS_PHP_VER, '>=' ) ) {
 	require_once dirname( __FILE__ ) . '/wp-mail-smtp.php';
 	return;
 }

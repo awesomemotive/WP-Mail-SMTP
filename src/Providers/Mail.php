@@ -30,7 +30,7 @@ class Mail extends ProviderAbstract {
 		?>
 
 		<blockquote>
-			<?php esc_html_e( 'You currently have the native WordPress option selected. Please select an SMTP above to begin setup.', 'wp-mail-smtp' ); ?>
+			<?php esc_html_e( 'You currently have the native WordPress option selected. Please select any other Mailer option above to continue the setup.', 'wp-mail-smtp' ); ?>
 		</blockquote>
 
 		<?php

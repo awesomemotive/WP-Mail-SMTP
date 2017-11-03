@@ -22,6 +22,10 @@ abstract class ProviderAbstract implements ProviderInterface {
 	 */
 	private $title = '';
 	/**
+	 * @var string
+	 */
+	private $php = WPMS_PHP_VER;
+	/**
 	 * @var Options
 	 */
 	protected $options;
@@ -44,6 +48,10 @@ abstract class ProviderAbstract implements ProviderInterface {
 
 		$this->slug  = sanitize_key( $params['slug'] );
 		$this->title = sanitize_text_field( $params['title'] );
+
+		if ( ! empty( $params['php'] ) ) {
+			$this->php = sanitize_text_field( $params['php'] );
+		}
 
 		if ( ! empty( $params['logo_url'] ) ) {
 			$this->logo_url = esc_url_raw( $params['logo_url'] );
@@ -247,6 +255,40 @@ abstract class ProviderAbstract implements ProviderInterface {
 			);
 			?>
 		</p>
+
+		<?php
+	}
+
+	/**
+	 * Check whether we can use this provider based on the PHP version.
+	 * Valid for those, that use SDK.
+	 *
+	 * @return bool
+	 */
+	protected function is_php_correct() {
+		return version_compare( phpversion(), $this->php, '>=' );
+	}
+
+	/**
+	 * Display a helpful message to those users, that are using an outdated version of PHP,
+	 * which is not supported by the currently selected Provider.
+	 */
+	protected function display_php_warning() {
+		?>
+
+		<blockquote>
+			<?php
+			printf(
+				/* translators: %1$s - Provider name; %2$s - PHP version required by Provider; %3$s - current PHP version. */
+				esc_html__( '%1$s requires PHP %2$s to work and does not support your current PHP version %3$s. Please contact your host and request a PHP upgrade to the latest one.', 'wp-mail-smtp' ),
+				$this->title,
+				$this->php,
+				phpversion()
+			)
+			?>
+			<br>
+			<?php esc_html_e( 'Meanwhile you can switch to the "Other SMTP" Mailer option.', 'wp-mail-smtp' ); ?>
+		</blockquote>
 
 		<?php
 	}

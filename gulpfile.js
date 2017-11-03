@@ -33,6 +33,7 @@ var plugin = {
 		'!node_modules',
 		'!vendor/**/*.md',
 		'!vendor/**/*.json',
+		'!vendor/**/*.lock',
 		'!vendor/**/*.dist',
 		'!vendor/**/*.xml',
 		'!vendor/**/tests/**',

@@ -15,7 +15,7 @@
   "prefer-stable": true,
   "require": {
     "composer/installers": "~1.0",
-    "php": "^5.3|^7.0",
+    "php": ">=5.3",
     "mailgun/mailgun-php": "^2.3",
     "php-http/curl-client": "^1.7",
     "guzzlehttp/psr7": "^1.4"

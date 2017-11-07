@@ -1,11 +1,13 @@
 <?php
 
-namespace WPMailSMTP\Providers;
+namespace WPMailSMTP\Providers\Sendgrid;
+
+use WPMailSMTP\Providers\OptionAbstract;
 
 /**
- * Class Sendgrid
+ * Class Option
  */
-class Sendgrid extends ProviderAbstract {
+class Option extends OptionAbstract {
 
 	/**
 	 * Sendgrid constructor.

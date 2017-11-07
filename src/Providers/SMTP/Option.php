@@ -1,11 +1,13 @@
 <?php
 
-namespace WPMailSMTP\Providers;
+namespace WPMailSMTP\Providers\SMTP;
+
+use WPMailSMTP\Providers\OptionAbstract;
 
 /**
  * Class SMTP
  */
-class SMTP extends ProviderAbstract {
+class Option extends OptionAbstract {
 
 	/**
 	 * SMTP constructor.

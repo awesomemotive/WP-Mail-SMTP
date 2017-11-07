@@ -3,12 +3,12 @@
 namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\Options;
-use WPMailSMTP\Providers\Mail;
-use WPMailSMTP\Providers\Mailgun;
-use WPMailSMTP\Providers\Pepipost;
-use WPMailSMTP\Providers\ProviderAbstract;
-use WPMailSMTP\Providers\Sendgrid;
-use WPMailSMTP\Providers\SMTP;
+use WPMailSMTP\Providers\OptionAbstract;
+use WPMailSMTP\Providers\Mail\Option as MailOption;
+use WPMailSMTP\Providers\Mailgun\Option as MailgunOption;
+use WPMailSMTP\Providers\Pepipost\Option as PepipostOption;
+use WPMailSMTP\Providers\Sendgrid\Option as SendgridOption;
+use WPMailSMTP\Providers\SMTP\Option as SMTPOption;
 use WPMailSMTP\WP;
 
 /**
@@ -252,22 +252,22 @@ class Area {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \WPMailSMTP\Providers\ProviderAbstract[]
+	 * @return \WPMailSMTP\Providers\OptionAbstract[]
 	 */
 	public function get_providers() {
 
 		$providers = array();
 
 		$default = array(
-			new Mail(),
-			new Sendgrid(),
-			new Mailgun(),
-			new SMTP(),
+			new MailOption(),
+			new SendgridOption(),
+			new MailgunOption(),
+			new SMTPOption(),
 		);
 
-		// Add the Pepipost only if it's active on a site.
+		// // Add the Pepipost only if it's active on a site.
 		if ( Options::init()->is_pepipost_active() ) {
-			array_push( $default, new Pepipost() );
+			array_push( $default, new PepipostOption() );
 		}
 
 		// Allow to modify the list of providers.
@@ -276,7 +276,7 @@ class Area {
 		// Do not allow providers that are not valid for further usage.
 		foreach ( $custom as $provider ) {
 
-			if ( ! $provider instanceof ProviderAbstract ) {
+			if ( ! $provider instanceof OptionAbstract ) {
 				continue;
 			}
 

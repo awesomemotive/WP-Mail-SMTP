@@ -7,7 +7,7 @@ use WPMailSMTP\Options;
 /**
  * Abstract Class ProviderAbstract to contain common providers functionality.
  */
-abstract class ProviderAbstract implements ProviderInterface {
+abstract class OptionAbstract implements OptionInterface {
 
 	/**
 	 * @var string

@@ -6,11 +6,10 @@ namespace WPMailSMTP\Providers;
  * Interface ProviderInterface, shared between all current and future providers.
  * Defines required methods across all providers.
  */
-interface ProviderInterface {
+interface OptionInterface {
 
 	/**
 	 * Get the mailer provider slug.
-	 * Already escaped.
 	 *
 	 * @since 1.0.0
 	 *
@@ -20,7 +19,6 @@ interface ProviderInterface {
 
 	/**
 	 * Get the mailer provider title (or name).
-	 * Already escaped.
 	 *
 	 * @since 1.0.0
 	 *
@@ -30,7 +28,6 @@ interface ProviderInterface {
 
 	/**
 	 * Get the mailer provider logo URL.
-	 * Already escaped.
 	 *
 	 * @since 1.0.0
 	 *

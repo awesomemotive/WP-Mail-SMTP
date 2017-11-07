@@ -1,11 +1,13 @@
 <?php
 
-namespace WPMailSMTP\Providers;
+namespace WPMailSMTP\Providers\Pepipost;
+
+use WPMailSMTP\Providers\OptionAbstract;
 
 /**
- * Class Pepipost
+ * Class Option
  */
-class Pepipost extends ProviderAbstract {
+class Option extends OptionAbstract {
 
 	/**
 	 * Pepipost constructor.

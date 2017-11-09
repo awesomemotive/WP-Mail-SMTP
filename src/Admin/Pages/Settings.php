@@ -57,10 +57,11 @@ class Settings extends PageAbstract {
 						/>
 
 						<p class="description">
+							<?php esc_html_e( 'You can specify the email address that emails should be sent from.', 'wp-mail-smtp' ); ?><br/>
 							<?php
 							printf(
 								/* translators: %s - default email address. */
-								esc_html__( 'You can specify the email address that emails should be sent from. If you leave this blank, the default one will be used: %s', 'wp-mail-smtp' ),
+								esc_html__( 'If you leave this blank, the default one will be used: %s.', 'wp-mail-smtp' ),
 								'<code>' . wp_mail_smtp()->get_processor()->get_default_email() . '</code>'
 							);
 							?>
@@ -81,10 +82,11 @@ class Settings extends PageAbstract {
 						/>
 
 						<p class="description">
+							<?php esc_html_e( 'You can specify the name that emails should be sent from.', 'wp-mail-smtp' ); ?><br/>
 							<?php
 							printf(
 								/* translators: %s - WordPress. */
-								esc_html__( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from %s.', 'wp-mail-smtp' ),
+								esc_html__( 'If you leave this blank, the emails will be sent from %s.', 'wp-mail-smtp' ),
 								'<code>WordPress</code>'
 							);
 							?>
@@ -139,7 +141,8 @@ class Settings extends PageAbstract {
 						<label for="wp-mail-smtp-setting-return-path"><?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?></label>
 
 						<p class="description">
-							<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?>
+							<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
+							<?php esc_html_e( 'It won\'t be set if unchecked, thus bounce messages may be lost.', 'wp-mail-smtp' ); ?>
 						</p>
 					</td>
 				</tr>

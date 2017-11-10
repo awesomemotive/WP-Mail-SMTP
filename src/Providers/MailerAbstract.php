@@ -258,11 +258,7 @@ abstract class MailerAbstract implements MailerInterface {
 
 		$is_sent = false;
 
-		if (
-			isset( $this->response['response'] ) &&
-			isset( $this->response['response']['code'] ) &&
-			$this->response['response']['code'] === $this->email_sent_code
-		) {
+		if ( wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code ) {
 			$is_sent = true;
 		}
 

@@ -12,6 +12,12 @@ use WPMailSMTP\Options;
 abstract class MailerAbstract implements MailerInterface {
 
 	/**
+	 * Which response code from HTTP provider is considered to be successful?
+	 *
+	 * @var int
+	 */
+	protected $email_sent_code = 200;
+	/**
 	 * @var Options
 	 */
 	protected $options;
@@ -44,11 +50,6 @@ abstract class MailerAbstract implements MailerInterface {
 	protected $response = array();
 
 	/**
-	 * @var string
-	 */
-	protected $error_message = '';
-
-	/**
 	 * Mailer constructor.
 	 *
 	 * @since 1.0.0
@@ -68,6 +69,10 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * Re-use the \PHPMailer class methods and properties.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param \PHPMailer $phpmailer
 	 */
 	protected function process_phpmailer( $phpmailer ) {
@@ -101,6 +106,10 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * Set the request params, that goes to the body of the HTTP request.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param array $param Key=>value of what should be sent to a 3rd party API.
 	 *
 	 * @internal param array $params
@@ -110,7 +119,7 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @param array $headers
+	 * @inheritdoc
 	 */
 	public function set_headers( $headers ) {
 
@@ -127,8 +136,7 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @param string $name
-	 * @param string $value
+	 * @inheritdoc
 	 */
 	public function set_header( $name, $value ) {
 
@@ -166,14 +174,14 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_body() {
 		return apply_filters( 'wp_mail_smtp_providers_mailer_get_body', $this->body );
 	}
 
 	/**
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_headers() {
 		return apply_filters( 'wp_mail_smtp_providers_mailer_get_headers', $this->headers );
@@ -195,6 +203,11 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * We might need to do something after the email was sent to the API.
+	 * In this method we preprocess the response from the API.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param array|\WP_Error $response
 	 */
 	protected function process_response( $response ) {
@@ -211,6 +224,10 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * Get the default params, required for wp_safe_remote_post().
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return array
 	 */
 	protected function get_default_params() {
@@ -227,14 +244,23 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function is_email_sent() {
 
-		return apply_filters(
-			'wp_mail_smtp_providers_mailer_is_email_sent',
-			isset( $this->response['response'] ) && isset( $this->response['response']['code'] ) && $this->response['response']['code'] === 200
-		);
+		$is_sent = false;
+
+		if (
+			isset( $this->response['response'] ) &&
+			isset( $this->response['response']['code'] ) &&
+			$this->response['response']['code'] === $this->email_sent_code
+		) {
+			$is_sent = true;
+		}
+
+		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent );
 	}
 
 	/**
 	 * Check whether the string is a JSON or not.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $string
 	 *
@@ -247,6 +273,8 @@ abstract class MailerAbstract implements MailerInterface {
 	/**
 	 * Merge recursively, including a proper substitution of values in sub-arrays when keys are the same.
 	 * It's more like array_merge() and array_merge_recursive() combined.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */

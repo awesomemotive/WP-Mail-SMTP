@@ -12,6 +12,13 @@ use WPMailSMTP\Providers\MailerAbstract;
 class Mailer extends MailerAbstract {
 
 	/**
+	 * Which response code from HTTP provider is considered to be successful?
+	 *
+	 * @var int
+	 */
+	protected $email_sent_code = 200;
+
+	/**
 	 * URL to make an API request to.
 	 *
 	 * @var string
@@ -19,11 +26,7 @@ class Mailer extends MailerAbstract {
 	protected $url = 'https://api.mailgun.net/v3';
 
 	/**
-	 * Mailer constructor.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \PHPMailer $phpmailer
+	 * @inheritdoc
 	 */
 	public function __construct( $phpmailer ) {
 

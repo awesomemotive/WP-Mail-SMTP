@@ -1,0 +1,293 @@
+<?php
+
+namespace WPMailSMTP\Providers;
+
+use WPMailSMTP\Options;
+
+/**
+ * Class MailerAbstract
+ *
+ * @package WPMailSMTP\Providers
+ */
+abstract class MailerAbstract implements MailerInterface {
+
+	/**
+	 * @var Options
+	 */
+	protected $options;
+	/**
+	 * @var \PHPMailer
+	 */
+	protected $phpmailer;
+	/**
+	 * @var string
+	 */
+	protected $mailer = '';
+
+	/**
+	 * URL to make an API request to.
+	 *
+	 * @var string
+	 */
+	protected $url = '';
+	/**
+	 * @var array
+	 */
+	protected $headers = array();
+	/**
+	 * @var array
+	 */
+	protected $body = array();
+	/**
+	 * @var mixed
+	 */
+	protected $response = array();
+
+	/**
+	 * @var string
+	 */
+	protected $error_message = '';
+
+	/**
+	 * Mailer constructor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHPMailer $phpmailer
+	 */
+	public function __construct( $phpmailer ) {
+
+		if ( empty( $this->url ) ) {
+			return;
+		}
+
+		$this->options = new Options();
+		$this->mailer  = $this->options->get( 'mail', 'mailer' );
+
+		$this->process_phpmailer( $phpmailer );
+	}
+
+	/**
+	 * @param \PHPMailer $phpmailer
+	 */
+	protected function process_phpmailer( $phpmailer ) {
+
+		// Make sure that we have access to PHPMailer class methods.
+		if ( ! $phpmailer instanceof \PHPMailer ) {
+			return;
+		}
+
+		$this->phpmailer = $phpmailer;
+
+		$this->set_headers( $this->phpmailer->getCustomHeaders() );
+		$this->set_from( $this->phpmailer->From, $this->phpmailer->FromName );
+		$this->set_recipients(
+			array(
+				'to'  => $this->phpmailer->getToAddresses(),
+				'cc'  => $this->phpmailer->getCcAddresses(),
+				'bcc' => $this->phpmailer->getBccAddresses(),
+			)
+		);
+		$this->set_subject( $this->phpmailer->Subject );
+		$this->set_content(
+			array(
+				'html' => $this->phpmailer->Body,
+				'text' => $this->phpmailer->AltBody,
+			)
+		);
+		$this->set_attachments( $this->phpmailer->getAttachments() );
+		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
+		$this->set_return_path( $this->phpmailer->From );
+	}
+
+	/**
+	 * @param array $param Key=>value of what should be sent to a 3rd party API.
+	 *
+	 * @internal param array $params
+	 */
+	protected function set_body_param( $param ) {
+		$this->body = $this->array_merge_recursive( $this->body, $param );
+	}
+
+	/**
+	 * @param array $headers
+	 */
+	public function set_headers( $headers ) {
+
+		foreach ( $headers as $header ) {
+			$name  = isset( $header[0] ) ? $header[0] : false;
+			$value = isset( $header[1] ) ? $header[1] : false;
+
+			if ( empty( $name ) || empty( $value ) ) {
+				continue;
+			}
+
+			$this->set_header( $name, $value );
+		}
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $value
+	 */
+	public function set_header( $name, $value ) {
+
+		$process_value = function ( $value ) {
+			// Remove HTML tags.
+			$filtered = wp_strip_all_tags( $value, false );
+			// Remove multi-lines/tabs.
+			$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
+			// Remove whitespaces.
+			$filtered = trim( $filtered );
+
+			// Remove octets.
+			$found = false;
+			while ( preg_match( '/%[a-f0-9]{2}/i', $filtered, $match ) ) {
+				$filtered = str_replace( $match[0], '', $filtered );
+				$found    = true;
+			}
+
+			if ( $found ) {
+				// Strip out the whitespace that may now exist after removing the octets.
+				$filtered = trim( preg_replace( '/ +/', ' ', $filtered ) );
+			}
+
+			return $filtered;
+		};
+
+		$name = sanitize_text_field( $name );
+		if ( empty( $name ) ) {
+			return;
+		}
+
+		$value = $process_value( $value );
+
+		$this->headers[ $name ] = $value;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_body() {
+		return apply_filters( 'wp_mail_smtp_providers_mailer_get_body', $this->body );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_headers() {
+		return apply_filters( 'wp_mail_smtp_providers_mailer_get_headers', $this->headers );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function send() {
+
+		$params = $this->array_merge_recursive( $this->get_default_params(), array(
+			'headers' => $this->get_headers(),
+			'body'    => $this->get_body(),
+		) );
+
+		$response = wp_safe_remote_post( $this->url, $params );
+
+		$this->process_response( $response );
+	}
+
+	/**
+	 * @param array|\WP_Error $response
+	 */
+	protected function process_response( $response ) {
+
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
+
+		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
+			$response['body'] = json_decode( $response['body'] );
+		}
+
+		$this->response = $response;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_default_params() {
+
+		return apply_filters( 'wp_mail_smtp_providers_mailer_get_default_params', array(
+			'timeout'     => 15,
+			'httpversion' => '1.1',
+			'blocking'    => true,
+		) );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function is_email_sent() {
+
+		return apply_filters(
+			'wp_mail_smtp_providers_mailer_is_email_sent',
+			isset( $this->response['response'] ) && isset( $this->response['response']['code'] ) && $this->response['response']['code'] === 200
+		);
+	}
+
+	/**
+	 * Check whether the string is a JSON or not.
+	 *
+	 * @param string $string
+	 *
+	 * @return bool
+	 */
+	protected function is_json( $string ) {
+		return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( json_last_error() === JSON_ERROR_NONE ) ? true : false;
+	}
+
+	/**
+	 * Merge recursively, including a proper substitution of values in sub-arrays when keys are the same.
+	 * It's more like array_merge() and array_merge_recursive() combined.
+	 *
+	 * @return array
+	 */
+	protected function array_merge_recursive() {
+
+		$arrays = func_get_args();
+
+		if ( count( $arrays ) < 2 ) {
+			return isset( $arrays[0] ) ? $arrays[0] : array();
+		}
+
+		$merged = array();
+
+		while ( $arrays ) {
+			$array = array_shift( $arrays );
+
+			if ( ! is_array( $array ) ) {
+				return array();
+			}
+
+			if ( empty( $array ) ) {
+				continue;
+			}
+
+			foreach ( $array as $key => $value ) {
+				if ( is_string( $key ) ) {
+					if (
+						is_array( $value ) &&
+						array_key_exists( $key, $merged ) &&
+						is_array( $merged[ $key ] )
+					) {
+						$merged[ $key ] = call_user_func( __FUNCTION__, $merged[ $key ], $value );
+					} else {
+						$merged[ $key ] = $value;
+					}
+				} else {
+					$merged[] = $value;
+				}
+			}
+		}
+
+		return $merged;
+	}
+}

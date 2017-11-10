@@ -231,7 +231,7 @@ abstract class MailerAbstract implements MailerInterface {
 		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
 			$response['body'] = json_decode( $response['body'] );
 		}
-pvar($response,1);
+
 		$this->response = $response;
 	}
 

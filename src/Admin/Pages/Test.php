@@ -85,8 +85,8 @@ class Test extends PageAbstract {
 			$phpmailer = new \PHPMailer( true );
 		}
 
-		// Set SMTPDebug level, default is 0 (no output).
-		$phpmailer->SMTPDebug = apply_filters( 'wp_mail_smtp_test_email_smtp_debug', 0 );
+		// Set SMTPDebug level, default is 3 (commands + data + connection status).
+		$phpmailer->SMTPDebug = apply_filters( 'wp_mail_smtp_admin_test_email_smtp_debug', 3 );
 
 		// Start output buffering to grab smtp debugging output.
 		ob_start();

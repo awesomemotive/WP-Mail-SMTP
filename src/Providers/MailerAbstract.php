@@ -106,6 +106,18 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function set_subject( $subject ) {
+
+		$this->set_body_param(
+			array(
+				'subject' => $subject,
+			)
+		);
+	}
+
+	/**
 	 * Set the request params, that goes to the body of the HTTP request.
 	 *
 	 * @since 1.0.0
@@ -219,7 +231,7 @@ abstract class MailerAbstract implements MailerInterface {
 		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
 			$response['body'] = json_decode( $response['body'] );
 		}
-
+pvar($response,1);
 		$this->response = $response;
 	}
 

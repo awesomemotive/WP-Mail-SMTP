@@ -79,7 +79,7 @@ interface MailerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $content
+	 * @param string|array $content
 	 */
 	public function set_content( $content );
 

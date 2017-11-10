@@ -116,18 +116,6 @@ class Mailer extends MailerAbstract {
 	/**
 	 * @inheritdoc
 	 */
-	public function set_subject( $subject ) {
-
-		$this->set_body_param(
-			array(
-				'subject' => $subject,
-			)
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function set_content( $content ) {
 
 		if ( is_array( $content ) ) {

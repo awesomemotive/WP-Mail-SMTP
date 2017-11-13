@@ -64,6 +64,8 @@ class MailCatcher extends \PHPMailer {
 	/**
 	 * Get the mailer class instance based on the Mailer setting.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $mailer
 	 *
 	 * @return null|\WPMailSMTP\Providers\MailerAbstract

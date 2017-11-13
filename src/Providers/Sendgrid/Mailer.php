@@ -45,6 +45,8 @@ class Mailer extends MailerAbstract {
 	 * Redefine the way email body is returned.
 	 * By default we are sending an array of data.
 	 * Sendgrid requires a JSON, so we encode the body.
+	 *
+	 * @since 1.0.0
 	 */
 	public function get_body() {
 
@@ -185,20 +187,51 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * TODO: this doesn't work, we need to actually upload files and pass their temp paths.
-	 * TODO: in the end it should be an array of paths to temp files.
+	 * Sendgrid accepts an arrat of files content in body, so we will include all files and send.
+	 * Doesn't handle exceeding the limits etc, as this is done and reported be Sendgrid API.
 	 *
 	 * @param array $attachments
 	 */
 	public function set_attachments( $attachments ) {
 
-		if ( ! empty( $attachments ) ) {
-			$this->set_body_param(
-				array(
-					'attachment' => $attachments,
-				)
+		if ( empty( $attachments ) ) {
+			return;
+		}
+
+		$data = array();
+
+		foreach ( $attachments as $attachment ) {
+			$file = false;
+
+			/*
+			 * We are not using WP_Filesystem API as we can't reliably work with it.
+			 * It is not always available, same as credentials for FTP.
+			 */
+			try {
+				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
+					$file = file_get_contents( $attachment[0] );
+				}
+			} catch ( \Exception $e ) {
+				$file = false;
+			}
+
+			if ( $file === false ) {
+				continue;
+			}
+
+			$data[] = array(
+				'content'     => base64_encode( $file ),
+				'type'        => $attachment[4],
+				'filename'    => $attachment[1],
+				'disposition' => $attachment[6],
 			);
 		}
+
+		$this->set_body_param(
+			array(
+				'attachments' => $data,
+			)
+		);
 	}
 
 	/**
@@ -247,6 +280,8 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Sendgrid doesn't support sender or return_path params.
 	 * So we do nothing.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $email
 	 */

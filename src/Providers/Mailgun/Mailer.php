@@ -154,19 +154,83 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * TODO: this doesn't work, we need to actually upload files and pass their temp paths.
-	 * TODO: in the end it should be an array of paths to temp files.
+	 * It's the last one, so we can modify the whole body.
 	 *
 	 * @param array $attachments
 	 */
 	public function set_attachments( $attachments ) {
 
-		if ( ! empty( $attachments ) ) {
-			$this->set_body_param(
-				array(
-					'attachment' => $attachments,
-				)
+		if ( empty( $attachments ) ) {
+			return;
+		}
+
+		$payload = '';
+		$data    = array();
+
+		foreach ( $attachments as $attachment ) {
+			$file = false;
+
+			/*
+			 * We are not using WP_Filesystem API as we can't reliably work with it.
+			 * It is not always available, same as credentials for FTP.
+			 */
+			try {
+				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
+					$file = file_get_contents( $attachment[0] );
+				}
+			} catch ( \Exception $e ) {
+				$file = false;
+			}
+
+			if ( $file === false ) {
+				continue;
+			}
+
+			$data[] = array(
+				'content' => $file,
+				'name'    => $attachment[1],
 			);
+		}
+
+		if ( ! empty( $data ) ) {
+
+			// First, generate a boundary for the multipart message.
+			$boundary = base_convert( uniqid( 'boundary', true ), 10, 36 );
+
+			// Iterate through pre-built params and build a payload.
+			foreach ( $this->body as $key => $value ) {
+				if ( is_array( $value ) ) {
+					foreach ( $value as $child_key => $child_value ) {
+						$payload .= '--' . $boundary;
+						$payload .= "\r\n";
+						$payload .= 'Content-Disposition: form-data; name="' . $key . "\"\r\n\r\n";
+						$payload .= $child_value;
+						$payload .= "\r\n";
+					}
+				} else {
+					$payload .= '--' . $boundary;
+					$payload .= "\r\n";
+					$payload .= 'Content-Disposition: form-data; name="' . $key . '"' . "\r\n\r\n";
+					$payload .= $value;
+					$payload .= "\r\n";
+				}
+			}
+
+			// Now iterate through our attachments, and add them too.
+			foreach ( $data as $key => $attachment ) {
+				$payload .= '--' . $boundary;
+				$payload .= "\r\n";
+				$payload .= 'Content-Disposition: form-data; name="attachment[' . $key . ']"; filename="' . $attachment['name'] . '"' . "\r\n\r\n";
+				$payload .= $attachment['content'];
+				$payload .= "\r\n";
+			}
+
+			$payload .= '--' . $boundary . '--';
+
+			// Redefine the body the "dirty way".
+			$this->body = $payload;
+
+			$this->set_header( 'Content-Type', 'multipart/form-data; boundary=' . $boundary );
 		}
 	}
 

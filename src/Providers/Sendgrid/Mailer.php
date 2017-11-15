@@ -187,7 +187,7 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Sendgrid accepts an arrat of files content in body, so we will include all files and send.
+	 * Sendgrid accepts an array of files content in body, so we will include all files and send.
 	 * Doesn't handle exceeding the limits etc, as this is done and reported be Sendgrid API.
 	 *
 	 * @param array $attachments
@@ -227,11 +227,13 @@ class Mailer extends MailerAbstract {
 			);
 		}
 
-		$this->set_body_param(
-			array(
-				'attachments' => $data,
-			)
-		);
+		if ( ! empty( $data ) ) {
+			$this->set_body_param(
+				array(
+					'attachments' => $data,
+				)
+			);
+		}
 	}
 
 	/**

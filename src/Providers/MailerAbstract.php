@@ -100,9 +100,15 @@ abstract class MailerAbstract implements MailerInterface {
 				'text' => $this->phpmailer->AltBody,
 			)
 		);
-		$this->set_attachments( $this->phpmailer->getAttachments() );
-		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
 		$this->set_return_path( $this->phpmailer->From );
+		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
+
+		/*
+		 * In some cases we will need to modify the internal structure
+		 * of the body content, if attachments are present.
+		 * So lets make this call the last one.
+		 */
+		$this->set_attachments( $this->phpmailer->getAttachments() );
 	}
 
 	/**

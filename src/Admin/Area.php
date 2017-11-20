@@ -175,15 +175,15 @@ class Area {
 
 			<div class="wp-mail-smtp-page-title">
 				<?php foreach ( $this->get_pages() as $page_slug => $page ) : ?>
-					<?php $class = $page_slug === $this->get_current_subpage() ? 'class="active"' : ''; ?>
+					<?php $class = $page_slug === $this->get_current_tab() ? 'class="active"' : ''; ?>
 					<a href="<?php echo $page->get_link(); ?>" <?php echo $class; ?>><?php echo $page->get_label(); ?></a>
 				<?php endforeach; ?>
 			</div>
 
 			<div class="wp-mail-smtp-page">
-				<h1><?php echo $this->get_current_subpage_title(); ?></h1>
+				<h1><?php echo $this->get_current_tab_title(); ?></h1>
 
-				<?php $this->display_current_subpage_content(); ?>
+				<?php $this->display_current_tab_content(); ?>
 			</div>
 
 		</div>
@@ -192,32 +192,32 @@ class Area {
 	}
 
 	/**
-	 * Get the current subpage title.
+	 * Get the current tab title.
 	 *
 	 * @since 1.0.0
 	 */
-	public function display_current_subpage_content() {
+	public function display_current_tab_content() {
 
-		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
+		if ( ! array_key_exists( $this->get_current_tab(), $this->get_pages() ) ) {
 			return;
 		}
 
-		$this->pages[ $this->get_current_subpage() ]->display();
+		$this->pages[ $this->get_current_tab() ]->display();
 	}
 
 	/**
-	 * Get the current admin area subpage.
+	 * Get the current admin area tab.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
-	protected function get_current_subpage() {
-		return ! empty( $_GET['subpage'] ) ? sanitize_key( $_GET['subpage'] ) : 'settings';
+	protected function get_current_tab() {
+		return ! empty( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'settings';
 	}
 
 	/**
-	 * Get the array of default registered subpages for plugin admin area.
+	 * Get the array of default registered tabs for plugin admin area.
 	 *
 	 * @since 1.0.0
 	 *
@@ -236,19 +236,19 @@ class Area {
 	}
 
 	/**
-	 * Get the current subpage title.
+	 * Get the current tab title.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
-	public function get_current_subpage_title() {
+	public function get_current_tab_title() {
 
-		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
+		if ( ! array_key_exists( $this->get_current_tab(), $this->get_pages() ) ) {
 			return '';
 		}
 
-		return $this->pages[ $this->get_current_subpage() ]->get_title();
+		return $this->pages[ $this->get_current_tab() ]->get_title();
 	}
 
 	/**
@@ -323,11 +323,11 @@ class Area {
 			return;
 		}
 
-		if ( ! array_key_exists( $this->get_current_subpage(), $this->get_pages() ) ) {
+		if ( ! array_key_exists( $this->get_current_tab(), $this->get_pages() ) ) {
 			return;
 		}
 
-		$this->pages[ $this->get_current_subpage() ]->process( $_POST['wp-mail-smtp'] );
+		$this->pages[ $this->get_current_tab() ]->process( $_POST['wp-mail-smtp'] );
 	}
 
 	/**

@@ -11,7 +11,7 @@ use WPMailSMTP\Admin\PageAbstract;
 class Test extends PageAbstract {
 
 	/**
-	 * @var string Slug of a subpage.
+	 * @var string Slug of a tab.
 	 */
 	protected $slug = 'test';
 

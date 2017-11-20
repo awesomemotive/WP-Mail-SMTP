@@ -8,7 +8,7 @@ namespace WPMailSMTP\Admin;
 abstract class PageAbstract implements PageInterface {
 
 	/**
-	 * @var string Slug of a subpage.
+	 * @var string Slug of a tab.
 	 */
 	protected $slug;
 
@@ -18,7 +18,7 @@ abstract class PageAbstract implements PageInterface {
 	public function get_link() {
 		return esc_url(
 			add_query_arg(
-				'subpage',
+				'tab',
 				$this->slug,
 				admin_url( 'options-general.php?page=' . Area::SLUG )
 			)
@@ -26,7 +26,7 @@ abstract class PageAbstract implements PageInterface {
 	}
 
 	/**
-	 * Print the nonce field for specific subpage.
+	 * Print the nonce field for a specific tab.
 	 *
 	 * @since 1.0.0
 	 */

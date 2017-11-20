@@ -8,7 +8,7 @@ namespace WPMailSMTP\Admin;
 interface PageInterface {
 
 	/**
-	 * URL to a subpage.
+	 * URL to a tab.
 	 *
 	 * @since 1.0.0
 	 *
@@ -17,7 +17,7 @@ interface PageInterface {
 	public function get_link();
 
 	/**
-	 * Title of a subpage.
+	 * Title of a tab.
 	 *
 	 * @since 1.0.0
 	 *
@@ -26,7 +26,7 @@ interface PageInterface {
 	public function get_title();
 
 	/**
-	 * Link label of a subpage.
+	 * Link label of a tab.
 	 *
 	 * @since 1.0.0
 	 *
@@ -35,14 +35,14 @@ interface PageInterface {
 	public function get_label();
 
 	/**
-	 * Subpage content.
+	 * Tab content.
 	 *
 	 * @since 1.0.0
 	 */
 	public function display();
 
 	/**
-	 * Process subpage form submission.
+	 * Process tab form submission.
 	 *
 	 * @since 1.0.0
 	 *

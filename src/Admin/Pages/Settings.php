@@ -12,7 +12,7 @@ use WPMailSMTP\WP;
 class Settings extends PageAbstract {
 
 	/**
-	 * @var string Slug of a subpage.
+	 * @var string Slug of a tab.
 	 */
 	protected $slug = 'settings';
 

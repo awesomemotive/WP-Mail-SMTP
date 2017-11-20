@@ -155,15 +155,15 @@ class Options {
 
 		switch ( $key ) {
 			case 'return_path':
-				$value = empty( $value ) ? false : true;
+				$value = $group === 'mail' && empty( $value ) ? false : true;
 				break;
 
 			case 'encryption':
-				$value = empty( $value ) ? 'none' : $value;
+				$value = $group === 'smtp' && empty( $value ) ? 'none' : $value;
 				break;
 
 			case 'auth':
-				$value = empty( $value ) ? false : true;
+				$value = $group === 'smtp' && empty( $value ) ? false : true;
 				break;
 		}
 

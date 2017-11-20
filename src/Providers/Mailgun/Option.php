@@ -23,7 +23,6 @@ class Option extends OptionAbstract {
 				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.png',
 				'slug'     => 'mailgun',
 				'title'    => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
-				'php'      => '5.5',
 			)
 		);
 	}
@@ -32,12 +31,6 @@ class Option extends OptionAbstract {
 	 * @inheritdoc
 	 */
 	public function display_options() {
-
-		// Do not display options if PHP version is not correct.
-		if ( ! $this->is_php_correct() ) {
-			$this->display_php_warning();
-			return;
-		}
 		?>
 
 		<table class="form-table">
@@ -49,15 +42,15 @@ class Option extends OptionAbstract {
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]" type="text"
-					       value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ? 'disabled' : ''; ?>
-						   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api-key" class="regular-text" spellcheck="false"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api-key" class="regular-text" spellcheck="false"
 					/>
 
 					<p class="description">
 						<?php
 						printf(
-						/* translators: %s - API key link. */
+							/* translators: %s - API key link. */
 							esc_html__( 'Follow this link to get an API Key from Mailgun: %s.', 'wp-mail-smtp' ),
 							'<a href="https://app.mailgun.com/app/account/security" target="_blank">' .
 							esc_html__( 'Get a Private API Key', 'wp-mail-smtp' ) .
@@ -75,15 +68,15 @@ class Option extends OptionAbstract {
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][domain]" type="text"
-					       value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'domain' ) ); ?>"
+						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'domain' ) ); ?>"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'domain' ) ? 'disabled' : ''; ?>
-						   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain" class="regular-text" spellcheck="false"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain" class="regular-text" spellcheck="false"
 					/>
 
 					<p class="description">
 						<?php
 						printf(
-						/* translators: %s - Domain Name link. */
+							/* translators: %s - Domain Name link. */
 							esc_html__( 'Follow this link to get a Domain Name from Mailgun: %s.', 'wp-mail-smtp' ),
 							'<a href="https://app.mailgun.com/app/domains" target="_blank">' .
 							esc_html__( 'Get a Domain Name', 'wp-mail-smtp' ) .

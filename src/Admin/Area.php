@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\OptionAbstract;
+use WPMailSMTP\Providers\Gmail\Option as GmailOption;
 use WPMailSMTP\Providers\Mail\Option as MailOption;
 use WPMailSMTP\Providers\Mailgun\Option as MailgunOption;
 use WPMailSMTP\Providers\Pepipost\Option as PepipostOption;
@@ -251,7 +252,7 @@ class Area {
 	}
 
 	/**
-	 * Default providers (mail/smtp) should not be redefined or removed.
+	 * Get the list of currently supported providers.
 	 *
 	 * @since 1.0.0
 	 *
@@ -263,6 +264,7 @@ class Area {
 
 		$default = array(
 			new MailOption(),
+			new GmailOption(),
 			new SendgridOption(),
 			new MailgunOption(),
 			new SMTPOption(),

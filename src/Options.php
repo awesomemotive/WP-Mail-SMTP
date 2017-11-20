@@ -233,6 +233,18 @@ class Options {
 
 				break;
 
+			case 'gmail':
+				switch ( $key ) {
+					case 'client_id':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_GMAIL_CLIENT_ID : $value;
+					case 'client_secret':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_GMAIL_CLIENT_SECRET : $value;
+				}
+
+				break;
+
 			case 'mailgun':
 				switch ( $key ) {
 					case 'api_key':
@@ -325,6 +337,16 @@ class Options {
 
 				break;
 
+			case 'gmail':
+				switch ( $key ) {
+					case 'client_id':
+						return defined( 'WPMS_GMAIL_CLIENT_ID' ) && WPMS_GMAIL_CLIENT_ID;
+					case 'client_secret':
+						return defined( 'WPMS_GMAIL_CLIENT_SECRET' ) && WPMS_GMAIL_CLIENT_SECRET;
+				}
+
+				break;
+
 			case 'mailgun':
 				switch ( $key ) {
 					case 'api_key':
@@ -392,6 +414,8 @@ class Options {
 					case 'pass':
 					case 'api_key':
 					case 'domain':
+					case 'client_id':
+					case 'client_secret':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'port':
@@ -401,7 +425,8 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'auth':
-						$value                           = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
+						$value = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
+
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;
 				}

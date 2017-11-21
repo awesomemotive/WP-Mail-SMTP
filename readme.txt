@@ -3,7 +3,7 @@ Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 3.6
-Tested up to: 4.8
+Tested up to: 4.9
 Stable tag: trunk
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 700k sites.
@@ -103,6 +103,7 @@ By all means please contact us to discuss features or options you'd like to see 
 * Added: Helper description to Return Path option.
 * Added: Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.
 * Added: PHP 5.2 notice.
+* Added: Announcement feed.
 * Changed: Localization fixes, proper locale name.
 * Changed: Code style improvements and optimizations for both HTML and PHP.
 * Changed: Inputs for emails now have a proper type `email`, instead of a generic `text`.

@@ -123,9 +123,7 @@ class WPMS_AM_Notification {
 				'body' => array(
 					'slug'              => $this->plugin,
 					'version'           => $this->plugin_version,
-					'last_notification' => $notification_id,
-					'plugins'           => $this->get_plugins_list(),
-					'themes'            => $this->get_themes_list(),
+					'last_notification' => $notification_id
 				),
 			) ) );
 
@@ -194,62 +192,6 @@ class WPMS_AM_Notification {
 				'post_type' => 'amn_' . $this->plugin,
 			) + $args
 		);
-	}
-
-	/**
-	 * Retrieve a list of plugins that are currently installed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array An array of plugins that are currently installed.
-	 */
-	public function get_plugins_list() {
-		if ( ! empty( $this->plugin_list ) ) {
-			return $this->plugin_list;
-		}
-
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$plugins = get_plugins();
-
-		foreach ( $plugins as $slug => $plugin ) {
-			$this->plugin_list[ $slug ] = array(
-				'slug'    => $slug,
-				'name'    => $plugin['Name'],
-				'version' => $plugin['Version'],
-				'active'  => is_plugin_active( $slug ),
-			);
-		}
-
-		return $this->plugin_list;
-	}
-
-	/**
-	 * Retrieve a list of themes that are currently installed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array An array of themes that are currently installed.
-	 */
-	public function get_themes_list() {
-		if ( ! empty( $this->theme_list ) ) {
-			return $this->theme_list;
-		}
-
-		$themes = wp_get_themes();
-
-		foreach ( $themes as $slug => $theme ) {
-			$this->theme_list[ $slug ] = array(
-				'slug'    => $slug,
-				'name'    => $theme->Name,
-				'version' => $theme->Version,
-				'active'  => (string) wp_get_theme() === $theme->Name,
-			);
-		}
-
-		return $this->theme_list;
 	}
 
 	/**

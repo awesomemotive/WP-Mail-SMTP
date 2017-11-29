@@ -429,6 +429,10 @@ class Options {
 
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;
+
+					case 'auth_code':
+					case 'access_token':
+						// Do nothing for them.
 				}
 			}
 		}

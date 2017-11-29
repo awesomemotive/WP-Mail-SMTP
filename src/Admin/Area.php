@@ -280,6 +280,7 @@ class Area {
 			$this->pages[ $this->get_current_tab() ]->process_post( $_POST['wp-mail-smtp'] );
 		}
 
+		// This won't do anything for most pages.
 		$this->pages[ $this->get_current_tab() ]->process_auth();
 	}
 

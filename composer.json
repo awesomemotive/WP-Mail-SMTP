@@ -15,11 +15,22 @@
   "prefer-stable": true,
   "require": {
     "composer/installers": "~1.0",
-    "php": ">=5.3"
+    "php": ">=5.3",
+    "google/apiclient": "^2.2.1"
+  },
+  "config": {
+    "prepend-autoloader": false
   },
   "autoload": {
-    "psr-4": {
-      "WPMailSMTP\\": "src/"
-    }
+    "exclude-from-classmap": [
+      "**/test/",
+      "**/tests/",
+      "**/Test/",
+      "**/Tests/",
+      "/vendor/composer/installers/",
+      "/vendor/monolog/",
+      "/vendor/google/apiclient-services/src/Google/Service/Safebrowsing/",
+      "/src/"
+    ]
   }
 }

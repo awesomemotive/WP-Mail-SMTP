@@ -116,7 +116,7 @@ class Loader {
 	 *
 	 * @param string $provider
 	 *
-	 * @return null|callable
+	 * @return \WPMailSMTP\Providers\AuthAbstract|null
 	 */
 	public function get_auth( $provider ) {
 		return $this->get_entity( $provider, 'Auth' );

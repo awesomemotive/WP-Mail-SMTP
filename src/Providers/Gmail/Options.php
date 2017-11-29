@@ -78,7 +78,7 @@ class Options extends OptionAbstract {
 				</th>
 				<td>
 					<input type="text" readonly="readonly" class="regular-text"
-						value="<?php echo esc_attr( wp_mail_smtp()->get_admin()->get_admin_page_url() ); ?>"
+						value="<?php echo esc_attr( Auth::get_plugin_auth_url() ); ?>"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-redirect"
 					/>
 					<button type="button" class="button wp-mail-smtp-setting-copy"
@@ -94,20 +94,18 @@ class Options extends OptionAbstract {
 				</td>
 			</tr>
 
-			<!-- Auth users -->
-			<tr>
-				<td>&nbsp;</td>
-				<td>
-					<?php /*
-					<?php $auth = new Auth(); ?>
-					<?php if ( $auth->is_completed() ) : ?>
-						<a href="<?php echo esc_url( $auth->get_auth_url() ); ?>" class="button-primary">
+			<!-- Auth users button -->
+			<?php $auth = new Auth(); ?>
+			<?php if ( ! $auth->is_completed() ) : ?>
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="button-primary">
 							<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
 						</a>
-					<?php endif; ?>
-					*/ ?>
-				</td>
-			</tr>
+					</td>
+				</tr>
+			<?php endif; ?>
 
 		</table>
 

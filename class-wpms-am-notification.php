@@ -42,24 +42,6 @@ class WPMS_AM_Notification {
 	public $plugin_version;
 
 	/**
-	 * The list of installed plugins.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var array
-	 */
-	public $plugin_list = array();
-
-	/**
-	 * The list of installed themes.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $theme_list = array();
-
-	/**
 	 * Flag if a notice has been registered.
 	 *
 	 * @since 1.0.0
@@ -156,7 +138,6 @@ class WPMS_AM_Notification {
 					update_post_meta( $new_notification_id, 'type', sanitize_text_field( trim( $data->type ) ) );
 					update_post_meta( $new_notification_id, 'dismissable', (bool) $data->dismissible ? 1 : 0 );
 					update_post_meta( $new_notification_id, 'location', function_exists( 'wp_json_encode' ) ? wp_json_encode( $data->location ) : json_encode( $data->location ) );
-					update_post_meta( $new_notification_id, 'plugins', function_exists( 'wp_json_encode' ) ? wp_json_encode( $data->plugins ) : json_encode( $data->plugins ) );
 					update_post_meta( $new_notification_id, 'theme', sanitize_text_field( trim( $data->theme ) ) );
 					update_post_meta( $new_notification_id, 'version', sanitize_text_field( trim( $data->version ) ) );
 					update_post_meta( $new_notification_id, 'viewed', 0 );
@@ -260,21 +241,6 @@ class WPMS_AM_Notification {
 
 				if ( in_array( 'plugins.php', $location, true ) && 'plugins.php' === $pagenow ) {
 					$continue = true;
-				}
-
-				if ( ! $continue ) {
-					unset( $plugin_notifications[ $key ] );
-				}
-			}
-
-			// Plugin validation (OR conditional).
-			$plugins  = (array) json_decode( get_post_meta( $notification->ID, 'plugins', true ) );
-			$continue = false;
-			if ( ! empty( $plugins ) ) {
-				foreach ( $plugins as $plugin ) {
-					if ( is_plugin_active( $plugin ) ) {
-						$continue = true;
-					}
 				}
 
 				if ( ! $continue ) {

@@ -9,7 +9,7 @@ use WPMailSMTP\Providers\OptionAbstract;
  *
  * @package WPMailSMTP\Providers\Mailgun
  */
-class Option extends OptionAbstract {
+class Options extends OptionAbstract {
 
 	/**
 	 * Mailgun constructor.

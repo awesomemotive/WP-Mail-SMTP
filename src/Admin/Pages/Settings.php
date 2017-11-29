@@ -102,7 +102,7 @@ class Settings extends PageAbstract {
 					<td>
 						<div class="wp-mail-smtp-mailers">
 
-							<?php foreach ( wp_mail_smtp()->get_admin()->get_providers() as $provider ) : ?>
+							<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
 
 								<div class="wp-mail-smtp-mailer <?php echo $mailer === $provider->get_slug() ? 'active' : ''; ?>">
 									<div class="wp-mail-smtp-mailer-image">
@@ -150,8 +150,7 @@ class Settings extends PageAbstract {
 
 			<!-- Mailer Options -->
 			<div class="wp-mail-smtp-mailer-options">
-
-				<?php foreach ( wp_mail_smtp()->get_admin()->get_providers() as $provider ) : ?>
+				<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
 
 					<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
 						<h2><?php echo $provider->get_title(); ?></h2>
@@ -174,7 +173,7 @@ class Settings extends PageAbstract {
 	/**
 	 * @inheritdoc
 	 */
-	public function process( $data ) {
+	public function process_post( $data ) {
 
 		$this->check_admin_referer();
 

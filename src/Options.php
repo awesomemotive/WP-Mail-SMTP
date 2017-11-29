@@ -402,7 +402,7 @@ class Options {
 
 		if (
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp', 'sendgrid', 'mailgun' ), true )
+			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp', 'sendgrid', 'mailgun', 'gmail' ), true )
 		) {
 
 			$mailer = $options['mail']['mailer'];

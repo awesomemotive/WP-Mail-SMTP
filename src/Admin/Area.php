@@ -2,14 +2,6 @@
 
 namespace WPMailSMTP\Admin;
 
-use WPMailSMTP\Options;
-use WPMailSMTP\Providers\OptionAbstract;
-use WPMailSMTP\Providers\Gmail\Option as GmailOption;
-use WPMailSMTP\Providers\Mail\Option as MailOption;
-use WPMailSMTP\Providers\Mailgun\Option as MailgunOption;
-use WPMailSMTP\Providers\Pepipost\Option as PepipostOption;
-use WPMailSMTP\Providers\Sendgrid\Option as SendgridOption;
-use WPMailSMTP\Providers\SMTP\Option as SMTPOption;
 use WPMailSMTP\WP;
 
 /**
@@ -62,9 +54,6 @@ class Area {
 
 		// Process the admin page forms actions.
 		add_action( 'admin_init', array( $this, 'process_actions' ) );
-
-		// Get the list of providers.
-		add_action( 'admin_init', array( $this, 'get_providers' ) );
 
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
@@ -174,9 +163,17 @@ class Area {
 		<div class="wrap" id="wp-mail-smtp">
 
 			<div class="wp-mail-smtp-page-title">
-				<?php foreach ( $this->get_pages() as $page_slug => $page ) : ?>
-					<?php $class = $page_slug === $this->get_current_tab() ? 'class="active"' : ''; ?>
-					<a href="<?php echo $page->get_link(); ?>" <?php echo $class; ?>><?php echo $page->get_label(); ?></a>
+				<?php
+				foreach ( $this->get_pages() as $page_slug => $page ) :
+					$label = $page->get_label();
+					if ( empty( $label ) ) {
+						continue;
+					}
+					$class = $page_slug === $this->get_current_tab() ? 'class="active"' : '';
+					?>
+
+					<a href="<?php echo $page->get_link(); ?>" <?php echo $class; ?>><?php echo $label; ?></a>
+
 				<?php endforeach; ?>
 			</div>
 
@@ -229,6 +226,7 @@ class Area {
 			$this->pages = array(
 				'settings' => new Pages\Settings(),
 				'test'     => new Pages\Test(),
+				'auth'     => new Pages\Auth(),
 			);
 		}
 
@@ -252,53 +250,6 @@ class Area {
 	}
 
 	/**
-	 * Get the list of currently supported providers.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return \WPMailSMTP\Providers\OptionAbstract[]
-	 */
-	public function get_providers() {
-
-		$providers = array();
-
-		$default = array(
-			new MailOption(),
-			new GmailOption(),
-			new SendgridOption(),
-			new MailgunOption(),
-			new SMTPOption(),
-		);
-
-		// // Add the Pepipost only if it's active on a site.
-		if ( Options::init()->is_pepipost_active() ) {
-			array_push( $default, new PepipostOption() );
-		}
-
-		// Allow to modify the list of providers.
-		$custom = apply_filters( 'wp_mail_smtp_admin_get_providers', $default );
-
-		// Do not allow providers that are not valid for further usage.
-		foreach ( $custom as $provider ) {
-
-			if ( ! $provider instanceof OptionAbstract ) {
-				continue;
-			}
-
-			$slug  = $provider->get_slug();
-			$title = $provider->get_title();
-
-			if ( empty( $title ) || empty( $slug ) ) {
-				continue;
-			}
-
-			$providers[] = $provider;
-		}
-
-		return $providers;
-	}
-
-	/**
 	 * Check whether we are on an admin page.
 	 *
 	 * @since 1.0.0
@@ -319,15 +270,17 @@ class Area {
 	 */
 	public function process_actions() {
 
-		if ( empty( $_POST['wp-mail-smtp'] ) ) {
-			return;
-		}
-
+		// Allow to process only own tabs.
 		if ( ! array_key_exists( $this->get_current_tab(), $this->get_pages() ) ) {
 			return;
 		}
 
-		$this->pages[ $this->get_current_tab() ]->process( $_POST['wp-mail-smtp'] );
+		// Process POST only if it exists.
+		if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
+			$this->pages[ $this->get_current_tab() ]->process_post( $_POST['wp-mail-smtp'] );
+		}
+
+		$this->pages[ $this->get_current_tab() ]->process_auth();
 	}
 
 	/**
@@ -346,11 +299,26 @@ class Area {
 			return $links;
 		}
 
-		$settings_link = '<a href="options-general.php?page=' . self::SLUG . '">' . esc_html__( 'Settings', 'wp-mail-smtp' ) . '</a>';
+		$settings_link = '<a href="' . $this->get_admin_page_url() . '">' . esc_html__( 'Settings', 'wp-mail-smtp' ) . '</a>';
 
 		array_unshift( $links, $settings_link );
 
 		return $links;
+	}
+
+	/**
+	 * Get plugin admin area page URL.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_admin_page_url() {
+		return add_query_arg(
+			'page',
+			self::SLUG,
+			admin_url( 'options-general.php' )
+		);
 	}
 
 	/**

@@ -7,7 +7,7 @@ use WPMailSMTP\Providers\OptionAbstract;
 /**
  * Class SMTP
  */
-class Option extends OptionAbstract {
+class Options extends OptionAbstract {
 
 	/**
 	 * SMTP constructor.

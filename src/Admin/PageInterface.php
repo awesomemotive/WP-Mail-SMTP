@@ -40,13 +40,4 @@ interface PageInterface {
 	 * @since 1.0.0
 	 */
 	public function display();
-
-	/**
-	 * Process tab form submission.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $data $_POST data specific for the plugin.
-	 */
-	public function process( $data );
 }

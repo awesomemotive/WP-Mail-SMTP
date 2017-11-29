@@ -7,7 +7,7 @@ use WPMailSMTP\Providers\OptionAbstract;
 /**
  * Class Option
  */
-class Option extends OptionAbstract {
+class Options extends OptionAbstract {
 
 	/**
 	 * Sendgrid constructor.

@@ -9,7 +9,7 @@ use WPMailSMTP\Providers\OptionAbstract;
  *
  * @package WPMailSMTP\Providers\Mail
  */
-class Option extends OptionAbstract {
+class Options extends OptionAbstract {
 
 	/**
 	 * Mail constructor.

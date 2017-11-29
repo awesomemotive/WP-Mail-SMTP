@@ -26,6 +26,24 @@ abstract class PageAbstract implements PageInterface {
 	}
 
 	/**
+	 * Process tab form submission ($_POST ).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data $_POST data specific for the plugin.
+	 */
+	public function process_post( $data ) {
+	}
+
+	/**
+	 * Process tab & mailer specific Auth actions.
+	 *
+	 * @since 1.0.0
+	 */
+	public function process_auth() {
+	}
+
+	/**
 	 * Print the nonce field for a specific tab.
 	 *
 	 * @since 1.0.0

@@ -8,10 +8,14 @@ namespace WPMailSMTP;
 class Core {
 
 	/**
+	 * Without trailing slash.
+	 *
 	 * @var string
 	 */
 	public $plugin_url;
 	/**
+	 * Without trailing slash.
+	 *
 	 * @var string
 	 */
 	public $plugin_path;
@@ -23,8 +27,8 @@ class Core {
 	 */
 	public function __construct() {
 
-		$this->plugin_url  = trim( plugin_dir_url( dirname( __FILE__ ) ), '/\\' );
-		$this->plugin_path = trim( plugin_dir_path( dirname( __FILE__ ) ), '/\\' );
+		$this->plugin_url  = trim( plugin_dir_url( __DIR__ ), '/\\' );
+		$this->plugin_path = trim( plugin_dir_path( __DIR__ ), '/\\' );
 
 		$this->hooks();
 	}
@@ -103,6 +107,24 @@ class Core {
 		}
 
 		return $admin;
+	}
+
+	/**
+	 * Load the plugin providers loader.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return Providers\Loader
+	 */
+	public function get_providers() {
+
+		static $providers;
+
+		if ( ! isset( $providers ) ) {
+			$providers = apply_filters( 'wp_mail_smtp_core_get_providers', new Providers\Loader() );
+		}
+
+		return $providers;
 	}
 
 	/**

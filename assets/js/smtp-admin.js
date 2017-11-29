@@ -7,13 +7,14 @@ jQuery( document ).ready( function ( $ ) {
 
 			if ( $( this ).is( ':visible' ) ) {
 				$( this )
-					.siblings('.wp-mail-smtp-code-helper')
+					.siblings( '.wp-mail-smtp-code-helper' )
 					.find( '.dashicons' )
 					.removeClass( 'dashicons-arrow-down-alt2' )
 					.addClass( 'dashicons-arrow-up-alt2' );
-			} else {
+			}
+			else {
 				$( this )
-					.siblings('.wp-mail-smtp-code-helper')
+					.siblings( '.wp-mail-smtp-code-helper' )
 					.find( '.dashicons' )
 					.removeClass( 'dashicons-arrow-up-alt2' )
 					.addClass( 'dashicons-arrow-down-alt2' );
@@ -38,6 +39,16 @@ jQuery( document ).ready( function ( $ ) {
 
 	$( '.wp-mail-smtp-mailer-image' ).click( function () {
 		$( this ).parents( '.wp-mail-smtp-mailer' ).find( 'input' ).trigger( 'click' );
+	} );
+
+	$( '.wp-mail-smtp-setting-copy' ).click( function ( e ) {
+		e.preventDefault();
+
+		var target = $( '#' + $( this ).data( 'source_id' ) ).get(0);
+
+		target.select();
+
+		document.execCommand( 'Copy' );
 	} );
 
 } );

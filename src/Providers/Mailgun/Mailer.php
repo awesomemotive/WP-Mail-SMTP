@@ -37,7 +37,7 @@ class Mailer extends MailerAbstract {
 		 * Append the url with a domain,
 		 * to avoid passing the domain name as a query parameter with all requests.
 		 */
-		$this->url .= esc_url_raw( $this->options->get( $this->mailer, 'domain' ) . '/messages' );
+		$this->url .= sanitize_text_field( $this->options->get( $this->mailer, 'domain' ) . '/messages' );
 
 		$this->set_header( 'Authorization', 'Basic ' . base64_encode( 'api:' . $this->options->get( $this->mailer, 'api_key' ) ) );
 	}

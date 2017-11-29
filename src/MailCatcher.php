@@ -22,21 +22,20 @@ class MailCatcher extends \PHPMailer {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @throws \phpmailerException Throws when sending via PhpMailer fails for some reason.
+	 *
 	 * @return bool
 	 */
 	public function send() {
-		/*
-		 * TODO: attachments - $this->getAttachments()
-		 * TODO: Content type.
-		 * TODO: CharSet.
-		 */
+
 		$options = new Options();
+		$mailer  = $options->get( 'mail', 'mailer' );
 
 		// Use the default PHPMailer, as we inject our settings there for certain providers.
 		if (
-			$options->get( 'mail', 'mailer' ) === 'mail' ||
-			$options->get( 'mail', 'mailer' ) === 'smtp' ||
-			$options->get( 'mail', 'mailer' ) === 'pepipost'
+			$mailer === 'mail' ||
+			$mailer === 'smtp' ||
+			$mailer === 'pepipost'
 		) {
 			return parent::send();
 		}
@@ -46,7 +45,7 @@ class MailCatcher extends \PHPMailer {
 			return false;
 		}
 
-		$mailer = $this->get_provider( $options->get( 'mail', 'mailer' ) );
+		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $mailer, $this );
 
 		if ( ! $mailer ) {
 			return false;
@@ -59,32 +58,5 @@ class MailCatcher extends \PHPMailer {
 		$mailer->send();
 
 		return $mailer->is_email_sent();
-	}
-
-	/**
-	 * Get the mailer class instance based on the Mailer setting.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $mailer
-	 *
-	 * @return null|\WPMailSMTP\Providers\MailerAbstract
-	 */
-	protected function get_provider( $mailer ) {
-
-		$default = array(
-			'sendgrid' => 'WPMailSMTP\Providers\Sendgrid\Mailer',
-			'mailgun'  => 'WPMailSMTP\Providers\Mailgun\Mailer',
-		);
-
-		// Allow to modify the list of providers.
-		$providers = apply_filters( 'wp_mail_smtp_mailcatcher_get_default_providers', $default );
-
-		if ( isset( $providers[ $mailer ] ) ) {
-			// Pass the \PHPMailer instance to the provider __construct().
-			return new $providers[ $mailer ]( $this );
-		}
-
-		return null;
 	}
 }

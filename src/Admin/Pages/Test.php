@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
+use WPMailSMTP\MailCatcher;
 use WPMailSMTP\WP;
 use WPMailSMTP\Admin\PageAbstract;
 
@@ -61,7 +62,7 @@ class Test extends PageAbstract {
 	/**
 	 * @inheritdoc
 	 */
-	public function process( $data ) {
+	public function process_post( $data ) {
 
 		$this->check_admin_referer();
 
@@ -82,7 +83,7 @@ class Test extends PageAbstract {
 		// Make sure the PHPMailer class has been instantiated.
 		if ( ! is_object( $phpmailer ) || ! is_a( $phpmailer, 'PHPMailer' ) ) {
 			require_once ABSPATH . WPINC . '/class-phpmailer.php';
-			$phpmailer = new \PHPMailer( true );
+			$phpmailer = new MailCatcher( true );
 		}
 
 		// Set SMTPDebug level, default is 3 (commands + data + connection status).

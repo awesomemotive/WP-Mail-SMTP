@@ -21,13 +21,9 @@ class Auth {
 	 */
 	public function process_auth() {
 
-		$options = new Options();
-		$auth    = wp_mail_smtp()->get_providers()->get_auth( $options->get( 'mail', 'mailer' ) );
+		$auth = wp_mail_smtp()->get_providers()->get_auth( Options::init()->get( 'mail', 'mailer' ) );
 
 		$auth->process();
-
-		// TODO: remove this when ready.
-		exit;
 	}
 
 	/**

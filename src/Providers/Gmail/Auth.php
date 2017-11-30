@@ -112,13 +112,13 @@ class Auth extends AuthAbstract {
 
 		// In case of any error: display a message to a user.
 		if ( ! empty( $error ) ) {
-			WP::add_admin_notice(
-				/* translators: %s - error code, returned by Google API. */
-				sprintf( esc_html__( 'There was an error while processing the authentication request: %s. Please try again.', 'wp-mail-smtp' ), '<code>' . $error . '</code>' ),
-				WP::ADMIN_NOTICE_ERROR
+			wp_redirect(
+				add_query_arg(
+					'error',
+					'google_' . $error,
+					wp_mail_smtp()->get_admin()->get_admin_page_url()
+				)
 			);
-
-			wp_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
 			exit;
 		}
 
@@ -138,22 +138,23 @@ class Auth extends AuthAbstract {
 			// Save the auth code. So \Google_Client can reuse it to retrieve the access token.
 			$this->update_auth_code( $code );
 		} else {
-
-			WP::add_admin_notice(
-				esc_html__( 'There was an error while processing the authentication request. Please try again.', 'wp-mail-smtp' ),
-				WP::ADMIN_NOTICE_ERROR
+			wp_redirect(
+				add_query_arg(
+					'error',
+					'google_no_code_scope',
+					wp_mail_smtp()->get_admin()->get_admin_page_url()
+				)
 			);
-
-			wp_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
 			exit;
 		}
 
-		WP::add_admin_notice(
-			esc_html__( 'You have successfully linked the current site with you Google API project. Now you can start sending emails through Google.', 'wp-mail-smtp' ),
-			WP::ADMIN_NOTICE_SUCCESS
+		wp_redirect(
+			add_query_arg(
+				'success',
+				'google_site_linked',
+				wp_mail_smtp()->get_admin()->get_admin_page_url()
+			)
 		);
-
-		wp_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
 		exit;
 	}
 
@@ -199,18 +200,5 @@ class Auth extends AuthAbstract {
 	 */
 	public function is_completed() {
 		return ! empty( $this->gmail['access_token'] );
-	}
-
-	/**
-	 * Redirect to Google to request permissions from a user.
-	 */
-	public function redirect_to_auth() {
-
-		$url = $this->get_google_auth_url();
-
-		if ( $url ) {
-			wp_redirect( $url );
-			exit;
-		}
 	}
 }

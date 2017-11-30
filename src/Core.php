@@ -47,7 +47,7 @@ class Core {
 		add_action( 'plugins_loaded', array( $this, 'replace_phpmailer' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
-		add_action( 'admin_notices', array( 'WPMailSMTP\WP', 'display_admin_notices' ) );
+		add_action( 'admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
 
 		add_action( 'init', array( $this, 'init' ) );
 	}

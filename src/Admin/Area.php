@@ -55,11 +55,49 @@ class Area {
 		// Process the admin page forms actions.
 		add_action( 'admin_init', array( $this, 'process_actions' ) );
 
+		// Display custom notices based on the error/success codes.
+		add_action( 'admin_init', array( $this, 'display_custom_auth_notices' ) );
+
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
 
 		// Hide all unrelated to the plugin notices on the plugin admin pages.
 		add_action( 'admin_print_scripts', array( $this, 'hide_unrelated_notices' ) );
+	}
+
+	/**
+	 * Display custom notices based on the error/success codes.
+	 */
+	public function display_custom_auth_notices() {
+
+		$error = isset( $_GET['error'] ) ? $_GET['error'] : '';
+		if ( empty( $error ) ) {
+			return;
+		}
+
+		switch ( $error ) {
+			case 'google_access_denied':
+				WP::add_admin_notice(
+					/* translators: %s - error code, returned by Google API. */
+					sprintf( esc_html__( 'There was an error while processing the authentication request: %s. Please try again.', 'wp-mail-smtp' ), '<code>' . $error . '</code>' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
+
+			case 'google_no_code_scope':
+				WP::add_admin_notice(
+					esc_html__( 'There was an error while processing the authentication request. Please try again.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
+
+			case 'google_site_linked':
+				WP::add_admin_notice(
+					esc_html__( 'You have successfully linked the current site with you Google API project. Now you can start sending emails through Google.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_SUCCESS
+				);
+				break;
+		}
 	}
 
 	/**

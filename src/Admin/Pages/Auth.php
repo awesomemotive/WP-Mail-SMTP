@@ -5,9 +5,9 @@ namespace WPMailSMTP\Admin\Pages;
 use WPMailSMTP\Options;
 
 /**
- * Class Auth
+ * Class Auth.
  *
- * @package WPMailSMTP\Admin\Pages
+ * @since 1.0.0
  */
 class Auth {
 
@@ -18,6 +18,8 @@ class Auth {
 
 	/**
 	 * Launch mailer specific Auth logic.
+	 *
+	 * @since 1.0.0
 	 */
 	public function process_auth() {
 
@@ -28,6 +30,8 @@ class Auth {
 
 	/**
 	 * Return nothing, as we don't need this functionality.
+	 *
+	 * @since 1.0.0
 	 */
 	public function get_label() {
 		return '';
@@ -35,6 +39,8 @@ class Auth {
 
 	/**
 	 * Return nothing, as we don't need this functionality.
+	 *
+	 * @since 1.0.0
 	 */
 	public function get_title() {
 		return '';
@@ -42,6 +48,8 @@ class Auth {
 
 	/**
 	 * Do nothing, as we don't need this functionality.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display() {
 	}

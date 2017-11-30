@@ -5,7 +5,9 @@ namespace WPMailSMTP\Providers\Sendgrid;
 use WPMailSMTP\Providers\MailerAbstract;
 
 /**
- * Class Mailer
+ * Class Mailer.
+ *
+ * @since 1.0.0
  *
  * @package WPMailSMTP\Providers\Sendgrid
  */
@@ -189,6 +191,8 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Sendgrid accepts an array of files content in body, so we will include all files and send.
 	 * Doesn't handle exceeding the limits etc, as this is done and reported be Sendgrid API.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $attachments
 	 */

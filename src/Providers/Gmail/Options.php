@@ -5,7 +5,9 @@ namespace WPMailSMTP\Providers\Gmail;
 use WPMailSMTP\Providers\OptionAbstract;
 
 /**
- * Class Option
+ * Class Option.
+ *
+ * @since 1.0.0
  *
  * @package WPMailSMTP\Providers\Mailgun
  */

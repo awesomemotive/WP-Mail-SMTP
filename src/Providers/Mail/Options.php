@@ -5,9 +5,9 @@ namespace WPMailSMTP\Providers\Mail;
 use WPMailSMTP\Providers\OptionAbstract;
 
 /**
- * Class Option
+ * Class Option.
  *
- * @package WPMailSMTP\Providers\Mail
+ * @since 1.0.0
  */
 class Options extends OptionAbstract {
 

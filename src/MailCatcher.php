@@ -11,6 +11,8 @@ if ( ! class_exists( 'PHPMailer', false ) ) {
  * Class MailCatcher replaces the \PHPMailer and modifies the email sending logic.
  * Thus, we can use other mailers API to do what we need, or stop emails completely.
  *
+ * @since 1.0.0
+ *
  * @package WPMailSMTP
  */
 class MailCatcher extends \PHPMailer {

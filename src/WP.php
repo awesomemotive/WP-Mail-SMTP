@@ -4,6 +4,8 @@ namespace WPMailSMTP;
 
 /**
  * Class WP provides WordPress shortcuts.
+ *
+ * @since 1.0.0
  */
 class WP {
 

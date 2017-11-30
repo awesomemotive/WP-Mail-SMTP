@@ -4,6 +4,8 @@ namespace WPMailSMTP;
 
 /**
  * Class Migration helps migrate all plugin options saved into DB to a new storage location.
+ *
+ * @since 1.0.0
  */
 class Migration {
 

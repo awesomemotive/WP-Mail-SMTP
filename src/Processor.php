@@ -4,6 +4,8 @@ namespace WPMailSMTP;
 
 /**
  * Class Processor modifies the behaviour of wp_mail() function.
+ *
+ * @since 1.0.0
  */
 class Processor {
 

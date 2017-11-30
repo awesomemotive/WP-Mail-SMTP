@@ -6,6 +6,8 @@ use WPMailSMTP\Options;
 
 /**
  * Abstract Class ProviderAbstract to contain common providers functionality.
+ *
+ * @since 1.0.0
  */
 abstract class OptionAbstract implements OptionInterface {
 
@@ -229,6 +231,8 @@ abstract class OptionAbstract implements OptionInterface {
 
 	/**
 	 * Helper icon to open or close code section.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function display_helper_icon() {
 		?>
@@ -242,6 +246,8 @@ abstract class OptionAbstract implements OptionInterface {
 
 	/**
 	 * Helper generic text, that is the same for all fields.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function display_helper_text() {
 		?>

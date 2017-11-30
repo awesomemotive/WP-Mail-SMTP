@@ -5,7 +5,9 @@ namespace WPMailSMTP\Providers\Sendgrid;
 use WPMailSMTP\Providers\OptionAbstract;
 
 /**
- * Class Option
+ * Class Option.
+ *
+ * @since 1.0.0
  */
 class Options extends OptionAbstract {
 

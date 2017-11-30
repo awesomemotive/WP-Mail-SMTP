@@ -3,7 +3,9 @@
 namespace WPMailSMTP\Providers;
 
 /**
- * Interface MailerInterface
+ * Interface MailerInterface.
+ *
+ * @since 1.0.0
  *
  * @package WPMailSMTP\Providers
  */

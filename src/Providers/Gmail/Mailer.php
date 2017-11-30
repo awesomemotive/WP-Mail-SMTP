@@ -5,7 +5,7 @@ namespace WPMailSMTP\Providers\Gmail;
 use WPMailSMTP\Providers\MailerAbstract;
 
 /**
- * Class Mailer
+ * Class Mailer.
  *
  * @since 1.0.0
  *

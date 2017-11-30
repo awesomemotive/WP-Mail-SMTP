@@ -6,6 +6,8 @@ use WPMailSMTP\WP;
 
 /**
  * Class Area registers and process all wp-admin display functionality.
+ *
+ * @since 1.0.0
  */
 class Area {
 
@@ -67,6 +69,8 @@ class Area {
 
 	/**
 	 * Display custom notices based on the error/success codes.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display_custom_auth_notices() {
 

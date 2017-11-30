@@ -8,6 +8,8 @@ use WPMailSMTP\Admin\PageAbstract;
 
 /**
  * Class Test is part of Area, displays email testing page of the plugin.
+ *
+ * @since 1.0.0
  */
 class Test extends PageAbstract {
 

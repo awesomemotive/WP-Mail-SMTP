@@ -7,6 +7,8 @@ namespace WPMailSMTP;
  * WordPress does all the heavy work for caching get_option() data,
  * so we don't have to do that. But we want to minimize cyclomatic complexity
  * of calling a bunch of WP functions, thus we will cache them in a class as well.
+ *
+ * @since 1.0.0
  */
 class Options {
 

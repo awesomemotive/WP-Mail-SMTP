@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @link https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
  *
+ * @since 1.0.0
+ *
  * @param string $class The fully-qualified class name.
  */
 spl_autoload_register( function ( $class ) {
@@ -41,7 +43,7 @@ spl_autoload_register( function ( $class ) {
  *
  * @since 1.0.0
  *
- * @return WPMailSMTP\Core;
+ * @return WPMailSMTP\Core
  */
 function wp_mail_smtp() {
 	/**

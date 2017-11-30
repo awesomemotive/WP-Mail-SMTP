@@ -7,6 +7,8 @@ use WPMailSMTP\MailCatcher;
 /**
  * Class Loader
  *
+ * @since 1.0.0
+ *
  * @package WPMailSMTP\Providers
  */
 class Loader {
@@ -31,12 +33,10 @@ class Loader {
 	private $phpmailer;
 
 	/**
-	 * Loader constructor.
-	 */
-	public function __construct() {
-	}
-
-	/**
+	 * Get all the supported providers.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return array
 	 */
 	public function get_providers() {
@@ -44,6 +44,10 @@ class Loader {
 	}
 
 	/**
+	 * Get a single provider FQN-path based on its name.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $provider
 	 *
 	 * @return array
@@ -61,6 +65,8 @@ class Loader {
 	/**
 	 * Get the provider options, if exists.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $provider
 	 *
 	 * @return \WPMailSMTP\Providers\OptionAbstract|null
@@ -71,6 +77,8 @@ class Loader {
 
 	/**
 	 * Get all options of all providers.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return \WPMailSMTP\Providers\OptionAbstract[]
 	 */
@@ -101,6 +109,8 @@ class Loader {
 	/**
 	 * Get the provider mailer, if exists.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $provider
 	 * @param MailCatcher $phpmailer
 	 *
@@ -127,6 +137,12 @@ class Loader {
 	}
 
 	/**
+	 * Get a generic entity based on the request.
+	 *
+	 * @uses ReflectionClass
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $provider
 	 * @param string $request
 	 *

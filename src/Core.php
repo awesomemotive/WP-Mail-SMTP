@@ -4,6 +4,8 @@ namespace WPMailSMTP;
 
 /**
  * Class Core to handle all plugin initialization.
+ *
+ * @since 1.0.0
  */
 class Core {
 

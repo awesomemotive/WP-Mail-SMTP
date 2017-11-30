@@ -8,6 +8,8 @@ use WPMailSMTP\WP;
 
 /**
  * Class Settings is part of Area, displays general settings of the plugin.
+ *
+ * @since 1.0.0
  */
 class Settings extends PageAbstract {
 

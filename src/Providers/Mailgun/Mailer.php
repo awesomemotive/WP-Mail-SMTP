@@ -5,7 +5,9 @@ namespace WPMailSMTP\Providers\Mailgun;
 use WPMailSMTP\Providers\MailerAbstract;
 
 /**
- * Class Mailer
+ * Class Mailer.
+ *
+ * @since 1.0.0
  *
  * @package WPMailSMTP\Providers\Mailgun
  */
@@ -155,6 +157,8 @@ class Mailer extends MailerAbstract {
 
 	/**
 	 * It's the last one, so we can modify the whole body.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $attachments
 	 */

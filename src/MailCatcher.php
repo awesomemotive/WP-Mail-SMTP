@@ -12,8 +12,6 @@ if ( ! class_exists( 'PHPMailer', false ) ) {
  * Thus, we can use other mailers API to do what we need, or stop emails completely.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP
  */
 class MailCatcher extends \PHPMailer {
 

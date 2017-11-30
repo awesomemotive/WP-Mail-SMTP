@@ -3,11 +3,9 @@
 namespace WPMailSMTP\Providers;
 
 /**
- * Class AuthAbstract
+ * Class AuthAbstract.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers
  */
 abstract class AuthAbstract implements AuthInterface {
 

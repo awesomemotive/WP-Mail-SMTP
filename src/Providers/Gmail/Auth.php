@@ -9,8 +9,6 @@ use WPMailSMTP\Providers\AuthAbstract;
  * Class Auth to request access and refresh tokens.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers\Gmail
  */
 class Auth extends AuthAbstract {
 

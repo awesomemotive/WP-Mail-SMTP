@@ -8,8 +8,6 @@ use WPMailSMTP\Providers\MailerAbstract;
  * Class Mailer.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers\Gmail
  */
 class Mailer extends MailerAbstract {
 

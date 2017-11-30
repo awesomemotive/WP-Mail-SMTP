@@ -3,11 +3,9 @@
 namespace WPMailSMTP\Providers;
 
 /**
- * Interface AuthInterface
+ * Interface AuthInterface.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers
  */
 interface AuthInterface {
 

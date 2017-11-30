@@ -9,8 +9,6 @@ use WPMailSMTP\Options;
  * Class MailerAbstract.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers
  */
 abstract class MailerAbstract implements MailerInterface {
 

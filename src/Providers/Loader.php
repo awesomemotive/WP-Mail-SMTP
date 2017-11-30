@@ -5,11 +5,9 @@ namespace WPMailSMTP\Providers;
 use WPMailSMTP\MailCatcher;
 
 /**
- * Class Loader
+ * Class Loader.
  *
  * @since 1.0.0
- *
- * @package WPMailSMTP\Providers
  */
 class Loader {
 

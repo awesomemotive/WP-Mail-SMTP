@@ -8,7 +8,6 @@ namespace WPMailSMTP;
  * This creates a custom post type (if it doesn't exist) and calls the API to
  * retrieve notifications for this product.
  *
- * @package    AwesomeMotive
  * @author     Benjamin Rojas
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2017, Retyp LLC

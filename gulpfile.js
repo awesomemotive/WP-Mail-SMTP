@@ -62,7 +62,10 @@ var plugin = {
 		'!CHANGELOG.md',
 		'!LICENSE'
 	],
-	php: '**/*.php',
+	php: [
+		'**/*.php',
+		'!vendor/**'
+	],
 	sass: [
 		'assets/scss/**/*.scss'
 	],

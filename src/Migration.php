@@ -29,6 +29,7 @@ class Migration {
 		'mailer',
 		'mail_from_name',
 		'mail_from',
+		'wp_mail_smtp_am_notifications_hidden',
 	);
 
 	/**
@@ -158,6 +159,9 @@ class Migration {
 					break;
 				case 'mailer':
 					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
+					break;
+				case 'wp_mail_smtp_am_notifications_hidden':
+					$converted['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
 					break;
 			}
 		}

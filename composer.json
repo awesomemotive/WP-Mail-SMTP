@@ -22,14 +22,30 @@
     "prepend-autoloader": false
   },
   "autoload": {
+    "files": [
+      "vendor/google/apiclient-services/src/Google/Service/Gmail.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Message.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/Users.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersDrafts.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersHistory.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersLabels.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersMessages.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersMessagesAttachments.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettings.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsFilters.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsForwardingAddresses.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsSendAs.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsSendAsSmimeInfo.php",
+      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersThreads.php"
+    ],
     "exclude-from-classmap": [
       "**/test/",
       "**/tests/",
       "**/Test/",
       "**/Tests/",
       "/vendor/composer/installers/",
-      "/vendor/monolog/",
-      "/vendor/google/apiclient-services/src/Google/Service/Safebrowsing/",
+      "/vendor/firebase/",
+      "/vendor/google/apiclient-services/src/Google/Service/",
       "/src/"
     ]
   }

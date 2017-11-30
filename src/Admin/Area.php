@@ -70,8 +70,10 @@ class Area {
 	 */
 	public function display_custom_auth_notices() {
 
-		$error = isset( $_GET['error'] ) ? $_GET['error'] : '';
-		if ( empty( $error ) ) {
+		$error   = isset( $_GET['error'] ) ? $_GET['error'] : '';
+		$success = isset( $_GET['success'] ) ? $_GET['success'] : '';
+
+		if ( empty( $error ) && empty( $success ) ) {
 			return;
 		}
 
@@ -90,7 +92,9 @@ class Area {
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
+		}
 
+		switch ( $success ) {
 			case 'google_site_linked':
 				WP::add_admin_notice(
 					esc_html__( 'You have successfully linked the current site with you Google API project. Now you can start sending emails through Google.', 'wp-mail-smtp' ),

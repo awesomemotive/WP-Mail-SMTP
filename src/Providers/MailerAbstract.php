@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 
 /**
@@ -22,7 +23,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	protected $options;
 	/**
-	 * @var \PHPMailer
+	 * @var MailCatcher
 	 */
 	protected $phpmailer;
 	/**
@@ -54,9 +55,9 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \PHPMailer $phpmailer
+	 * @param MailCatcher $phpmailer
 	 */
-	public function __construct( $phpmailer ) {
+	public function __construct( MailCatcher $phpmailer ) {
 
 		if ( empty( $this->url ) ) {
 			return;
@@ -69,16 +70,16 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * Re-use the \PHPMailer class methods and properties.
+	 * Re-use the MailCatcher class methods and properties.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \PHPMailer $phpmailer
+	 * @param MailCatcher $phpmailer
 	 */
 	protected function process_phpmailer( $phpmailer ) {
 
 		// Make sure that we have access to PHPMailer class methods.
-		if ( ! $phpmailer instanceof \PHPMailer ) {
+		if ( ! $phpmailer instanceof MailCatcher ) {
 			return;
 		}
 

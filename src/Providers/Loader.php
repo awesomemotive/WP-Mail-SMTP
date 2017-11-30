@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\MailCatcher;
+
 /**
  * Class Loader
  *
@@ -100,13 +102,15 @@ class Loader {
 	 * Get the provider mailer, if exists.
 	 *
 	 * @param string $provider
-	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 * @param MailCatcher $phpmailer
 	 *
 	 * @return \WPMailSMTP\Providers\MailerAbstract|null
 	 */
 	public function get_mailer( $provider, $phpmailer ) {
 
-		$this->phpmailer = $phpmailer;
+		if ( $phpmailer instanceof MailCatcher ) {
+			$this->phpmailer = $phpmailer;
+		}
 
 		return $this->get_entity( $provider, 'Mailer' );
 	}
@@ -144,10 +148,14 @@ class Loader {
 
 			if ( file_exists( $reflection->getFileName() ) ) {
 				$class = $path . $request;
-
-				$entity = new $class( $this->phpmailer );
+				if ( $this->phpmailer ) {
+					$entity = new $class( $this->phpmailer );
+				} else {
+					$entity = new $class();
+				}
 			}
 		} catch ( \Exception $e ) {
+			// TODO: save error message later to display a user.
 			$entity = null;
 		}
 

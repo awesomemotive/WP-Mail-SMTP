@@ -4,10 +4,11 @@ namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
-use WPMailSMTP\WP;
 
 /**
  * Class Auth to request access and refresh tokens.
+ *
+ * @since 1.0.0
  *
  * @package WPMailSMTP\Providers\Gmail
  */
@@ -32,6 +33,8 @@ class Auth extends AuthAbstract {
 
 	/**
 	 * Auth constructor.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 
@@ -46,6 +49,8 @@ class Auth extends AuthAbstract {
 
 	/**
 	 * Use the composer autoloader to include the Google Library.
+	 *
+	 * @since 1.0.0
 	 */
 	protected function include_google_lib() {
 		require wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
@@ -53,6 +58,8 @@ class Auth extends AuthAbstract {
 
 	/**
 	 * Init and get the Google Client object.
+	 *
+	 * @since 1.0.0
 	 */
 	public function get_client() {
 
@@ -66,42 +73,57 @@ class Auth extends AuthAbstract {
 			)
 		);
 		$client->setAccessType( 'offline' );
+		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
 		// We request only the sending capability, as it's what we only need to do.
 		$client->addScope( \Google_Service_Gmail::GMAIL_SEND );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
 
-		if ( isset( $this->gmail['auth_code'] ) ) {
-			$creds = $client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
+		if (
+			empty( $this->gmail['access_token'] ) &&
+			! empty( $this->gmail['auth_code'] )
+		) {
+			$client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
 
+			// Bail if we have an error.
 			if ( ! empty( $creds['error'] ) ) {
-				WP::add_admin_notice(
-					esc_html__( 'There was an error while authenticating you via Google. Please try again.', 'wp-mail-smtp' ),
-					WP::ADMIN_NOTICE_ERROR
-				);
-
+				// TODO: save this error to display to a user later.
 				return $client;
 			}
 
-			$access_token = $client->getAccessToken();
+			$this->update_access_token( $client->getAccessToken() );
+			$this->update_refresh_token( $client->getRefreshToken() );
+		}
 
-			$client->setAccessToken( $access_token );
+		if ( ! empty( $this->gmail['access_token'] ) ) {
+			$client->setAccessToken( $this->gmail['access_token'] );
+		}
 
-			// Refresh the token if it's expired.
-			if ( $client->isAccessTokenExpired() ) {
-				$client->fetchAccessTokenWithRefreshToken( $client->getRefreshToken() );
+		// Refresh the token if it's expired.
+		if ( $client->isAccessTokenExpired() ) {
+			$refresh = $client->getRefreshToken();
+			if ( empty( $refresh ) && isset( $this->gmail['refresh_token'] ) ) {
+				$refresh = $this->gmail['refresh_token'];
 			}
 
-			$this->update_access_token( $client->getAccessToken() );
+			if ( ! empty( $refresh ) ) {
+				$client->fetchAccessTokenWithRefreshToken( $refresh );
+				$this->update_access_token( $client->getAccessToken() );
+				$this->update_refresh_token( $client->getRefreshToken() );
+			}
 		}
 
 		return $client;
 	}
 
 	/**
-	 * Do all the logic of the user authentication.
+	 * Get the auth code from the $_GET and save it.
+	 * Redirect user back to settings with an error message, if failed.
+	 *
+	 * @since 1.0.0
 	 */
 	public function process() {
+
 		$code  = '';
 		$scope = '';
 		$error = '';
@@ -159,6 +181,10 @@ class Auth extends AuthAbstract {
 	}
 
 	/**
+	 * Update access token in our DB.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param array $token
 	 */
 	protected function update_access_token( $token ) {
@@ -167,11 +193,34 @@ class Auth extends AuthAbstract {
 		$all     = $options->get_all();
 
 		$all[ $this->mailer ]['access_token'] = $token;
+		$this->gmail['access_token']          = $token;
 
 		$options->set( $all );
 	}
 
 	/**
+	 * Update refresh token in our DB.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $token
+	 */
+	protected function update_refresh_token( $token ) {
+
+		$options = new PluginOptions();
+		$all     = $options->get_all();
+
+		$all[ $this->mailer ]['refresh_token'] = $token;
+		$this->gmail['refresh_token']          = $token;
+
+		$options->set( $all );
+	}
+
+	/**
+	 * Update auth code in our DB.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $code
 	 */
 	protected function update_auth_code( $code ) {
@@ -180,12 +229,16 @@ class Auth extends AuthAbstract {
 		$all     = $options->get_all();
 
 		$all[ $this->mailer ]['auth_code'] = $code;
+		$this->gmail['auth_code']          = $code;
+
 
 		$options->set( $all );
 	}
 
 	/**
 	 * Get the auth URL used to proceed to Google to request access to send emails.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -196,9 +249,11 @@ class Auth extends AuthAbstract {
 	/**
 	 * Whether we have a code or not.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return bool
 	 */
 	public function is_completed() {
-		return ! empty( $this->gmail['access_token'] );
+		return ! empty( $this->gmail['access_token'] ) && ! empty( $this->gmail['refresh_token'] );
 	}
 }

@@ -185,9 +185,10 @@ abstract class OptionAbstract implements OptionInterface {
 				</th>
 				<td>
 					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][user]" type="text"
+						class="regular-text" spellcheck="false" autocomplete="off"
 						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'user' ) ); ?>"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'user' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user" class="regular-text" spellcheck="false"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"
 					/>
 				</td>
 			</tr>
@@ -199,12 +200,13 @@ abstract class OptionAbstract implements OptionInterface {
 				</th>
 				<td>
 					<?php if ( $this->options->is_const_defined( $this->get_slug(), 'pass' ) ) : ?>
-						<input type="text" value="*************" disabled id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"
-							class="regular-text"/>
+						<input type="text" value="*************" disabled class="regular-text"
+							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"/>
 					<?php else : ?>
-						<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][pass]" type="text"
+						<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][pass]" type="password"
+							class="regular-text" spellcheck="false" autocomplete="off"
 							value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'pass' ) ); ?>"
-							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" class="regular-text" spellcheck="false"
+							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"
 						/>
 
 						<?php $this->display_helper_icon(); ?>

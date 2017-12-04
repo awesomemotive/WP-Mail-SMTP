@@ -492,7 +492,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_user"><?php esc_html_e( 'Username', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_user" type="text" id="smtp_user" value="<?php print( get_option( 'smtp_user' ) ); ?>" size="40" class="code"/>
+								<input name="smtp_user" type="text" id="smtp_user" value="<?php print( get_option( 'smtp_user' ) ); ?>" size="40" class="code" autocomplete="off"/>
 							</td>
 						</tr>
 						<tr valign="top">
@@ -500,7 +500,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_pass"><?php esc_html_e( 'Password', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_pass" type="text" id="smtp_pass" value="<?php print( get_option( 'smtp_pass' ) ); ?>" size="40" class="code"/>
+								<input name="smtp_pass" type="password" id="smtp_pass" value="<?php print( get_option( 'smtp_pass' ) ); ?>" size="40" class="code" autocomplete="off"/>
 
 								<p class="description">
 									<?php esc_html_e( 'This is in plain text because it must not be stored encrypted.', 'wp-mail-smtp' ); ?>

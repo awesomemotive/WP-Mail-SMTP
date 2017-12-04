@@ -96,7 +96,7 @@ class Options extends OptionAbstract {
 
 			<!-- Auth users button -->
 			<?php $auth = new Auth(); ?>
-			<?php if ( ! $auth->is_completed() ) : ?>
+			<?php if ( ! $auth->is_auth_required() ) : ?>
 				<tr>
 					<td>&nbsp;</td>
 					<td>

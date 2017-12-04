@@ -36,13 +36,18 @@ class Auth extends AuthAbstract {
 	 */
 	public function __construct() {
 
-		$this->include_google_lib();
-
 		$options      = new PluginOptions();
 		$this->mailer = $options->get( 'mail', 'mailer' );
 		$this->gmail  = $options->get_group( $this->mailer );
 
-		$this->client = $this->get_client();
+		if (
+			isset( $this->gmail['client_id'] ) &&
+			isset( $this->gmail['client_secret'] )
+		) {
+			$this->include_google_lib();
+
+			$this->client = $this->get_client();
+		}
 	}
 
 	/**
@@ -241,7 +246,15 @@ class Auth extends AuthAbstract {
 	 * @return string
 	 */
 	public function get_google_auth_url() {
-		return filter_var( $this->client->createAuthUrl(), FILTER_SANITIZE_URL );
+		if (
+			! empty( $this->client ) &&
+			class_exists( 'Google_Client', false ) &&
+			$this->client instanceof \Google_Client
+		) {
+			return filter_var( $this->client->createAuthUrl(), FILTER_SANITIZE_URL );
+		}
+
+		return null;
 	}
 
 	/**
@@ -251,7 +264,14 @@ class Auth extends AuthAbstract {
 	 *
 	 * @return bool
 	 */
-	public function is_completed() {
+	public function is_auth_required() {
+		if (
+			empty( $this->gmail['client_id'] ) &&
+			empty( $this->gmail['client_secret'] )
+		) {
+			return true;
+		}
+
 		return ! empty( $this->gmail['access_token'] ) && ! empty( $this->gmail['refresh_token'] );
 	}
 }

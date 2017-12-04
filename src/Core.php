@@ -151,18 +151,18 @@ class Core {
 	 * Awesome Motive Notifications.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @return AM_Notification
 	 */
 	public function init_notifications() {
+
+		if ( Options::init()->get( 'general', 'am_notifications_hidden' ) ) {
+			return;
+		}
 
 		static $notification;
 
 		if ( ! isset( $notification ) ) {
 			$notification = new AM_Notification( 'smtp', WPMS_PLUGIN_VER );
 		}
-
-		return $notification;
 	}
 
 	/**

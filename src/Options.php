@@ -176,6 +176,7 @@ class Options {
 	 * Process the options values through the constants check.
 	 * If we have defined associated constant - use it instead of a DB value.
 	 * Backward compatibility is hard.
+	 * General section of options won't have constants, so we are omitting those checks and just return default value.
 	 *
 	 * @since 1.0.0
 	 *
@@ -396,6 +397,14 @@ class Options {
 								break;
 							case 'return_path':
 								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, (bool) $options[ $group ][ $key_name ] );
+								break;
+						}
+						break;
+
+					case 'general':
+						switch ( $key_name ) {
+							case 'am_notifications_hidden':
+								$options[ $group ][ $key_name ] = (bool) $options[ $group ][ $key_name ];
 								break;
 						}
 				}

@@ -44,6 +44,8 @@ class Settings extends PageAbstract {
 		<form method="POST" action="">
 			<?php $this->wp_nonce_field(); ?>
 
+			<h2><?php esc_html_e( 'Mail', 'wp-mail-smtp' ); ?></h2>
+
 			<table class="form-table">
 
 				<!-- From Email -->
@@ -148,6 +150,7 @@ class Settings extends PageAbstract {
 						</p>
 					</td>
 				</tr>
+
 			</table>
 
 			<!-- Mailer Options -->
@@ -163,6 +166,28 @@ class Settings extends PageAbstract {
 				<?php endforeach; ?>
 
 			</div>
+
+			<h2><?php esc_html_e( 'General', 'wp-mail-smtp' ); ?></h2>
+
+			<table class="form-table">
+
+				<!-- Hide Announcements -->
+				<tr valign="top">
+					<th scope="row">
+						<label for="wp-mail-smtp-setting-am-notifications-hidden">
+							<?php esc_html_e( 'Hide Announcements', 'wp-mail-smtp' ); ?>
+						</label>
+					</th>
+					<td>
+						<label for="wp-mail-smtp-setting-am-notifications-hidden">
+							<input name="wp-mail-smtp[general][am_notifications_hidden]" type="checkbox" id="wp-mail-smtp-setting-am-notifications-hidden"
+								value="true" <?php checked( true, $options->get( 'general', 'am_notifications_hidden' ) ); ?> />
+							<?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?>
+						</label>
+					</td>
+				</tr>
+
+			</table>
 
 			<p class="wp-mail-smtp-submit">
 				<button type="submit" class="button-primary"><?php esc_html_e( 'Save Changes', 'wp-mail-smtp' ); ?></button>

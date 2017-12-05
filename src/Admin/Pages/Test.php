@@ -29,7 +29,7 @@ class Test extends PageAbstract {
 	 * @inheritdoc
 	 */
 	public function get_title() {
-		return esc_html__( 'Send a Test Email', 'wp-mail-smtp' );
+		return $this->get_label();
 	}
 
 	/**
@@ -41,20 +41,28 @@ class Test extends PageAbstract {
 		<form method="POST" action="">
 			<?php $this->wp_nonce_field(); ?>
 
-			<table class="form-table">
-				<tr>
-					<th scope="row">
-						<label for="wp-mail-smtp-test-email"><?php esc_html_e( 'Send To', 'wp-mail-smtp' ); ?></label>
-					</th>
-					<td>
-						<input name="wp-mail-smtp[test_email]" type="email" id="wp-mail-smtp-test-email" required class="regular-text" spellcheck="false" />
-						<p class="description"><?php esc_html_e( 'Type an email address here and then click a button below to generate a test email.', 'wp-mail-smtp' ); ?></p>
-					</td>
-				</tr>
-			</table>
+			<!-- Test Email Section Title -->
+			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
+				<span class="wp-mail-smtp-setting-field">
+					<h2><?php esc_html_e( 'Send a Test Email', 'wp-mail-smtp' ); ?></h2>
+				</span>
+			</div>
+
+			<!-- Test Email -->
+			<div id="wp-mail-smtp-setting-row-test_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
+				<span class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-test_email"><?php esc_html_e( 'Send To', 'wp-mail-smtp' ); ?></label>
+				</span>
+				<span class="wp-mail-smtp-setting-field">
+					<input name="wp-mail-smtp[test_email]" type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required />
+					<p class="desc">
+						<?php esc_html_e( 'Type an email address here and then click a button below to generate a test email.', 'wp-mail-smtp' ); ?>
+					</p>
+				</span>
+			</div>
 
 			<p class="wp-mail-smtp-submit">
-				<button type="submit" class="button-primary"><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></button>
+				<button type="submit"><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></button>
 			</p>
 		</form>
 

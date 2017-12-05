@@ -224,7 +224,7 @@ class Area {
 			</div>
 
 			<div class="wp-mail-smtp-page wp-mail-smtp-tab-<?php echo $this->get_current_tab(); ?>">
-				<h1><?php echo $this->get_current_tab_title(); ?></h1>
+				<h1 class="screen-reader-text"><?php echo $this->get_current_tab_title(); ?></h1>
 
 				<?php $this->display_current_tab_content(); ?>
 			</div>

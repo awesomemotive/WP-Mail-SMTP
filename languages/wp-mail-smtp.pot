@@ -46,7 +46,7 @@ msgstr ""
 msgid "WP Mail SMTP Settings"
 msgstr ""
 
-#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:52
+#: wp_mail_smtp.php:296, src/Admin/Pages/Settings.php:54
 msgid "From Email"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "<strong>Please Note:</strong> You appear to be using a version of WordPress prior to 2.3. Please ignore the From Name field and instead enter Name&lt;email@domain.com&gt; in this field."
 msgstr ""
 
-#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:77
+#: wp_mail_smtp.php:315, src/Admin/Pages/Settings.php:79
 msgid "From Name"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 msgid "You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress."
 msgstr ""
 
-#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:102
+#: wp_mail_smtp.php:330, wp_mail_smtp.php:335, src/Admin/Pages/Settings.php:104
 msgid "Mailer"
 msgstr ""
 
@@ -86,27 +86,27 @@ msgstr ""
 msgid "Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s."
 msgstr ""
 
-#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:135
+#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:137
 msgid "Return Path"
 msgstr ""
 
-#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:143
+#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:145
 msgid "Set the return-path to match the From Email"
 msgstr ""
 
-#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:146
+#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:148
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
-#: wp_mail_smtp.php:395, wp_mail_smtp.php:400
+#: wp_mail_smtp.php:395, wp_mail_smtp.php:400, src/Admin/Pages/Settings.php:178
 msgid "Hide Announcements"
 msgstr ""
 
-#: wp_mail_smtp.php:405
+#: wp_mail_smtp.php:405, src/Admin/Pages/Settings.php:185
 msgid "Check this if you would like to hide plugin announcements and update details."
 msgstr ""
 
-#: wp_mail_smtp.php:413, wp_mail_smtp.php:513, wp_mail_smtp.php:589, src/Admin/Pages/Settings.php:168
+#: wp_mail_smtp.php:413, wp_mail_smtp.php:513, wp_mail_smtp.php:589, src/Admin/Pages/Settings.php:193
 msgid "Save Changes"
 msgstr ""
 
@@ -246,47 +246,55 @@ msgstr ""
 msgid "SMTP Username"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:198
+#: src/Providers/OptionAbstract.php:199
 msgid "SMTP Password"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:213
+#: src/Providers/OptionAbstract.php:215
 msgid "The password is stored in plain text. For information on how to securely setup your password, please click a dropdown icon above."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:259
+#: src/Providers/OptionAbstract.php:261
 msgid "To redefine this value in %s use this code:"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:289
+#: src/Providers/OptionAbstract.php:291
 msgid "%1$s requires PHP %2$s to work and does not support your current PHP version %3$s. Please contact your host and request a PHP upgrade to the latest one."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:296
+#: src/Providers/OptionAbstract.php:298
 msgid "Meanwhile you can switch to the \"Other SMTP\" Mailer option."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:62
+#: src/Admin/Pages/Settings.php:47
+msgid "Mail"
+msgstr ""
+
+#: src/Admin/Pages/Settings.php:64
 msgid "You can specify the email address that emails should be sent from."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:66
+#: src/Admin/Pages/Settings.php:68
 msgid "If you leave this blank, the default one will be used: %s."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:87
+#: src/Admin/Pages/Settings.php:89
 msgid "You can specify the name that emails should be sent from."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:91
+#: src/Admin/Pages/Settings.php:93
 msgid "If you leave this blank, the emails will be sent from %s."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:147
+#: src/Admin/Pages/Settings.php:149
 msgid "It won't be set if unchecked, thus bounce messages may be lost."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:188
+#: src/Admin/Pages/Settings.php:170
+msgid "General"
+msgstr ""
+
+#: src/Admin/Pages/Settings.php:213
 msgid "Settings were successfully saved."
 msgstr ""
 

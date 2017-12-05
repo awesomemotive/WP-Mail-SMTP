@@ -156,7 +156,13 @@ class Settings extends PageAbstract {
 				<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
 
 					<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
-						<h2><?php echo $provider->get_title(); ?></h2>
+
+						<!-- Mailer Option Title -->
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
+							<span class="wp-mail-smtp-setting-field">
+								<h2><?php echo $provider->get_title(); ?></h2>
+							</span>
+						</div>
 
 						<?php $provider->display_options(); ?>
 					</div>
@@ -187,7 +193,7 @@ class Settings extends PageAbstract {
 			</div>
 
 			<p class="wp-mail-smtp-submit">
-				<button type="submit"><?php esc_html_e( 'Save Settings', 'wp-mail-smtp' ); ?></button>
+				<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange"><?php esc_html_e( 'Save Settings', 'wp-mail-smtp' ); ?></button>
 			</p>
 
 		</form>

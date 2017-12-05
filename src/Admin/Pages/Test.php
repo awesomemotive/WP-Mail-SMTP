@@ -62,7 +62,7 @@ class Test extends PageAbstract {
 			</div>
 
 			<p class="wp-mail-smtp-submit">
-				<button type="submit"><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></button>
+				<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange"><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></button>
 			</p>
 		</form>
 

@@ -49,7 +49,7 @@ class Options extends OptionAbstract {
 					printf(
 						/* translators: %s - API key link. */
 						esc_html__( 'Follow this link to get an API Key from Mailgun: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.mailgun.com/app/account/security" target="_blank">' .
+						'<a href="https://app.mailgun.com/app/account/security" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get a Private API Key', 'wp-mail-smtp' ) .
 						'</a>'
 					);
@@ -74,7 +74,7 @@ class Options extends OptionAbstract {
 					printf(
 						/* translators: %s - Domain Name link. */
 						esc_html__( 'Follow this link to get a Domain Name from Mailgun: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.mailgun.com/app/domains" target="_blank">' .
+						'<a href="https://app.mailgun.com/app/domains" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get a Domain Name', 'wp-mail-smtp' ) .
 						'</a>'
 					);

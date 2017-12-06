@@ -49,7 +49,7 @@ class Options extends OptionAbstract {
 					printf(
 						/* translators: %s - API key link. */
 						esc_html__( 'Follow this link to get an API Key from Sendgrid: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.sendgrid.com/settings/api_keys" target="_blank">' .
+						'<a href="https://app.sendgrid.com/settings/api_keys" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Create API Key', 'wp-mail-smtp' ) .
 						'</a>'
 					);

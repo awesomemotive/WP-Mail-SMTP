@@ -142,7 +142,7 @@ class Migration {
 					if ( $old_key === 'smtp_ssl' ) {
 						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
 					} elseif ( $old_key === 'smtp_auth' ) {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' );
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' ? 'yes' : 'no' );
 					} else {
 						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
 					}
@@ -162,7 +162,7 @@ class Migration {
 					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
-					$converted['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['general']['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
 					break;
 			}
 		}

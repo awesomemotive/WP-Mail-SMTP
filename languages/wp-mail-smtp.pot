@@ -30,11 +30,11 @@ msgstr ""
 msgid "The result was:"
 msgstr ""
 
-#: wp_mail_smtp.php:272, src/Admin/Pages/Test.php:119
+#: wp_mail_smtp.php:272
 msgid "The full debugging output is shown below:"
 msgstr ""
 
-#: wp_mail_smtp.php:275, src/Admin/Pages/Test.php:121
+#: wp_mail_smtp.php:275
 msgid "The SMTP debugging output is shown below:"
 msgstr ""
 
@@ -322,8 +322,12 @@ msgstr ""
 msgid "Your email was sent successfully!"
 msgstr ""
 
-#: src/Admin/Pages/Test.php:118
+#: src/Admin/Pages/Test.php:120
 msgid "There was a problem while sending a test email."
+msgstr ""
+
+#: src/Admin/Pages/Test.php:121
+msgid "The related debugging output is shown below:"
 msgstr ""
 
 #: src/Providers/Gmail/Options.php:25

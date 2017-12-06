@@ -84,6 +84,10 @@
 				padding: 20px 0;
 			}
 
+			&.inactive {
+				display: none;
+			}
+
 			// Section heading.
 			&.section-heading {
 				padding: 20px 0;
@@ -122,8 +126,11 @@
 				}
 			}
 
-			// Text settings field.
-			&.wp-mail-smtp-setting-row-text {
+			// Text based settings field.
+			&.wp-mail-smtp-setting-row-text,
+			&.wp-mail-smtp-setting-row-password,
+			&.wp-mail-smtp-setting-row-number,
+			&.wp-mail-smtp-setting-row-email {
 
 				.wp-mail-smtp-setting-label {
 					padding-top: 8px;
@@ -155,70 +162,149 @@
 
 			}
 
-			// Mailer image radio settings field.
-			&.wp-mail-smtp-setting-row-mailer {
-				padding-bottom: 20px;
+			// Radio settings field.
+			&.wp-mail-smtp-setting-row-checkbox-toggle {
 
-				.wp-mail-smtp-mailers {
-					.wp-mail-smtp-mailer {
+				.wp-mail-smtp-setting-field {
+
+					label {
+						vertical-align: middle;
 						display: inline-block;
-						width: 140px;
-						margin-right: 10px;
-						margin-bottom: 10px;
 
-						&:last-child {
-							margin-right: 0;
+						&:hover {
+							.wp-mail-smtp-setting-toggle-switch {
+								background-color: #999;
+							}
+						}
+					}
+
+					input[type=checkbox] {
+						display: none;
+
+						&:checked + .wp-mail-smtp-setting-toggle-switch {
+							background-color: #83c11f;
+
+							&:before {
+								-webkit-transform: translateX(19px);
+								-ms-transform: translateX(19px);
+								transform: translateX(19px);
+							}
 						}
 
-						.wp-mail-smtp-mailer-image {
-							background: #fff;
-							text-align: center;
-							border: 2px solid #E5E5E5;
-							border-radius: $border-radius;
-							height: 76px;
-							position: relative;
-							margin-bottom: 10px;
-							cursor: pointer;
+						&:checked + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-checked-label {
+							display: inline-block;
+						}
+
+						&:checked + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-checked-label + .wp-mail-smtp-setting-toggle-unchecked-label {
+							display: none;
+						}
+					}
+
+					.wp-mail-smtp-setting-toggle-unchecked-label,
+					.wp-mail-smtp-setting-toggle-checked-label {
+						text-transform: uppercase;
+						font-weight: 700;
+						font-size: 13px;
+					}
+
+					.wp-mail-smtp-setting-toggle-checked-label {
+						display: none;
+					}
+
+					.wp-mail-smtp-setting-toggle-switch {
+						position: relative;
+						cursor: pointer;
+						background-color: #ccc;
+						border-radius: 15px;
+						-webkit-transition: all 0.2s ease-in-out;
+						-moz-transition:    all 0.2s ease-in-out;
+						-ms-transition:     all 0.2s ease-in-out;
+						transition:         all 0.2s ease-in-out;
+						vertical-align: middle;
+						position: relative;
+						display: inline-block;
+						margin: 0 5px 0 0;
+						width: 40px;
+						height: 20px;
+
+						&:before {
+							position: absolute;
+							content: "";
+							height: 14px;
+							width: 14px;
+							left: 3px;
+							top: 3px;
+							background-color: #fff;
+							border-radius: 50%;
 							-webkit-transition: all 0.2s ease-in-out;
 							-moz-transition:    all 0.2s ease-in-out;
 							-ms-transition:     all 0.2s ease-in-out;
 							transition:         all 0.2s ease-in-out;
+						}
+					}
+				}
+			}
+
+			// Mailer image radio settings field.
+			&.wp-mail-smtp-setting-row-mailer {
+				padding-bottom: 20px;
+
+				.wp-mail-smtp-mailer {
+					display: inline-block;
+					width: 140px;
+					margin-right: 10px;
+					margin-bottom: 10px;
+
+					&:last-child {
+						margin-right: 0;
+					}
+
+					.wp-mail-smtp-mailer-image {
+						background: #fff;
+						text-align: center;
+						border: 2px solid #E5E5E5;
+						border-radius: $border-radius;
+						height: 76px;
+						position: relative;
+						margin-bottom: 10px;
+						cursor: pointer;
+						-webkit-transition: all 0.2s ease-in-out;
+						-moz-transition:    all 0.2s ease-in-out;
+						-ms-transition:     all 0.2s ease-in-out;
+						transition:         all 0.2s ease-in-out;
+
+						img {
+							display: block;
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+							opacity: 0.6;
+							-webkit-transition: all 0.2s ease-in-out;
+							-moz-transition:    all 0.2s ease-in-out;
+							-ms-transition:     all 0.2s ease-in-out;
+							transition:         all 0.2s ease-in-out;
+						}
+					}
+
+					&.active {
+						.wp-mail-smtp-mailer-image {
+							border-color: $orange;
 
 							img {
-								display: block;
-								position: absolute;
-								top: 50%;
-								left: 50%;
-								transform: translate(-50%, -50%);
-								opacity: 0.6;
-								-webkit-transition: all 0.2s ease-in-out;
-								-moz-transition:    all 0.2s ease-in-out;
-								-ms-transition:     all 0.2s ease-in-out;
-								transition:         all 0.2s ease-in-out;
+								opacity: 1;
 							}
 						}
+					}
 
-						&.active {
-							.wp-mail-smtp-mailer-image {
-								border-color: $orange;
+					&:hover {
+						.wp-mail-smtp-mailer-image {
+							border-color: #ccc;
 
-								img {
-									opacity: 1;
-								}
+							img {
+								opacity: 1;
 							}
 						}
-
-						&:hover {
-							.wp-mail-smtp-mailer-image {
-								border-color: #ccc;
-
-								img {
-									opacity: 1;
-								}
-							}
-						}
-
-						.wp-mail-smtp-mailer-text{}
 					}
 				}
 			}
@@ -256,6 +342,7 @@
 			// Form elements.
 			input[type=text],
 			input[type=email],
+			input[type=number],
 			input[type=password] {
 				background-color: #fff;
 				border: 1px solid #ddd;
@@ -277,13 +364,16 @@
 					background-color: #f9f9f9;
 				}
 
+				&.small-text {
+					width: 75px;
+				}
+
 				&:focus {
 					border-color: #bbb;
 				}
 
 				&:disabled {
-					background-color: #f6f6f6;
-					color: #666;
+					opacity: 0.6;
 				}
 			}
 
@@ -326,69 +416,6 @@
 			padding: 25px 0;
 		}
 
-
-	// 	.wp-mail-smtp-inline-radios {
-	// 		border: solid $borderWidth $fg;
-	// 		display: inline-block;
-	// 		border-radius: 10px;
-	// 		overflow: hidden;
-
-	// 		input[type=radio] {
-	// 			position: absolute;
-	// 			visibility: hidden;
-	// 			display: none;
-	// 		}
-
-	// 		label {
-	// 			color: #929292;
-	// 			display: inline-block;
-	// 			cursor: pointer;
-	// 			font-weight: bold;
-	// 			padding: 5px 20px;
-	// 			margin-right: -0.3em;
-	// 		}
-
-	// 		input[type=radio]:checked + label {
-	// 			color: #000;
-	// 			background: $fg;
-	// 		}
-
-	// 		label + input[type=radio] + label {
-	// 			border-left: solid $borderWidth $fg;
-	// 		}
-
-	// 		label:last-child {
-	// 			margin-right: 0;
-	// 		}
-	// 	}
-
-
-
-
-	// 	.wp-mail-smtp-setting-copy {
-	// 		padding-left: 2px;
-	// 		padding-right: 2px;
-
-	// 		.dashicons {
-	// 			line-height: inherit;
-	// 		}
-	// 	}
-
-	// .wp-mail-smtp-code-helper {
-	// 	background: rgba(0,0,0,.07);
-	// 	cursor: pointer;
-	// 	padding: 4px;
-
-	// 	.dashicons {
-	// 		line-height: 1.5;
-	// 	}
-	// }
-
-	// .wp-mail-smtp-code-helper-text {
-	// 	display: none;
-	// 	margin-top: 5px;
-	// }
-
 		// Mailer Options
 		.wp-mail-smtp-mailer-options {
 			.wp-mail-smtp-mailer-option {
@@ -399,8 +426,9 @@
 				blockquote {
 					background: #E5E5E5;
 					border-radius: $border-radius;
-					color: #929292;
-					margin-bottom: 20px;
+					color: #666;
+					font-size: 14px;
+					margin: 20px 0;
 					padding: 15px;
 				}
 			}

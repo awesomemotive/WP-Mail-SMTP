@@ -72,6 +72,9 @@ class Settings extends PageAbstract {
 						);
 						?>
 					</p>
+					<p class="desc">
+						<?php esc_html_e( 'Please note if you are sending using an email provider (Gmail, Yahoo, Hotmail, Outlook.com, etc) this setting should be your email address for that account.', 'wp-mail-smtp' ); ?>
+					</p>
 				</span>
 			</div>
 
@@ -146,7 +149,7 @@ class Settings extends PageAbstract {
 					<label for="wp-mail-smtp-setting-return_path"><?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?></label></label>
 					<p class="desc">
 						<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
-						<?php esc_html_e( 'It won\'t be set if unchecked, thus bounce messages may be lost.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'If unchecked bounce messages may be lost.', 'wp-mail-smtp' ); ?>
 					</p>
 				</span>
 			</div>

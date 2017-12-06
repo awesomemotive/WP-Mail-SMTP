@@ -1,28 +1,6 @@
 /* globals jQuery */
 jQuery( document ).ready( function ( $ ) {
 
-	$( '.js-wp-mail-smtp-code-helper' ).click( function () {
-
-		$( this ).siblings( '.wp-mail-smtp-code-helper-text' ).slideToggle( 'fast', function () {
-
-			if ( $( this ).is( ':visible' ) ) {
-				$( this )
-					.siblings( '.wp-mail-smtp-code-helper' )
-					.find( '.dashicons' )
-					.removeClass( 'dashicons-arrow-down-alt2' )
-					.addClass( 'dashicons-arrow-up-alt2' );
-			}
-			else {
-				$( this )
-					.siblings( '.wp-mail-smtp-code-helper' )
-					.find( '.dashicons' )
-					.removeClass( 'dashicons-arrow-up-alt2' )
-					.addClass( 'dashicons-arrow-down-alt2' );
-			}
-		} );
-
-	} );
-
 	$( '.wp-mail-smtp-mailer input' ).click( function () {
 		if ( $( this ).prop( 'disabled' ) ) {
 			return false;
@@ -50,5 +28,9 @@ jQuery( document ).ready( function ( $ ) {
 
 		document.execCommand( 'Copy' );
 	} );
+
+	$( '#wp-mail-smtp-setting-smtp-auth' ).change(function() {
+		$( '#wp-mail-smtp-setting-row-smtp-user, #wp-mail-smtp-setting-row-smtp-pass' ).toggleClass( 'inactive' );
+	});
 
 } );

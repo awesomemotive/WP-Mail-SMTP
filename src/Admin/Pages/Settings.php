@@ -46,17 +46,17 @@ class Settings extends PageAbstract {
 
 			<!-- Mail Section Title -->
 			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-				<span class="wp-mail-smtp-setting-field">
+				<div class="wp-mail-smtp-setting-field">
 					<h2><?php esc_html_e( 'Mail', 'wp-mail-smtp' ); ?></h2>
-				</span>
+				</div>
 			</div>
 
 			<!-- From Email -->
 			<div id="wp-mail-smtp-setting-row-from_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][from_email]" type="email"
 						value="<?php echo esc_attr( $options->get( 'mail', 'from_email' ) ); ?>"
 						<?php echo $options->is_const_defined( 'mail', 'from_email' ) ? 'disabled' : ''; ?>
@@ -75,15 +75,15 @@ class Settings extends PageAbstract {
 					<p class="desc">
 						<?php esc_html_e( 'Please note if you are sending using an email provider (Gmail, Yahoo, Hotmail, Outlook.com, etc) this setting should be your email address for that account.', 'wp-mail-smtp' ); ?>
 					</p>
-				</span>
+				</div>
 			</div>
 
 			<!-- From Name -->
 			<div id="wp-mail-smtp-setting-row-from_name" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-from_name"><?php esc_html_e( 'From Name', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][from_name]" type="text"
 						value="<?php echo esc_attr( $options->get( 'mail', 'from_name' ) ); ?>"
 						<?php echo $options->is_const_defined( 'mail', 'from_name' ) ? 'disabled' : ''; ?>
@@ -99,15 +99,15 @@ class Settings extends PageAbstract {
 						);
 						?>
 					</p>
-				</span>
+				</div>
 			</div>
 
 			<!-- Mailer -->
 			<div id="wp-mail-smtp-setting-row-mailer" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-mailer wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-mailer"><?php esc_html_e( 'Mailer', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<div class="wp-mail-smtp-mailers">
 
 						<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
@@ -132,15 +132,15 @@ class Settings extends PageAbstract {
 						<?php endforeach; ?>
 
 					</div>
-				</span>
+				</div>
 			</div>
 
 			<!-- Return Path -->
 			<div id="wp-mail-smtp-setting-row-return_path" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-return_path"><?php esc_html_e( 'Return Path', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][return_path]" type="checkbox"
 						value="true" <?php checked( true, $options->get( 'mail', 'return_path' ) ); ?>
 						<?php echo $options->is_const_defined( 'mail', 'return_path' ) ? 'disabled' : ''; ?>
@@ -151,7 +151,7 @@ class Settings extends PageAbstract {
 						<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
 						<?php esc_html_e( 'If unchecked bounce messages may be lost.', 'wp-mail-smtp' ); ?>
 					</p>
-				</span>
+				</div>
 			</div>
 
 			<!-- Mailer Options -->
@@ -162,9 +162,9 @@ class Settings extends PageAbstract {
 
 						<!-- Mailer Option Title -->
 						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-							<span class="wp-mail-smtp-setting-field">
+							<div class="wp-mail-smtp-setting-field">
 								<h2><?php echo $provider->get_title(); ?></h2>
-							</span>
+							</div>
 						</div>
 
 						<?php $provider->display_options(); ?>
@@ -176,23 +176,23 @@ class Settings extends PageAbstract {
 
 			<!-- General Section Title -->
 			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-				<span class="wp-mail-smtp-setting-field">
+				<div class="wp-mail-smtp-setting-field">
 					<h2><?php esc_html_e( 'General', 'wp-mail-smtp' ); ?></h2>
-				</span>
+				</div>
 			</div>
 
 			<!-- Hide Announcements -->
 			<div id="wp-mail-smtp-setting-row-am_notifications_hidden" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Hide Announcements', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[general][am_notifications_hidden]" type="checkbox"
 						value="true" <?php checked( true, $options->get( 'general', 'am_notifications_hidden' ) ); ?>
 						id="wp-mail-smtp-setting-am_notifications_hidden"
 					/>
 					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?></label>
-				</span>
+				</div>
 			</div>
 
 			<p class="wp-mail-smtp-submit">

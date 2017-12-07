@@ -43,22 +43,22 @@ class Test extends PageAbstract {
 
 			<!-- Test Email Section Title -->
 			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-				<span class="wp-mail-smtp-setting-field">
+				<div class="wp-mail-smtp-setting-field">
 					<h2><?php esc_html_e( 'Send a Test Email', 'wp-mail-smtp' ); ?></h2>
-				</span>
+				</div>
 			</div>
 
 			<!-- Test Email -->
 			<div id="wp-mail-smtp-setting-row-test_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
-				<span class="wp-mail-smtp-setting-label">
+				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-test_email"><?php esc_html_e( 'Send To', 'wp-mail-smtp' ); ?></label>
-				</span>
-				<span class="wp-mail-smtp-setting-field">
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[test_email]" type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required />
 					<p class="desc">
 						<?php esc_html_e( 'Type an email address here and then click a button below to generate a test email.', 'wp-mail-smtp' ); ?>
 					</p>
-				</span>
+				</div>
 			</div>
 
 			<p class="wp-mail-smtp-submit">

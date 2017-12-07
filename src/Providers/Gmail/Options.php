@@ -41,73 +41,74 @@ class Options extends OptionAbstract {
 		}
 		?>
 
-		<table class="form-table">
+		<!-- Client ID -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_id" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_id"><?php esc_html_e( 'Client ID', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][client_id]" type="text"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'client_id' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'client_id' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_id" spellcheck="false"
+				/>
+			</div>
+		</div>
 
-			<!-- Client ID -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-id"><?php esc_html_e( 'Client ID', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][client_id]" type="text"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'client_id' ) ); ?>"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'client_id' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-id" class="regular-text" spellcheck="false"
-					/>
-				</td>
-			</tr>
+		<!-- Client Secret -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret"><?php esc_html_e( 'Client Secret', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][client_secret]" type="text"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'client_secret' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'client_secret' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret" spellcheck="false"
+				/>
+			</div>
+		</div>
 
-			<!-- Client Secret -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-secret"><?php esc_html_e( 'Client Secret', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][client_secret]" type="text"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'client_secret' ) ); ?>"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'client_secret' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-secret" class="regular-text" spellcheck="false"
-					/>
-				</td>
-			</tr>
+		<!-- Authorized redirect URI -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect"><?php esc_html_e( 'Authorized redirect URI', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input type="text" readonly="readonly"
+					value="<?php echo esc_attr( Auth::get_plugin_auth_url() ); ?>"
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect"
+				/>
+				<button type="button" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-light-grey wp-mail-smtp-setting-copy"
+					title="<?php esc_attr_e( 'Copy URL to clipboard', 'wp-mail-smtp' ); ?>"
+					data-source_id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect">
+					<span class="dashicons dashicons-admin-page"></span>
+				</button>
+				<p class="desc">
+					<?php esc_html_e( 'This is the path on your site that you will be redirected to after you have authenticated with Google.', 'wp-mail-smtp' ); ?>
+					<br>
+					<?php esc_html_e( 'You need to copy this URL into "Authorized redirect URIs" field for you web application on Google APIs site for your project there.', 'wp-mail-smtp' ); ?>
+				</p>
+			</div>
+		</div>
 
-			<!-- Authorized redirect URI -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-redirect"><?php esc_html_e( 'Authorized redirect URI', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input type="text" readonly="readonly" class="regular-text"
-						value="<?php echo esc_attr( Auth::get_plugin_auth_url() ); ?>"
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-redirect"
-					/>
-					<button type="button" class="button wp-mail-smtp-setting-copy"
-						title="<?php esc_attr_e( 'Copy URL to clipboard', 'wp-mail-smtp' ); ?>"
-						data-source_id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client-redirect">
-						<span class="dashicons dashicons-admin-page"></span>
-					</button>
-					<p class="description">
-						<?php esc_html_e( 'This is the path on your site that you will be redirected to after you have authenticated with Google.', 'wp-mail-smtp' ); ?>
-						<br>
-						<?php esc_html_e( 'You need to copy this URL into "Authorized redirect URIs" field for you web application on Google APIs site for your project there.', 'wp-mail-smtp' ); ?>
+		<!-- Auth users button -->
+		<?php $auth = new Auth(); ?>
+		<?php if ( $auth->is_clients_saved() && $auth->is_auth_required() ) : ?>
+			<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label><?php esc_html_e( 'Authorize', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
+						<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
+					</a>
+					<p class="desc">
+						<?php esc_html_e( 'Click the button above to confirm authorization.', 'wp-mail-smtp' ); ?>
 					</p>
-				</td>
-			</tr>
-
-			<!-- Auth users button -->
-			<?php $auth = new Auth(); ?>
-			<?php if ( ! $auth->is_auth_required() ) : ?>
-				<tr>
-					<td>&nbsp;</td>
-					<td>
-						<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="button-primary">
-							<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
-						</a>
-					</td>
-				</tr>
-			<?php endif; ?>
-
-		</table>
+				</div>
+			</div>
+		<?php endif; ?>
 
 		<?php
 	}

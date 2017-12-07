@@ -89,180 +89,137 @@ abstract class OptionAbstract implements OptionInterface {
 	public function display_options() {
 		?>
 
-		<table class="form-table">
+		<!-- SMTP Host -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-host" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host"><?php esc_html_e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][host]" type="text"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'host' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'host' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host" spellcheck="false"
+				/>
+			</div>
+		</div>
 
-			<!-- SMTP Host -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host"><?php esc_html_e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][host]" type="text"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'host' ) ); ?>"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'host' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-host" class="regular-text" spellcheck="false"
+		<!-- SMTP Port -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-port" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-number wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port"><?php esc_html_e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][port]" type="number"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'port' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'port' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port" class="small-text" spellcheck="false"
+				/>
+			</div>
+		</div>
+
+		<!-- SMTP Encryption -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-encryption" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-radio wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label><?php esc_html_e( 'Encryption', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none">
+					<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="none"
+						<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
+						<?php checked( 'none', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
 					/>
-				</td>
-			</tr>
+					<?php esc_html_e( 'None', 'wp-mail-smtp' ); ?>
+				</label>
 
-			<!-- SMTP Port -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port"><?php esc_html_e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][port]" type="number"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'port' ) ); ?>"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'port' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-port" class="small-text" spellcheck="false"
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl">
+					<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="ssl"
+						<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
+						<?php checked( 'ssl', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
 					/>
-				</td>
-			</tr>
+					<?php esc_html_e( 'SSL', 'wp-mail-smtp' ); ?>
+				</label>
 
-			<!-- SMTP Encryption -->
-			<tr>
-				<th scope="row">
-					<label><?php esc_html_e( 'Encryption', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<div class="wp-mail-smtp-inline-radios">
-						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none"
-							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="none"
-							<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
-							<?php checked( 'none', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
-						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-none"><?php esc_html_e( 'None', 'wp-mail-smtp' ); ?></label>
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls">
+					<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="tls"
+						<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
+						<?php checked( 'tls', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
+					/>
+					<?php esc_html_e( 'TLS', 'wp-mail-smtp' ); ?>
+				</label>
 
-						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"
-							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="ssl"
-							<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
-							<?php checked( 'ssl', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
-						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-ssl"><?php esc_html_e( 'SSL', 'wp-mail-smtp' ); ?></label>
+				<p class="desc">
+					<?php esc_html_e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?>
+				</p>
+			</div>
+		</div>
 
-						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"
-							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][encryption]" value="tls"
-							<?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) ? 'disabled' : ''; ?>
-							<?php checked( 'tls', $this->options->get( $this->get_slug(), 'encryption' ) ); ?>
-						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-enc-tls"><?php esc_html_e( 'TLS', 'wp-mail-smtp' ); ?></label>
-					</div>
 
-					<p class="description">
-						<?php esc_html_e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?>
+		<!-- SMTP Authentication -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-auth" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth"><?php esc_html_e( 'Authentication', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth">
+					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="yes"
+						<?php echo $this->options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
+						<?php checked( true, $this->options->get( $this->get_slug(), 'auth' ) ); ?>
+					/>
+					<span class="wp-mail-smtp-setting-toggle-switch"></span>
+					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
+					<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
+				</label>
+			</div>
+		</div>
+
+		<!-- SMTP Username -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-user" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear <?php echo ! $this->options->is_const_defined( $this->get_slug(), 'auth' ) && ! $this->options->get( $this->get_slug(), 'auth' ) ? 'inactive' : ''; ?>">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"><?php esc_html_e( 'SMTP Username', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][user]" type="text"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'user' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'user' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user" spellcheck="false" autocomplete="off"
+				/>
+			</div>
+		</div>
+
+		<!-- SMTP Password -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-pass" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-password wp-mail-smtp-clear <?php echo ! $this->options->is_const_defined( $this->get_slug(), 'auth' ) && ! $this->options->get( $this->get_slug(), 'auth' ) ? 'inactive' : ''; ?>">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"><?php esc_html_e( 'SMTP Password', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<?php if ( $this->options->is_const_defined( $this->get_slug(), 'pass' ) ) : ?>
+					<input type="text" value="*************" disabled id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"/>
+				<?php else : ?>
+					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][pass]" type="password"
+						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'pass' ) ); ?>"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" spellcheck="false" autocomplete="off"
+					/>
+					<p class="desc">
+						<?php
+						printf(
+							/* translators: %s - wp-config.php. */
+							esc_html__( 'The password is stored in plain text. We highly recommend you setup your password in your WordPress configuration file for improved security; to do this add the lines below to your %s file.', 'wp-mail-smtp' ),
+							'<code>wp-config.php</code>'
+						);
+						?>
 					</p>
-				</td>
-			</tr>
-
-			<!-- SMTP Authentication -->
-			<tr>
-				<th scope="row">
-					<label><?php esc_html_e( 'Authentication', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<div class="wp-mail-smtp-inline-radios">
-						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-no"
-							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="no"
-							<?php echo $this->options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
-							<?php checked( false, $this->options->get( $this->get_slug(), 'auth' ) ); ?>
-						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-no"><?php esc_html_e( 'No', 'wp-mail-smtp' ); ?></label>
-
-						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-yes"
-							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="yes"
-							<?php echo $this->options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
-							<?php checked( true, $this->options->get( $this->get_slug(), 'auth' ) ); ?>
-						/>
-						<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth-yes"><?php esc_html_e( 'Yes', 'wp-mail-smtp' ); ?></label>
-					</div>
-				</td>
-			</tr>
-
-			<!-- SMTP Username -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"><?php esc_html_e( 'SMTP Username', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][user]" type="text"
-						class="regular-text" spellcheck="false" autocomplete="off"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'user' ) ); ?>"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'user' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-user"
-					/>
-				</td>
-			</tr>
-
-			<!-- SMTP Password -->
-			<tr>
-				<th scope="row">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"><?php esc_html_e( 'SMTP Password', 'wp-mail-smtp' ); ?></label>
-				</th>
-				<td>
-					<?php if ( $this->options->is_const_defined( $this->get_slug(), 'pass' ) ) : ?>
-						<input type="text" value="*************" disabled class="regular-text"
-							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"/>
-					<?php else : ?>
-						<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][pass]" type="password"
-							class="regular-text" spellcheck="false" autocomplete="off"
-							value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'pass' ) ); ?>"
-							id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass"
-						/>
-
-						<?php $this->display_helper_icon(); ?>
-
-						<p class="description">
-							<?php esc_html_e( 'The password is stored in plain text. For information on how to securely setup your password, please click a dropdown icon above.', 'wp-mail-smtp' ); ?>
-						</p>
-
-						<div class="wp-mail-smtp-code-helper-text">
-							<?php $this->display_helper_text(); ?>
-							<pre>
-								define( 'WPMS_ON', true );
-								define( 'WPMS_SMTP_PASS', 'your_password' );
-							</pre>
-						</div>
-
-					<?php endif; ?>
-				</td>
-			</tr>
-		</table>
-
-		<?php
-	}
-
-	/**
-	 * Helper icon to open or close code section.
-	 *
-	 * @since 1.0.0
-	 */
-	protected function display_helper_icon() {
-		?>
-
-		<span class="wp-mail-smtp-code-helper js-wp-mail-smtp-code-helper">
-			<span class="dashicons dashicons-arrow-down-alt2"></span>
-		</span>
-
-		<?php
-	}
-
-	/**
-	 * Helper generic text, that is the same for all fields.
-	 *
-	 * @since 1.0.0
-	 */
-	protected function display_helper_text() {
-		?>
-
-		<p>
-			<?php
-			printf(
-				/* translators: %s - wp-config.php. */
-				esc_html__( 'To redefine this value in %s use this code:', 'wp-mail-smtp' ),
-				'<code>wp-config.php</code>'
-			);
-			?>
-		</p>
+					<pre>
+						define( 'WPMS_ON', true );
+						define( 'WPMS_SMTP_PASS', 'your_password' );
+					</pre>
+				<?php endif; ?>
+			</div>
+		</div>
 
 		<?php
 	}

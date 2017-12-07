@@ -189,7 +189,7 @@ class Area {
 
 			$text = sprintf(
 				/* translators: %1$s - WP.org link; %2$s - same WP.org link. */
-				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
+				__( 'Please rate <strong>WP Mail SMTP</strong> <a href="%1$s" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%2$s" target="_blank">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!', 'wp-mail-smtp' ),
 				$url,
 				$url
 			);
@@ -223,8 +223,8 @@ class Area {
 				<?php endforeach; ?>
 			</div>
 
-			<div class="wp-mail-smtp-page">
-				<h1><?php echo $this->get_current_tab_title(); ?></h1>
+			<div class="wp-mail-smtp-page wp-mail-smtp-tab-<?php echo $this->get_current_tab(); ?>">
+				<h1 class="screen-reader-text"><?php echo $this->get_current_tab_title(); ?></h1>
 
 				<?php $this->display_current_tab_content(); ?>
 			</div>

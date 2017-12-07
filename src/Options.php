@@ -110,7 +110,7 @@ class Options {
 	/**
 	 * Get options by a group and a key.
 	 *
-	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option (string).
+	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option.
 	 *
 	 * @since 1.0.0
 	 *

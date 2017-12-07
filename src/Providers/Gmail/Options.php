@@ -100,7 +100,7 @@ class Options extends OptionAbstract {
 					<label><?php esc_html_e( 'Authorize', 'wp-mail-smtp' ); ?></label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
-					<a href="" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
+					<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
 						<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
 					</a>
 					<p class="desc">

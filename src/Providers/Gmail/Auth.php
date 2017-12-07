@@ -77,7 +77,7 @@ class Auth extends AuthAbstract {
 		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
 		// We request only the sending capability, as it's what we only need to do.
-		$client->addScope( \Google_Service_Gmail::GMAIL_SEND );
+		$client->setScopes( array( \Google_Service_Gmail::GMAIL_SEND ) );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
 
 		if (

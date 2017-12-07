@@ -34,15 +34,15 @@ class Options extends OptionAbstract {
 		?>
 
 		<!-- API Key -->
-		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-apli_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-api_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
 			<span class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-apli_key"><?php esc_html_e( 'API Key', 'wp-mail-smtp' ); ?></label>
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'API Key', 'wp-mail-smtp' ); ?></label>
 			</span>
 			<span class="wp-mail-smtp-setting-field">
-				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][apli_key]" type="text"
-					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'apli_key' ) ); ?>"
-					<?php echo $this->options->is_const_defined( $this->get_slug(), 'apli_key' ) ? 'disabled' : ''; ?>
-					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-apli_key" spellcheck="false"
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]" type="text"
+					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ? 'disabled' : ''; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key" spellcheck="false"
 				/>
 				<p class="desc">
 					<?php

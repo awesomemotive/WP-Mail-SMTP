@@ -40,10 +40,8 @@ class Auth extends AuthAbstract {
 		$this->mailer = $options->get( 'mail', 'mailer' );
 		$this->gmail  = $options->get_group( $this->mailer );
 
-		if (
-			isset( $this->gmail['client_id'] ) &&
-			isset( $this->gmail['client_secret'] )
-		) {
+		if ( $this->is_clients_saved() ) {
+
 			$this->include_google_lib();
 
 			$this->client = $this->get_client();
@@ -258,20 +256,25 @@ class Auth extends AuthAbstract {
 	}
 
 	/**
-	 * Whether we have a code or not.
+	 * Whether user saved Client ID and Client Secret or not.
+	 * Both options should be saved.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	public function is_clients_saved() {
+		return ! empty( $this->gmail['client_id'] ) && ! empty( $this->gmail['client_secret'] );
+	}
+
+	/**
+	 * Whether we have an access and refresh tokens or not.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return bool
 	 */
 	public function is_auth_required() {
-		if (
-			empty( $this->gmail['client_id'] ) &&
-			empty( $this->gmail['client_secret'] )
-		) {
-			return true;
-		}
-
-		return ! empty( $this->gmail['access_token'] ) && ! empty( $this->gmail['refresh_token'] );
+		return empty( $this->gmail['access_token'] ) || empty( $this->gmail['refresh_token'] );
 	}
 }

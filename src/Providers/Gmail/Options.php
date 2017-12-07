@@ -94,20 +94,20 @@ class Options extends OptionAbstract {
 
 		<!-- Auth users button -->
 		<?php $auth = new Auth(); ?>
-		<?php if ( ! $auth->is_auth_required() ) : ?>
-		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
-			<span class="wp-mail-smtp-setting-label">
-				<label><?php esc_html_e( 'Authorize', 'wp-mail-smtp' ); ?></label>
-			</span>
-			<span class="wp-mail-smtp-setting-field">
-				<a href="" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
-					<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
-				</a>
-				<p class="desc">
-					<?php esc_html_e( 'Click the button above to confirm authorization.', 'wp-mail-smtp' ); ?>
-				</p>
-			</span>
-		</div>
+		<?php if ( $auth->is_clients_saved() && $auth->is_auth_required() ) : ?>
+			<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+				<span class="wp-mail-smtp-setting-label">
+					<label><?php esc_html_e( 'Authorize', 'wp-mail-smtp' ); ?></label>
+				</span>
+				<span class="wp-mail-smtp-setting-field">
+					<a href="" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
+						<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
+					</a>
+					<p class="desc">
+						<?php esc_html_e( 'Click the button above to confirm authorization.', 'wp-mail-smtp' ); ?>
+					</p>
+				</span>
+			</div>
 		<?php endif; ?>
 
 		<?php

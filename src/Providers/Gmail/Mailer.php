@@ -59,7 +59,6 @@ class Mailer extends MailerAbstract {
 	 * @param string $name
 	 */
 	public function set_from( $email, $name ) {
-		// TODO: Implement set_from() method.
 	}
 
 	/**
@@ -70,7 +69,6 @@ class Mailer extends MailerAbstract {
 	 * @param array $recipients
 	 */
 	public function set_recipients( $recipients ) {
-		// TODO: Implement set_recipients() method.
 	}
 
 	/**
@@ -81,7 +79,6 @@ class Mailer extends MailerAbstract {
 	 * @param string|array $content
 	 */
 	public function set_content( $content ) {
-		// TODO: Implement set_content() method.
 	}
 
 	/**
@@ -92,7 +89,6 @@ class Mailer extends MailerAbstract {
 	 * @param array $attachments
 	 */
 	public function set_attachments( $attachments ) {
-		// TODO: Implement set_attachments() method.
 	}
 
 	/**
@@ -103,7 +99,6 @@ class Mailer extends MailerAbstract {
 	 * @param array $reply_to
 	 */
 	public function set_reply_to( $reply_to ) {
-		// TODO: Implement set_reply_to() method.
 	}
 
 	/**
@@ -114,7 +109,6 @@ class Mailer extends MailerAbstract {
 	 * @param string $email
 	 */
 	public function set_return_path( $email ) {
-		// TODO: Implement set_return_path() method.
 	}
 
 	/**

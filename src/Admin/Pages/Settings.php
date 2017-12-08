@@ -174,27 +174,6 @@ class Settings extends PageAbstract {
 
 			</div>
 
-			<!-- General Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-				<div class="wp-mail-smtp-setting-field">
-					<h2><?php esc_html_e( 'General', 'wp-mail-smtp' ); ?></h2>
-				</div>
-			</div>
-
-			<!-- Hide Announcements -->
-			<div id="wp-mail-smtp-setting-row-am_notifications_hidden" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
-				<div class="wp-mail-smtp-setting-label">
-					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Hide Announcements', 'wp-mail-smtp' ); ?></label>
-				</div>
-				<div class="wp-mail-smtp-setting-field">
-					<input name="wp-mail-smtp[general][am_notifications_hidden]" type="checkbox"
-						value="true" <?php checked( true, $options->get( 'general', 'am_notifications_hidden' ) ); ?>
-						id="wp-mail-smtp-setting-am_notifications_hidden"
-					/>
-					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?></label>
-				</div>
-			</div>
-
 			<p class="wp-mail-smtp-submit">
 				<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange"><?php esc_html_e( 'Save Settings', 'wp-mail-smtp' ); ?></button>
 			</p>

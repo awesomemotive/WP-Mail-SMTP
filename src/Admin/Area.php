@@ -272,6 +272,7 @@ class Area {
 			$this->pages = array(
 				'settings' => new Pages\Settings(),
 				'test'     => new Pages\Test(),
+				'misc'     => new Pages\Misc(),
 				'auth'     => new Pages\Auth(),
 			);
 		}
@@ -322,8 +323,14 @@ class Area {
 		}
 
 		// Process POST only if it exists.
-		if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
-			$this->pages[ $this->get_current_tab() ]->process_post( $_POST['wp-mail-smtp'] );
+		if ( ! empty( $_POST ) ) {
+			if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
+				$post = $_POST['wp-mail-smtp'];
+			} else {
+				$post = array();
+			}
+
+			$this->pages[ $this->get_current_tab() ]->process_post( $post );
 		}
 
 		// This won't do anything for most pages.

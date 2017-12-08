@@ -159,9 +159,11 @@ class Auth extends AuthAbstract {
 		// Let's try to get the access token.
 		if (
 			! empty( $code ) &&
-			$scope === ( \Google_Service_Gmail::GMAIL_SEND . ' ' . \Google_Service_Gmail::MAIL_GOOGLE_COM )
+			(
+				$scope === ( \Google_Service_Gmail::GMAIL_SEND . ' ' . \Google_Service_Gmail::MAIL_GOOGLE_COM ) ||
+				$scope === \Google_Service_Gmail::GMAIL_SEND
+			)
 		) {
-
 			// Save the auth code. So \Google_Client can reuse it to retrieve the access token.
 			$this->update_auth_code( $code );
 		} else {

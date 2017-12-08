@@ -64,6 +64,10 @@ class Auth extends AuthAbstract {
 	 */
 	public function get_client() {
 
+		if ( ! empty( $this->client ) ) {
+			return $this->client;
+		}
+
 		$client = new \Google_Client(
 			array(
 				'client_id'     => $this->gmail['client_id'],

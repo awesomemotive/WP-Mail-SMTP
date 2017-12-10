@@ -3,7 +3,7 @@ Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
 Tags: mail, smtp, wp_mail, mailer, phpmailer
 Requires at least: 3.6
-Tested up to: 4.9.1
+Tested up to: 4.9
 Stable tag: trunk
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 700k sites.
@@ -49,9 +49,6 @@ If you like this plugin, then consider checking out our other projects:
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
 
-
-
-
 == Installation ==
 
 1. Install WP Mail SMTP by WPForms either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
@@ -89,10 +86,12 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Screenshots ==
 
-1. Advanced Email Options
-2. SMTP Options
-3. Pepipost SMTP Options
-4. Send a Test Email
+1. WP Mail SMTP Settings page
+2. Gmail / G Suite settings
+3. Mailgun settings
+4. SendGrid settings
+5. SMTP settings
+6. Send a Test Email
 
 == Changelog ==
 

@@ -22,7 +22,7 @@ class Options extends OptionAbstract {
 			array(
 				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/sendgrid.png',
 				'slug'     => 'sendgrid',
-				'title'    => esc_html__( 'Sendgrid', 'wp-mail-smtp' ),
+				'title'    => esc_html__( 'SendGrid', 'wp-mail-smtp' ),
 			)
 		);
 	}
@@ -48,7 +48,7 @@ class Options extends OptionAbstract {
 					<?php
 					printf(
 						/* translators: %s - API key link. */
-						esc_html__( 'Follow this link to get an API Key from Sendgrid: %s.', 'wp-mail-smtp' ),
+						esc_html__( 'Follow this link to get an API Key from SendGrid: %s.', 'wp-mail-smtp' ),
 						'<a href="https://app.sendgrid.com/settings/api_keys" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Create API Key', 'wp-mail-smtp' ) .
 						'</a>'

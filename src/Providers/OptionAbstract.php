@@ -26,6 +26,10 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * @var string
 	 */
+	private $description = '';
+	/**
+	 * @var string
+	 */
 	private $php = WPMS_PHP_VER;
 	/**
 	 * @var Options
@@ -50,6 +54,19 @@ abstract class OptionAbstract implements OptionInterface {
 
 		$this->slug  = sanitize_key( $params['slug'] );
 		$this->title = sanitize_text_field( $params['title'] );
+
+		if ( ! empty( $params['description'] ) ) {
+			$this->description = wp_kses( $params['description'],
+				array(
+					'br' => array(),
+					'a'  => array(
+						'href'   => array(),
+						'rel'    => array(),
+						'target' => array(),
+					),
+				)
+			);
+		}
 
 		if ( ! empty( $params['php'] ) ) {
 			$this->php = sanitize_text_field( $params['php'] );
@@ -81,6 +98,13 @@ abstract class OptionAbstract implements OptionInterface {
 	 */
 	public function get_title() {
 		return apply_filters( 'wp_mail_smtp_providers_provider_get_title', $this->title, $this );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_description() {
+		return apply_filters( 'wp_mail_smtp_providers_provider_get_description', $this->description, $this );
 	}
 
 	/**

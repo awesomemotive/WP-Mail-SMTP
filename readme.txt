@@ -1,7 +1,7 @@
 === WP Mail SMTP by WPForms ===
 Contributors: wpforms, smub, jaredatch, slaFFik
 Donate link: https://wpforms.com/
-Tags: mail, smtp, wp_mail, mailer, phpmailer
+Tags: mail, smtp, wp_mail, mailer, phpmailer, gmail, mailgun, sendgrid
 Requires at least: 3.6
 Tested up to: 4.9
 Stable tag: trunk
@@ -95,10 +95,10 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
-= [0.11.1] - 2017-10-30 =
+= 0.11.1 - 2017-10-30 =
 * Older PHP compatibility fix.
 
-= [0.11] - 2017-10-30 =
+= 0.11 - 2017-10-30 =
 * Added: Helper description to Return Path option.
 * Added: Filter `wp_mail_smtp_admin_test_email_smtp_debug` to increase the debug message verbosity.
 * Added: PHP 5.2 notice.

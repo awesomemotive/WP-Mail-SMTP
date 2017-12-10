@@ -20,9 +20,25 @@ class Options extends OptionAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/smtp.png',
-				'slug'     => 'smtp',
-				'title'    => esc_html__( 'Other SMTP', 'wp-mail-smtp' ),
+				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/smtp.png',
+				'slug'        => 'smtp',
+				'title'       => esc_html__( 'Other SMTP', 'wp-mail-smtp' ),
+				/* translators: %1$s - opening link tag; %2$s - closing link tag. */
+				'description' => sprintf(
+					wp_kses(
+						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommend settings for the popular services as well as troubleshooting tips, check out our %1$sSMTP documentation%2$s.', 'wp-mail-smtp' ),
+						array(
+							'br' => array(),
+							'a'  => array(
+								'href'   => array(),
+								'rel'    => array(),
+								'target' => array(),
+							),
+						)
+					),
+					'<a href="https://wpforms.com/how-to-set-up-wordpress-smtp-using-wp-mail-smtp-by-wpforms/" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				),
 			)
 		);
 	}

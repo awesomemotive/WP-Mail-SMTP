@@ -161,11 +161,12 @@ class Settings extends PageAbstract {
 					<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
 
 						<!-- Mailer Option Title -->
-						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php empty( $provider->get_description() ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
+						<?php $provider_desc = $provider->get_description(); ?>
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php empty( $provider_desc ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
 							<div class="wp-mail-smtp-setting-field">
 								<h2><?php echo $provider->get_title(); ?></h2>
-								<?php if ( ! empty( $provider->get_description() ) ) : ?>
-								<p class="desc"><?php echo $provider->get_description(); ?></p>
+								<?php if ( ! empty( $provider_desc ) ) : ?>
+									<p class="desc"><?php echo $provider_desc; ?></p>
 								<?php endif; ?>
 							</div>
 						</div>

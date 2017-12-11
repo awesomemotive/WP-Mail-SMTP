@@ -38,6 +38,15 @@ interface OptionInterface {
 	public function get_description();
 
 	/**
+	 * Get the mailer provider minimum PHP version.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_php_version();
+
+	/**
 	 * Get the mailer provider logo URL.
 	 *
 	 * @since 1.0.0

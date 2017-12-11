@@ -51,6 +51,10 @@ class MailCatcher extends \PHPMailer {
 			return false;
 		}
 
+		if ( ! $mailer->is_php_compatible() ) {
+			return false;
+		}
+
 		/*
 		 * Send the actual email.
 		 * We reuse everything, that was preprocessed for usage in \PHPMailer.

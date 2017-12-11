@@ -44,7 +44,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Redefine the way email body is returned.
 	 * By default we are sending an array of data.
-	 * Sendgrid requires a JSON, so we encode the body.
+	 * SendGrid requires a JSON, so we encode the body.
 	 *
 	 * @since 1.0.0
 	 */
@@ -187,8 +187,8 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Sendgrid accepts an array of files content in body, so we will include all files and send.
-	 * Doesn't handle exceeding the limits etc, as this is done and reported be Sendgrid API.
+	 * SendGrid accepts an array of files content in body, so we will include all files and send.
+	 * Doesn't handle exceeding the limits etc, as this is done and reported be SendGrid API.
 	 *
 	 * @since 1.0.0
 	 *
@@ -282,7 +282,7 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Sendgrid doesn't support sender or return_path params.
+	 * SendGrid doesn't support sender or return_path params.
 	 * So we do nothing.
 	 *
 	 * @since 1.0.0

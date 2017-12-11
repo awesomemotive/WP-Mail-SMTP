@@ -12,7 +12,7 @@ use WPMailSMTP\Providers\OptionAbstract;
 class Options extends OptionAbstract {
 
 	/**
-	 * Sendgrid constructor.
+	 * Options constructor.
 	 *
 	 * @since 1.0.0
 	 */
@@ -75,7 +75,7 @@ class Options extends OptionAbstract {
 					<br/>
 					<?php
 					printf(
-						/* translators: %s - Sendgrid access level. */
+						/* translators: %s - SendGrid access level. */
 						esc_html__( 'To send emails you will need only a %s access level for this API key.', 'wp-mail-smtp' ),
 						'<code>Mail Send</code>'
 					);

@@ -26,7 +26,7 @@ class Options extends OptionAbstract {
 				/* translators: %1$s - opening link tag; %2$s - closing link tag. */
 				'description' => sprintf(
 					wp_kses(
-						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommend settings for the popular services as well as troubleshooting tips, check out our %1$sSMTP documentation%2$s.', 'wp-mail-smtp' ),
+						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services as well as troubleshooting tips, check out our %1$sSMTP documentation%2$s.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(

@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - New compatibility mode - for PHP 5.2 old plugin will be loaded, for PHP 5.3 and higher - new version of admin area and new functionality.
 
 ### Changed
-The new look of the admin area.
+- The new look of the admin area.
 - SMTP password field now has "password" type.
 - SMTP password field does not display real password at all when using constants in `wp-config.php` to define it.
 - Escape properly all translations.

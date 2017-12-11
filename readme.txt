@@ -95,6 +95,18 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.0.0 - 2017-12-12 =
+* Added: Automatic migration tool to move options from older storage format to a new one.
+* Added: Added Gmail & G Suite email provider integration - without your email and password.
+* Added: Added SendGrid email provider integration - using the API key only.
+* Added: Added Mailgun email provider integration - using the API key and configured domain only.
+* Added: New compatibility mode - for PHP 5.2 old plugin will be loaded, for PHP 5.3 and higher - new version of admin area and new functionality.
+* Changed: The new look of the admin area.
+* Changed: SMTP password field now has "password" type.
+* Changed: SMTP password field does not display real password at all when using constants in `wp-config.php` to define it.
+* Changed: Escape properly all translations.
+* Changed: More helpful test email content (with a mailer name).
+
 = 0.11.1 - 2017-10-30 =
 * Older PHP compatibility fix.
 

@@ -273,6 +273,16 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function is_php_compatible() {
+
+		$options = wp_mail_smtp()->get_providers()->get_options( $this->mailer );
+
+		return version_compare( phpversion(), $options->get_php_version(), '>=' );
+	}
+
+	/**
 	 * Check whether the string is a JSON or not.
 	 *
 	 * @since 1.0.0

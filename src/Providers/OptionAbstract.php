@@ -110,6 +110,13 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * @inheritdoc
 	 */
+	public function get_php_version() {
+		return apply_filters( 'wp_mail_smtp_providers_provider_get_php_version', $this->php, $this );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function display_options() {
 		?>
 

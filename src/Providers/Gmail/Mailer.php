@@ -43,6 +43,10 @@ class Mailer extends MailerAbstract {
 	public function __construct( $phpmailer ) {
 		parent::__construct( $phpmailer );
 
+		if ( ! $this->is_php_compatible() ) {
+			return;
+		}
+
 		// Include the Google library.
 		require wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
@@ -113,6 +117,8 @@ class Mailer extends MailerAbstract {
 
 	/**
 	 * Use Google API Services to send emails.
+	 *
+	 * @since 1.0.0
 	 */
 	public function send() {
 

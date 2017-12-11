@@ -28,6 +28,15 @@ interface MailerInterface {
 	public function is_email_sent();
 
 	/**
+	 * Whether the mailer supports the current PHP version or not.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	public function is_php_compatible();
+
+	/**
 	 * Set the email headers in bulk.
 	 *
 	 * @since 1.0.0

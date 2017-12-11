@@ -17,6 +17,13 @@ All notable changes to this project will be documented in this file.
 - Escape properly all translations.
 - More helpful test email content (with a mailer name).
 
+## [0.11.2] - 2017-11-28
+### Added
+- Setting to hide announcement feed.
+
+### Changed
+- Announcement feed data.
+
 ## [0.11.1] - 2017-10-30
 ### Changed
 - Older PHP compatibility fix.

@@ -2,7 +2,7 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp
 Requires at least: 3.6
-Tested up to: 4.9.1
+Tested up to: 4.9
 Stable tag: trunk
 Requires PHP: 5.3
 
@@ -159,7 +159,7 @@ By all means please contact us to discuss features or options you'd like to see 
 * Changed: More helpful test email content (with a mailer name).
 
 = 0.11.2 - 2017-11-28 =
-* Added: Setting to hide annoucement feed.
+* Added: Setting to hide announcement feed.
 * Changed: Announcement feed data.
 
 = 0.11.1 - 2017-10-30 =

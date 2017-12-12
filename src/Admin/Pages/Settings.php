@@ -197,7 +197,9 @@ class Settings extends PageAbstract {
 		$options = new Options();
 		$old_opt = $options->get_all();
 
-		// Old and new values are different - we need to invalidate tokens and scroll to Auth button.
+		$to_redirect = false;
+
+		// Old and new Gmail client id/secret values are different - we need to invalidate tokens and scroll to Auth button.
 		if (
 			$options->get( 'mail', 'mailer' ) === 'gmail' &&
 			(
@@ -206,6 +208,13 @@ class Settings extends PageAbstract {
 			)
 		) {
 			unset( $old_opt['gmail'] );
+
+			if (
+				! empty( $data['gmail']['client_id'] ) &&
+				! empty( $data['gmail']['client_secret'] )
+			) {
+				$to_redirect = true;
+			}
 		}
 
 		// New gmail clients data will be added from new $data, except the old access/refresh_token.
@@ -213,6 +222,11 @@ class Settings extends PageAbstract {
 
 		// All the sanitization is done there.
 		$options->set( $to_save );
+
+		if ( $to_redirect ) {
+			wp_redirect( $_POST['_wp_http_referer'] . '#wp-mail-smtp-setting-row-gmail-authorize' );
+			exit;
+		}
 
 		WP::add_admin_notice(
 			esc_html__( 'Settings were successfully saved.', 'wp-mail-smtp' ),

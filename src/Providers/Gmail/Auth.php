@@ -132,7 +132,13 @@ class Auth extends AuthAbstract {
 
 		// We can't process without saved client_id/secret.
 		if ( ! $this->is_clients_saved() ) {
-			wp_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
+			wp_redirect(
+				add_query_arg(
+					'error',
+					'google_no_clients',
+					wp_mail_smtp()->get_admin()->get_admin_page_url()
+				)
+			);
 			exit;
 		}
 

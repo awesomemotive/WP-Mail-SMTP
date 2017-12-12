@@ -96,6 +96,13 @@ class Area {
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
+
+			case 'google_no_clients':
+				WP::add_admin_notice(
+					esc_html__( 'There was an error while processing the authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
 		}
 
 		switch ( $success ) {

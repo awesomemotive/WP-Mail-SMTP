@@ -60,6 +60,7 @@ class Processor {
 		}
 
 		// Set the mailer type as per config above, this overrides the already called isMail method.
+		// It's basically always 'smtp'.
 		$phpmailer->Mailer = $mailer;
 
 		// Set the Sender (return-path) if required.
@@ -68,7 +69,7 @@ class Processor {
 		}
 
 		// Set the SMTPSecure value, if set to none, leave this blank.
-		$phpmailer->SMTPSecure = 'smtp';
+		$phpmailer->SMTPSecure = $options[ $mailer ]['encryption'];
 		if ( isset( $options[ $mailer ]['encryption'] ) && 'none' === $options[ $mailer ]['encryption'] ) {
 			$phpmailer->SMTPSecure  = '';
 			$phpmailer->SMTPAutoTLS = false;

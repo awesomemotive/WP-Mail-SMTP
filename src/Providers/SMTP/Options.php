@@ -36,7 +36,7 @@ class Options extends OptionAbstract {
 							),
 						)
 					),
-					'<a href="https://wpforms.com/how-to-set-up-wordpress-smtp-using-wp-mail-smtp-by-wpforms/" target="_blank" rel="noopener noreferrer">',
+					'<a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 			)

@@ -85,7 +85,7 @@ You can set the following options:
 
 WP Mail SMTP also gives you the option to insert your password in your wp-config.php file, so it's not visible in your WordPress settings.
 
-To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="https://wpforms.com/how-to-set-up-wordpress-smtp-using-wp-mail-smtp-by-wpforms/" rel="friend">SMTP documentation</a>.
+To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" rel="friend">SMTP documentation</a>.
 
 We hope that you find WP Mail SMTP plugin helpful.
 

@@ -39,7 +39,7 @@ class Options extends OptionAbstract {
 					'<a href="https://wpforms.com/how-to-securely-send-wordpress-emails-using-gmail-smtp/" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
-				'php'         => '5.4',
+				'php'         => '5.5',
 			)
 		);
 	}

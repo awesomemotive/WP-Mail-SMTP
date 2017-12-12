@@ -49,7 +49,7 @@ class Auth extends AuthAbstract {
 	}
 
 	/**
-	 * Use the composer autoloader to include the Google Library.
+	 * Use the composer autoloader to include the Google Library and all its dependencies.
 	 *
 	 * @since 1.0.0
 	 */
@@ -64,6 +64,7 @@ class Auth extends AuthAbstract {
 	 */
 	public function get_client() {
 
+		// Doesn't load client twice + gives ability to overwrite.
 		if ( ! empty( $this->client ) ) {
 			return $this->client;
 		}
@@ -128,6 +129,11 @@ class Auth extends AuthAbstract {
 	 * @since 1.0.0
 	 */
 	public function process() {
+
+		// We can't process without saved client_id/secret.
+		if ( $this->is_clients_saved() ) {
+			return;
+		}
 
 		$code  = '';
 		$scope = '';
@@ -258,12 +264,12 @@ class Auth extends AuthAbstract {
 			return filter_var( $this->client->createAuthUrl(), FILTER_SANITIZE_URL );
 		}
 
-		return null;
+		return '';
 	}
 
 	/**
 	 * Whether user saved Client ID and Client Secret or not.
-	 * Both options should be saved.
+	 * Both options are required.
 	 *
 	 * @since 1.0.0
 	 *

@@ -195,8 +195,21 @@ class Settings extends PageAbstract {
 		$this->check_admin_referer();
 
 		$options = new Options();
+		$old_opt = $options->get_all();
 
-		$to_save = array_merge( $options->get_all(), $data );
+		// Old and new values are different - we need to invalidate tokens and scroll to Auth button.
+		if (
+			$options->get( 'mail', 'mailer' ) === 'gmail' &&
+			(
+				$options->get( 'gmail', 'client_id' ) !== $data['gmail']['client_id'] ||
+				$options->get( 'gmail', 'client_secret' ) !== $data['gmail']['client_secret']
+			)
+		) {
+			unset( $old_opt['gmail'] );
+		}
+
+		// New gmail clients data will be added from new $data, except the old access/refresh_token.
+		$to_save = array_merge( $old_opt, $data );
 
 		// All the sanitization is done there.
 		$options->set( $to_save );

@@ -131,8 +131,9 @@ class Auth extends AuthAbstract {
 	public function process() {
 
 		// We can't process without saved client_id/secret.
-		if ( $this->is_clients_saved() ) {
-			return;
+		if ( ! $this->is_clients_saved() ) {
+			wp_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
+			exit;
 		}
 
 		$code  = '';

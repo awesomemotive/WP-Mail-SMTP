@@ -120,13 +120,13 @@ Yes! We have extensive documentation that covers setting up SMTP most popular em
 
 <a href="How to Set Up WordPress SMTP Using WP Mail SMTP by WPForms" rel="friend">Read our docs</a> to see the correct SMTP settings for each service.
 
-== Help! I need support or have an issue. ==
+= Help! I need support or have an issue. =
 
-Please read <a href="http://wordpress.org">our support policy</a> for more information.
+Please read <a href="https://wordpress.org/support/topic/wp-mail-smtp-support-policy/">our support policy</a> for more information.
 
-== I found a bug, now what? ==
+= I found a bug, now what? =
 
-If you've stumbled upon a bug, the best place to report it is in the <a href="https://github.com/awesomemotive/wp-mail-smtp">WP Mail SMTP GitHub repository. GitHub is where the plugin is actively developed, and posting there will get your issue quickly seen by our developers (myself and Slava). Once posted, we'll review your bug report and triage the bug. When creating an issue, the more details you can add to your report, the faster the bug can be solved.
+If you've stumbled upon a bug, the best place to report it is in the <a href="https://github.com/awesomemotive/wp-mail-smtp">WP Mail SMTP GitHub repository</a>. GitHub is where the plugin is actively developed, and posting there will get your issue quickly seen by our developers (myself and Slava). Once posted, we'll review your bug report and triage the bug. When creating an issue, the more details you can add to your report, the faster the bug can be solved.
 
 = Can you add feature x, y or z to the plugin? =
 

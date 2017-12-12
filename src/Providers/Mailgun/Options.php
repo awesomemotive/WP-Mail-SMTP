@@ -23,9 +23,9 @@ class Options extends OptionAbstract {
 				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.png',
 				'slug'        => 'mailgun',
 				'title'       => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
-				/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
 				'description' => sprintf(
 					wp_kses(
+						/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
 						__( '%1$sMailgun%2$s is one of the leading transactional email services trusted by over 10,000 website and application developers. They provide users 10,000 free emails per month.<br><br>Read our %3$sMailgun documentation%4$s to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),

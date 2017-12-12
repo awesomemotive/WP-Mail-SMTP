@@ -23,23 +23,23 @@ class Options extends OptionAbstract {
 				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/gmail.png',
 				'slug'        => 'gmail',
 				'title'       => esc_html__( 'Gmail', 'wp-mail-smtp' ),
-				/* translators: %1$s - opening link tag; %2$s - closing link tag. */
 				'description' => sprintf(
-									wp_kses(
-										__( 'Send emails using your Gmail or G Suite (formerly Google Apps) account, all while keeping your login credentials safe. Other Google SMTP methods require enabling less secure apps in your account and entering your password. However, this integration uses the Google API to improve email delivery issues while keeping your site secure.<br><br>Read our %1$sGmail documentation%2$s to learn how to configure Gmail or G Suite.', 'wp-mail-smtp' ),
-										array(
-											'br' => array(),
-											'a'  => array(
-												'href'   => array(),
-												'rel'    => array(),
-												'target' => array(),
-											),
-										)
-									),
-									'<a href="https://wpforms.com/how-to-securely-send-wordpress-emails-using-gmail-smtp/" target="_blank" rel="noopener noreferrer">',
-									'</a>'
-								),
-				'php'          => '5.4',
+					wp_kses(
+						/* translators: %1$s - opening link tag; %2$s - closing link tag. */
+						__( 'Send emails using your Gmail or G Suite (formerly Google Apps) account, all while keeping your login credentials safe. Other Google SMTP methods require enabling less secure apps in your account and entering your password. However, this integration uses the Google API to improve email delivery issues while keeping your site secure.<br><br>Read our %1$sGmail documentation%2$s to learn how to configure Gmail or G Suite.', 'wp-mail-smtp' ),
+						array(
+							'br' => array(),
+							'a'  => array(
+								'href'   => array(),
+								'rel'    => array(),
+								'target' => array(),
+							),
+						)
+					),
+					'<a href="https://wpforms.com/how-to-securely-send-wordpress-emails-using-gmail-smtp/" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				),
+				'php'         => '5.4',
 			)
 		);
 	}

@@ -23,9 +23,9 @@ class Options extends OptionAbstract {
 				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/sendgrid.png',
 				'slug'        => 'sendgrid',
 				'title'       => esc_html__( 'SendGrid', 'wp-mail-smtp' ),
-				/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
 				'description' => sprintf(
 					wp_kses(
+						/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
 						__( '%1$sSendGrid%2$s is one of the leading transactional email services, sending over 35 billion emails every month. They provide users 100 free emails per month.<br><br>Read our %3$sSendGrid documentation%4$s to learn how to set up SendGrid and improve your email deliverability.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),

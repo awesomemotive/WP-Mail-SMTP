@@ -118,15 +118,15 @@ msgstr ""
 msgid "These options only apply if you have chosen to send mail by SMTP above."
 msgstr ""
 
-#: wp_mail_smtp.php:425, src/Providers/OptionAbstract.php:95
+#: wp_mail_smtp.php:425, src/Providers/OptionAbstract.php:126
 msgid "SMTP Host"
 msgstr ""
 
-#: wp_mail_smtp.php:433, wp_mail_smtp.php:551, src/Providers/OptionAbstract.php:109
+#: wp_mail_smtp.php:433, wp_mail_smtp.php:551, src/Providers/OptionAbstract.php:140
 msgid "SMTP Port"
 msgstr ""
 
-#: wp_mail_smtp.php:440, wp_mail_smtp.php:444, wp_mail_smtp.php:559, wp_mail_smtp.php:565, src/Providers/OptionAbstract.php:123
+#: wp_mail_smtp.php:440, wp_mail_smtp.php:444, wp_mail_smtp.php:559, wp_mail_smtp.php:565, src/Providers/OptionAbstract.php:154
 msgid "Encryption"
 msgstr ""
 
@@ -142,11 +142,11 @@ msgstr ""
 msgid "Use TLS encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:462, src/Providers/OptionAbstract.php:155
+#: wp_mail_smtp.php:462, src/Providers/OptionAbstract.php:186
 msgid "TLS is not the same as STARTTLS. For most servers SSL is the recommended option."
 msgstr ""
 
-#: wp_mail_smtp.php:467, wp_mail_smtp.php:471, src/Providers/OptionAbstract.php:164
+#: wp_mail_smtp.php:467, wp_mail_smtp.php:471, src/Providers/OptionAbstract.php:195
 msgid "Authentication"
 msgstr ""
 
@@ -222,43 +222,43 @@ msgstr ""
 msgid "Please rate <strong>WP Mail SMTP</strong> <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href=\"%2$s\" target=\"_blank\">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:133
+#: src/Providers/OptionAbstract.php:164
 msgid "None"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:142
+#: src/Providers/OptionAbstract.php:173
 msgid "SSL"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:151
+#: src/Providers/OptionAbstract.php:182
 msgid "TLS"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:174
+#: src/Providers/OptionAbstract.php:205
 msgid "On"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:175
+#: src/Providers/OptionAbstract.php:206
 msgid "Off"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:183
+#: src/Providers/OptionAbstract.php:214
 msgid "SMTP Username"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:197
+#: src/Providers/OptionAbstract.php:228
 msgid "SMTP Password"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:211
+#: src/Providers/OptionAbstract.php:242
 msgid "The password is stored in plain text. We highly recommend you setup your password in your WordPress configuration file for improved security; to do this add the lines below to your %s file."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:248
+#: src/Providers/OptionAbstract.php:279
 msgid "%1$s requires PHP %2$s to work and does not support your current PHP version %3$s. Please contact your host and request a PHP upgrade to the latest one."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:255
+#: src/Providers/OptionAbstract.php:286
 msgid "Meanwhile you can switch to the \"Other SMTP\" Mailer option."
 msgstr ""
 
@@ -270,11 +270,11 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/Admin/Pages/Misc.php:67, src/Admin/Pages/Settings.php:178
+#: src/Admin/Pages/Misc.php:67, src/Admin/Pages/Settings.php:182
 msgid "Save Settings"
 msgstr ""
 
-#: src/Admin/Pages/Misc.php:94, src/Admin/Pages/Settings.php:199
+#: src/Admin/Pages/Misc.php:95, src/Admin/Pages/Settings.php:205
 msgid "Settings were successfully saved."
 msgstr ""
 
@@ -350,39 +350,43 @@ msgstr ""
 msgid "Gmail"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:47
+#: src/Providers/Gmail/Options.php:29
+msgid "Send emails using your Gmail or G Suite (formerly Google Apps) account, all while keeping your login credentials safe. Other Google SMTP methods require enabling less secure apps in your account and entering your password. However, this integration uses the Google API to improve email delivery issues while keeping your site secure.<br><br>Read our %1$sGmail documentation%2$s to learn how to configure Gmail or G Suite."
+msgstr ""
+
+#: src/Providers/Gmail/Options.php:63
 msgid "Client ID"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:61
+#: src/Providers/Gmail/Options.php:77
 msgid "Client Secret"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:75
+#: src/Providers/Gmail/Options.php:91
 msgid "Authorized redirect URI"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:83
+#: src/Providers/Gmail/Options.php:99
 msgid "Copy URL to clipboard"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:88
+#: src/Providers/Gmail/Options.php:104
 msgid "This is the path on your site that you will be redirected to after you have authenticated with Google."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:90
+#: src/Providers/Gmail/Options.php:106
 msgid "You need to copy this URL into \"Authorized redirect URIs\" field for you web application on Google APIs site for your project there."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:100
+#: src/Providers/Gmail/Options.php:116
 msgid "Authorize"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:104
+#: src/Providers/Gmail/Options.php:120
 msgid "Allow plugin to send emails using your Google account"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:107
+#: src/Providers/Gmail/Options.php:123
 msgid "Click the button above to confirm authorization."
 msgstr ""
 
@@ -398,27 +402,31 @@ msgstr ""
 msgid "Mailgun"
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:39
+#: src/Providers/Mailgun/Options.php:29
+msgid "%1$sMailgun%2$s is one of the leading transactional email services trusted by over 10,000 website and application developers. They provide users 10,000 free emails per month.<br><br>Read our %3$sMailgun documentation%4$s to learn how to configure Mailgun and improve your email deliverability."
+msgstr ""
+
+#: src/Providers/Mailgun/Options.php:57
 msgid "Private API Key"
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:51
+#: src/Providers/Mailgun/Options.php:69
 msgid "Follow this link to get an API Key from Mailgun: %s."
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:53
+#: src/Providers/Mailgun/Options.php:71
 msgid "Get a Private API Key"
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:64
+#: src/Providers/Mailgun/Options.php:82
 msgid "Domain Name"
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:76
+#: src/Providers/Mailgun/Options.php:94
 msgid "Follow this link to get a Domain Name from Mailgun: %s."
 msgstr ""
 
-#: src/Providers/Mailgun/Options.php:78
+#: src/Providers/Mailgun/Options.php:96
 msgid "Get a Domain Name"
 msgstr ""
 
@@ -427,25 +435,33 @@ msgid "Pepipost"
 msgstr ""
 
 #: src/Providers/Sendgrid/Options.php:25
-msgid "Sendgrid"
+msgid "SendGrid"
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:39
+#: src/Providers/Sendgrid/Options.php:29
+msgid "%1$sSendGrid%2$s is one of the leading transactional email services, sending over 35 billion emails every month. They provide users 100 free emails per month.<br><br>Read our %3$sSendGrid documentation%4$s to learn how to set up SendGrid and improve your email deliverability."
+msgstr ""
+
+#: src/Providers/Sendgrid/Options.php:57
 msgid "API Key"
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:51
-msgid "Follow this link to get an API Key from Sendgrid: %s."
+#: src/Providers/Sendgrid/Options.php:69
+msgid "Follow this link to get an API Key from SendGrid: %s."
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:53
+#: src/Providers/Sendgrid/Options.php:71
 msgid "Create API Key"
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:61
+#: src/Providers/Sendgrid/Options.php:79
 msgid "To send emails you will need only a %s access level for this API key."
 msgstr ""
 
 #: src/Providers/SMTP/Options.php:25
 msgid "Other SMTP"
+msgstr ""
+
+#: src/Providers/SMTP/Options.php:29
+msgid "Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services as well as troubleshooting tips, check out our %1$sSMTP documentation%2$s."
 msgstr ""

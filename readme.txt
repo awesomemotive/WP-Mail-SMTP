@@ -146,6 +146,9 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.0.1 - 2017-12-12 =
+* Fixed: Global POST processing conflict.
+
 = 1.0.0 - 2017-12-12 =
 * Added: Automatic migration tool to move options from older storage format to a new one.
 * Added: Added Gmail & G Suite email provider integration - without your email and password.

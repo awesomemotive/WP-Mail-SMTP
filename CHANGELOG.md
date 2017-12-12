@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2017-12-12
+### Fixed
+- Global POST processing conflict. 
+
 ## [1.0.0] - 2017-12-12
 ### Added 
 - Automatic migration tool to move options from older storage format to a new one.

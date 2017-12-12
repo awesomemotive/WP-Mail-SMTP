@@ -198,7 +198,7 @@ msgstr ""
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: wp_mail_smtp.php:758, src/Admin/Area.php:363, src/Admin/Pages/Settings.php:25
+#: wp_mail_smtp.php:758, src/Admin/Area.php:370, src/Admin/Pages/Settings.php:25
 msgid "Settings"
 msgstr ""
 

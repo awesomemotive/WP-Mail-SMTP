@@ -20,35 +20,55 @@ var plugin = {
 	slug: 'wp-mail-smtp',
 	files: [
 		'**',
-		'!assets/css/*.css.map',
+		'!**/*.map',
 		'!assets/scss/**',
 		'!assets/scss',
 		'!assets/wporg/**',
 		'!assets/wporg',
-		'!.github/**',
-		'!.github',
-		'!build/**',
-		'!build',
-		'!node_modules/**',
-		'!node_modules',
-		'!vendor/**',
-		'!vendor',
-		'!bin/**',
-		'!bin',
-		'!tests/**',
-		'!tests',
-		'!phpcs.xml',
-		'!gulpfile.js',
-		'!package.json',
-		'!package-lock.json',
-		'!composer.json',
-		'!composer.lock',
-		'!phpunit.xml',
-		'!README.md',
-		'!CHANGELOG.md',
-		'!LICENSE'
+		'!**/.github/**',
+		'!**/.github',
+		'!**/bin/**',
+		'!**/bin',
+		'!**/tests/**',
+		'!**/tests',
+		'!**/Test/**',
+		'!**/Test',
+		'!**/Tests/**',
+		'!**/Tests',
+		'!**/build/**',
+		'!**/build',
+		'!**/examples/**',
+		'!**/examples',
+		'!**/doc/**',
+		'!**/doc',
+		'!**/docs/**',
+		'!**/docs',
+		'!**/node_modules/**',
+		'!**/node_modules',
+		'!**/*.md',
+		'!**/*.rst',
+		'!**/*.xml',
+		'!**/*.dist',
+		'!**/*.json',
+		'!**/*.lock',
+		'!**/gulpfile.js',
+		'!LICENSE', // but include licenses in the packages
+		'!**/Makefile',
+		'!**/AUTHORS',
+		'!vendor/composer/installers/**',
+		'!vendor/composer/installers',
+		'!vendor/composer/installed.json',
+		'!vendor/firebase/**',
+		'!vendor/firebase',
+		// We need only a specific service: Gmail. Others should be omitted.
+		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail)/**',
+		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail|Gmail.php)'
 	],
-	php: '**/*.php',
+	php: [
+		'**/*.php',
+		'!vendor/**',
+		'!tests/**'
+	],
 	sass: [
 		'assets/scss/**/*.scss'
 	],
@@ -56,8 +76,8 @@ var plugin = {
 		'assets/js/*.js',
 		'!assets/js/*.min.js'
 	],
-	img: [
-		'assets/img/**/*',
+	images: [
+		'assets/images/**/*',
 		'assets/wporg/**/*'
 	]
 };
@@ -78,20 +98,13 @@ gulp.task('process-sass', function() {
 		// UnMinified file.
 		.pipe(cached('processSASS'))
 		.pipe(sourcemaps.init())
-		.pipe(sass({outputStyle: 'expanded'}).on('error',sass.logError))
-		.pipe(rename(function(path){
-			path.dirname = '/assets/css';
-			path.extname = '.css';
-		}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('.'))
-		.pipe(debug({title: '[sass]'}))
 		// Minified file.
 		.pipe(sass({outputStyle: 'compressed'}).on('error',sass.logError))
 		.pipe(rename(function(path){
 			path.dirname = '/assets/css';
 			path.extname = '.min.css';
 		}))
+	    .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('.'))
 		.pipe(debug({title: '[sass]'}));
 });
@@ -131,7 +144,7 @@ gulp.task('process-img', function () {
 		gutil.colors.gray(' ======')
 	);
 
-	return gulp.src(plugin.img)
+	return gulp.src(plugin.images)
 		.pipe(cached('processIMG'))
 		.pipe(imagemin())
 		.pipe(gulp.dest(function (file) {

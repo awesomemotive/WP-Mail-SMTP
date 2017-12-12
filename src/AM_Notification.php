@@ -1,5 +1,7 @@
 <?php
 
+namespace WPMailSMTP;
+
 /**
  * Awesome Motive Notifications
  *
@@ -12,7 +14,7 @@
  * @copyright  Copyright (c) 2017, Retyp LLC
  * @version    1.0.2
  */
-class WPMS_AM_Notification {
+class AM_Notification {
 	/**
 	 * The api url we are calling.
 	 *

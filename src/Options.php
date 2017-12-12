@@ -436,7 +436,7 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'auth':
-						$value = $options[ $mailer ][ $key_name ] === 'yes' ? true : false;
+						$value = $options[ $mailer ][ $key_name ] === 'yes' || $options[ $mailer ][ $key_name ] === true ? true : false;
 
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;

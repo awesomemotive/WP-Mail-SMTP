@@ -81,6 +81,7 @@ class Misc extends PageAbstract {
 
 		$options = new Options();
 
+		// Unchecked checkbox doesn't exist in $_POST, so we need to ensure we actually have it.
 		if ( empty( $data['general']['am_notifications_hidden'] ) ) {
 			$data['general']['am_notifications_hidden'] = false;
 		}

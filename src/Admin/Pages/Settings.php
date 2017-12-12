@@ -196,8 +196,10 @@ class Settings extends PageAbstract {
 
 		$options = new Options();
 
+		$to_save = array_merge( $options->get_all(), $data );
+
 		// All the sanitization is done there.
-		$options->set( $data );
+		$options->set( $to_save );
 
 		WP::add_admin_notice(
 			esc_html__( 'Settings were successfully saved.', 'wp-mail-smtp' ),

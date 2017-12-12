@@ -118,7 +118,7 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 Yes! We have extensive documentation that covers setting up SMTP most popular email services.
 
-<a href="How to Set Up WordPress SMTP Using WP Mail SMTP by WPForms" rel="friend">Read our docs</a> to see the correct SMTP settings for each service.
+<a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" rel="friend">Read our docs</a> to see the correct SMTP settings for each service.
 
 = Help! I need support or have an issue. =
 

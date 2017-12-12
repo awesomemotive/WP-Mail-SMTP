@@ -146,6 +146,9 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.0.2 - 2017-12-12 =
+* Fixed: PHPMailer using incorrect SMTPSecure value.
+
 = 1.0.1 - 2017-12-12 =
 * Fixed: Global POST processing conflict.
 

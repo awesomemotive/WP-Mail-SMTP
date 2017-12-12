@@ -263,7 +263,14 @@ class Area {
 	 * @return string
 	 */
 	protected function get_current_tab() {
-		return ! empty( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'settings';
+
+		$current = '';
+
+		if ( $this->is_admin_page() ) {
+			$current = ! empty( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'settings';
+		}
+
+		return $current;
 	}
 
 	/**
@@ -310,7 +317,7 @@ class Area {
 	 *
 	 * @return bool
 	 */
-	protected function is_admin_page() {
+	public function is_admin_page() {
 
 		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
 

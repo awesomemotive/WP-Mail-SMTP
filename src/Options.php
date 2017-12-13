@@ -26,7 +26,7 @@ class Options {
 			'host',
 			'port',
 			'encryption',
-			'disable_autotls',
+			'autotls',
 			'auth',
 			'user',
 			'pass',
@@ -218,12 +218,9 @@ class Options {
 				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? 'none' : $value;
 				break;
 
-			case 'auth': // By default - no auth.
+			case 'auth':
+			case 'autotls':
 				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? false : true;
-				break;
-
-			case 'disable_autotls': // By default - enabled.
-				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? true : false;
 				break;
 
 			case 'pass':
@@ -288,9 +285,9 @@ class Options {
 					case 'auth':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTH : $value;
-					case 'disable_autotls':
+					case 'autotls':
 						/** @noinspection PhpUndefinedConstantInspection */
-						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_DISABLE_AUTOTLS : $value;
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTOTLS : $value;
 					case 'user':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_USER : $value;
@@ -397,8 +394,8 @@ class Options {
 						return defined( 'WPMS_SSL' );
 					case 'auth':
 						return defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH;
-					case 'disable_autotls':
-						return defined( 'WPMS_SMTP_DISABLE_AUTOTLS' ) && WPMS_SMTP_DISABLE_AUTOTLS;
+					case 'autotls':
+						return defined( 'WPMS_SMTP_AUTOTLS' ) && WPMS_SMTP_AUTOTLS;
 					case 'user':
 						return defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER;
 					case 'pass':
@@ -498,13 +495,8 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'auth':
+					case 'autotls':
 						$value = $options[ $mailer ][ $key_name ] === 'yes' || $options[ $mailer ][ $key_name ] === true ? true : false;
-
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
-						break;
-					case 'disable_autotls':
-						$value = $options[ $mailer ][ $key_name ] === 'no' || $options[ $mailer ][ $key_name ] === false ? false : true;
-						// $value = (bool) $options[ $mailer ][ $key_name ];
 
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;

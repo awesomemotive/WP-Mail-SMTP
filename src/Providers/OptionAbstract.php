@@ -188,17 +188,17 @@ abstract class OptionAbstract implements OptionInterface {
 			</div>
 		</div>
 
-		<!-- PHPMailer Disable SMTPAutoTLS -->
+		<!-- PHPMailer SMTPAutoTLS -->
 		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle wp-mail-smtp-clear <?php echo $this->options->is_const_defined( $this->get_slug(), 'encryption' ) || 'tls' === $this->options->get( $this->get_slug(), 'encryption' ) ? 'inactive' : ''; ?>">
 			<div class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls"><?php esc_html_e( 'Disable Auto TLS', 'wp-mail-smtp' ); ?></label>
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls"><?php esc_html_e( 'Auto TLS', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls">
 					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][disable_autotls]" value="yes"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'disable_autotls' ) ? 'disabled' : ''; ?>
-						<?php checked( true, $this->options->get( $this->get_slug(), 'disable_autotls' ) ); ?>
+						<?php checked( false, $this->options->get( $this->get_slug(), 'disable_autotls' ) ); ?>
 					/>
 					<span class="wp-mail-smtp-setting-toggle-switch"></span>
 					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>

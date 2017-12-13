@@ -443,7 +443,9 @@ class Options {
 					case 'client_secret':
 					case 'auth_code':
 					case 'access_token':
-						// Do not process as they may contain certain special characters.
+						// Do not process as they may contain certain special characters, but allow to be overwritten using constants.
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $options[ $mailer ][ $key_name ] );
+						break;
 				}
 			}
 		}

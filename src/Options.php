@@ -422,11 +422,6 @@ class Options {
 				switch ( $key_name ) {
 					case 'host':
 					case 'user':
-					case 'pass':
-					case 'api_key':
-					case 'domain':
-					case 'client_id':
-					case 'client_secret':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'port':
@@ -441,9 +436,14 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;
 
+					case 'pass':
+					case 'api_key':
+					case 'domain':
+					case 'client_id':
+					case 'client_secret':
 					case 'auth_code':
 					case 'access_token':
-						// Do nothing for them.
+						// Do not process as they may contain certain special characters.
 				}
 			}
 		}

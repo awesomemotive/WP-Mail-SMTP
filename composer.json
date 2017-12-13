@@ -46,6 +46,9 @@
       "/vendor/composer/installers/",
       "/vendor/firebase/",
       "/vendor/google/apiclient-services/src/Google/Service/",
+      "/vendor/phpseclib/phpseclib/phpseclib/File/",
+      "/vendor/phpseclib/phpseclib/phpseclib/Net/",
+      "/vendor/phpseclib/phpseclib/phpseclib/System/",
       "/src/"
     ]
   }

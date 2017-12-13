@@ -62,7 +62,14 @@ var plugin = {
 		'!vendor/firebase',
 		// We need only a specific service: Gmail. Others should be omitted.
 		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail)/**',
-		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail|Gmail.php)'
+		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail|Gmail.php)',
+		'!vendor/phpseclib/phpseclib/phpseclib/Crypt/!(AES.php|Rijndael.php|RSA.php|Random.php)',
+		'!vendor/phpseclib/phpseclib/phpseclib/Net/**',
+		'!vendor/phpseclib/phpseclib/phpseclib/Net',
+		'!vendor/phpseclib/phpseclib/phpseclib/File/**',
+		'!vendor/phpseclib/phpseclib/phpseclib/File',
+		'!vendor/phpseclib/phpseclib/phpseclib/System/**',
+		'!vendor/phpseclib/phpseclib/phpseclib/System'
 	],
 	php: [
 		'**/*.php',

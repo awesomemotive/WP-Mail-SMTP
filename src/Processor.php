@@ -75,6 +75,11 @@ class Processor {
 			$phpmailer->SMTPSecure = $options->get( $mailer, 'encryption' );
 		}
 
+		// Check if user has disabled SMTPAutoTLS.
+		if ( $options->get( $mailer, 'disable_autotls' ) ) {
+			$phpmailer->SMTPAutoTLS = false;
+		}
+
 		// If we're sending via SMTP, set the host.
 		if ( 'smtp' === $mailer ) {
 			// Set the other options.

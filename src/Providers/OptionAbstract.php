@@ -183,7 +183,7 @@ abstract class OptionAbstract implements OptionInterface {
 				</label>
 
 				<p class="desc">
-					<?php esc_html_e( 'TLS is not the same as STARTTLS. For most servers SSL is the recommended option.', 'wp-mail-smtp' ); ?>
+					<?php esc_html_e( 'For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS.', 'wp-mail-smtp' ); ?>
 				</p>
 			</div>
 		</div>

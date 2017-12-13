@@ -13,6 +13,45 @@ namespace WPMailSMTP;
 class Options {
 
 	/**
+	 * @var array Map of all the default options of the plugin.
+	 */
+	private static $map = array(
+		'mail'     => array(
+			'from_name',
+			'from_email',
+			'mailer',
+			'return_path',
+		),
+		'smtp'     => array(
+			'host',
+			'port',
+			'encryption',
+			'auth',
+			'user',
+			'pass',
+		),
+		'gmail'    => array(
+			'client_id',
+			'client_secret',
+		),
+		'mailgun'  => array(
+			'api_key',
+			'domain',
+		),
+		'sendgrid' => array(
+			'api_key',
+		),
+		'pepipost' => array(
+			'host',
+			'port',
+			'encryption',
+			'auth',
+			'user',
+			'pass',
+		),
+	);
+
+	/**
 	 * That's where plugin options are saved in wp_options table.
 	 *
 	 * @var string
@@ -124,7 +163,7 @@ class Options {
 	/**
 	 * Get options by a group and a key.
 	 *
-	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option.
+	 * Options::init()->get( 'smtp', 'host' ) - will return only SMTP 'host' option.
 	 *
 	 * @since 1.0.0
 	 *
@@ -180,6 +219,10 @@ class Options {
 
 			case 'auth':
 				$value = $group === 'smtp' && empty( $value ) ? false : true;
+				break;
+
+			case 'pass':
+				$value = $this->get_const_value( $group, $key, $value );
 				break;
 		}
 

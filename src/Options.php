@@ -121,12 +121,10 @@ class Options {
 	public function get_all() {
 		$options = $this->_options;
 
-		if ( ! $this->is_const_enabled() ) {
-			return apply_filters( 'wp_mail_smtp_options_get_all', $options );
-		}
-
-		foreach ( $options as $group => $key ) {
-			$options[ $group ][ $key ] = $this->get( $group, $key );
+		foreach ( $options as $group => $g_value ) {
+			foreach ( $g_value as $key => $value ) {
+				$options[ $group ][ $key ] = $this->get( $group, $key );
+			}
 		}
 
 		return apply_filters( 'wp_mail_smtp_options_get_all', $options );

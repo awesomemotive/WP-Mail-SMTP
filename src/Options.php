@@ -80,14 +80,23 @@ class Options {
 	 * @return array
 	 */
 	public function get_all() {
-		return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options );
-	}
+		$options = $this->_options;
 
+		if ( ! $this->is_const_enabled() ) {
+			return apply_filters( 'wp_mail_smtp_options_get_all', $options );
+		}
+
+		foreach ( $options as $group => $key ) {
+			$options[ $group ][ $key ] = $this->get( $group, $key );
+		}
+
+		return apply_filters( 'wp_mail_smtp_options_get_all', $options );
+	}
 
 	/**
 	 * Get all the options for a group.
 	 *
-	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if no key doesn't exist).
+	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if a key doesn't exist).
 	 *
 	 * @since 1.0.0
 	 *
@@ -101,6 +110,11 @@ class Options {
 		$group = sanitize_key( $group );
 
 		if ( isset( $this->_options[ $group ] ) ) {
+
+			foreach ( $this->_options[ $group ] as $g_key => $g_value ) {
+				$options[ $group ][ $g_key ] = $this->get( $group, $g_key );
+			}
+
 			return apply_filters( 'wp_mail_smtp_options_get_group', $this->_options[ $group ], $group );
 		}
 

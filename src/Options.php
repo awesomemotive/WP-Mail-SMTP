@@ -119,6 +119,7 @@ class Options {
 	 * @return array
 	 */
 	public function get_all() {
+
 		$options = $this->_options;
 
 		foreach ( $options as $group => $g_value ) {

@@ -68,11 +68,13 @@ class Processor {
 			$phpmailer->Sender = $phpmailer->From;
 		}
 
-		// Set the SMTPSecure value, if set to none, leave this blank.
-		$phpmailer->SMTPSecure = $options[ $mailer ]['encryption'];
-		if ( isset( $options[ $mailer ]['encryption'] ) && 'none' === $options[ $mailer ]['encryption'] ) {
-			$phpmailer->SMTPSecure  = '';
-			$phpmailer->SMTPAutoTLS = false;
+		// Set the SMTPSecure value, if set to none, leave this blank. Possible values: 'ssl', 'tls', ''.
+		if ( isset( $options[ $mailer ]['encryption'] ) ) {
+			if ( 'none' === $options[ $mailer ]['encryption'] ) {
+				$phpmailer->SMTPSecure = '';
+			} else {
+				$phpmailer->SMTPSecure = $options[ $mailer ]['encryption'];
+			}
 		}
 
 		// If we're sending via SMTP, set the host.

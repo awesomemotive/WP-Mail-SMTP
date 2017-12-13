@@ -13,6 +13,45 @@ namespace WPMailSMTP;
 class Options {
 
 	/**
+	 * @var array Map of all the default options of the plugin.
+	 */
+	private static $map = array(
+		'mail'     => array(
+			'from_name',
+			'from_email',
+			'mailer',
+			'return_path',
+		),
+		'smtp'     => array(
+			'host',
+			'port',
+			'encryption',
+			'auth',
+			'user',
+			'pass',
+		),
+		'gmail'    => array(
+			'client_id',
+			'client_secret',
+		),
+		'mailgun'  => array(
+			'api_key',
+			'domain',
+		),
+		'sendgrid' => array(
+			'api_key',
+		),
+		'pepipost' => array(
+			'host',
+			'port',
+			'encryption',
+			'auth',
+			'user',
+			'pass',
+		),
+	);
+
+	/**
 	 * That's where plugin options are saved in wp_options table.
 	 *
 	 * @var string
@@ -80,14 +119,23 @@ class Options {
 	 * @return array
 	 */
 	public function get_all() {
-		return apply_filters( 'wp_mail_smtp_options_get_all', $this->_options );
-	}
+		$options = $this->_options;
 
+		if ( ! $this->is_const_enabled() ) {
+			return apply_filters( 'wp_mail_smtp_options_get_all', $options );
+		}
+
+		foreach ( $options as $group => $key ) {
+			$options[ $group ][ $key ] = $this->get( $group, $key );
+		}
+
+		return apply_filters( 'wp_mail_smtp_options_get_all', $options );
+	}
 
 	/**
 	 * Get all the options for a group.
 	 *
-	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if no key doesn't exist).
+	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if a key doesn't exist).
 	 *
 	 * @since 1.0.0
 	 *
@@ -101,6 +149,11 @@ class Options {
 		$group = sanitize_key( $group );
 
 		if ( isset( $this->_options[ $group ] ) ) {
+
+			foreach ( $this->_options[ $group ] as $g_key => $g_value ) {
+				$options[ $group ][ $g_key ] = $this->get( $group, $g_key );
+			}
+
 			return apply_filters( 'wp_mail_smtp_options_get_group', $this->_options[ $group ], $group );
 		}
 
@@ -110,7 +163,7 @@ class Options {
 	/**
 	 * Get options by a group and a key.
 	 *
-	 * Options::init()->get('smtp', 'host') - will return only SMTP 'host' option.
+	 * Options::init()->get( 'smtp', 'host' ) - will return only SMTP 'host' option.
 	 *
 	 * @since 1.0.0
 	 *
@@ -166,6 +219,10 @@ class Options {
 
 			case 'auth':
 				$value = $group === 'smtp' && empty( $value ) ? false : true;
+				break;
+
+			case 'pass':
+				$value = $this->get_const_value( $group, $key, $value );
 				break;
 		}
 
@@ -422,11 +479,6 @@ class Options {
 				switch ( $key_name ) {
 					case 'host':
 					case 'user':
-					case 'pass':
-					case 'api_key':
-					case 'domain':
-					case 'client_id':
-					case 'client_secret':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'port':
@@ -441,9 +493,16 @@ class Options {
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;
 
+					case 'pass':
+					case 'api_key':
+					case 'domain':
+					case 'client_id':
+					case 'client_secret':
 					case 'auth_code':
 					case 'access_token':
-						// Do nothing for them.
+						// Do not process as they may contain certain special characters, but allow to be overwritten using constants.
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $options[ $mailer ][ $key_name ] );
+						break;
 				}
 			}
 		}

@@ -40,13 +40,13 @@ class Processor {
 	 */
 	public function phpmailer_init( $phpmailer ) {
 
-		$options = Options::init()->get_all();
-		$mailer  = $options['mail']['mailer'];
+		$options = new Options();
+		$mailer  = $options->get( 'mail', 'mailer' );
 
 		// Check that mailer is not blank, and if mailer=smtp, host is not blank.
 		if (
 			! $mailer ||
-			( 'smtp' === $mailer && ! $options['smtp']['host'] )
+			( 'smtp' === $mailer && ! $options->get( 'smtp', 'host' ) )
 		) {
 			return;
 		}
@@ -54,7 +54,7 @@ class Processor {
 		// If the mailer is pepipost, make sure we have a username and password.
 		if (
 			'pepipost' === $mailer &&
-			( ! $options['pepipost']['user'] && ! $options['pepipost']['pass'] )
+			( ! $options->get( 'pepipost', 'user' ) && ! $options->get( 'pepipost', 'pass' ) )
 		) {
 			return;
 		}
@@ -64,40 +64,38 @@ class Processor {
 		$phpmailer->Mailer = $mailer;
 
 		// Set the Sender (return-path) if required.
-		if ( isset( $options['mail']['return_path'] ) && $options['mail']['return_path'] ) {
+		if ( $options->get( 'mail', 'return_path' ) ) {
 			$phpmailer->Sender = $phpmailer->From;
 		}
 
 		// Set the SMTPSecure value, if set to none, leave this blank. Possible values: 'ssl', 'tls', ''.
-		if ( isset( $options[ $mailer ]['encryption'] ) ) {
-			if ( 'none' === $options[ $mailer ]['encryption'] ) {
-				$phpmailer->SMTPSecure = '';
-			} else {
-				$phpmailer->SMTPSecure = $options[ $mailer ]['encryption'];
-			}
+		if ( 'none' === $options->get( $mailer, 'encryption' ) ) {
+			$phpmailer->SMTPSecure = '';
+		} else {
+			$phpmailer->SMTPSecure = $options->get( $mailer, 'encryption' );
 		}
 
 		// If we're sending via SMTP, set the host.
 		if ( 'smtp' === $mailer ) {
 			// Set the other options.
-			$phpmailer->Host = $options[ $mailer ]['host'];
-			$phpmailer->Port = $options[ $mailer ]['port'];
+			$phpmailer->Host = $options->get( $mailer, 'host' );
+			$phpmailer->Port = $options->get( $mailer, 'port' );
 
 			// If we're using smtp auth, set the username & password.
-			if ( $options[ $mailer ]['auth'] ) {
+			if ( $options->get( $mailer, 'auth' ) ) {
 				$phpmailer->SMTPAuth = true;
-				$phpmailer->Username = $options[ $mailer ]['user'];
-				$phpmailer->Password = $options[ $mailer ]['pass'];
+				$phpmailer->Username = $options->get( $mailer, 'user' );
+				$phpmailer->Password = $options->get( $mailer, 'pass' );
 			}
 		} elseif ( 'pepipost' === $mailer ) {
 			// Set the Pepipost settings for BC.
 			$phpmailer->Mailer     = 'smtp';
 			$phpmailer->Host       = 'smtp.pepipost.com';
-			$phpmailer->Port       = $options[ $mailer ]['port'];
-			$phpmailer->SMTPSecure = $options[ $mailer ]['encryption'] === 'none' ? '' : $options[ $mailer ]['encryption'];
+			$phpmailer->Port       = $options->get( $mailer, 'port' );
+			$phpmailer->SMTPSecure = $options->get( $mailer, 'encryption' ) === 'none' ? '' : $options->get( $mailer, 'encryption' );
 			$phpmailer->SMTPAuth   = true;
-			$phpmailer->Username   = $options[ $mailer ]['user'];
-			$phpmailer->Password   = $options[ $mailer ]['pass'];
+			$phpmailer->Username   = $options->get( $mailer, 'user' );
+			$phpmailer->Password   = $options->get( $mailer, 'pass' );
 		}
 
 		// You can add your own options here.

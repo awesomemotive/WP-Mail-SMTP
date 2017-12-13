@@ -76,7 +76,7 @@ class Processor {
 		}
 
 		// Check if user has disabled SMTPAutoTLS.
-		if ( $options->get( $mailer, 'disable_autotls' ) ) {
+		if ( $options->get( $mailer, 'encryption' ) !== 'tls' && $options->get( $mailer, 'disable_autotls' ) ) {
 			$phpmailer->SMTPAutoTLS = false;
 		}
 

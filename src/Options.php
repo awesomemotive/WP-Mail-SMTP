@@ -26,6 +26,7 @@ class Options {
 			'host',
 			'port',
 			'encryption',
+			'disable_autotls',
 			'auth',
 			'user',
 			'pass',
@@ -184,10 +185,10 @@ class Options {
 			if ( isset( $this->_options[ $group ][ $key ] ) ) {
 				$value = $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
 			} else {
-				$value = $this->postprocess_key_defaults( $group, $key, '' );
+				$value = $this->postprocess_key_defaults( $group, $key );
 			}
 		} else {
-			$value = $this->postprocess_key_defaults( $group, $key, '' );
+			$value = $this->postprocess_key_defaults( $group, $key );
 		}
 
 		return apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key );
@@ -201,23 +202,28 @@ class Options {
 	 *
 	 * @param string $group
 	 * @param string $key
-	 * @param mixed $value Default value, it's '' (empty string).
 	 *
 	 * @return mixed
 	 */
-	protected function postprocess_key_defaults( $group, $key, $value ) {
+	protected function postprocess_key_defaults( $group, $key ) {
+
+		$value = '';
 
 		switch ( $key ) {
 			case 'return_path':
-				$value = $group === 'mail' && empty( $value ) ? false : true;
+				$value = $group === 'mail' ? false : true;
 				break;
 
 			case 'encryption':
-				$value = $group === 'smtp' && empty( $value ) ? 'none' : $value;
+				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? 'none' : $value;
 				break;
 
-			case 'auth':
-				$value = $group === 'smtp' && empty( $value ) ? false : true;
+			case 'auth': // By default - no auth.
+				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? false : true;
+				break;
+
+			case 'disable_autotls': // By default - enabled.
+				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? true : false;
 				break;
 
 			case 'pass':
@@ -225,7 +231,7 @@ class Options {
 				break;
 		}
 
-		return $value;
+		return apply_filters( 'wp_mail_smtp_options_postprocess_key_defaults', $value, $group, $key );
 	}
 
 	/**
@@ -282,6 +288,9 @@ class Options {
 					case 'auth':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTH : $value;
+					case 'disable_autotls':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_DISABLE_AUTOTLS : $value;
 					case 'user':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_USER : $value;
@@ -388,6 +397,8 @@ class Options {
 						return defined( 'WPMS_SSL' );
 					case 'auth':
 						return defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH;
+					case 'disable_autotls':
+						return defined( 'WPMS_SMTP_DISABLE_AUTOTLS' ) && WPMS_SMTP_DISABLE_AUTOTLS;
 					case 'user':
 						return defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER;
 					case 'pass':
@@ -488,6 +499,12 @@ class Options {
 						break;
 					case 'auth':
 						$value = $options[ $mailer ][ $key_name ] === 'yes' || $options[ $mailer ][ $key_name ] === true ? true : false;
+
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
+						break;
+					case 'disable_autotls':
+						$value = $options[ $mailer ][ $key_name ] === 'no' || $options[ $mailer ][ $key_name ] === false ? false : true;
+						// $value = (bool) $options[ $mailer ][ $key_name ];
 
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
 						break;

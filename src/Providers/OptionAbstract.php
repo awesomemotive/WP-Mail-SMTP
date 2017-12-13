@@ -196,7 +196,7 @@ abstract class OptionAbstract implements OptionInterface {
 			<div class="wp-mail-smtp-setting-field">
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls">
 					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-disable_autotls"
-						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][disable_autotls]" value="yes"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][disable_autotls]" value="no"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'disable_autotls' ) ? 'disabled' : ''; ?>
 						<?php checked( false, $this->options->get( $this->get_slug(), 'disable_autotls' ) ); ?>
 					/>

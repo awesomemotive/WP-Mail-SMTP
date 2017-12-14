@@ -6,14 +6,14 @@ namespace WPMailSMTP;
  * Class Upgrade helps upgrade plugin options and similar tasks when the
  * occassion arises.
  *
- * @since 1.0.3
+ * @since 1.1.0
  */
 class Upgrade {
 
 	/**
 	 * Upgrader constructor.
 	 *
-	 * @since 1.0.3
+	 * @since 1.1.0
 	 */
 	public function __construct() {
 
@@ -35,7 +35,7 @@ class Upgrade {
 	/**
 	 * Whether we need to perform an upgrade.
 	 *
-	 * @since 1.0.3
+	 * @since 1.1.0
 	 *
 	 * @return bool
 	 */
@@ -44,22 +44,22 @@ class Upgrade {
 		$version  = get_option( 'wp_mail_smtp_version' );
 		$upgrades = array();
 
-		// Version 1.0.3 upgrade; prior to this the option was not available.
+		// Version 1.1.0 upgrade; prior to this the option was not available.
 		if ( empty( $version ) ) {
-			$upgrades[] = 'v103_upgrade';
+			$upgrades[] = 'v110_upgrade';
 		}
 
 		return $upgrades;
 	}
 
 	/**
-	 * Upgrade routine for v1.0.3.
+	 * Upgrade routine for v1.1.0.
 	 *
 	 * Set SMTPAutoTLS to true.
 	 *
-	 * @since 1.0.3
+	 * @since 1.1.0
 	 */
-	public function v103_upgrade() {
+	public function v110_upgrade() {
 
 		$values = Options::init()->get_all();
 

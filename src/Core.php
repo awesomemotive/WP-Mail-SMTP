@@ -151,7 +151,7 @@ class Core {
 	/**
 	 * Load the plugin upgrader.
 	 *
-	 * @since 1.0.3
+	 * @since 1.1.0
 	 *
 	 * @return Upgrade
 	 */

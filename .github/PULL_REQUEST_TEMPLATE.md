@@ -22,5 +22,5 @@
 <!--- Go over all the following points, and put an x in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] My code follows the code style of this project.
-- [ ] My code has appropriate phpdoc comments with description, `@since`, `@params` and `@return`.
+- [ ] My code has appropriate phpdoc comments with a description, `@since`, `@params` and `@return`.
 - [ ] My code is tested for both new installs and for users that are upgrading from older versions.

@@ -173,7 +173,7 @@ class Test extends PageAbstract {
 		$phpmailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
 		$phpmailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
 		if ( ! empty( $phpmailer->SMTPOptions ) ) {
-			$phpmailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . wp_json_encode( $phpmailer->SMTPOptions ) . '</code>';
+			$phpmailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
 		}
 
 		$errors[] = $phpmailer_text;

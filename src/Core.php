@@ -71,6 +71,7 @@ class Core {
 		 */
 		if ( WP::in_wp_admin() ) {
 			$this->get_migration();
+			$this->get_upgrade();
 			$this->get_admin();
 		}
 	}
@@ -148,6 +149,24 @@ class Core {
 	}
 
 	/**
+	 * Load the plugin upgrader.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @return Upgrade
+	 */
+	public function get_upgrade() {
+
+		static $upgrade;
+
+		if ( ! isset( $upgrade ) ) {
+			$upgrade = apply_filters( 'wp_mail_smtp_core_get_upgrade', new Upgrade() );
+		}
+
+		return $upgrade;
+	}
+
+	/**
 	 * Awesome Motive Notifications.
 	 *
 	 * @since 1.0.0
@@ -201,11 +220,18 @@ class Core {
 	 */
 	public function activate() {
 
+		// Store the plugin version activated to reference with upgrades.
+		update_option( 'wp_mail_smtp_version', WPMS_PLUGIN_VER );
+
+		// Create and store inital plugin settings.
 		$options['mail'] = array(
 			'from_email'  => get_option( 'admin_email' ),
 			'from_name'   => get_bloginfo( 'name' ),
 			'mailer'      => 'mail',
 			'return_path' => false,
+			'smtp'        => array(
+				'autotls' => true,
+			),
 		);
 
 		Options::init()->set( $options );

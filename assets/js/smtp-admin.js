@@ -29,8 +29,15 @@ jQuery( document ).ready( function ( $ ) {
 		document.execCommand( 'Copy' );
 	} );
 
-	$( '#wp-mail-smtp-setting-smtp-auth' ).change(function() {
+	$( '#wp-mail-smtp-setting-smtp-auth' ).change( function() {
 		$( '#wp-mail-smtp-setting-row-smtp-user, #wp-mail-smtp-setting-row-smtp-pass' ).toggleClass( 'inactive' );
 	});
 
+	$( '#wp-mail-smtp-setting-row-smtp-encryption input').change( function() {
+		if ( 'tls' === $(this).val() ) {
+			$(' #wp-mail-smtp-setting-row-smtp-autotls' ).addClass( 'inactive' );
+		} else {
+			$( '#wp-mail-smtp-setting-row-smtp-autotls' ).removeClass( 'inactive' );
+		}
+	} );
 } );

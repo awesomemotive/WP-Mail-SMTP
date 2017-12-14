@@ -35,9 +35,9 @@ jQuery( document ).ready( function ( $ ) {
 
 	$( '#wp-mail-smtp-setting-row-smtp-encryption input').change( function() {
 		if ( 'tls' === $(this).val() ) {
-			$(' #wp-mail-smtp-setting-row-smtp-disable_autotls' ).addClass( 'inactive' );
+			$(' #wp-mail-smtp-setting-row-smtp-autotls' ).addClass( 'inactive' );
 		} else {
-			$( '#wp-mail-smtp-setting-row-smtp-disable_autotls' ).removeClass( 'inactive' );
+			$( '#wp-mail-smtp-setting-row-smtp-autotls' ).removeClass( 'inactive' );
 		}
 	} );
 } );

@@ -89,7 +89,11 @@ class Auth extends AuthAbstract {
 			empty( $this->gmail['access_token'] ) &&
 			! empty( $this->gmail['auth_code'] )
 		) {
-			$client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
+			try {
+				$creds = $client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
+			} catch ( \Exception $e ) {
+				$creds['error'] = $e->getMessage();
+			}
 
 			// Bail if we have an error.
 			if ( ! empty( $creds['error'] ) ) {
@@ -113,7 +117,18 @@ class Auth extends AuthAbstract {
 			}
 
 			if ( ! empty( $refresh ) ) {
-				$client->fetchAccessTokenWithRefreshToken( $refresh );
+				try {
+					$creds = $client->fetchAccessTokenWithRefreshToken( $refresh );
+				} catch ( \Exception $e ) {
+					$creds['error'] = $e->getMessage();
+				}
+
+				// Bail if we have an error.
+				if ( ! empty( $creds['error'] ) ) {
+					// TODO: save this error to display to a user later.
+					return $client;
+				}
+
 				$this->update_access_token( $client->getAccessToken() );
 				$this->update_refresh_token( $client->getRefreshToken() );
 			}

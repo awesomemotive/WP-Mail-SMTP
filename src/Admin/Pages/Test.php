@@ -97,8 +97,8 @@ class Test extends PageAbstract {
 			$phpmailer = new MailCatcher( true );
 		}
 
-		// Set SMTPDebug level, default is 2 (commands + data + connection status).
-		$phpmailer->SMTPDebug = apply_filters( 'wp_mail_smtp_admin_test_email_smtp_debug', 2 );
+		// Set SMTPDebug level, default is 3 (commands + data + connection status).
+		$phpmailer->SMTPDebug = apply_filters( 'wp_mail_smtp_admin_test_email_smtp_debug', 3 );
 
 		// Start output buffering to grab smtp debugging output.
 		ob_start();
@@ -132,7 +132,8 @@ class Test extends PageAbstract {
 			WP::add_admin_notice(
 				'<p><strong>' . esc_html__( 'There was a problem while sending a test email.', 'wp-mail-smtp' ) . '</strong></p>' .
 				'<p>' . esc_html__( 'The related debugging output is shown below:', 'wp-mail-smtp' ) . '</p>' .
-				'<blockquote>' . $error . '</blockquote>',
+				'<blockquote style="border-left:1px solid orange;padding-left:10px">' . $error . '</blockquote>' .
+				'<p class="description">' . esc_html__( 'Please copy only the content of the error debug message above, identified with an orange left border, into the support forum topic if you experience any issues.', 'wp-mail-smtp' ) . '</p>',
 				WP::ADMIN_NOTICE_ERROR
 			);
 		}
@@ -140,6 +141,8 @@ class Test extends PageAbstract {
 
 	/**
 	 * Prepare debug information, that will help users to identify the error.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param \PHPMailer $phpmailer
 	 * @param string $smtp_debug
@@ -152,15 +155,15 @@ class Test extends PageAbstract {
 
 		$errors = array();
 
-		$versions_text = '<h3>Versions</h3>';
+		$versions_text = '<strong>Versions:</strong><br>';
 
 		$versions_text .= '<strong>WordPress:</strong> ' . $wp_version . '<br>';
 		$versions_text .= '<strong>PHP:</strong> ' . PHP_VERSION . '<br>';
-		$versions_text .= '<strong>WP Mail SMTP:</strong> ' . WPMS_PLUGIN_VER;
+		$versions_text .= '<strong>WP Mail SMTP:</strong> ' . WPMS_PLUGIN_VER . '<br>';
 
 		$errors[] = $versions_text;
 
-		$phpmailer_text = '<h3>PHPMailer</h3>';
+		$phpmailer_text = '<strong>PHPMailer:</strong><br>';
 
 		$phpmailer_text .= '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo ) . '<br>';
 		$phpmailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
@@ -170,20 +173,27 @@ class Test extends PageAbstract {
 		$phpmailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
 		$phpmailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
 		if ( ! empty( $phpmailer->SMTPOptions ) ) {
-			$phpmailer_text .= '<br><strong>SMTPOptions:</strong> ' . $this->pvar( $phpmailer->SMTPOptions );
+			$phpmailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . wp_json_encode( $phpmailer->SMTPOptions ) . '</code>';
 		}
 
 		$errors[] = $phpmailer_text;
 
+		$smtp_text = '<br><strong>SMTP Debug:</strong><br>';
 		if ( ! empty( $smtp_debug ) ) {
-			$errors[] = '<h3>SMTP Debug</h3>' . nl2br( $smtp_debug );
+			$smtp_text .= $smtp_debug;
+		} else {
+			$smtp_text .= '[empty]';
 		}
 
-		return implode( '</p><p>', $errors );
+		$errors[] = $smtp_text;
+
+		return '<pre>' . implode( '<br>', $errors ) . '</pre>';
 	}
 
 	/**
 	 * Get the proper variable content output to debug.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param mixed $var
 	 *
@@ -203,6 +213,8 @@ class Test extends PageAbstract {
 
 		echo '</code>';
 
-		return ob_get_clean();
+		$output = ob_get_clean();
+
+		return str_replace( array( "\r\n", "\r", "\n" ), '', $output );
 	}
 }

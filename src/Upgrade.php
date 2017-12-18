@@ -4,14 +4,14 @@ namespace WPMailSMTP;
 
 /**
  * Class Upgrade helps upgrade plugin options and similar tasks when the
- * occassion arises.
+ * occasion arises.
  *
  * @since 1.1.0
  */
 class Upgrade {
 
 	/**
-	 * Upgrader constructor.
+	 * Upgrade constructor.
 	 *
 	 * @since 1.1.0
 	 */
@@ -37,7 +37,7 @@ class Upgrade {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	protected function upgrades() {
 

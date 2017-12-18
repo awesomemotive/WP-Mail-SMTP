@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 1.0.2
+ * Version: 1.1.0
  * Plugin URI: https://wpforms.com/
  * Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
  * Author: WPForms
@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/gpl.txt
  */
 
-define( 'WPMS_PLUGIN_VER', '1.0.2' );
+define( 'WPMS_PLUGIN_VER', '1.1.0' );
 define( 'WPMS_PHP_VER', '5.3' );
 
 /**

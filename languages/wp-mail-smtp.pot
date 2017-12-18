@@ -142,11 +142,11 @@ msgstr ""
 msgid "Use TLS encryption."
 msgstr ""
 
-#: wp_mail_smtp.php:462, src/Providers/OptionAbstract.php:186
+#: wp_mail_smtp.php:462
 msgid "TLS is not the same as STARTTLS. For most servers SSL is the recommended option."
 msgstr ""
 
-#: wp_mail_smtp.php:467, wp_mail_smtp.php:471, src/Providers/OptionAbstract.php:195
+#: wp_mail_smtp.php:467, wp_mail_smtp.php:471, src/Providers/OptionAbstract.php:216
 msgid "Authentication"
 msgstr ""
 
@@ -238,31 +238,43 @@ msgstr ""
 msgid "TLS"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:205
+#: src/Providers/OptionAbstract.php:186
+msgid "For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS."
+msgstr ""
+
+#: src/Providers/OptionAbstract.php:194
+msgid "Auto TLS"
+msgstr ""
+
+#: src/Providers/OptionAbstract.php:204, src/Providers/OptionAbstract.php:226
 msgid "On"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:206
+#: src/Providers/OptionAbstract.php:205, src/Providers/OptionAbstract.php:227
 msgid "Off"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:214
+#: src/Providers/OptionAbstract.php:208
+msgid "By default TLS encryption is automatically used if the server supports it, which is recommended. In some cases, due to server misconfigurations, this can cause issues and may need to be disabled."
+msgstr ""
+
+#: src/Providers/OptionAbstract.php:235
 msgid "SMTP Username"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:228
+#: src/Providers/OptionAbstract.php:249
 msgid "SMTP Password"
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:242
+#: src/Providers/OptionAbstract.php:263
 msgid "The password is stored in plain text. We highly recommend you setup your password in your WordPress configuration file for improved security; to do this add the lines below to your %s file."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:279
+#: src/Providers/OptionAbstract.php:300
 msgid "%1$s requires PHP %2$s to work and does not support your current PHP version %3$s. Please contact your host and request a PHP upgrade to the latest one."
 msgstr ""
 
-#: src/Providers/OptionAbstract.php:286
+#: src/Providers/OptionAbstract.php:307
 msgid "Meanwhile you can switch to the \"Other SMTP\" Mailer option."
 msgstr ""
 
@@ -348,6 +360,10 @@ msgstr ""
 
 #: src/Admin/Pages/Test.php:134
 msgid "The related debugging output is shown below:"
+msgstr ""
+
+#: src/Admin/Pages/Test.php:136
+msgid "Please copy only the content of the error debug message above, identified with an orange left border, into the support forum topic if you experience any issues."
 msgstr ""
 
 #: src/Providers/Gmail/Options.php:25

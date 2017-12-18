@@ -531,6 +531,17 @@ class Options {
 	 * @return bool
 	 */
 	public function is_pepipost_active() {
-		return apply_filters( 'wp_mail_smtp_options_is_pepipost_active', 'pepipost' === $this->get( 'mail', 'mailer' ) );
+		return apply_filters( 'wp_mail_smtp_options_is_pepipost_active', $this->get( 'mail', 'mailer' ) === 'pepipost' );
+	}
+
+	/**
+	 * Check whether the site is using Pepipost/SMTP as a mailer or not.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool
+	 */
+	public function is_mailer_smtp() {
+		return apply_filters( 'wp_mail_smtp_options_is_mailer_smtp', in_array( $this->get( 'mail', 'mailer' ), array( 'pepipost', 'smtp' ), true ) );
 	}
 }

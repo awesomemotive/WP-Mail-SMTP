@@ -151,32 +151,43 @@ class Test extends PageAbstract {
 	 */
 	protected function get_debug_messages( $phpmailer, $smtp_debug ) {
 
-		global $wp_version;
+		$options = new Options();
 
-		$errors = array();
+		/*
+		 * Versions Debug.
+		 */
 
 		$versions_text = '<strong>Versions:</strong><br>';
 
-		$versions_text .= '<strong>WordPress:</strong> ' . $wp_version . '<br>';
+		$versions_text .= '<strong>WordPress:</strong> ' . get_bloginfo( 'version' ) . '<br>';
+		$versions_text .= '<strong>WordPress MS:</strong> ' . ( is_multisite() ? 'Yes' : 'No' ) . '<br>';
 		$versions_text .= '<strong>PHP:</strong> ' . PHP_VERSION . '<br>';
 		$versions_text .= '<strong>WP Mail SMTP:</strong> ' . WPMS_PLUGIN_VER . '<br>';
 
-		$errors[] = $versions_text;
+		/*
+		 * Mailer Debug.
+		 */
 
-		$phpmailer_text = '<strong>PHPMailer:</strong><br>';
+		$mailer_text = '<strong>PHPMailer:</strong><br>';
 
-		$phpmailer_text .= '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo ) . '<br>';
-		$phpmailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
-		$phpmailer_text .= '<strong>Host:</strong> ' . $phpmailer->Host . '<br>';
-		$phpmailer_text .= '<strong>Port:</strong> ' . $phpmailer->Port . '<br>';
-		$phpmailer_text .= '<strong>SMTPSecure:</strong> ' . $this->pvar( $phpmailer->SMTPSecure ) . '<br>';
-		$phpmailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
-		$phpmailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
-		if ( ! empty( $phpmailer->SMTPOptions ) ) {
-			$phpmailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
+		$mailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
+
+		// Display different debug info based on the mailer.
+		if ( $options->is_mailer_smtp() ) {
+			$mailer_text .= '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo ) . '<br>';
+			$mailer_text .= '<strong>Host:</strong> ' . $phpmailer->Host . '<br>';
+			$mailer_text .= '<strong>Port:</strong> ' . $phpmailer->Port . '<br>';
+			$mailer_text .= '<strong>SMTPSecure:</strong> ' . $this->pvar( $phpmailer->SMTPSecure ) . '<br>';
+			$mailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
+			$mailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
+			if ( ! empty( $phpmailer->SMTPOptions ) ) {
+				$mailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
+			}
 		}
 
-		$errors[] = $phpmailer_text;
+		/*
+		 * SMTP Debug.
+		 */
 
 		$smtp_text = '<br><strong>SMTP Debug:</strong><br>';
 		if ( ! empty( $smtp_debug ) ) {
@@ -185,7 +196,11 @@ class Test extends PageAbstract {
 			$smtp_text .= '[empty]';
 		}
 
-		$errors[] = $smtp_text;
+		$errors = apply_filters( 'wp_mail_smtp_admin_test_get_debug_messages', array(
+			$versions_text,
+			$mailer_text,
+			$smtp_text,
+		) );
 
 		return '<pre>' . implode( '<br>', $errors ) . '</pre>';
 	}

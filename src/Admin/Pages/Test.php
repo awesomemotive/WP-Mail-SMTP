@@ -119,7 +119,7 @@ class Test extends PageAbstract {
 		$smtp_debug = ob_get_clean();
 
 		/*
-		 * Do the actual sending.
+		 * Notify a user about the results.
 		 */
 		if ( $result ) {
 			WP::add_admin_notice(
@@ -144,7 +144,7 @@ class Test extends PageAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \PHPMailer $phpmailer
+	 * @param MailCatcher $phpmailer
 	 * @param string $smtp_debug
 	 *
 	 * @return string
@@ -168,26 +168,17 @@ class Test extends PageAbstract {
 		 * Mailer Debug.
 		 */
 
-		$mailer_text = '<strong>PHPMailer:</strong><br>';
+		$mailer_text = '<strong>Params:</strong><br>';
 
 		$mailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
+		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
 
 		// Display different debug info based on the mailer.
-		if ( $options->is_mailer_smtp() ) {
-			$mailer_text .= '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo ) . '<br>';
-			$mailer_text .= '<strong>Host:</strong> ' . $phpmailer->Host . '<br>';
-			$mailer_text .= '<strong>Port:</strong> ' . $phpmailer->Port . '<br>';
-			$mailer_text .= '<strong>SMTPSecure:</strong> ' . $this->pvar( $phpmailer->SMTPSecure ) . '<br>';
-			$mailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
-			$mailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
-			if ( ! empty( $phpmailer->SMTPOptions ) ) {
-				$mailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
-			}
-		}
+		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $options->get( 'mail', 'mailer' ), $phpmailer );
 
-		/*
-		 * SMTP Debug.
-		 */
+		if ( $mailer ) {
+			$mailer_text .= $mailer->get_debug_info();
+		}
 
 		$smtp_text = '<br><strong>SMTP Debug:</strong><br>';
 		if ( ! empty( $smtp_debug ) ) {
@@ -196,6 +187,10 @@ class Test extends PageAbstract {
 			$smtp_text .= '[empty]';
 		}
 
+		/*
+		 * SMTP Debug.
+		 */
+
 		$errors = apply_filters( 'wp_mail_smtp_admin_test_get_debug_messages', array(
 			$versions_text,
 			$mailer_text,
@@ -203,33 +198,5 @@ class Test extends PageAbstract {
 		) );
 
 		return '<pre>' . implode( '<br>', $errors ) . '</pre>';
-	}
-
-	/**
-	 * Get the proper variable content output to debug.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $var
-	 *
-	 * @return string
-	 */
-	protected function pvar( $var = '' ) {
-
-		ob_start();
-
-		echo '<code>';
-
-		if ( is_bool( $var ) || empty( $var ) ) {
-			var_dump( $var );
-		} else {
-			print_r( $var );
-		}
-
-		echo '</code>';
-
-		$output = ob_get_clean();
-
-		return str_replace( array( "\r\n", "\r", "\n" ), '', $output );
 	}
 }

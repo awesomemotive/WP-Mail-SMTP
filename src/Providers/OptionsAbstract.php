@@ -9,7 +9,7 @@ use WPMailSMTP\Options;
  *
  * @since 1.0.0
  */
-abstract class OptionAbstract implements OptionInterface {
+abstract class OptionsAbstract implements OptionsInterface {
 
 	/**
 	 * @var string

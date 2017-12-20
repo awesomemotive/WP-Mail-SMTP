@@ -112,6 +112,12 @@ class Settings extends PageAbstract {
 
 						<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
 
+							<?php
+							if ( ! $options->is_pepipost_active() && $provider->get_slug() === 'pepipost' ) {
+								continue;
+							}
+							?>
+
 							<div class="wp-mail-smtp-mailer <?php echo $mailer === $provider->get_slug() ? 'active' : ''; ?>">
 								<div class="wp-mail-smtp-mailer-image">
 									<img src="<?php echo esc_url( $provider->get_logo_url() ); ?>"

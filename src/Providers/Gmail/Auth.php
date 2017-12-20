@@ -44,15 +44,13 @@ class Auth extends AuthAbstract {
 			return;
 		}
 
-		$this->gmail  = $options->get_group( $this->mailer );
+		$this->gmail = $options->get_group( $this->mailer );
 
 		if ( $this->is_clients_saved() ) {
 
 			$this->include_google_lib();
 
 			$this->client = $this->get_client();
-		} else {
-			Debug::set( 'Please make sure that both Client ID and Client Secret are not empty.' );
 		}
 	}
 

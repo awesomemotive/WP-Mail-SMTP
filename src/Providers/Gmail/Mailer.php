@@ -56,6 +56,25 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Re-use the MailCatcher class methods and properties.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 */
+	public function process_phpmailer( $phpmailer ) {
+		// Make sure that we have access to MailCatcher class methods.
+		if (
+			! $phpmailer instanceof \WPMailSMTP\MailCatcher &&
+			! $phpmailer instanceof \PHPMailer
+		) {
+			return;
+		}
+
+		$this->phpmailer = $phpmailer;
+	}
+
+	/**
 	 * Use Google API Services to send emails.
 	 *
 	 * @since 1.0.0

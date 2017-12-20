@@ -57,7 +57,18 @@ interface MailerInterface {
 	/**
 	 * Get an array of all debug information relevant to the mailer.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @return array
 	 */
 	public function get_debug_info();
+
+	/**
+	 * Re-use the MailCatcher class methods and properties.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 */
+	public function process_phpmailer( $phpmailer );
 }

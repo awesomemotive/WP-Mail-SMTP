@@ -39,6 +39,11 @@ class Auth extends AuthAbstract {
 
 		$options      = new PluginOptions();
 		$this->mailer = $options->get( 'mail', 'mailer' );
+
+		if ( $this->mailer !== 'gmail' ) {
+			return;
+		}
+
 		$this->gmail  = $options->get_group( $this->mailer );
 
 		if ( $this->is_clients_saved() ) {

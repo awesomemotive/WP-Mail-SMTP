@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
 
@@ -45,6 +46,8 @@ class Auth extends AuthAbstract {
 			$this->include_google_lib();
 
 			$this->client = $this->get_client();
+		} else {
+			Debug::set( 'Please make sure that both Client ID and Client Secret are not empty.' );
 		}
 	}
 
@@ -93,6 +96,7 @@ class Auth extends AuthAbstract {
 				$creds = $client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
 			} catch ( \Exception $e ) {
 				$creds['error'] = $e->getMessage();
+				Debug::set( $e->getMessage() );
 			}
 
 			// Bail if we have an error.
@@ -121,11 +125,11 @@ class Auth extends AuthAbstract {
 					$creds = $client->fetchAccessTokenWithRefreshToken( $refresh );
 				} catch ( \Exception $e ) {
 					$creds['error'] = $e->getMessage();
+					Debug::set( $e->getMessage() );
 				}
 
 				// Bail if we have an error.
 				if ( ! empty( $creds['error'] ) ) {
-					// TODO: save this error to display to a user later.
 					return $client;
 				}
 
@@ -147,6 +151,7 @@ class Auth extends AuthAbstract {
 
 		// We can't process without saved client_id/secret.
 		if ( ! $this->is_clients_saved() ) {
+			Debug::set( 'There was an error while processing the Google authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.' );
 			wp_redirect(
 				add_query_arg(
 					'error',
@@ -265,7 +270,6 @@ class Auth extends AuthAbstract {
 
 		$all[ $this->mailer ]['auth_code'] = $code;
 		$this->gmail['auth_code']          = $code;
-
 
 		$options->set( $all );
 	}

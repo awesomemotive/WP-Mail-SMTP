@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 
@@ -342,5 +343,29 @@ abstract class MailerAbstract implements MailerInterface {
 		}
 
 		return $merged;
+	}
+
+	/**
+	 * This method is relevant to SMTP, Pepipost and Mail only.
+	 * All other custom mailers should override it with own information.
+	 *
+	 * @return string
+	 */
+	public function get_debug_info() {
+		global $phpmailer;
+
+		$smtp_text = array();
+
+		$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo );
+		$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
+		$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
+		$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Debug::pvar( $phpmailer->SMTPSecure );
+		$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Debug::pvar( $phpmailer->SMTPAutoTLS );
+		$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Debug::pvar( $phpmailer->SMTPAuth );
+		if ( ! empty( $phpmailer->SMTPOptions ) ) {
+			$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
+		}
+
+		return implode( '<br>', $smtp_text );
 	}
 }

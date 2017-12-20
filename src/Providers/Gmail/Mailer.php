@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\Providers\MailerAbstract;
 
 /**
@@ -55,67 +56,6 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Set email FROM.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $email
-	 * @param string $name
-	 */
-	public function set_from( $email, $name ) {
-	}
-
-	/**
-	 * Set a bunch of email recipients: to, cc, bcc.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $recipients
-	 */
-	public function set_recipients( $recipients ) {
-	}
-
-	/**
-	 * Set the email content.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string|array $content
-	 */
-	public function set_content( $content ) {
-	}
-
-	/**
-	 * Set the email attachments.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $attachments
-	 */
-	public function set_attachments( $attachments ) {
-	}
-
-	/**
-	 * Set the email reply_to option.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $reply_to
-	 */
-	public function set_reply_to( $reply_to ) {
-	}
-
-	/**
-	 * Set the email return_path (when supported).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $email
-	 */
-	public function set_return_path( $email ) {
-	}
-
-	/**
 	 * Use Google API Services to send emails.
 	 *
 	 * @since 1.0.0
@@ -135,7 +75,8 @@ class Mailer extends MailerAbstract {
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
-			// TODO: save here the error message to display to a user later.
+			Debug::set( 'Error while sending via Gmail mailer: ' . $e->getMessage() );
+
 			return;
 		}
 	}

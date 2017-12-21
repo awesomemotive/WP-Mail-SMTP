@@ -234,7 +234,7 @@ class Settings extends PageAbstract {
 		// New gmail clients data will be added from new $data, except the old access/refresh_token.
 		$to_save = array_merge( $old_opt, $data );
 
-		// All the sanitization is done there.
+		// All the sanitization is done in Options class.
 		$options->set( $to_save );
 
 		if ( $to_redirect ) {

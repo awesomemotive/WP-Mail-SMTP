@@ -202,8 +202,6 @@ class Test extends PageAbstract {
 			} else {
 				$smtp_text .= '[empty]';
 			}
-
-			array_push( $errors, $smtp_text );
 		}
 
 		$errors = apply_filters( 'wp_mail_smtp_admin_test_get_debug_messages', array(

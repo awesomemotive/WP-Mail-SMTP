@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Debug;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -204,6 +205,11 @@ class Settings extends PageAbstract {
 
 		$options = new Options();
 		$old_opt = $options->get_all();
+
+		// Remove all debug messages when switching mailers.
+		if ( $old_opt['mail']['mailer'] !== $data['mail']['mailer'] ) {
+			Debug::clear();
+		}
 
 		$to_redirect = false;
 

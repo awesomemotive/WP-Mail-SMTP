@@ -28,9 +28,15 @@ spl_autoload_register( function ( $class ) {
 	// Get the relative class name.
 	$relative_class = substr( $class, strlen( $plugin_space ) + 1 );
 
-	/*
+	/**
 	 * Normalize a filesystem path.
-	 * Copy of the wp_normalize_path() from WordPress 3.9.
+	 * Copy of the `wp_normalize_path()` from WordPress 3.9.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $path
+	 *
+	 * @return string
 	 */
 	$normalize = function( $path ) {
 		$path = str_replace( '\\', '/', $path );

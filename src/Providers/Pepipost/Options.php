@@ -2,14 +2,14 @@
 
 namespace WPMailSMTP\Providers\Pepipost;
 
-use WPMailSMTP\Providers\OptionAbstract;
+use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
- * Class Option.
+ * Class Options.
  *
  * @since 1.0.0
  */
-class Option extends OptionAbstract {
+class Options extends OptionsAbstract {
 
 	/**
 	 * Pepipost constructor.

@@ -2,7 +2,9 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\Providers\MailerAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class Mailer.
@@ -55,64 +57,22 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Set email FROM.
+	 * Re-use the MailCatcher class methods and properties.
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 *
-	 * @param string $email
-	 * @param string $name
+	 * @param \WPMailSMTP\MailCatcher $phpmailer
 	 */
-	public function set_from( $email, $name ) {
-	}
+	public function process_phpmailer( $phpmailer ) {
+		// Make sure that we have access to MailCatcher class methods.
+		if (
+			! $phpmailer instanceof \WPMailSMTP\MailCatcher &&
+			! $phpmailer instanceof \PHPMailer
+		) {
+			return;
+		}
 
-	/**
-	 * Set a bunch of email recipients: to, cc, bcc.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $recipients
-	 */
-	public function set_recipients( $recipients ) {
-	}
-
-	/**
-	 * Set the email content.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string|array $content
-	 */
-	public function set_content( $content ) {
-	}
-
-	/**
-	 * Set the email attachments.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $attachments
-	 */
-	public function set_attachments( $attachments ) {
-	}
-
-	/**
-	 * Set the email reply_to option.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $reply_to
-	 */
-	public function set_reply_to( $reply_to ) {
-	}
-
-	/**
-	 * Set the email return_path (when supported).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $email
-	 */
-	public function set_return_path( $email ) {
+		$this->phpmailer = $phpmailer;
 	}
 
 	/**
@@ -135,7 +95,8 @@ class Mailer extends MailerAbstract {
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
-			// TODO: save here the error message to display to a user later.
+			Debug::set( 'Error while sending via Gmail mailer: ' . $e->getMessage() );
+
 			return;
 		}
 	}
@@ -169,5 +130,31 @@ class Mailer extends MailerAbstract {
 		}
 
 		return $is_sent;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_debug_info() {
+
+		$gmail_text = array();
+
+		$options = new \WPMailSMTP\Options();
+		$gmail   = $options->get_group( 'gmail' );
+
+		$gmail_text[] = '<strong>Client ID/Secret:</strong> ' . ( ! empty( $gmail['client_id'] ) && ! empty( $gmail['client_secret'] ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Auth Code:</strong> ' . ( ! empty( $gmail['auth_code'] ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Access Token:</strong> ' . ( ! empty( $gmail['access_token'] ) ? 'Yes' : 'No' );
+
+		$gmail_text[] = '<br><strong>Server:</strong>';
+
+		$gmail_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.allow_url_fopen:</strong> ' . ( ini_get( 'allow_url_fopen' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.stream_socket_client():</strong> ' . ( function_exists( 'stream_socket_client' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.fsockopen():</strong> ' . ( function_exists( 'fsockopen' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.curl_version():</strong> ' . ( function_exists( 'curl_version' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', apache_get_modules(), true ) || in_array( 'mod_security2', apache_get_modules(), true ) ? 'Yes' : 'No' );
+
+		return implode( '<br>', $gmail_text );
 	}
 }

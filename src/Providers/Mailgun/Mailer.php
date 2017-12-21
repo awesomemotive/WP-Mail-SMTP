@@ -30,7 +30,7 @@ class Mailer extends MailerAbstract {
 	 */
 	public function __construct( $phpmailer ) {
 
-		// We want to prefill everything from \PHPMailer class.
+		// We want to prefill everything from \WPMailSMTP\MailCatcher class, which extends \PHPMailer.
 		parent::__construct( $phpmailer );
 
 		/*
@@ -295,5 +295,44 @@ class Mailer extends MailerAbstract {
 				'sender' => $email,
 			)
 		);
+	}
+
+	/**
+	 * Get a Mailgun-specific response with a helpful error.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	protected function get_response_error() {
+
+		$body = (array) wp_remote_retrieve_body( $this->response );
+
+		$error_text = array();
+
+		if ( ! empty( $body['message'] ) ) {
+			if ( ! is_string( $body['message'] ) ) {
+				$error_text[] = \json_encode( $body['message'] );
+			} else {
+				$error_text[] = $body['message'];
+			}
+		}
+
+		return implode( '<br>', $error_text );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_debug_info() {
+
+		$mg_text = array();
+
+		$options = new \WPMailSMTP\Options();
+		$mailgun = $options->get_group( 'mailgun' );
+
+		$mg_text[] = '<strong>Api Key / Domain:</strong> ' . ( ! empty( $mailgun['api_key'] ) && ! empty( $mailgun['domain'] ) ? 'Yes' : 'No' );
+
+		return implode( '<br>', $mg_text );
 	}
 }

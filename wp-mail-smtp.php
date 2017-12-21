@@ -28,8 +28,27 @@ spl_autoload_register( function ( $class ) {
 	// Get the relative class name.
 	$relative_class = substr( $class, strlen( $plugin_space ) + 1 );
 
+	/**
+	 * Normalize a filesystem path.
+	 * Copy of the `wp_normalize_path()` from WordPress 3.9.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $path
+	 *
+	 * @return string
+	 */
+	$normalize = function( $path ) {
+		$path = str_replace( '\\', '/', $path );
+		$path = preg_replace( '|(?<=.)/+|', '/', $path );
+		if ( ':' === substr( $path, 1, 1 ) ) {
+			$path = ucfirst( $path );
+		}
+		return $path;
+	};
+
 	// Prepare a path to a file.
-	$file = wp_normalize_path( $base_dir . $relative_class . '.php' );
+	$file = $normalize( $base_dir . $relative_class . '.php' );
 
 	// If the file exists, require it.
 	if ( is_readable( $file ) ) {

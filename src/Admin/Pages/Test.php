@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
@@ -119,7 +120,7 @@ class Test extends PageAbstract {
 		$smtp_debug = ob_get_clean();
 
 		/*
-		 * Do the actual sending.
+		 * Notify a user about the results.
 		 */
 		if ( $result ) {
 			WP::add_admin_notice(
@@ -130,8 +131,7 @@ class Test extends PageAbstract {
 			$error = $this->get_debug_messages( $phpmailer, $smtp_debug );
 
 			WP::add_admin_notice(
-				'<p><strong>' . esc_html__( 'There was a problem while sending a test email.', 'wp-mail-smtp' ) . '</strong></p>' .
-				'<p>' . esc_html__( 'The related debugging output is shown below:', 'wp-mail-smtp' ) . '</p>' .
+				'<p><strong>' . esc_html__( 'There was a problem while sending a test email. Related debugging output is shown below:', 'wp-mail-smtp' ) . '</strong></p>' .
 				'<blockquote style="border-left:1px solid orange;padding-left:10px">' . $error . '</blockquote>' .
 				'<p class="description">' . esc_html__( 'Please copy only the content of the error debug message above, identified with an orange left border, into the support forum topic if you experience any issues.', 'wp-mail-smtp' ) . '</p>',
 				WP::ADMIN_NOTICE_ERROR
@@ -144,7 +144,7 @@ class Test extends PageAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \PHPMailer $phpmailer
+	 * @param MailCatcher $phpmailer
 	 * @param string $smtp_debug
 	 *
 	 * @return string
@@ -168,68 +168,51 @@ class Test extends PageAbstract {
 		 * Mailer Debug.
 		 */
 
-		$mailer_text = '<strong>PHPMailer:</strong><br>';
+		$mailer_text = '<strong>Params:</strong><br>';
 
 		$mailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
+		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
 
 		// Display different debug info based on the mailer.
-		if ( $options->is_mailer_smtp() ) {
-			$mailer_text .= '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo ) . '<br>';
-			$mailer_text .= '<strong>Host:</strong> ' . $phpmailer->Host . '<br>';
-			$mailer_text .= '<strong>Port:</strong> ' . $phpmailer->Port . '<br>';
-			$mailer_text .= '<strong>SMTPSecure:</strong> ' . $this->pvar( $phpmailer->SMTPSecure ) . '<br>';
-			$mailer_text .= '<strong>SMTPAutoTLS:</strong> ' . $this->pvar( $phpmailer->SMTPAutoTLS ) . '<br>';
-			$mailer_text .= '<strong>SMTPAuth:</strong> ' . $this->pvar( $phpmailer->SMTPAuth );
-			if ( ! empty( $phpmailer->SMTPOptions ) ) {
-				$mailer_text .= '<br><strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
-			}
+		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $options->get( 'mail', 'mailer' ), $phpmailer );
+
+		if ( $mailer ) {
+			$mailer_text .= $mailer->get_debug_info();
 		}
 
 		/*
-		 * SMTP Debug.
+		 * General Debug.
 		 */
 
-		$smtp_text = '<br><strong>SMTP Debug:</strong><br>';
-		if ( ! empty( $smtp_debug ) ) {
-			$smtp_text .= $smtp_debug;
-		} else {
-			$smtp_text .= '[empty]';
+		$debug_text = implode( '<br>', Debug::get() );
+		Debug::clear();
+		if ( ! empty( $debug_text ) ) {
+			$debug_text = '<br><strong>Debug:</strong><br>' . $debug_text . '<br>';
+		}
+
+		/*
+		* SMTP Debug.
+		*/
+
+		$smtp_text = '';
+		if ( $options->is_mailer_smtp() ) {
+			$smtp_text = '<strong>SMTP Debug:</strong><br>';
+			if ( ! empty( $smtp_debug ) ) {
+				$smtp_text .= $smtp_debug;
+			} else {
+				$smtp_text .= '[empty]';
+			}
+
+			array_push( $errors, $smtp_text );
 		}
 
 		$errors = apply_filters( 'wp_mail_smtp_admin_test_get_debug_messages', array(
 			$versions_text,
 			$mailer_text,
+			$debug_text,
 			$smtp_text,
 		) );
 
-		return '<pre>' . implode( '<br>', $errors ) . '</pre>';
-	}
-
-	/**
-	 * Get the proper variable content output to debug.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $var
-	 *
-	 * @return string
-	 */
-	protected function pvar( $var = '' ) {
-
-		ob_start();
-
-		echo '<code>';
-
-		if ( is_bool( $var ) || empty( $var ) ) {
-			var_dump( $var );
-		} else {
-			print_r( $var );
-		}
-
-		echo '</code>';
-
-		$output = ob_get_clean();
-
-		return str_replace( array( "\r\n", "\r", "\n" ), '', $output );
+		return '<pre>' . implode( '<br>', array_filter( $errors ) ) . '</pre>';
 	}
 }

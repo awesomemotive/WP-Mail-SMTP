@@ -223,7 +223,7 @@ class Core {
 		// Store the plugin version activated to reference with upgrades.
 		update_option( 'wp_mail_smtp_version', WPMS_PLUGIN_VER );
 
-		// Create and store inital plugin settings.
+		// Create and store initial plugin settings.
 		$options['mail'] = array(
 			'from_email'  => get_option( 'admin_email' ),
 			'from_name'   => get_bloginfo( 'name' ),

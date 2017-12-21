@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 
@@ -76,10 +77,13 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @param MailCatcher $phpmailer
 	 */
-	protected function process_phpmailer( $phpmailer ) {
+	public function process_phpmailer( $phpmailer ) {
 
-		// Make sure that we have access to PHPMailer class methods.
-		if ( ! $phpmailer instanceof MailCatcher ) {
+		// Make sure that we have access to MailCatcher class methods.
+		if (
+			! $phpmailer instanceof MailCatcher &&
+			! $phpmailer instanceof \PHPMailer
+		) {
 			return;
 		}
 
@@ -232,11 +236,17 @@ abstract class MailerAbstract implements MailerInterface {
 	protected function process_response( $response ) {
 
 		if ( is_wp_error( $response ) ) {
+			// Save the error text.
+			$errors = $response->get_error_messages();
+			foreach ( $errors as $error ) {
+				Debug::set( $error );
+			}
+
 			return;
 		}
 
 		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
-			$response['body'] = json_decode( $response['body'] );
+			$response['body'] = \json_decode( $response['body'] );
 		}
 
 		$this->response = $response;
@@ -267,9 +277,26 @@ abstract class MailerAbstract implements MailerInterface {
 
 		if ( wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code ) {
 			$is_sent = true;
+		} else {
+			$error = $this->get_response_error();
+
+			if ( ! empty( $error ) ) {
+				Debug::set( $error );
+			}
 		}
 
 		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent );
+	}
+
+	/**
+	 * Should be overwritten when appropriate.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	protected function get_response_error() {
+		return '';
 	}
 
 	/**
@@ -342,5 +369,34 @@ abstract class MailerAbstract implements MailerInterface {
 		}
 
 		return $merged;
+	}
+
+	/**
+	 * This method is relevant to SMTP, Pepipost and Mail.
+	 * All other custom mailers should override it with own information.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	public function get_debug_info() {
+		global $phpmailer;
+
+		$smtp_text = array();
+
+		// Mail mailer has nothing to return.
+		if ( $this->options->is_mailer_smtp() ) {
+			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo );
+			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
+			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
+			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Debug::pvar( $phpmailer->SMTPSecure );
+			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Debug::pvar( $phpmailer->SMTPAutoTLS );
+			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Debug::pvar( $phpmailer->SMTPAuth );
+			if ( ! empty( $phpmailer->SMTPOptions ) ) {
+				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
+			}
+		}
+
+		return implode( '<br>', $smtp_text );
 	}
 }

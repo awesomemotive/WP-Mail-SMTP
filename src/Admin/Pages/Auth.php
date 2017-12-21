@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Options;
+use WPMailSMTP\Providers\AuthAbstract;
 
 /**
  * Class Auth.
@@ -25,7 +26,9 @@ class Auth {
 
 		$auth = wp_mail_smtp()->get_providers()->get_auth( Options::init()->get( 'mail', 'mailer' ) );
 
-		$auth->process();
+		if ( $auth && $auth instanceof AuthAbstract ) {
+			$auth->process();
+		}
 	}
 
 	/**

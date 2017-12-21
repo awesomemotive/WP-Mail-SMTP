@@ -30,11 +30,11 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \PHPMailer $phpmailer
+	 * @param \WPMailSMTP\MailCatcher $phpmailer
 	 */
 	public function __construct( $phpmailer ) {
 
-		// We want to prefill everything from \PHPMailer class.
+		// We want to prefill everything from \WPMailSMTP\MailCatcher class, which extends \PHPMailer.
 		parent::__construct( $phpmailer );
 
 		$this->set_header( 'Authorization', 'Bearer ' . $this->options->get( $this->mailer, 'api_key' ) );
@@ -213,7 +213,8 @@ class Mailer extends MailerAbstract {
 				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
 					$file = file_get_contents( $attachment[0] );
 				}
-			} catch ( \Exception $e ) {
+			}
+			catch ( \Exception $e ) {
 				$file = false;
 			}
 
@@ -290,5 +291,54 @@ class Mailer extends MailerAbstract {
 	 * @param string $email
 	 */
 	public function set_return_path( $email ) {
+	}
+
+	/**
+	 * Get a SendGrid-specific response with a helpful error.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	protected function get_response_error() {
+
+		$body = (array) wp_remote_retrieve_body( $this->response );
+
+		$error_text = array();
+
+		if ( ! empty( $body['errors'] ) ) {
+			foreach ( $body['errors'] as $error ) {
+				if ( property_exists( $error, 'message' ) ) {
+					// Prepare additional information from SendGrid API.
+					$extra = '';
+					if ( property_exists( $error, 'field' ) && ! empty( $error->field ) ) {
+						$extra .= $error->field . '; ';
+					}
+					if ( property_exists( $error, 'help' ) && ! empty( $error->help ) ) {
+						$extra .= $error->help;
+					}
+
+					// Assign both the main message and perhaps extra information, if exists.
+					$error_text[] = $error->message . ( ! empty( $extra ) ? ' - ' . $extra : '' );
+				}
+			}
+		}
+
+		return implode( '<br>', $error_text );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_debug_info() {
+
+		$mg_text = array();
+
+		$options = new \WPMailSMTP\Options();
+		$mailgun = $options->get_group( 'sendgrid' );
+
+		$mg_text[] = '<strong>Api Key:</strong> ' . ( ! empty( $mailgun['api_key'] ) ? 'Yes' : 'No' );
+
+		return implode( '<br>', $mg_text );
 	}
 }

@@ -8,7 +8,7 @@ namespace WPMailSMTP\Providers;
  *
  * @since 1.0.0
  */
-interface OptionInterface {
+interface OptionsInterface {
 
 	/**
 	 * Get the mailer provider slug.

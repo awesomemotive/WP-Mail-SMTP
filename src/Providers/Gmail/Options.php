@@ -2,14 +2,14 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
-use WPMailSMTP\Providers\OptionAbstract;
+use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
  * Class Option.
  *
  * @since 1.0.0
  */
-class Options extends OptionAbstract {
+class Options extends OptionsAbstract {
 
 	/**
 	 * Mailgun constructor.

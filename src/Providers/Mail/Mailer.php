@@ -16,6 +16,7 @@ class Mailer extends MailerAbstract {
 	 * @inheritdoc
 	 */
 	public function get_debug_info() {
+
 		$mail_text = array();
 
 		$mail_text[] = '<br><strong>Server:</strong>';

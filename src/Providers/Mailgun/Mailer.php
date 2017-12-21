@@ -296,4 +296,19 @@ class Mailer extends MailerAbstract {
 			)
 		);
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_debug_info() {
+
+		$mg_text = array();
+
+		$options = new \WPMailSMTP\Options();
+		$mailgun = $options->get_group( 'mailgun' );
+
+		$mg_text[] = '<strong>Api Key / Domain:</strong> ' . ( ! empty( $mailgun['api_key'] ) && ! empty( $mailgun['domain'] ) ? 'Yes' : 'No' );
+
+		return implode( '<br>', $mg_text );
+	}
 }

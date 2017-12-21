@@ -136,6 +136,7 @@ class Mailer extends MailerAbstract {
 	 * @inheritdoc
 	 */
 	public function get_debug_info() {
+
 		$gmail_text = array();
 
 		$options = new \WPMailSMTP\Options();

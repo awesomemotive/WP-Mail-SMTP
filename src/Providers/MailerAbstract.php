@@ -60,12 +60,13 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function __construct( MailCatcher $phpmailer ) {
 
-		if ( empty( $this->url ) ) {
-			return;
-		}
-
 		$this->options = new Options();
 		$this->mailer  = $this->options->get( 'mail', 'mailer' );
+
+		// Only non-SMTP mailers need URL.
+		if ( ! $this->options->is_mailer_smtp() && empty( $this->url ) ) {
+			return;
+		}
 
 		$this->process_phpmailer( $phpmailer );
 	}
@@ -88,6 +89,11 @@ abstract class MailerAbstract implements MailerInterface {
 		}
 
 		$this->phpmailer = $phpmailer;
+
+		// Prevent working with those methods, as they are not needed for SMTP-like mailers.
+		if ( $this->options->is_mailer_smtp() ) {
+			return;
+		}
 
 		$this->set_headers( $this->phpmailer->getCustomHeaders() );
 		$this->set_from( $this->phpmailer->From, $this->phpmailer->FromName );

@@ -10,6 +10,8 @@ namespace WPMailSMTP;
  *      Debug::set( 'Some warning: %s', array( '%s' => $e->getMessage() );
  *      $debug = Debug::get(); // array
  *      $debug = Debug::get_last(); // string
+ *
+ * @since 1.2.0
  */
 class Debug {
 
@@ -27,6 +29,7 @@ class Debug {
 	 * @param string $message
 	 */
 	public static function set( $message ) {
+
 		if ( ! is_string( $message ) ) {
 			$message = \json_encode( $message );
 		}
@@ -58,7 +61,7 @@ class Debug {
 	 */
 	public static function get() {
 
-		$all = get_option( 'wp_mail_smtp_errors', array() );
+		$all = get_option( self::OPTION_KEY, array() );
 
 		if ( ! is_array( $all ) ) {
 			$all = (array) $all;

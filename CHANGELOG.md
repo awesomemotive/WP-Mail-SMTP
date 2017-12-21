@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2017-12-21
+### Fixed:
+- Failed SMTP connections generate fatal errors.
+
 ## [1.2.0] - 2017-12-21
 ### Fixed:
 - Decrease the factual minimum WordPress version from 3.9 to 3.6.

@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
@@ -130,8 +131,7 @@ class Test extends PageAbstract {
 			$error = $this->get_debug_messages( $phpmailer, $smtp_debug );
 
 			WP::add_admin_notice(
-				'<p><strong>' . esc_html__( 'There was a problem while sending a test email.', 'wp-mail-smtp' ) . '</strong></p>' .
-				'<p>' . esc_html__( 'The related debugging output is shown below:', 'wp-mail-smtp' ) . '</p>' .
+				'<p><strong>' . esc_html__( 'There was a problem while sending a test email. Related debugging output is shown below:', 'wp-mail-smtp' ) . '</strong></p>' .
 				'<blockquote style="border-left:1px solid orange;padding-left:10px">' . $error . '</blockquote>' .
 				'<p class="description">' . esc_html__( 'Please copy only the content of the error debug message above, identified with an orange left border, into the support forum topic if you experience any issues.', 'wp-mail-smtp' ) . '</p>',
 				WP::ADMIN_NOTICE_ERROR
@@ -180,23 +180,39 @@ class Test extends PageAbstract {
 			$mailer_text .= $mailer->get_debug_info();
 		}
 
-		$smtp_text = '<br><strong>SMTP Debug:</strong><br>';
-		if ( ! empty( $smtp_debug ) ) {
-			$smtp_text .= $smtp_debug;
-		} else {
-			$smtp_text .= '[empty]';
+		/*
+		 * General Debug.
+		 */
+
+		$debug_text = implode( '<br>', Debug::get() );
+		Debug::clear();
+		if ( ! empty( $debug_text ) ) {
+			$debug_text = '<br><strong>Debug:</strong><br>' . $debug_text . '<br>';
 		}
 
 		/*
-		 * SMTP Debug.
-		 */
+		* SMTP Debug.
+		*/
+
+		$smtp_text = '';
+		if ( $options->is_mailer_smtp() ) {
+			$smtp_text = '<strong>SMTP Debug:</strong><br>';
+			if ( ! empty( $smtp_debug ) ) {
+				$smtp_text .= $smtp_debug;
+			} else {
+				$smtp_text .= '[empty]';
+			}
+
+			array_push( $errors, $smtp_text );
+		}
 
 		$errors = apply_filters( 'wp_mail_smtp_admin_test_get_debug_messages', array(
 			$versions_text,
 			$mailer_text,
+			$debug_text,
 			$smtp_text,
 		) );
 
-		return '<pre>' . implode( '<br>', $errors ) . '</pre>';
+		return '<pre>' . implode( '<br>', array_filter( $errors ) ) . '</pre>';
 	}
 }

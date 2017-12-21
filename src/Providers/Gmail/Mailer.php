@@ -4,6 +4,7 @@ namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Debug;
 use WPMailSMTP\Providers\MailerAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class Mailer.
@@ -129,5 +130,30 @@ class Mailer extends MailerAbstract {
 		}
 
 		return $is_sent;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_debug_info() {
+		$gmail_text = array();
+
+		$options = new \WPMailSMTP\Options();
+		$gmail   = $options->get_group( 'gmail' );
+
+		$gmail_text[] = '<strong>Client ID/Secret:</strong> ' . ( ! empty( $gmail['client_id'] ) && ! empty( $gmail['client_secret'] ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Auth Code:</strong> ' . ( ! empty( $gmail['auth_code'] ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Access Token:</strong> ' . ( ! empty( $gmail['access_token'] ) ? 'Yes' : 'No' );
+
+		$gmail_text[] = '<br><strong>Server:</strong>';
+
+		$gmail_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.allow_url_fopen:</strong> ' . ( ini_get( 'allow_url_fopen' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.stream_socket_client():</strong> ' . ( function_exists( 'stream_socket_client' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.fsockopen():</strong> ' . ( function_exists( 'fsockopen' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>PHP.curl_version():</strong> ' . ( function_exists( 'curl_version' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', apache_get_modules(), true ) || in_array( 'mod_security2', apache_get_modules(), true ) ? 'Yes' : 'No' );
+
+		return implode( '<br>', $gmail_text );
 	}
 }

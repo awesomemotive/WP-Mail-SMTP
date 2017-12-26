@@ -31,6 +31,9 @@ class MailCatcher extends \PHPMailer {
 		$options = new Options();
 		$mailer  = $options->get( 'mail', 'mailer' );
 
+		// Define a custom header, that will be used in Gmail/SMTP mailers.
+		$this->XMailer = 'WPMailSMTP/Mailer/' . $mailer . ' ' . WPMS_PLUGIN_VER;
+
 		// Use the default PHPMailer, as we inject our settings there for certain providers.
 		if (
 			$mailer === 'mail' ||

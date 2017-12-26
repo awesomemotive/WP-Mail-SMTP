@@ -25,7 +25,10 @@ class Mailer extends MailerAbstract {
 		$disabled           = (array) explode( ',', trim( $disabled_functions ) );
 
 		$mail_text[] = '<strong>PHP.mail():</strong> ' . ( in_array( 'mail', $disabled, true ) || ! function_exists( 'mail' ) ? 'No' : 'Yes' );
-		$mail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', apache_get_modules(), true ) || in_array( 'mod_security2', apache_get_modules(), true ) ? 'Yes' : 'No' );
+		if ( function_exists( 'apache_get_modules' ) ) {
+			$modules     = apache_get_modules();
+			$mail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
+		}
 
 		return implode( '<br>', $mail_text );
 	}

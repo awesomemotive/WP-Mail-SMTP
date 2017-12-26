@@ -403,6 +403,13 @@ abstract class MailerAbstract implements MailerInterface {
 			}
 		}
 
+		$smtp_text[] = '<br><strong>Server:</strong>';
+		$smtp_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) ? 'Yes' : 'No' );
+		if ( function_exists( 'apache_get_modules' ) ) {
+			$modules     = apache_get_modules();
+			$smtp_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
+		}
+
 		return implode( '<br>', $smtp_text );
 	}
 }

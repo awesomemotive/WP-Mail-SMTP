@@ -146,6 +146,11 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.2.2 - 2017-12-27 =
+* Fixed: Correctly handle Mailgun debug message for an incorrect api key.
+* Fixed: Fatal error for Gmail and SMTP mailers with Nginx web-server (without Apache at all).
+* Changed: Update X-Mailer emails header to show the real sender with a mailer and plugin version.
+
 = 1.2.1 - 2017-12-21 =
 * Fixed: Failed SMTP connections generate fatal errors.
 

@@ -63,6 +63,7 @@ var plugin = {
 		// We need only a specific service: Gmail. Others should be omitted.
 		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail)/**',
 		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail|Gmail.php)',
+		// We need only specific crypto-libraries. Others should be omitted.
 		'!vendor/phpseclib/phpseclib/phpseclib/Crypt/!(AES.php|Rijndael.php|RSA.php|Random.php)',
 		'!vendor/phpseclib/phpseclib/phpseclib/Net/**',
 		'!vendor/phpseclib/phpseclib/phpseclib/Net',

@@ -311,10 +311,16 @@ class Mailer extends MailerAbstract {
 		$error_text = array();
 
 		if ( ! empty( $body['message'] ) ) {
-			if ( ! is_string( $body['message'] ) ) {
-				$error_text[] = \json_encode( $body['message'] );
-			} else {
+			if ( is_string( $body['message'] ) ) {
 				$error_text[] = $body['message'];
+			} else {
+				$error_text[] = \json_encode( $body['message'] );
+			}
+		} elseif ( ! empty( $body[0] ) ) {
+			if ( is_string( $body[0] ) ) {
+				$error_text[] = $body[0];
+			} else {
+				$error_text[] = \json_encode( $body[0] );
 			}
 		}
 

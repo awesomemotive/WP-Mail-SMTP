@@ -1,4 +1,4 @@
-# Copyright (C) 2017 WP Mail SMTP
+# Copyright (C) 2018 WP Mail SMTP
 # This file is distributed under the same license as the WP Mail SMTP package.
 msgid ""
 msgstr ""
@@ -215,7 +215,7 @@ msgid "There was an error while processing the authentication request. Please ma
 msgstr ""
 
 #: src/Admin/Area.php:111
-msgid "You have successfully linked the current site with you Google API project. Now you can start sending emails through Google."
+msgid "You have successfully linked the current site with your Google API project. Now you can start sending emails through Google."
 msgstr ""
 
 #: src/Admin/Area.php:126

@@ -231,8 +231,8 @@ class Settings extends PageAbstract {
 			}
 		}
 
-		// New gmail clients data will be added from new $data, except the old access/refresh_token.
-		$to_save = array_merge( $old_opt, $data );
+		// New gmail clients data will be added from new $data.
+		$to_save = Options::array_merge_recursive( $old_opt, $data );
 
 		// All the sanitization is done in Options class.
 		$options->set( $to_save );

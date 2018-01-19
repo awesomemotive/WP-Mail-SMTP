@@ -144,7 +144,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @internal param array $params
 	 */
 	protected function set_body_param( $param ) {
-		$this->body = $this->array_merge_recursive( $this->body, $param );
+		$this->body = Options::array_merge_recursive( $this->body, $param );
 	}
 
 	/**
@@ -221,7 +221,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function send() {
 
-		$params = $this->array_merge_recursive( $this->get_default_params(), array(
+		$params = Options::array_merge_recursive( $this->get_default_params(), array(
 			'headers' => $this->get_headers(),
 			'body'    => $this->get_body(),
 		) );
@@ -326,55 +326,6 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	protected function is_json( $string ) {
 		return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( json_last_error() === JSON_ERROR_NONE ) ? true : false;
-	}
-
-	/**
-	 * Merge recursively, including a proper substitution of values in sub-arrays when keys are the same.
-	 * It's more like array_merge() and array_merge_recursive() combined.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array
-	 */
-	protected function array_merge_recursive() {
-
-		$arrays = func_get_args();
-
-		if ( count( $arrays ) < 2 ) {
-			return isset( $arrays[0] ) ? $arrays[0] : array();
-		}
-
-		$merged = array();
-
-		while ( $arrays ) {
-			$array = array_shift( $arrays );
-
-			if ( ! is_array( $array ) ) {
-				return array();
-			}
-
-			if ( empty( $array ) ) {
-				continue;
-			}
-
-			foreach ( $array as $key => $value ) {
-				if ( is_string( $key ) ) {
-					if (
-						is_array( $value ) &&
-						array_key_exists( $key, $merged ) &&
-						is_array( $merged[ $key ] )
-					) {
-						$merged[ $key ] = call_user_func( __FUNCTION__, $merged[ $key ], $value );
-					} else {
-						$merged[ $key ] = $value;
-					}
-				} else {
-					$merged[] = $value;
-				}
-			}
-		}
-
-		return $merged;
 	}
 
 	/**

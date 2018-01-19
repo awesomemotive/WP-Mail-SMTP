@@ -82,7 +82,7 @@ class Mailer extends MailerAbstract {
 	 */
 	public function send() {
 
-		// Get the raw MIME email using \PHPMailer data.
+		// Get the raw MIME email using \MailCatcher data.
 		$base64 = base64_encode( $this->phpmailer->getSentMIMEMessage() );
 		$base64 = str_replace( array( '+', '/', '=' ), array( '-', '_', '' ), $base64 ); // url safe.
 		$this->message->setRaw( $base64 );

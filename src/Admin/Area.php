@@ -108,7 +108,7 @@ class Area {
 		switch ( $success ) {
 			case 'google_site_linked':
 				WP::add_admin_notice(
-					esc_html__( 'You have successfully linked the current site with you Google API project. Now you can start sending emails through Google.', 'wp-mail-smtp' ),
+					esc_html__( 'You have successfully linked the current site with your Google API project. Now you can start sending emails through Google.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_SUCCESS
 				);
 				break;

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2018-01-28
+### Fixed:
+- Gmail tokens were resetted after clicking Save Settings.
+- Slight typo in Gmail success message.
+
 ## [1.2.2] - 2017-12-27
 ### Fixed:
 - Correctly handle Mailgun debug message for an incorrect api key.

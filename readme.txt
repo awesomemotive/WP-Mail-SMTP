@@ -146,6 +146,10 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.2.3 - 2017-01-22 =
+* Fixed: Gmail tokens were resetted after clicking Save Settings.
+* Fixed: Slight typo in Gmail success message.
+
 = 1.2.2 - 2017-12-27 =
 * Fixed: Correctly handle Mailgun debug message for an incorrect api key.
 * Fixed: Fatal error for Gmail and SMTP mailers with Nginx web-server (without Apache at all).

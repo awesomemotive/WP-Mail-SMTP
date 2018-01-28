@@ -198,7 +198,7 @@ class Test extends PageAbstract {
 		if ( $options->is_mailer_smtp() ) {
 			$smtp_text = '<strong>SMTP Debug:</strong><br>';
 			if ( ! empty( $smtp_debug ) ) {
-				$smtp_text .= $smtp_debug;
+				$smtp_text .= esc_textarea( $smtp_debug );
 			} else {
 				$smtp_text .= '[empty]';
 			}

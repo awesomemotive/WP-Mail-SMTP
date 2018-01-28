@@ -343,7 +343,7 @@ abstract class MailerAbstract implements MailerInterface {
 
 		// Mail mailer has nothing to return.
 		if ( $this->options->is_mailer_smtp() ) {
-			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( $phpmailer->ErrorInfo );
+			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( wp_strip_all_tags( $phpmailer->ErrorInfo ) );
 			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
 			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
 			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Debug::pvar( $phpmailer->SMTPSecure );

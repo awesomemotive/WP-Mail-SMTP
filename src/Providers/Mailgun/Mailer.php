@@ -324,7 +324,7 @@ class Mailer extends MailerAbstract {
 			}
 		}
 
-		return implode( '<br>', esc_textarea( $error_text ) );
+		return implode( '<br>', array_map( 'esc_textarea', $error_text ) );
 	}
 
 	/**

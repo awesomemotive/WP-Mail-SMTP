@@ -18,12 +18,12 @@ class Loader {
 	 * @var array
 	 */
 	protected $providers = array(
-		'mail'     => '\WPMailSMTP\Providers\Mail\\',
-		'gmail'    => '\WPMailSMTP\Providers\Gmail\\',
-		'mailgun'  => '\WPMailSMTP\Providers\Mailgun\\',
-		'sendgrid' => '\WPMailSMTP\Providers\Sendgrid\\',
-		'pepipost' => '\WPMailSMTP\Providers\Pepipost\\',
-		'smtp'     => '\WPMailSMTP\Providers\SMTP\\',
+		'mail'     => 'WPMailSMTP\Providers\Mail\\',
+		'gmail'    => 'WPMailSMTP\Providers\Gmail\\',
+		'mailgun'  => 'WPMailSMTP\Providers\Mailgun\\',
+		'sendgrid' => 'WPMailSMTP\Providers\Sendgrid\\',
+		'pepipost' => 'WPMailSMTP\Providers\Pepipost\\',
+		'smtp'     => 'WPMailSMTP\Providers\SMTP\\',
 	);
 
 	/**

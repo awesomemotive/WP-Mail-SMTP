@@ -224,12 +224,14 @@ class Core {
 		update_option( 'wp_mail_smtp_version', WPMS_PLUGIN_VER );
 
 		// Create and store initial plugin settings.
-		$options['mail'] = array(
-			'from_email'  => get_option( 'admin_email' ),
-			'from_name'   => get_bloginfo( 'name' ),
-			'mailer'      => 'mail',
-			'return_path' => false,
-			'smtp'        => array(
+		$options = array(
+			'mail' => array(
+				'from_email'  => get_option( 'admin_email' ),
+				'from_name'   => get_bloginfo( 'name' ),
+				'mailer'      => 'mail',
+				'return_path' => false,
+			),
+			'smtp' => array(
 				'autotls' => true,
 			),
 		);

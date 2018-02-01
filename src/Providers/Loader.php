@@ -4,6 +4,7 @@ namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
+use WPMailSMTP\Options;
 
 /**
  * Class Loader.
@@ -39,6 +40,11 @@ class Loader {
 	 * @return array
 	 */
 	public function get_providers() {
+
+		if ( ! Options::init()->is_pepipost_active() ) {
+			unset( $this->providers['pepipost'] );
+		}
+
 		return apply_filters( 'wp_mail_smtp_providers_loader_get_providers', $this->providers );
 	}
 

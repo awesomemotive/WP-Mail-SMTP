@@ -521,9 +521,9 @@ class Options {
 
 		// Whether to update existing options or to add these options only once if they don't exist yet.
 		if ( $once ) {
-			add_option( self::META_KEY, $options );
+			add_option( self::META_KEY, $options, '', 'no' ); // Do not autoload these options.
 		} else {
-			update_option( self::META_KEY, $options );
+			update_option( self::META_KEY, $options, 'no' );
 		}
 
 		// Now we need to re-cache values.

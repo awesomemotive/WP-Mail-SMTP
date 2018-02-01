@@ -440,10 +440,12 @@ class Options {
 	 * Set plugin options, all at once.
 	 *
 	 * @since 1.0.0
+	 * @since 1.3.0 Added $once argument to save option only if they don't exist already.
 	 *
-	 * @param array $options Data to save.
+	 * @param array $options Plugin options to save.
+	 * @param bool $once Whether to update existing options or to add these options only once.
 	 */
-	public function set( $options ) {
+	public function set( $options, $once = false ) {
 
 		foreach ( (array) $options as $group => $keys ) {
 			foreach ( $keys as $key_name => $key_value ) {
@@ -517,7 +519,12 @@ class Options {
 
 		$options = apply_filters( 'wp_mail_smtp_options_set', $options );
 
-		update_option( self::META_KEY, $options );
+		// Whether to update existing options or to add these options only once if they don't exist yet.
+		if ( $once ) {
+			add_option( self::META_KEY, $options );
+		} else {
+			update_option( self::META_KEY, $options );
+		}
 
 		// Now we need to re-cache values.
 		$this->populate_options();

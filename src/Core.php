@@ -234,6 +234,6 @@ class Core {
 			),
 		);
 
-		Options::init()->set( $options );
+		Options::init()->set( $options, true );
 	}
 }

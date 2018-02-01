@@ -198,7 +198,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-autotls"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][autotls]" value="yes"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'autotls' ) ? 'disabled' : ''; ?>
-						<?php checked( true, $this->options->get( $this->get_slug(), 'autotls' ) ); ?>
+						<?php checked( true, (bool) $this->options->get( $this->get_slug(), 'autotls' ) ); ?>
 					/>
 					<span class="wp-mail-smtp-setting-toggle-switch"></span>
 					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
@@ -220,7 +220,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="yes"
 						<?php echo $this->options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
-						<?php checked( true, $this->options->get( $this->get_slug(), 'auth' ) ); ?>
+						<?php checked( true, (bool) $this->options->get( $this->get_slug(), 'auth' ) ); ?>
 					/>
 					<span class="wp-mail-smtp-setting-toggle-switch"></span>
 					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>

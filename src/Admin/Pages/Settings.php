@@ -206,6 +206,14 @@ class Settings extends PageAbstract {
 		$options = new Options();
 		$old_opt = $options->get_all();
 
+		// When checkbox is unchecked - it's not submitted at all, so we need to define its default false value.
+		if ( ! isset( $data['smtp']['autotls'] ) ) {
+			$data['smtp']['autotls'] = false;
+		}
+		if ( ! isset( $data['smtp']['auth'] ) ) {
+			$data['smtp']['auth'] = false;
+		}
+
 		// Remove all debug messages when switching mailers.
 		if ( $old_opt['mail']['mailer'] !== $data['mail']['mailer'] ) {
 			Debug::clear();

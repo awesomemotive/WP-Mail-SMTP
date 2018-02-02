@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2.4] - 2018-01-28
 ### Fixed:
-- Improved escaping with debug reporting.
+- Improved escaping in debug reporting.
 
 ## [1.2.3] - 2018-01-22
 ### Fixed:
-- Gmail tokens were resetted after clicking Save Settings.
+- Gmail tokens were reset after clicking Save Settings.
 - Slight typo in Gmail success message.
 
 ## [1.2.2] - 2017-12-27

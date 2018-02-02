@@ -156,6 +156,12 @@ class Mailer extends MailerAbstract {
 			$modules      = apache_get_modules();
 			$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
 		}
+		if ( function_exists( 'selinux_is_enabled' ) ) {
+			$gmail_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? 'Yes' : 'No' );
+		}
+		if ( function_exists( 'grsecurity_is_enabled' ) ) {
+			$gmail_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? 'Yes' : 'No' );
+		}
 
 		return implode( '<br>', $gmail_text );
 	}

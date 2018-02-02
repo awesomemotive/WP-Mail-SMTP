@@ -191,7 +191,7 @@ class Options {
 			$value = $this->postprocess_key_defaults( $group, $key );
 		}
 
-		return apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key );
+		return apply_filters( 'wp_mail_smtp_options_get', stripslashes( $value ), $group, $key );
 	}
 
 	/**
@@ -454,7 +454,7 @@ class Options {
 						switch ( $key_name ) {
 							case 'from_name':
 							case 'mailer':
-								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, sanitize_text_field( $options[ $group ][ $key_name ] ) );
+								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, wp_strip_all_tags( $options[ $group ][ $key_name ], true ) );
 								break;
 							case 'from_email':
 								if ( filter_var( $options[ $group ][ $key_name ], FILTER_VALIDATE_EMAIL ) ) {
@@ -488,13 +488,13 @@ class Options {
 				switch ( $key_name ) {
 					case 'host':
 					case 'user':
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, wp_strip_all_tags( $options[ $mailer ][ $key_name ], true ) );
 						break;
 					case 'port':
 						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, intval( $options[ $mailer ][ $key_name ] ) );
 						break;
 					case 'encryption':
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, sanitize_text_field( $options[ $mailer ][ $key_name ] ) );
+						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, wp_strip_all_tags( $options[ $mailer ][ $key_name ], true ) );
 						break;
 					case 'auth':
 					case 'autotls':

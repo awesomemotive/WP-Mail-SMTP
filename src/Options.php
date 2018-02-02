@@ -191,7 +191,11 @@ class Options {
 			$value = $this->postprocess_key_defaults( $group, $key );
 		}
 
-		return apply_filters( 'wp_mail_smtp_options_get', stripslashes( $value ), $group, $key );
+		if ( is_string( $value ) ) {
+			$value = stripslashes( $value );
+		}
+
+		return apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key );
 	}
 
 	/**

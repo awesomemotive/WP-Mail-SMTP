@@ -43,6 +43,9 @@ class MailCatcher extends \PHPMailer {
 			return parent::send();
 		}
 
+		// We need this so that the \PHPMailer class will correctly prepare all the headers.
+		$this->Mailer = 'mail';
+
 		// Prepare everything (including the message) for sending.
 		if ( ! $this->preSend() ) {
 			return false;

@@ -4,16 +4,16 @@
 
 ### Welcome to our GitHub Repository
 
-Master branch is always stable and contains latest releases. Development occurs in the develop branch while large features/changes are contained in dedicated branches.
+`master` branch is always stable and contains latest releases. Development occurs in the `develop` branch while large features/changes are contained in dedicated branches.
 
 ## Bugs ##
 If you find an bug or problem, please let us know by [creating an issue](https://github.com/awesomemotive/wp-mail-smtp/issues?state=open)!
 
 ## Contributions ##
-Contribututions to WPForms are welcome!
+Contributions to WPForms are welcome!
 
 1. Open an [Issue](https://github.com/awesomemotive/wp-mail-smtp/issues) on GitHub.
 2. Fork WP Mail SMTP on GitHub.
-3. Create a new branch off of `develop`; branch name should be `issue/###` to reference the issue.
+3. Create a new branch off of `develop`; branch name should be `issues/###` to reference the issue.
 4. When committing, reference your issue and provide notes/feedback.
 5. Send us a Pull Request with your bug fixes and/or new features.

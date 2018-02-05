@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Plugin activation will not overwrite settings back to defaults.
 - Properly set `Auto TLS` option on plugin activation.
 - Providers autoloading improved for certain Windows-based installs.
+- Use the proper path to load translations from plugin's `/languages` directory.
 
 ### Changed:
 - Do not autoload on each page request plugin settings from WordPress options table.

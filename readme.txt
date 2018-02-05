@@ -157,6 +157,7 @@ By all means please contact us to discuss features or options you'd like to see 
 * Fixed: Plugin activation will not overwrite settings back to defaults.
 * Fixed: Properly set `Auto TLS` option on plugin activation.
 * Fixed: Providers autoloading improved for certain Windows-based installs.
+* Fixed: Use the proper path to load translations from plugin's `/languages` directory.
 * Changed: Do not autoload on each page request plugin settings from WordPress options table.
 * Changed: Do not autoload Pepipost classes unless it's saved as active mailer in settings.
 

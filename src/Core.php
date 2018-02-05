@@ -62,7 +62,7 @@ class Core {
 	public function init() {
 
 		// Load translations just in case.
-		load_plugin_textdomain( 'wp-mail-smtp', false, wp_mail_smtp()->plugin_path . '/languages' );
+		load_plugin_textdomain( 'wp-mail-smtp', false, plugin_basename( wp_mail_smtp()->plugin_path ) . '/languages' );
 
 		/*
 		 * Constantly check in admin area, that we don't need to upgrade DB.

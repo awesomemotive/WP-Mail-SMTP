@@ -146,6 +146,20 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 1.2.5 - 2017-02-05 =
+* Fixed: `Return path` can't be turned off.
+* Fixed: `Authentication` sometimes can't be turned off.
+* Fixed: `Auto TLS` sometimes can't be turned off.
+* Fixed: BCC support for Gmail was broken.
+* Fixed: Debug output improved to handle SELinux and grsecurity.
+* Fixed: Strip slashes from plugin settings (useful for `From Name` option).
+* Fixed: Change the way sanitization is done to prevent accidental removal of useful data.
+* Fixed: Plugin activation will not overwrite settings back to defaults.
+* Fixed: Properly set `Auto TLS` option on plugin activation.
+* Fixed: Providers autoloading improved for certain Windows-based installs.
+* Changed: Do not autoload on each page request plugin settings from WordPress options table.
+* Changed: Do not autoload Pepipost classes unless it's saved as active mailer in settings.
+
 = 1.2.4 - 2017-01-28 =
 * Fixed: Improved escaping in debug reporting.
 

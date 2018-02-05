@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "1.2.2",
+  "version": "1.2.5",
   "description": "Reconfigures the wp_mail() function to use SMTP instead of mail().",
   "private": true,
   "repository": {

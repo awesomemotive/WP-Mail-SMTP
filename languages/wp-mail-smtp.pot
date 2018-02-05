@@ -86,15 +86,15 @@ msgstr ""
 msgid "Looking for high inbox delivery? Try Pepipost with easy setup and free emails. Learn more %1$shere%2$s."
 msgstr ""
 
-#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:148
+#: wp_mail_smtp.php:371, wp_mail_smtp.php:376, src/Admin/Pages/Settings.php:142
 msgid "Return Path"
 msgstr ""
 
-#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:157
+#: wp_mail_smtp.php:381, src/Admin/Pages/Settings.php:151
 msgid "Set the return-path to match the From Email"
 msgstr ""
 
-#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:160
+#: wp_mail_smtp.php:385, src/Admin/Pages/Settings.php:154
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
@@ -286,11 +286,11 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/Admin/Pages/Misc.php:67, src/Admin/Pages/Settings.php:191
+#: src/Admin/Pages/Misc.php:67, src/Admin/Pages/Settings.php:185
 msgid "Save Settings"
 msgstr ""
 
-#: src/Admin/Pages/Misc.php:95, src/Admin/Pages/Settings.php:246
+#: src/Admin/Pages/Misc.php:95, src/Admin/Pages/Settings.php:251
 msgid "Settings were successfully saved."
 msgstr ""
 
@@ -318,7 +318,7 @@ msgstr ""
 msgid "If you leave this blank, the emails will be sent from %s."
 msgstr ""
 
-#: src/Admin/Pages/Settings.php:161
+#: src/Admin/Pages/Settings.php:155
 msgid "If unchecked bounce messages may be lost."
 msgstr ""
 

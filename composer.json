@@ -10,7 +10,7 @@
     "phpmailer"
   ],
   "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {

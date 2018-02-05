@@ -143,7 +143,7 @@ class Settings extends PageAbstract {
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][return_path]" type="checkbox"
-						value="true" <?php checked( true, $options->get( 'mail', 'return_path' ) ); ?>
+						value="true" <?php checked( true, (bool) $options->get( 'mail', 'return_path' ) ); ?>
 						<?php echo $options->is_const_defined( 'mail', 'return_path' ) ? 'disabled' : ''; ?>
 						id="wp-mail-smtp-setting-return_path"
 					/>
@@ -201,6 +201,9 @@ class Settings extends PageAbstract {
 		$old_opt = $options->get_all();
 
 		// When checkbox is unchecked - it's not submitted at all, so we need to define its default false value.
+		if ( ! isset( $data['mail']['return_path'] ) ) {
+			$data['mail']['return_path'] = false;
+		}
 		if ( ! isset( $data['smtp']['autotls'] ) ) {
 			$data['smtp']['autotls'] = false;
 		}

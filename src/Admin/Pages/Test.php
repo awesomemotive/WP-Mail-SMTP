@@ -170,7 +170,7 @@ class Test extends PageAbstract {
 
 		$mailer_text = '<strong>Params:</strong><br>';
 
-		$mailer_text .= '<strong>Mailer:</strong> ' . $phpmailer->Mailer . '<br>';
+		$mailer_text .= '<strong>Mailer:</strong> ' . $options->get( 'mail', 'mailer' ) . '<br>';
 		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
 
 		// Display different debug info based on the mailer.

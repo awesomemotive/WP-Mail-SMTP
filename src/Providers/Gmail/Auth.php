@@ -5,6 +5,7 @@ namespace WPMailSMTP\Providers\Gmail;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
+use GuzzleHttp\Client;
 
 /**
  * Class Auth to request access and refresh tokens.
@@ -90,6 +91,13 @@ class Auth extends AuthAbstract {
 		// We request only the sending capability, as it's what we only need to do.
 		$client->setScopes( array( \Google_Service_Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
+		
+		if ($this->gmail['bypass_ssl']) {
+			$options = ['exceptions' => false,
+				    'verify' => false];
+			$httpClient = new Client($options);
+			$client->setHttpClient($httpClient);
+		}
 
 		if (
 			empty( $this->gmail['access_token'] ) &&

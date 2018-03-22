@@ -111,6 +111,24 @@ class Options extends OptionsAbstract {
 			</div>
 		</div>
 
+		<!-- Bypass SSL validation -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-bypass_ssl" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-bypass_ssl"><?php esc_html_e( 'Bypass SSL Validation', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input type="checkbox" name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][bypass_ssl]"
+					value="true" <?php echo esc_attr( $this->options->get( $this->get_slug(), 'bypass_ssl' ) ) ? "checked=\"checked\"" : ""; ?>
+					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-bypass_ssl"
+				/>
+				<p class="desc">
+					<?php esc_html_e( 'Some hosting providers may have their certificate store misconfigured, causing emails to fail.', 'wp-mail-smtp' ); ?>
+					<br>
+					<?php esc_html_e( 'Select this option to bypass SSL verification.  (Do not use unless absolutely necessary!)', 'wp-mail-smtp' ); ?>
+				</p>
+			</div>
+		</div>
+
 		<!-- Auth users button -->
 		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize"
 			class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">

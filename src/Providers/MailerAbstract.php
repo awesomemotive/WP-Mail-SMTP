@@ -107,8 +107,8 @@ abstract class MailerAbstract implements MailerInterface {
 		$this->set_subject( $this->phpmailer->Subject );
 		$this->set_content(
 			array(
-				'html' => $this->phpmailer->Body,
 				'text' => $this->phpmailer->AltBody,
+				'html' => $this->phpmailer->Body,
 			)
 		);
 		$this->set_return_path( $this->phpmailer->From );

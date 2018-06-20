@@ -108,13 +108,14 @@ abstract class MailerAbstract implements MailerInterface {
 		if ($this->phpmailer->ContentType == 'text/html') {
 			$this->set_content(
 				array(
-					'html' => $this->phpmailer->Body,
 					'text' => $this->phpmailer->AltBody,
+					'html' => $this->phpmailer->Body,
 				)
 			);
 		} else {
 			$this->set_content($this->phpmailer->Body);
 		}
+
 		$this->set_return_path( $this->phpmailer->From );
 		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
 

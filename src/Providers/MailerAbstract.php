@@ -105,7 +105,7 @@ abstract class MailerAbstract implements MailerInterface {
 			)
 		);
 		$this->set_subject( $this->phpmailer->Subject );
-		if ($this->phpmailer->ContentType == 'text/html') {
+		if ( $this->phpmailer->ContentType === 'text/html' ) {
 			$this->set_content(
 				array(
 					'text' => $this->phpmailer->AltBody,
@@ -115,7 +115,6 @@ abstract class MailerAbstract implements MailerInterface {
 		} else {
 			$this->set_content($this->phpmailer->Body);
 		}
-
 		$this->set_return_path( $this->phpmailer->From );
 		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
 

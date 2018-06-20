@@ -190,7 +190,7 @@ class Mailer extends MailerAbstract {
 
 			$data[] = array(
 				'content' => $file,
-				'name'    => $attachment[1],
+				'name'    => $attachment[2],
 			);
 		}
 

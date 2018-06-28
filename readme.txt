@@ -6,13 +6,13 @@ Tested up to: 4.9
 Stable tag: trunk
 Requires PHP: 5.3
 
-The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 700k sites.
+The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 900k sites.
 
 == Description ==
 
 = WordPress Mail SMTP Plugin =
 
-Having problems with your WordPress site not sending emails? You're not alone. Over 700,000 websites use WP Mail SMTP to fix their email deliverability issues.
+Having problems with your WordPress site not sending emails? You're not alone. Over 900,000 websites use WP Mail SMTP to fix their email deliverability issues.
 
 WP Mail SMTP fixes your email deliverability by reconfiguring the wp_mail() PHP function to use a proper SMTP provider.
 
@@ -145,6 +145,30 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 1.3.0 - 2018-06-28 =
+* Added: New option: force From Email rewrite regardless of the current value.
+* Added: New option: force From Name rewrite regardless of the current value.
+* Added: New option: remove all plugin data on plugin uninstall (when user deletes it).
+* Added: Notify site admins in wp-admin area with a notice about last failed email delivery. Cleans up on successful delivery.
+* Added: Notify site admins in wp-admin area with a notice about possible compatibility issues with other SMTP and email delivery plugins.
+* Added: Improve User Debug Experience when doing Email Test - display helpful description and steps to fix the issue.
+* Added: New users: provide default SMTP Port value for new users based on Encryption selection.
+* Added: New users: notify about not configured plugin settings.
+* Added: New users: Recommend free WPForms Lite plugin for those who don't have it.
+* Added: SendGrid/Mailgun: provide support for multipart/alternative types of emails.
+* Added: Gmail: new button to remove connection and to connect a new Google account.
+* Fixed: Support plugin installation into /mu-plugins/ directory.
+* Fixed: SendGrid: required text/plain part of email being the first one - fixes plain text emails not having links.
+* Fixed: SendGrid and Mailgun: improperly sending plain text emails in html format.
+* Fixed: SMTP Debug output was empty in some cases.
+* Fixed: Compatibility with lots of other plugins that use Google Analytics library of different versions.
+* Fixed: "client_id is empty" is no more a problem, should be fixed.
+* Changed: For SendGrid and Mailgun allow using custom defined attachments names if present. Fallback to file name.
+* Changed: Gmail: switch to a wider scope to prevent possible issues in certain circumstances.
+* Changed: Remove whitespaces start/end of keys, secrets etc.
+* Changed: Improved helpful description tests of various options.
+* Changed: Improved plugin autoloading functionality.
 
 = 1.2.5 - 2017-02-05 =
 * Fixed: `Return path` can't be turned off.

@@ -113,7 +113,7 @@ abstract class MailerAbstract implements MailerInterface {
 				)
 			);
 		} else {
-			$this->set_content($this->phpmailer->Body);
+			$this->set_content( $this->phpmailer->Body );
 		}
 		$this->set_return_path( $this->phpmailer->From );
 		$this->set_reply_to( $this->phpmailer->getReplyToAddresses() );
@@ -291,8 +291,17 @@ abstract class MailerAbstract implements MailerInterface {
 			$error = $this->get_response_error();
 
 			if ( ! empty( $error ) ) {
-				Debug::set( $error );
+				// Add mailer to the beginning and save to display later.
+				Debug::set(
+					'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $this->mailer )->get_title() ) . "\r\n" .
+					$error
+				);
 			}
+		}
+
+		// Clear debug messages if email is successfully sent.
+		if ( $is_sent ) {
+			Debug::clear();
 		}
 
 		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent );

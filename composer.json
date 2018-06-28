@@ -16,28 +16,12 @@
   "require": {
     "composer/installers": "~1.0",
     "php": ">=5.3",
-    "google/apiclient": "^2.2.1"
-  },
-  "config": {
-    "prepend-autoloader": false
+    "google/apiclient": "2.2.2"
   },
   "autoload": {
-    "files": [
-      "vendor/google/apiclient-services/src/Google/Service/Gmail.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Message.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/Users.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersDrafts.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersHistory.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersLabels.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersMessages.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersMessagesAttachments.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettings.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsFilters.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsForwardingAddresses.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsSendAs.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersSettingsSendAsSmimeInfo.php",
-      "vendor/google/apiclient-services/src/Google/Service/Gmail/Resource/UsersThreads.php"
-    ],
+    "psr-4": {
+      "WPMailSMTP\\": "src"
+    },
     "exclude-from-classmap": [
       "**/test/",
       "**/tests/",
@@ -48,8 +32,7 @@
       "/vendor/google/apiclient-services/src/Google/Service/",
       "/vendor/phpseclib/phpseclib/phpseclib/File/",
       "/vendor/phpseclib/phpseclib/phpseclib/Net/",
-      "/vendor/phpseclib/phpseclib/phpseclib/System/",
-      "/src/"
+      "/vendor/phpseclib/phpseclib/phpseclib/System/"
     ]
   }
 }

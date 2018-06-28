@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2018-06-28
+### Added:
+- New option: force From Email rewrite regardless of the current value.
+- New option: force From Name rewrite regardless of the current value.
+- New option: remove all plugin data on plugin uninstall (when user deletes it).
+- Notify site admins in wp-admin area with a notice about last failed email delivery. Cleans up on successful delivery.
+- Notify site admins in wp-admin area with a notice about possible compatibility issues with other SMTP and email delivery plugins.
+- Improve User Debug Experience when doing Email Test - display helpful description and steps to fix the issue.
+- New users: provide default SMTP Port value for new users based on Encryption selection.
+- New users: notify about not configured plugin settings.
+- New users: Recommend free WPForms Lite plugin for those who don't have it.
+- SendGrid/Mailgun: provide support for multipart/alternative types of emails.
+- Gmail: new button to remove connection and to connect a new Google account.
+
+### Fixed:
+- Support plugin installation into /mu-plugins/ directory.
+- SendGrid: required text/plain part of email being the first one - fixes plain text emails not having links.
+- SendGrid and Mailgun: improperly sending plain text emails in html format.
+- SMTP Debug output was empty in some cases.
+- Compatibility with lots of other plugins that use Google Analytics library of different versions.
+- "client_id is empty" is no more a problem, should be fixed.
+
+### Changed:
+- For SendGrid and Mailgun allow using custom defined attachments names if present. Fallback to file name.
+- Gmail: switch to a wider scope to prevent possible issues in certain circumstances.
+- Remove whitespaces start/end of keys, secrets etc.
+- Improved helpful description tests of various options.
+- Improved plugin autoloading functionality.
+
 ## [1.2.5] - 2018-02-05
 ### Fixed:
 - `Return path` can't be turned off.

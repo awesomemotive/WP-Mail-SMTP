@@ -21,7 +21,7 @@ class Debug {
 	const OPTION_KEY = 'wp_mail_smtp_debug';
 
 	/**
-	 * Save the debug message to a debug log.
+	 * Save unique debug message to a debug log.
 	 * Adds one more to a list, at the end.
 	 *
 	 * @since 1.2.0
@@ -40,7 +40,7 @@ class Debug {
 
 		array_push( $all, $message );
 
-		update_option( self::OPTION_KEY, $all, false );
+		update_option( self::OPTION_KEY, array_unique( $all ), false );
 	}
 
 	/**

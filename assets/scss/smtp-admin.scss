@@ -1,5 +1,5 @@
-@import "variables";
 @import 'vendor/include-media';
+@import "variables";
 @import "general";
 
 #wp-mail-smtp-header {
@@ -86,6 +86,10 @@
 
 			&.inactive {
 				display: none;
+			}
+
+			.wp-mail-smtp-setting-mid-row-sep {
+				margin: 15px 0;
 			}
 
 			// Section heading.
@@ -376,9 +380,6 @@
 					opacity: 0.6;
 				}
 			}
-
-			textarea {
-			}
 		}
 
 		// Row label (left).
@@ -486,6 +487,19 @@
 			}
 		}
 
+		.wp-mail-smtp-btn-red {
+			background-color: red;
+			border-color: red;
+			color: #fff;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background-color: darkred;
+				border-color: darkred;
+			}
+		}
+
 		.wp-mail-smtp-btn-grey {
 			background-color: #eee;
 			border-color: #ccc;
@@ -519,8 +533,34 @@
 			margin: 0;
 		}
 
-		.notice p {
+		.notice-inline {
+			background: #fff;
+			border-left: 4px solid #fff;
+			box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
+			margin: 5px 0 15px;
+			padding: 1px 12px;
+
+			&.notice-success {
+				border-left-color: #46b450;
+			}
+
+			&.notice-warning {
+				border-left-color: #ffb900;
+			}
+
+			&.notice-error {
+				border-left-color: #dc3232;
+			}
+
+			&.notice-info {
+				border-left-color: #00a0d2;
+			}
+		}
+
+		.notice p,
+		.notice-inline p {
 			margin: 0.5em 0;
+			padding: 2px;
 		}
 
 		pre {
@@ -529,6 +569,187 @@
 
 		&.active {
 			display: block;
+		}
+
+		#wp-mail-smtp-debug {
+			background-color: #fff;
+			padding: 25px 20px 1px 25px;
+
+			h2 {
+				color: #444;
+				margin: 1.4em 0 0.8em;
+				font-size: 16px;
+				font-weight: 700;
+			}
+
+			p {
+				font-size: 14px;
+				color: #555;
+				margin-bottom: 1.1em;
+			}
+
+			ul,
+			ol {
+				font-size: 14px;
+				color: #555;
+				margin: 0 0 1.1em 1.8em;
+
+				li {
+					margin: 0 0 8px 0;
+					line-height: 1.5;
+
+					&:last-of-type {
+						margin: 0;
+					}
+
+					ul {
+						list-style-type: disc;
+					}
+				}
+			}
+
+			a {
+				color: $orange;
+
+				&:hover {
+					color: $orange_dark;
+				}
+			}
+
+			.dashicons-star-filled {
+				color: $orange;
+				width: 16px;
+				height: 16px;
+				font-size: 16px;
+				vertical-align: text-top;
+			}
+
+			.error-log-toggle {
+				text-decoration: none;
+				color: #444;
+
+				&:hover {
+					color: $orange;
+				}
+
+				.dashicons {
+					font-size: 15px;
+					height: 15px;
+					width: 15px;
+					padding-top: 3px;
+					border: 0;
+					outline: 0;
+				}
+			}
+
+			.error-log {
+				border-left: 3px solid #ffb900;
+				padding: 0 0 0 20px;
+				margin: 0 0 10px 0;
+				font-size: 12px;
+				display: none;
+
+				pre {
+					margin: 0;
+				}
+			}
+
+			.error-log-note {
+				display: none;
+			}
+		}
+
+
+		#wp-mail-smtp-wpforms {
+			background-color: #fff;
+			padding: 25px 20px;
+			border: 1px solid #dadada;
+			margin: 10px 0 0 0;
+			position: relative;
+
+			.wp-mail-smtp-wpforms-dismiss {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+
+				button {
+					background: none;
+					border: none;
+					color: $grey;
+					cursor: pointer;
+					margin: 0;
+					padding: 0;
+				}
+			}
+
+			h2 {
+				color: #444;
+				margin-top: 0;
+				font-size: 16px;
+				font-weight: 700;
+			}
+
+			p {
+				font-size: 14px;
+				color: #555;
+				margin-bottom: 1.1em;
+
+				&:last-of-type {
+					margin: 0;
+				}
+			}
+
+			.benefits {
+				margin: 0 0 16px 0;
+				overflow: auto;
+				max-width: 900px;
+			}
+
+			ul {
+				margin: 0;
+				padding: 0;
+				width: 50%;
+				float: left;
+
+				@include media("<=phone") {
+					width: 100%;
+					float: none;
+				}
+
+				li {
+					margin: 0;
+					padding: 0 0 2px 16px;
+					color: #555;
+					font-size: 14px;
+					position: relative;
+
+					&:before {
+						content: '+';
+						position: absolute;
+						top: -1px;
+						left: 0;
+					}
+				}
+			}
+
+			a {
+				color: $orange;
+
+				&:hover, &:active, &:focus {
+					color: $orange_dark;
+				}
+			}
+
+			.stars {
+				text-decoration: none;
+
+				.dashicons {
+					width: 16px;
+					height: 16px;
+					font-size: 16px;
+					vertical-align: text-top;
+				}
+			}
 		}
 	}
 }

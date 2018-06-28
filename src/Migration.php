@@ -12,6 +12,8 @@ class Migration {
 	/**
 	 * All old values for pre 1.0 version of a plugin.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $old_keys = array(
@@ -35,12 +37,16 @@ class Migration {
 	/**
 	 * Old values, taken from $old_keys options.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $old_values = array();
 
 	/**
 	 * Converted array of data from previous option values.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
@@ -60,7 +66,7 @@ class Migration {
 		$this->old_values = $this->get_old_values();
 		$this->new_values = $this->get_converted_options();
 
-		Options::init()->set( $this->new_values );
+		Options::init()->set( $this->new_values, true );
 
 		// Removing all options will be enabled some time in the future.
 		// $this->clean_deprecated_data();
@@ -97,7 +103,11 @@ class Migration {
 		$old_values = array();
 
 		foreach ( $this->old_keys as $old_key ) {
-			$old_values[ $old_key ] = get_option( $old_key, '' );
+			$value = get_option( $old_key, '' );
+
+			if ( ! empty( $value ) ) {
+				$old_values[ $old_key ] = $value;
+			}
 		}
 
 		return $old_values;
@@ -200,10 +210,10 @@ class Migration {
 			$converted['mail']['from_name'] = WPMS_MAIL_FROM_NAME;
 		}
 		if ( defined( 'WPMS_MAILER' ) ) {
-			$converted['mail']['return_path'] = WPMS_MAILER;
+			$converted['mail']['mailer'] = WPMS_MAILER;
 		}
 		if ( defined( 'WPMS_SET_RETURN_PATH' ) ) {
-			$converted['mail']['mailer'] = WPMS_SET_RETURN_PATH;
+			$converted['mail']['return_path'] = WPMS_SET_RETURN_PATH;
 		}
 
 		/*

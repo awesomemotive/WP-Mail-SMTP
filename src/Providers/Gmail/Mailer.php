@@ -94,7 +94,10 @@ class Mailer extends MailerAbstract {
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
-			Debug::set( 'Error while sending via Gmail mailer: ' . $e->getMessage() );
+			Debug::set(
+				'Mailer: Gmail' . "\r\n" .
+				$e->getMessage()
+			);
 
 			return;
 		}
@@ -119,13 +122,19 @@ class Mailer extends MailerAbstract {
 	 * @return bool
 	 */
 	public function is_email_sent() {
+
 		$is_sent = false;
 
 		if ( method_exists( $this->response, 'getId' ) ) {
 			$message_id = $this->response->getId();
 			if ( ! empty( $message_id ) ) {
-				return true;
+				$is_sent = true;
 			}
+		}
+
+		// Clear debug messages if email is successfully sent.
+		if ( $is_sent ) {
+			Debug::clear();
 		}
 
 		return $is_sent;

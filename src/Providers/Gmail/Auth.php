@@ -88,7 +88,7 @@ class Auth extends AuthAbstract {
 		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
 		// We request only the sending capability, as it's what we only need to do.
-		$client->setScopes( array( \Google_Service_Gmail::GMAIL_SEND ) );
+		$client->setScopes( array( \Google_Service_Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
 
 		if (
@@ -99,12 +99,14 @@ class Auth extends AuthAbstract {
 				$creds = $client->fetchAccessTokenWithAuthCode( $this->gmail['auth_code'] );
 			} catch ( \Exception $e ) {
 				$creds['error'] = $e->getMessage();
-				Debug::set( $e->getMessage() );
+				Debug::set(
+					'Mailer: Gmail' . "\r\n" .
+					$creds['error']
+				);
 			}
 
 			// Bail if we have an error.
 			if ( ! empty( $creds['error'] ) ) {
-				// TODO: save this error to display to a user later.
 				return $client;
 			}
 
@@ -128,7 +130,10 @@ class Auth extends AuthAbstract {
 					$creds = $client->fetchAccessTokenWithRefreshToken( $refresh );
 				} catch ( \Exception $e ) {
 					$creds['error'] = $e->getMessage();
-					Debug::set( $e->getMessage() );
+					Debug::set(
+						'Mailer: Gmail' . "\r\n" .
+						$e->getMessage()
+					);
 				}
 
 				// Bail if we have an error.
@@ -196,8 +201,10 @@ class Auth extends AuthAbstract {
 		if (
 			! empty( $code ) &&
 			(
-				$scope === ( \Google_Service_Gmail::GMAIL_SEND . ' ' . \Google_Service_Gmail::MAIL_GOOGLE_COM ) ||
-				$scope === \Google_Service_Gmail::GMAIL_SEND
+				$scope === \Google_Service_Gmail::MAIL_GOOGLE_COM . ' ' . \Google_Service_Gmail::GMAIL_SEND ||
+				$scope === \Google_Service_Gmail::GMAIL_SEND . ' ' . \Google_Service_Gmail::MAIL_GOOGLE_COM ||
+				$scope === \Google_Service_Gmail::GMAIL_SEND ||
+				$scope === \Google_Service_Gmail::MAIL_GOOGLE_COM
 			)
 		) {
 			// Save the auth code. So \Google_Client can reuse it to retrieve the access token.
@@ -246,7 +253,7 @@ class Auth extends AuthAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $token
+	 * @param string $token
 	 */
 	protected function update_refresh_token( $token ) {
 
@@ -285,6 +292,7 @@ class Auth extends AuthAbstract {
 	 * @return string
 	 */
 	public function get_google_auth_url() {
+
 		if (
 			! empty( $this->client ) &&
 			class_exists( 'Google_Client', false ) &&
@@ -293,7 +301,7 @@ class Auth extends AuthAbstract {
 			return filter_var( $this->client->createAuthUrl(), FILTER_SANITIZE_URL );
 		}
 
-		return '';
+		return '#';
 	}
 
 	/**

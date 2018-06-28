@@ -58,8 +58,21 @@ class Misc extends PageAbstract {
 					<input name="wp-mail-smtp[general][am_notifications_hidden]" type="checkbox"
 						value="true" <?php checked( true, $options->get( 'general', 'am_notifications_hidden' ) ); ?>
 						id="wp-mail-smtp-setting-am_notifications_hidden"
-					/>
+					>
 					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?></label>
+				</div>
+			</div>
+
+			<!-- Uninstall -->
+			<div id="wp-mail-smtp-setting-row-uninstall" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-uninstall"><?php esc_html_e( 'Uninstall WP Mail SMTP', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<input name="wp-mail-smtp[general][uninstall]" type="checkbox"
+						value="true" <?php checked( true, $options->get( 'general', 'uninstall' ) ); ?>
+						id="wp-mail-smtp-setting-uninstall">
+					<label for="wp-mail-smtp-setting-uninstall"><?php esc_html_e( 'Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable.', 'wp-mail-smtp' ); ?></label>
 				</div>
 			</div>
 
@@ -81,9 +94,12 @@ class Misc extends PageAbstract {
 
 		$options = new Options();
 
-		// Unchecked checkbox doesn't exist in $_POST, so we need to ensure we actually have it.
+		// Unchecked checkboxes doesn't exist in $_POST, so we need to ensure we actually have them in data to save.
 		if ( empty( $data['general']['am_notifications_hidden'] ) ) {
 			$data['general']['am_notifications_hidden'] = false;
+		}
+		if ( empty( $data['general']['uninstall'] ) ) {
+			$data['general']['uninstall'] = false;
 		}
 
 		$to_save = array_merge( $options->get_all(), $data );

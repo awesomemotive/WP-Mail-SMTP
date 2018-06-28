@@ -58,7 +58,8 @@ class Options extends OptionsAbstract {
 		?>
 
 		<!-- Client ID -->
-		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_id" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_id"
+			class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
 			<div class="wp-mail-smtp-setting-label">
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_id"><?php esc_html_e( 'Client ID', 'wp-mail-smtp' ); ?></label>
 			</div>
@@ -72,7 +73,8 @@ class Options extends OptionsAbstract {
 		</div>
 
 		<!-- Client Secret -->
-		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret"
+			class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
 			<div class="wp-mail-smtp-setting-label">
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_secret"><?php esc_html_e( 'Client Secret', 'wp-mail-smtp' ); ?></label>
 			</div>
@@ -86,7 +88,8 @@ class Options extends OptionsAbstract {
 		</div>
 
 		<!-- Authorized redirect URI -->
-		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect"
+			class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
 			<div class="wp-mail-smtp-setting-label">
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect"><?php esc_html_e( 'Authorized redirect URI', 'wp-mail-smtp' ); ?></label>
 			</div>
@@ -109,23 +112,98 @@ class Options extends OptionsAbstract {
 		</div>
 
 		<!-- Auth users button -->
-		<?php $auth = new Auth(); ?>
-		<?php if ( $auth->is_clients_saved() && $auth->is_auth_required() ) : ?>
-			<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
-				<div class="wp-mail-smtp-setting-label">
-					<label><?php esc_html_e( 'Authorize', 'wp-mail-smtp' ); ?></label>
-				</div>
-				<div class="wp-mail-smtp-setting-field">
-					<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
-						<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
-					</a>
-					<p class="desc">
-						<?php esc_html_e( 'Click the button above to confirm authorization.', 'wp-mail-smtp' ); ?>
-					</p>
-				</div>
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-authorize"
+			class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label><?php esc_html_e( 'Authorization', 'wp-mail-smtp' ); ?></label>
 			</div>
-		<?php endif; ?>
+			<div class="wp-mail-smtp-setting-field">
+				<?php $this->display_auth_setting_action(); ?>
+			</div>
+		</div>
 
 		<?php
+	}
+
+	/**
+	 * Display either an "Allow..." or "Remove..." button.
+	 *
+	 * @since 1.3.0
+	 */
+	protected function display_auth_setting_action() {
+
+		// Do the processing on the fly, as having ajax here is too complicated.
+		$this->process_gmail_remove();
+
+		$auth = new Auth();
+		?>
+
+		<script>
+			var wp_mail_smtp = window.wp_mail_smtp || {};
+			wp_mail_smtp.text_gmail_remove = "<?php esc_html_e( 'Are you sure you want to reset the current Gmail connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ); ?>";
+		</script>
+
+		<?php if ( $auth->is_clients_saved() ) : ?>
+
+			<?php if ( $auth->is_auth_required() ) : ?>
+
+				<a href="<?php echo esc_url( $auth->get_google_auth_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Allow plugin to send emails using your Google account', 'wp-mail-smtp' ); ?>
+				</a>
+				<p class="desc">
+					<?php esc_html_e( 'Click the button above to confirm authorization.', 'wp-mail-smtp' ); ?>
+				</p>
+
+			<?php else : ?>
+
+				<a href="<?php echo wp_nonce_url( wp_mail_smtp()->get_admin()->get_admin_page_url(), 'gmail_remove', 'gmail_remove_nonce' ); ?>#wp-mail-smtp-setting-row-gmail-authorize" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-red" id="wp-mail-smtp-gmail-remove">
+					<?php esc_html_e( 'Remove Connection', 'wp-mail-smtp' ); ?>
+				</a>
+				<p class="desc">
+					<?php esc_html_e( 'Removing the connection will give you an ability to redo the connection or link to another Google account.', 'wp-mail-smtp' ); ?>
+				</p>
+
+			<?php endif; ?>
+
+		<?php else : ?>
+
+			<p>
+				<?php esc_html_e( 'To setup Gmail integration properly you should save Client ID and Client Secret.', 'wp-mail-smtp' ); ?>
+			</p>
+
+		<?php
+		endif;
+	}
+
+	/**
+	 * Remove Gmail connection.
+	 *
+	 * @since 1.3.0
+	 */
+	public function process_gmail_remove() {
+
+		if ( ! is_super_admin() ) {
+			return;
+		}
+
+		if (
+			! isset( $_GET['gmail_remove_nonce'] ) ||
+			! wp_verify_nonce( $_GET['gmail_remove_nonce'], 'gmail_remove' )
+		) {
+			return;
+		}
+
+		$options = new \WPMailSMTP\Options();
+		$old_opt = $options->get_all();
+
+		if ( $options->get( 'mail', 'mailer' ) === 'gmail' ) {
+			foreach ( $old_opt['gmail'] as $key => $value ) {
+				if ( ! in_array( $key, array( 'client_id', 'client_secret' ), true ) ) {
+					unset( $old_opt['gmail'][ $key ] );
+				}
+			}
+		}
+
+		$options->set( $old_opt );
 	}
 }

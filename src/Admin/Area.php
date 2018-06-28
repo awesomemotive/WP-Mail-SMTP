@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\WP;
+use WPMailSMTP\Options;
 
 /**
  * Class Area registers and process all wp-admin display functionality.
@@ -60,11 +61,17 @@ class Area {
 		// Display custom notices based on the error/success codes.
 		add_action( 'admin_init', array( $this, 'display_custom_auth_notices' ) );
 
+		// Display notice instructing the user to complete plugin setup.
+		add_action( 'admin_init', array( $this, 'display_setup_notice' ) );
+
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', array( $this, 'display_admin_header' ), 100 );
 
 		// Hide all unrelated to the plugin notices on the plugin admin pages.
 		add_action( 'admin_print_scripts', array( $this, 'hide_unrelated_notices' ) );
+
+		// Process all AJAX requests.
+		add_action( 'wp_ajax_wp_mail_smtp_ajax', array( $this, 'process_ajax' ) );
 	}
 
 	/**
@@ -113,6 +120,42 @@ class Area {
 				);
 				break;
 		}
+	}
+
+	/**
+	 * Display notice instructing the user to complete plugin setup.
+	 *
+	 * @since 1.3.0
+	 */
+	public function display_setup_notice() {
+
+		// Bail if we're not on a plugin page.
+		if ( ! $this->is_admin_page() ) {
+			return;
+		}
+
+		// Check if the current settings are the same as the default settings.
+		if ( wp_json_encode( Options::init()->get_all() ) !== wp_json_encode( Options::get_defaults() ) ) {
+			return;
+		}
+
+		// Display notice informing user further action is needed.
+		WP::add_admin_notice(
+			sprintf(
+				wp_kses(
+					/* translators: %s - Mailer anchor link. */
+					__( 'Thanks for using WP Mail SMTP! To complete the plugin setup and start sending emails, <strong>please select and configure your <a href="%s">Mailer</a></strong>.', 'wp-mail-smtp' ),
+					array(
+						'a'      => array(
+							'href' => array(),
+						),
+						'strong' => array(),
+					)
+				),
+				'#wp-mail-smtp-setting-row-mailer'
+			),
+			WP::ADMIN_NOTICE_INFO
+		);
 	}
 
 	/**
@@ -349,6 +392,37 @@ class Area {
 
 		// This won't do anything for most pages.
 		$this->pages[ $this->get_current_tab() ]->process_auth();
+	}
+
+	/**
+	 * Process all AJAX requests.
+	 *
+	 * @since 1.3.0
+	 */
+	public function process_ajax() {
+
+		$task = sanitize_key( $_POST['task'] );
+		$data = array();
+
+		switch ( $task ) {
+			case 'wpforms_dismiss':
+				update_user_meta( get_current_user_id(), 'wp_mail_smtp_wpforms_dismissed', true );
+				$data['message'] = esc_html__( 'WPForms related message was successfully dismissed', 'wp-mail-smtp' );
+				break;
+
+			default:
+				// Allow custom tasks data processing being added here.
+				$data = apply_filters( 'wp_mail_smtp_admin_process_ajax_' . $task . '_data', $data );
+		}
+
+		// Final ability to rewrite all the data, just in case.
+		$data = (array) apply_filters( 'wp_mail_smtp_admin_process_ajax_data', $data, $task );
+
+		if ( empty( $data ) ) {
+			wp_send_json_error( $data );
+		}
+
+		wp_send_json_success( $data );
 	}
 
 	/**

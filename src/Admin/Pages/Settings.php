@@ -245,7 +245,7 @@ class Settings extends PageAbstract {
 			</h2>
 
 			<p>
-				<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintain it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
+				<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintains it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
 			</p>
 
 			<p>
@@ -357,6 +357,8 @@ class Settings extends PageAbstract {
 		// Old and new Gmail client id/secret values are different - we need to invalidate tokens and scroll to Auth button.
 		if (
 			$options->get( 'mail', 'mailer' ) === 'gmail' &&
+			! empty( $data['gmail']['client_id'] ) &&
+			! empty( $data['gmail']['client_secret'] ) &&
 			(
 				$options->get( 'gmail', 'client_id' ) !== $data['gmail']['client_id'] ||
 				$options->get( 'gmail', 'client_secret' ) !== $data['gmail']['client_secret']

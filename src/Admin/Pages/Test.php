@@ -140,7 +140,7 @@ class Test extends PageAbstract {
 			// Grab the smtp debugging output.
 			$this->debug['smtp_debug'] = $smtp_debug;
 			$this->debug['smtp_error'] = wp_strip_all_tags( $phpmailer->ErrorInfo );
-			$this->debug['error_log']  = $this->get_debug_messages( $phpmailer, $this->debug['smtp_debug'] );
+			$this->debug['error_log']  = $this->get_debug_messages( $phpmailer, $smtp_debug );
 		}
 	}
 
@@ -764,7 +764,7 @@ class Test extends PageAbstract {
 			<?php else : ?>
 
 			<p>
-				<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintain it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
+				<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintains it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
 			</p>
 
 			<p>

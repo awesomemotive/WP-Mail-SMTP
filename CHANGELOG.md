@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2018-06-29
+### Fixed: 
+- Make sure that other plugins/themes are not conflicting with our TGMPA library.
+
+## [1.3.1] - 2018-06-29
+### Fixed: 
+- Other SMTP: Clear new Debug messages about failed email delivery on next successful email sending.
+- Introduce conditional autoloader to workaround Gmail PHP 5.5 requirement and its library compatibility issues vs PHP 5.3+ minimum viable plugin version.
+
 ## [1.3.0] - 2018-06-28
 ### Added:
 - New option: force From Email rewrite regardless of the current value.

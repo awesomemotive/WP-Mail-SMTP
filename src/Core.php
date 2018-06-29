@@ -53,10 +53,10 @@ class Core {
 		add_action( 'plugins_loaded', array( $this, 'init_notifications' ) );
 
 		// Recommendations.
-		if ( ! class_exists( 'WPMailSMTP\TGM_Plugin_Activation', false ) ) {
+		if ( ! class_exists( '\WPMailSMTP\TGM_Plugin_Activation', false ) ) {
 			require_once __DIR__ . '/TGMPA.php';
 		}
-		add_action( 'tgmpa_register', array( $this, 'init_recommendations' ) );
+		add_action( 'wpms_tgmpa_register', array( $this, 'init_recommendations' ) );
 
 		add_action( 'init', array( $this, 'init' ) );
 	}
@@ -265,7 +265,7 @@ class Core {
 			),
 		) );
 
-		tgmpa( (array) $plugins, (array) $config );
+		\WPMailSMTP\tgmpa( (array) $plugins, (array) $config );
 	}
 
 	/**

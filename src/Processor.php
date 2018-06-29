@@ -130,6 +130,8 @@ class Processor {
 				'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( Options::init()->get( 'mail', 'mailer' ) )->get_title() ) . "\r\n" .
 				'PHPMailer was able to connect to SMTP server but failed while trying to send an email.'
 			);
+		} else {
+			Debug::clear();
 		}
 	}
 

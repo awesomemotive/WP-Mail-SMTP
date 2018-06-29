@@ -23,10 +23,7 @@
       "WPMailSMTP\\": "src"
     },
     "exclude-from-classmap": [
-      "**/test/",
-      "**/tests/",
-      "**/Test/",
-      "**/Tests/",
+      "**/test/", "**/tests/", "**/Test/", "**/Tests/",
       "/vendor/composer/installers/",
       "/vendor/firebase/",
       "/vendor/google/apiclient-services/src/Google/Service/",

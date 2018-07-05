@@ -146,6 +146,10 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+## [1.3.3] - 2018-07-05
+* Fixed: Compatibility with other plugins, that are using Google Service or Google Client classes.
+* Changed: Optimize code loading.
+
 = 1.3.2 - 2018-06-29 =
 * Make sure that other plugins/themes are not conflicting with our TGMPA library.
 

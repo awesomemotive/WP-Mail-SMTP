@@ -17,19 +17,16 @@ class Mailer extends MailerAbstract {
 	 * URL to make an API request to.
 	 * Not used for Gmail, as we are using its API.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var string
 	 */
-	protected $url = 'https://www.googleapis.com/upload/gmail/v1/users/userId/messages/send';
-
-	/**
-	 * Gmail custom Auth library.
-	 *
-	 * @var Auth
-	 */
-	protected $auth;
+	protected $url = 'https://www.googleapis.com/upload/gmail/v1/users/{userId}/messages/send';
 
 	/**
 	 * Gmail message.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var \Google_Service_Gmail_Message
 	 */
@@ -48,12 +45,6 @@ class Mailer extends MailerAbstract {
 		if ( ! $this->is_php_compatible() ) {
 			return;
 		}
-
-		// Include the Google library.
-		require wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
-
-		$this->auth    = new Auth();
-		$this->message = new \Google_Service_Gmail_Message();
 	}
 
 	/**
@@ -82,15 +73,25 @@ class Mailer extends MailerAbstract {
 	 */
 	public function send() {
 
-		// Get the raw MIME email using \MailCatcher data.
-		$base64 = base64_encode( $this->phpmailer->getSentMIMEMessage() );
-		$base64 = str_replace( array( '+', '/', '=' ), array( '-', '_', '' ), $base64 ); // url safe.
-		$this->message->setRaw( $base64 );
+		// Include the Google library.
+		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
-		$service = new \Google_Service_Gmail( $this->auth->get_client() );
+		$auth    = new Auth();
+		$message = new \Google_Service_Gmail_Message();
+
+		// Get the raw MIME email using \MailCatcher data.
+		$base64 = str_replace(
+			array( '+', '/', '=' ),
+			array( '-', '_', '' ),
+			base64_encode( $this->phpmailer->getSentMIMEMessage() )
+		); // url safe.
+
+		$message->setRaw( $base64 );
+
+		$service = new \Google_Service_Gmail( $auth->get_client() );
 
 		try {
-			$response = $service->users_messages->send( 'me', $this->message );
+			$response = $service->users_messages->send( 'me', $message );
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {

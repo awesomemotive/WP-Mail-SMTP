@@ -254,6 +254,11 @@ class Area {
 	 * @since 1.0.0
 	 */
 	public function display() {
+
+		// Bail if we're not on a plugin page.
+		if ( ! $this->is_admin_page() ) {
+			return;
+		}
 		?>
 
 		<div class="wrap" id="wp-mail-smtp">
@@ -373,6 +378,11 @@ class Area {
 	 * @since 1.0.0
 	 */
 	public function process_actions() {
+
+		// Bail if we're not on a plugin page.
+		if ( ! $this->is_admin_page() ) {
+			return;
+		}
 
 		// Allow to process only own tabs.
 		if ( ! array_key_exists( $this->get_current_tab(), $this->get_pages() ) ) {

@@ -13,23 +13,17 @@
   "license": "GPL-3.0-or-later",
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  },
   "require": {
     "composer/installers": "~1.0",
-    "php": ">=5.3",
+    "php": ">=5.3.6",
     "google/apiclient": "2.2.2"
   },
   "autoload": {
     "psr-4": {
       "WPMailSMTP\\": "src"
-    },
-    "exclude-from-classmap": [
-      "**/test/", "**/tests/", "**/Test/", "**/Tests/",
-      "/vendor/composer/installers/",
-      "/vendor/firebase/",
-      "/vendor/google/apiclient-services/src/Google/Service/",
-      "/vendor/phpseclib/phpseclib/phpseclib/File/",
-      "/vendor/phpseclib/phpseclib/phpseclib/Net/",
-      "/vendor/phpseclib/phpseclib/phpseclib/System/"
-    ]
+    }
   }
 }

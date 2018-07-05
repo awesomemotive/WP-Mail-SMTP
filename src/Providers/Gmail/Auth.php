@@ -61,7 +61,7 @@ class Auth extends AuthAbstract {
 	 * @since 1.0.0
 	 */
 	protected function include_google_lib() {
-		require wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
+		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 	}
 
 	/**
@@ -76,6 +76,8 @@ class Auth extends AuthAbstract {
 			return $this->client;
 		}
 
+		$this->include_google_lib();
+
 		$client = new \Google_Client(
 			array(
 				'client_id'     => $this->gmail['client_id'],
@@ -85,6 +87,7 @@ class Auth extends AuthAbstract {
 				),
 			)
 		);
+		$client->setApplicationName( 'WP Mail SMTP v' . WPMS_PLUGIN_VER );
 		$client->setAccessType( 'offline' );
 		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
@@ -177,6 +180,8 @@ class Auth extends AuthAbstract {
 			);
 			exit;
 		}
+
+		$this->include_google_lib();
 
 		$code  = '';
 		$scope = '';

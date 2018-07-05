@@ -263,11 +263,13 @@ class Test extends PageAbstract {
 				),
 				'description' => array(
 					'<strong>' . esc_html__( 'Could not connect to host.', 'wp-mail-smtp' ) . '</strong>',
-					sprintf(
-						/* translators: %s - SMTP host address. */
-						esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
-						$smtp_host
-					),
+					! empty( $smtp_host )
+						? sprintf(
+							/* translators: %s - SMTP host address. */
+							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
+							$smtp_host
+						)
+						: esc_html__( 'This means your web server was unable to connect to the host server.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned your web server is blocking the connections or the SMTP host denying the request.', 'wp-mail-smtp' ),
 				),
 				'steps'       => array(
@@ -288,11 +290,13 @@ class Test extends PageAbstract {
 				),
 				'description' => array(
 					'<strong>' . esc_html__( 'Could not connect to your host.', 'wp-mail-smtp' ) . '</strong>',
-					sprintf(
-						/* translators: %s - SMTP host address. */
-						esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
-						$smtp_host
-					),
+					! empty( $smtp_host )
+						? sprintf(
+							/* translators: %s - SMTP host address. */
+							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
+							$smtp_host
+						)
+						: esc_html__( 'This means your web server was unable to connect to the host server.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned when web server is not configured properly.', 'wp-mail-smtp' ),
 				),
 				'steps'       => array(
@@ -359,11 +363,13 @@ class Test extends PageAbstract {
 				),
 				'description' => array(
 					'<strong>' . esc_html__( 'Could not connect to the SMTP host.', 'wp-mail-smtp' ) . '</strong>',
-					sprintf(
-						/* translators: %s - SMTP host address. */
-						esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
-						$smtp_host
-					),
+					! empty( $smtp_host )
+						? sprintf(
+							/* translators: %s - SMTP host address. */
+							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
+							$smtp_host
+						)
+						: esc_html__( 'This means your web server was unable to connect to the host server.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned for one of the following reasons:', 'wp-mail-smtp' ),
 					'-' . esc_html__( 'SMTP settings are incorrect (wrong port, security setting, incorrect host).', 'wp-mail-smtp' ) . '<br>' .
 					'-' . esc_html__( 'Your web server is blocking the connection.', 'wp-mail-smtp' ) . '<br>' .

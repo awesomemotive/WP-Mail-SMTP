@@ -186,7 +186,7 @@ gulp.task( 'process-pot', function () {
 } );
 
 /**
- * Task: process-pot.
+ * Task: process-zip.
  *
  * Generate a .zip file.
  */

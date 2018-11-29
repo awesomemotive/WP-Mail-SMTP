@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2018-11-29
+### Added:
+- New option: Do Not Send - block emails from being sent.
+- New option: Send HTML or plain text emails when doing an Email Test.
+- New option: Mailgun region selection - US and EU (US is default to preserve compatibility).
+  
+### Fixed:
+- Compatibility with WordPress 3.6+.
+- Compatibility with WordPress 5.0.
+- Constants usage is much more reliable now, works correctly on Multisite. Constants are global accross the whole network.
+- Preserve multipart emails when using Sendgrid/Mailgun mailers (were converted to HTML-only).
+- Security hardening.
+
+### Changed:
+- Prefill Email Test page From field with currently logged in user email.
+- Update libraries: google/apiclient-services, google/auth, phpseclib/phpseclib and their dependecies.
+- Display in debug output cURL version if Gmail mailing failed.
+- Display in debug output OpenSSL version if it exists if Gmail/SMTP mailing failed.
+- Display plugin version in dashboard error notice when emailing failed.
+- Do not allow to send Test Email if mailer not configured properly.
+- Notify in plugin admin area that Gmail doesn't allow to redefine From Name/Email etc.
+- List all constants with descriptions in plugin main file: wp_mail_smtp.php. 
+- TGMPA: change descriptions from "Required" to "Recommended" (labels were incorrect).
+
 ## [1.3.3] - 2018-07-05
 ### Fixed:
 - Compatibility with other plugins, that are using Google Service or Google Client classes.

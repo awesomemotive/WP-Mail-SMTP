@@ -172,7 +172,7 @@ class Migration {
 					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
-					$converted['general']['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['general']['am_notifications_hidden'] = ( isset( $this->old_values[ $old_key ] ) && $this->old_values[ $old_key ] === 'true' );
 					break;
 			}
 		}

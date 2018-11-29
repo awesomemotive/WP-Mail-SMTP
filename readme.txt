@@ -2,17 +2,17 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp
 Requires at least: 3.6
-Tested up to: 4.9
-Stable tag: trunk
+Tested up to: 5.0
+Stable tag: 1.4.0
 Requires PHP: 5.3
 
-The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 900k sites.
+The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
 
 == Description ==
 
 = WordPress Mail SMTP Plugin =
 
-Having problems with your WordPress site not sending emails? You're not alone. Over 900,000 websites use WP Mail SMTP to fix their email deliverability issues.
+Having problems with your WordPress site not sending emails? You're not alone. Over 1 million websites use WP Mail SMTP to fix their email deliverability issues.
 
 WP Mail SMTP fixes your email deliverability by reconfiguring the wp_mail() PHP function to use a proper SMTP provider.
 
@@ -145,6 +145,25 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+## [1.4.0] - 2018-11-29
+* Added: New option: Do Not Send - block emails from being sent.
+* Added: New option: Send HTML or plain text emails when doing an Email Test.
+* Added: New option: Mailgun region selection - US and EU (US is default to preserve compatibility).
+* Fixed: Compatibility with WordPress 3.6+.
+* Fixed: Compatibility with WordPress 5.0.
+* Fixed: Constants usage is much more reliable now, works correctly on Multisite. Constants are global accross the whole network.
+* Fixed: Preserve multipart emails when using Sendgrid/Mailgun mailers (were converted to HTML-only).
+* Fixed: Security hardening.
+* Changed: Prefill Email Test page From field with currently logged in user email.
+* Changed: Update libraries: google/apiclient-services, google/auth, phpseclib/phpseclib and their dependecies.
+* Changed: Display in debug output cURL version if Gmail mailing failed.
+* Changed: Display in debug output OpenSSL version if it exists if Gmail/SMTP mailing failed.
+* Changed: Display plugin version in dashboard error notice when emailing failed.
+* Changed: Do not allow to send Test Email if mailer not configured properly.
+* Changed: Notify in plugin admin area that Gmail doesn't allow to redefine From Name/Email etc.
+* Changed: List all constants with descriptions in plugin main file: wp_mail_smtp.php.
+* Changed: TGMPA: change descriptions from "Required" to "Recommended" (labels were incorrect).
 
 ## [1.3.3] - 2018-07-05
 * Fixed: Compatibility with other plugins, that are using Google Service or Google Client classes.

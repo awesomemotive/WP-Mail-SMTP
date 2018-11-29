@@ -52,7 +52,7 @@ class Mailer extends MailerAbstract {
 
 		$body = parent::get_body();
 
-		return wp_json_encode( $body );
+		return function_exists( 'wp_json_encode' ) ? wp_json_encode( $body ) : json_encode( $body ); // phpcs:ignore
 	}
 
 	/**
@@ -340,5 +340,20 @@ class Mailer extends MailerAbstract {
 		$mg_text[] = '<strong>Api Key:</strong> ' . ( ! empty( $mailgun['api_key'] ) ? 'Yes' : 'No' );
 
 		return implode( '<br>', $mg_text );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function is_mailer_complete() {
+
+		$options = $this->options->get_group( $this->mailer );
+
+		// API key is the only required option.
+		if ( ! empty( $options['api_key'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }

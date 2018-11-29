@@ -49,30 +49,72 @@ class Misc extends PageAbstract {
 				</div>
 			</div>
 
+			<!-- Do not send -->
+			<div id="wp-mail-smtp-setting-row-do_not_send" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-do_not_send">
+						<?php esc_html_e( 'Do Not Send', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<input name="wp-mail-smtp[general][do_not_send]" type="checkbox"
+						value="true" <?php checked( true, $options->get( 'general', 'do_not_send' ) ); ?>
+						id="wp-mail-smtp-setting-do_not_send"
+					>
+					<label for="wp-mail-smtp-setting-do_not_send">
+						<?php esc_html_e( 'Check this if you would like to stop sending all emails.', 'wp-mail-smtp' ); ?>
+					</label>
+					<p class="desc">
+						<?php
+						printf(
+							wp_kses(
+								__( 'Some plugins, like BuddyPress and Events Manager, are using own email delivery solutions. By default, this option does not block their emails, as those plugins do not use default <code>wp_mail()</code> function to send emails.', 'wp-mail-smtp' ),
+								array(
+									'code' => array(),
+								)
+							)
+						);
+						?>
+						<br>
+						<?php esc_html_e( 'You will need to consult with their documentation to switch them to use default WordPress email delivery.', 'wp-mail-smtp' ); ?>
+						<br>
+						<?php esc_html_e( 'Test emails are allowed to be sent, regardless of this option.', 'wp-mail-smtp' ); ?>
+					</p>
+				</div>
+			</div>
+
 			<!-- Hide Announcements -->
 			<div id="wp-mail-smtp-setting-row-am_notifications_hidden" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
-					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Hide Announcements', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-am_notifications_hidden">
+						<?php esc_html_e( 'Hide Announcements', 'wp-mail-smtp' ); ?>
+					</label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[general][am_notifications_hidden]" type="checkbox"
 						value="true" <?php checked( true, $options->get( 'general', 'am_notifications_hidden' ) ); ?>
 						id="wp-mail-smtp-setting-am_notifications_hidden"
 					>
-					<label for="wp-mail-smtp-setting-am_notifications_hidden"><?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-am_notifications_hidden">
+						<?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?>
+					</label>
 				</div>
 			</div>
 
 			<!-- Uninstall -->
 			<div id="wp-mail-smtp-setting-row-uninstall" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
-					<label for="wp-mail-smtp-setting-uninstall"><?php esc_html_e( 'Uninstall WP Mail SMTP', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-uninstall">
+						<?php esc_html_e( 'Uninstall WP Mail SMTP', 'wp-mail-smtp' ); ?>
+					</label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[general][uninstall]" type="checkbox"
 						value="true" <?php checked( true, $options->get( 'general', 'uninstall' ) ); ?>
 						id="wp-mail-smtp-setting-uninstall">
-					<label for="wp-mail-smtp-setting-uninstall"><?php esc_html_e( 'Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable.', 'wp-mail-smtp' ); ?></label>
+					<label for="wp-mail-smtp-setting-uninstall">
+						<?php esc_html_e( 'Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable.', 'wp-mail-smtp' ); ?>
+					</label>
 				</div>
 			</div>
 

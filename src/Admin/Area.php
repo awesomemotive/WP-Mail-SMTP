@@ -134,8 +134,11 @@ class Area {
 			return;
 		}
 
+		$default_options = function_exists( 'wp_json_encode' ) ? wp_json_encode( Options::get_defaults() ) : json_encode( Options::get_defaults() ); // phpcs:ignore
+		$current_options = function_exists( 'wp_json_encode' ) ? wp_json_encode( Options::init()->get_all() ) : json_encode( Options::init()->get_all() ); // phpcs:ignore
+
 		// Check if the current settings are the same as the default settings.
-		if ( wp_json_encode( Options::init()->get_all() ) !== wp_json_encode( Options::get_defaults() ) ) {
+		if ( $current_options !== $default_options ) {
 			return;
 		}
 

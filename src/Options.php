@@ -13,6 +13,13 @@ namespace WPMailSMTP;
 class Options {
 
 	/**
+	 * All the options keys.
+	 *
+	 * @since 1.3.0
+	 * @since 1.4.0 Added Mailgun:region.
+	 *
+	 * @since
+	 *
 	 * @var array Map of all the default options of the plugin.
 	 */
 	private static $map = array(
@@ -40,6 +47,7 @@ class Options {
 		'mailgun'  => array(
 			'api_key',
 			'domain',
+			'region',
 		),
 		'sendgrid' => array(
 			'api_key',
@@ -197,29 +205,39 @@ class Options {
 	 * @param string $group
 	 * @param string $key
 	 *
-	 * @return mixed
+	 * @return mixed|null Null if value doesn't exist anywhere: in constants, in DB, in a map. So it's completely custom or a typo.
 	 */
 	public function get( $group, $key ) {
 
 		// Just to feel safe.
 		$group = sanitize_key( $group );
 		$key   = sanitize_key( $key );
+		$value = null;
 
-		// Get the options group.
-		if ( isset( $this->_options[ $group ] ) ) {
+		// Get the const value if we have one.
+		$value = $this->get_const_value( $group, $key, $value );
 
-			// Get the options key of a group.
-			if ( isset( $this->_options[ $group ][ $key ] ) ) {
-				$value = $this->get_const_value( $group, $key, $this->_options[ $group ][ $key ] );
+		// We don't have a const value.
+		if ( $value === null ) {
+			// Ordinary database or default values.
+			if ( isset( $this->_options[ $group ] ) ) {
+				// Get the options key of a group.
+				if ( isset( $this->_options[ $group ][ $key ] ) ) {
+					$value = $this->_options[ $group ][ $key ];
+				} else {
+					$value = $this->postprocess_key_defaults( $group, $key );
+				}
 			} else {
-				$value = $this->postprocess_key_defaults( $group, $key );
-			}
-		} else {
-			// check on maps
-			if ( isset( self::$map[ $group ] ) && in_array( $key, self::$map[ $group ] ) ) {
-				$value = $this->get_const_value( $group, $key, false );
-			} else {
-				$value = $this->postprocess_key_defaults( $group, $key );
+				/*
+				 * Fallback to default if it doesn't exist in a map.
+				 * Allow to retrive only values from a map.
+				 */
+				if (
+					isset( self::$map[ $group ] ) &&
+					in_array( $key, self::$map[ $group ], true )
+				) {
+					$value = $this->postprocess_key_defaults( $group, $key );
+				}
 			}
 		}
 
@@ -235,6 +253,7 @@ class Options {
 	 * so we need to postprocess them to convert.
 	 *
 	 * @since 1.0.0
+	 * @since 1.4.0 Added Mailgun:region support.
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -252,8 +271,16 @@ class Options {
 				$value = $group === 'mail' ? false : true;
 				break;
 
+			case 'mailer':
+				$value = 'mail';
+				break;
+
 			case 'encryption':
 				$value = in_array( $group, array( 'smtp', 'pepipost' ), true ) ? 'none' : $value;
+				break;
+
+			case 'region':
+				$value = $group === 'mailgun' ? 'US' : $value;
 				break;
 
 			case 'auth':
@@ -276,6 +303,7 @@ class Options {
 	 * General section of options won't have constants, so we are omitting those checks and just return default value.
 	 *
 	 * @since 1.0.0
+	 * @since 1.4.0 Added WPMS_MAILGUN_REGION support.
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -324,9 +352,7 @@ class Options {
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_PORT : $value;
 					case 'encryption':
 						/** @noinspection PhpUndefinedConstantInspection */
-						return $this->is_const_defined( $group, $key )
-							? ( WPMS_SSL === '' ? 'none' : WPMS_SSL )
-							: $value;
+						return $this->is_const_defined( $group, $key ) ? ( WPMS_SSL === '' ? 'none' : WPMS_SSL ) : $value;
 					case 'auth':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTH : $value;
@@ -363,6 +389,9 @@ class Options {
 					case 'domain':
 						/** @noinspection PhpUndefinedConstantInspection */
 						return $this->is_const_defined( $group, $key ) ? WPMS_MAILGUN_DOMAIN : $value;
+					case 'region':
+						/** @noinspection PhpUndefinedConstantInspection */
+						return $this->is_const_defined( $group, $key ) ? WPMS_MAILGUN_REGION : $value;
 				}
 
 				break;
@@ -469,6 +498,8 @@ class Options {
 						return defined( 'WPMS_MAILGUN_API_KEY' ) && WPMS_MAILGUN_API_KEY;
 					case 'domain':
 						return defined( 'WPMS_MAILGUN_DOMAIN' ) && WPMS_MAILGUN_DOMAIN;
+					case 'region':
+						return defined( 'WPMS_MAILGUN_REGION' ) && WPMS_MAILGUN_REGION;
 				}
 
 				break;
@@ -490,86 +521,89 @@ class Options {
 	 *
 	 * @since 1.0.0
 	 * @since 1.3.0 Added $once argument to save option only if they don't exist already.
+	 * @since 1.4.0 Added Mailgun:region support.
 	 *
 	 * @param array $options Plugin options to save.
 	 * @param bool $once Whether to update existing options or to add these options only once.
 	 */
 	public function set( $options, $once = false ) {
-
+		/*
+		 * Process general options.
+		 */
 		foreach ( (array) $options as $group => $keys ) {
-			foreach ( $keys as $key_name => $key_value ) {
+			foreach ( $keys as $option_name => $option_value ) {
 				switch ( $group ) {
 					case 'mail':
-						switch ( $key_name ) {
+						switch ( $option_name ) {
 							case 'from_name':
 							case 'mailer':
-								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, wp_strip_all_tags( $options[ $group ][ $key_name ], true ) );
+								$options[ $group ][ $option_name ] = $this->get_const_value( $group, $option_name, sanitize_text_field( $option_value ) );
 								break;
 							case 'from_email':
-								if ( filter_var( $options[ $group ][ $key_name ], FILTER_VALIDATE_EMAIL ) ) {
-									$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, sanitize_email( $options[ $group ][ $key_name ] ) );
+								if ( filter_var( $option_value, FILTER_VALIDATE_EMAIL ) ) {
+									$options[ $group ][ $option_name ] = $this->get_const_value( $group, $option_name, sanitize_email( $option_value ) );
 								}
 								break;
 							case 'return_path':
 							case 'from_name_force':
 							case 'from_email_force':
-								$options[ $group ][ $key_name ] = $this->get_const_value( $group, $key_name, (bool) $options[ $group ][ $key_name ] );
+								$options[ $group ][ $option_name ] = $this->get_const_value( $group, $option_name, (bool) $option_value );
 								break;
 						}
 						break;
 
 					case 'general':
-						switch ( $key_name ) {
+						switch ( $option_name ) {
+							case 'do_not_send':
 							case 'am_notifications_hidden':
 							case 'uninstall':
-								$options[ $group ][ $key_name ] = (bool) $options[ $group ][ $key_name ];
+								$options[ $group ][ $option_name ] = (bool) $option_value;
 								break;
 						}
 				}
 			}
 		}
 
+		/*
+		 * Process mailers-specific options.
+		 */
 		if (
+			! empty( $options['mail']['mailer'] ) &&
 			isset( $options[ $options['mail']['mailer'] ] ) &&
 			in_array( $options['mail']['mailer'], array( 'pepipost', 'smtp', 'sendgrid', 'mailgun', 'gmail' ), true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
 
-			foreach ( $options[ $mailer ] as $key_name => $key_value ) {
-				switch ( $key_name ) {
-					case 'host':
-					case 'user':
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, wp_strip_all_tags( $options[ $mailer ][ $key_name ], true ) );
-						break;
+			foreach ( $options[ $mailer ] as $option_name => $option_value ) {
+				switch ( $option_name ) {
+					case 'host': // smtp.
+					case 'user': // smtp.
+					case 'encryption': // smtp.
+					case 'region': // mailgun.
+						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, sanitize_text_field( $option_value ) );
+						break; // smtp.
 					case 'port':
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, intval( $options[ $mailer ][ $key_name ] ) );
+						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, (int) $option_value );
 						break;
-					case 'encryption':
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, wp_strip_all_tags( $options[ $mailer ][ $key_name ], true ) );
-						break;
-					case 'auth':
-					case 'autotls':
-						$value = $options[ $mailer ][ $key_name ] === 'yes' || $options[ $mailer ][ $key_name ] === true ? true : false;
+					case 'auth': // smtp.
+					case 'autotls': // smtp.
+						$option_value = $option_value === 'yes' || $option_value === true;
 
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
+						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, $option_value );
 						break;
 
-					case 'pass':
-					case 'api_key':
-					case 'domain':
-					case 'client_id':
-					case 'client_secret':
-					case 'auth_code':
-					case 'access_token':
-						if ( is_string( $options[ $mailer ][ $key_name ] ) ) {
-							$value = trim( $options[ $mailer ][ $key_name ] );
-						} else {
-							$value = $options[ $mailer ][ $key_name ];
-						}
+					case 'pass': // smtp.
+					case 'api_key': // mailgun/sendgrid.
+					case 'domain': // mailgun.
+					case 'client_id': // gmail.
+					case 'client_secret': // gmail.
+					case 'auth_code': // gmail.
+					case 'access_token': // gmail.
+						$option_value = is_string( $option_value ) ? sanitize_text_field( $option_value ) : $option_value;
 
 						// Do not process as they may contain certain special characters, but allow to be overwritten using constants.
-						$options[ $mailer ][ $key_name ] = $this->get_const_value( $mailer, $key_name, $value );
+						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, $option_value );
 						break;
 				}
 			}

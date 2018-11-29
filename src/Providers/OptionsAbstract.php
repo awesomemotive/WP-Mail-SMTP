@@ -282,7 +282,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 	 *
 	 * @return bool
 	 */
-	protected function is_php_correct() {
+	public function is_php_correct() {
 		return version_compare( phpversion(), $this->php, '>=' );
 	}
 

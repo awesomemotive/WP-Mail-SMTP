@@ -20,6 +20,7 @@ if ( empty( $settings['general']['uninstall'] ) ) {
 $options = array(
 	'wp_mail_smtp_initial_version',
 	'wp_mail_smtp_version',
+	'wp_mail_smtp_debug',
 	'wp_mail_smtp',
 	'_amn_smtp_last_checked',
 	// Legacy options.
@@ -44,13 +45,15 @@ foreach ( $options as $option ) {
 	delete_option( $option );
 }
 
-// Remove product annoucements.
-$annoucements = get_posts( array(
-	'post_type'   => array( 'amn_smtp' ),
-	'post_status' => 'any',
-	'numberposts' => -1,
-	'fields'      => 'ids',
-) );
+// Remove product announcements.
+$annoucements = get_posts(
+	array(
+		'post_type'   => array( 'amn_smtp' ),
+		'post_status' => 'any',
+		'numberposts' => - 1,
+		'fields'      => 'ids',
+	)
+);
 if ( ! empty( $annoucements ) ) {
 	foreach ( $annoucements as $annoucement ) {
 		wp_delete_post( $annoucement, true );

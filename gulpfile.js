@@ -1,20 +1,21 @@
 /**
+ * Register all the Gulp tasks.
+ */
+
+/**
  * Load plugins.
  */
-var gulp = require( 'gulp' ),
-	cached = require( 'gulp-cached' ),
-	gutil = require( 'gulp-util' ),
-	watch = require( 'gulp-watch' ),
-	sass = require( 'gulp-sass' ),
+var gulp       = require( 'gulp' ),
+	cached     = require( 'gulp-cached' ),
+	gutil      = require( 'gulp-util' ),
+	sass       = require( 'gulp-sass' ),
 	sourcemaps = require( 'gulp-sourcemaps' ),
-	rename = require( 'gulp-rename' ),
-	debug = require( 'gulp-debug' ),
-	uglify = require( 'gulp-uglify' ),
-	imagemin = require( 'gulp-imagemin' ),
-	wpPot = require( 'gulp-wp-pot' ),
-	zip = require( 'gulp-zip' ),
-	runSequence = require( 'run-sequence' ),
-	exec = require( 'child_process' ).exec;
+	rename 	   = require( 'gulp-rename' ),
+	debug 	   = require( 'gulp-debug' ),
+	uglify 	   = require( 'gulp-uglify' ),
+	imagemin   = require( 'gulp-imagemin' ),
+	wpPot 	   = require( 'gulp-wp-pot' ),
+	zip 	   = require( 'gulp-zip' );
 
 var plugin = {
 	name: 'WP Mail SMTP',
@@ -50,6 +51,7 @@ var plugin = {
 		'!**/*.md',
 		'!**/*.rst',
 		'!**/*.xml',
+		'!**/*.yml',
 		'!**/*.dist',
 		'!**/*.json',
 		'!**/*.lock',
@@ -206,20 +208,8 @@ gulp.task( 'process-zip', function () {
 
 /**
  * Task: build.
- *
- * Build a plugin by processing all required files.
  */
-gulp.task( 'build', function () {
-	runSequence(
-		[
-			'process-sass',
-			'process-js',
-			'process-img',
-			'process-pot'
-		],
-		'process-zip'
-	);
-} );
+gulp.task( 'build', gulp.series( 'process-sass', 'process-js', 'process-img', 'process-pot', 'process-zip' ) );
 
 /**
  * Task: watch.
@@ -227,13 +217,11 @@ gulp.task( 'build', function () {
  * Look out for relevant sass/js changes.
  */
 gulp.task( 'watch', function () {
-	gulp.watch( plugin.sass, [ 'process-sass' ] );
-	gulp.watch( plugin.js, [ 'process-js' ] );
+	gulp.watch( plugin.sass, gulp.parallel( 'process-sass' ) );
+	gulp.watch( plugin.js, gulp.parallel( 'process-js' ) );
 } );
 
 /**
  * Default.
  */
-gulp.task( 'default', function ( callback ) {
-	runSequence( 'process-sass', 'process-js', callback );
-} );
+gulp.task( 'default', gulp.parallel( 'process-sass', 'process-js' ) );

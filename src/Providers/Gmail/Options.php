@@ -156,7 +156,7 @@ class Options extends OptionsAbstract {
 
 			<?php else : ?>
 
-				<a href="<?php echo wp_nonce_url( wp_mail_smtp()->get_admin()->get_admin_page_url(), 'gmail_remove', 'gmail_remove_nonce' ); ?>#wp-mail-smtp-setting-row-gmail-authorize" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-red" id="wp-mail-smtp-gmail-remove">
+				<a href="<?php echo esc_url( wp_nonce_url( wp_mail_smtp()->get_admin()->get_admin_page_url(), 'gmail_remove', 'gmail_remove_nonce' ) ); ?>#wp-mail-smtp-setting-row-gmail-authorize" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-red" id="wp-mail-smtp-gmail-remove">
 					<?php esc_html_e( 'Remove Connection', 'wp-mail-smtp' ); ?>
 				</a>
 				<p class="desc">

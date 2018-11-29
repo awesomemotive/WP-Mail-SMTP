@@ -1,11 +1,12 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 1.3.3
+ * Version: 1.4.0
  * Plugin URI: https://wpforms.com/
- * Description: Reconfigures the wp_mail() function to use SMTP instead of mail() and creates an options page to manage the settings.
+ * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
  * Author: WPForms
  * Author URI: https://wpforms.com/
+ * Network: false
  * Text Domain: wp-mail-smtp
  * Domain Path: /languages
  */
@@ -14,32 +15,45 @@
  * @author WPForms
  * @copyright WPForms, 2007-18, All Rights Reserved
  * This code is released under the GPL licence version 3 or later, available here
- * http://www.gnu.org/licenses/gpl.txt
+ * https://www.gnu.org/licenses/gpl.txt
  */
 
-define( 'WPMS_PLUGIN_VER', '1.3.3' );
+define( 'WPMS_PLUGIN_VER', '1.4.0' );
 define( 'WPMS_PHP_VER', '5.3.6' );
 
 /**
  * Setting options in wp-config.php
  *
- * Specifically aimed at WPMU users, you can set the options for this plugin as
- * constants in wp-config.php. This disables the plugin's admin page and may
- * improve performance very slightly. Copy the code below into wp-config.php.
+ * Specifically aimed at WP Multisite users, you can set the options for this plugin as
+ * constants in wp-config.php. Copy the code below into wp-config.php and tweak settings.
  */
 
 /*
-define('WPMS_ON', true);
-define('WPMS_MAIL_FROM', 'From Email');
-define('WPMS_MAIL_FROM_NAME', 'From Name');
-define('WPMS_MAILER', 'smtp'); // Possible values 'smtp', 'mail', or 'sendmail'
-define('WPMS_SET_RETURN_PATH', 'false'); // Sets $phpmailer->Sender if true
-define('WPMS_SMTP_HOST', 'localhost'); // The SMTP mail host
-define('WPMS_SMTP_PORT', 25); // The SMTP server port number
-define('WPMS_SSL', ''); // Possible values '', 'ssl', 'tls' - note TLS is not STARTTLS
-define('WPMS_SMTP_AUTH', true); // True turns on SMTP authentication, false turns it off
-define('WPMS_SMTP_USER', 'username'); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true
-define('WPMS_SMTP_PASS', 'password'); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true
+define( 'WPMS_ON', true ); // True turns the whole constants support and usage on, false turns it off.
+
+define( 'WPMS_MAIL_FROM', 'mail@example.com' );
+define( 'WPMS_MAIL_FROM_FORCE', true ); // True turns it on, false turns it off.
+define( 'WPMS_MAIL_FROM_NAME', 'From Name' );
+define( 'WPMS_MAIL_FROM_NAME_FORCE', true ); // True turns it on, false turns it off.
+define( 'WPMS_MAILER', 'smtp' ); // Possible values: 'mail', 'gmail', 'mailgun', 'sendgrid', 'smtp'.
+define( 'WPMS_SET_RETURN_PATH', true ); // Sets $phpmailer->Sender if true.
+
+define( 'WPMS_SMTP_HOST', 'localhost' ); // The SMTP mail host.
+define( 'WPMS_SMTP_PORT', 25 ); // The SMTP server port number.
+define( 'WPMS_SSL', '' ); // Possible values '', 'ssl', 'tls' - note TLS is not STARTTLS.
+define( 'WPMS_SMTP_AUTH', true ); // True turns it on, false turns it off.
+define( 'WPMS_SMTP_USER', 'username' ); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true.
+define( 'WPMS_SMTP_PASS', 'password' ); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true.
+define( 'WPMS_SMTP_AUTOTLS', true ); // True turns it on, false turns it off.
+
+define( 'WPMS_GMAIL_CLIENT_ID', '' );
+define( 'WPMS_GMAIL_CLIENT_SECRET', '' );
+
+define( 'WPMS_MAILGUN_API_KEY', '' );
+define( 'WPMS_MAILGUN_DOMAIN', '' );
+define( 'WPMS_MAILGUN_REGION', 'US' ); // or 'EU' for Europe.
+
+define( 'WPMS_SENDGRID_API_KEY', '' );
 */
 
 /**

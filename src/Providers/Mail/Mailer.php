@@ -38,4 +38,19 @@ class Mailer extends MailerAbstract {
 
 		return implode( '<br>', $mail_text );
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function is_mailer_complete() {
+
+		// Do not allow to send test emails when using a default mailer Mail.
+		if (
+			$this->mailer !== \WPMailSMTP\Options::init()->get( 'mail', 'mailer' )
+		) {
+			return true;
+		}
+
+		return false;
+	}
 }

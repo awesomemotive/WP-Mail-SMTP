@@ -37,6 +37,15 @@ interface MailerInterface {
 	public function is_php_compatible();
 
 	/**
+	 * Whether the mailer has all its settings correctly set up and saved.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	public function is_mailer_complete();
+
+	/**
 	 * Get the email body.
 	 *
 	 * @since 1.0.0

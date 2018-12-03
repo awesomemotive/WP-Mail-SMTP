@@ -93,6 +93,8 @@ class Auth extends AuthAbstract {
 		// We request only the sending capability, as it's what we only need to do.
 		$client->setScopes( array( \Google_Service_Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
+		// Apply custom options to the client
+		$client = apply_filters('wp_mail_google_client_custom_options', $client);
 
 		if (
 			empty( $this->gmail['access_token'] ) &&

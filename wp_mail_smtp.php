@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 1.4.0
+ * Version: 1.4.1
  * Plugin URI: https://wpforms.com/
  * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
  * Author: WPForms
@@ -18,7 +18,7 @@
  * https://www.gnu.org/licenses/gpl.txt
  */
 
-define( 'WPMS_PLUGIN_VER', '1.4.0' );
+define( 'WPMS_PLUGIN_VER', '1.4.1' );
 define( 'WPMS_PHP_VER', '5.3.6' );
 
 /**
@@ -26,10 +26,11 @@ define( 'WPMS_PHP_VER', '5.3.6' );
  *
  * Specifically aimed at WP Multisite users, you can set the options for this plugin as
  * constants in wp-config.php. Copy the code below into wp-config.php and tweak settings.
+ * Values from constants are NOT stripslash()'ed.
  */
 
 /*
-define( 'WPMS_ON', true ); // True turns the whole constants support and usage on, false turns it off.
+define( 'WPMS_ON', true ); // True turns on the whole constants support and usage, false turns it off.
 
 define( 'WPMS_MAIL_FROM', 'mail@example.com' );
 define( 'WPMS_MAIL_FROM_FORCE', true ); // True turns it on, false turns it off.
@@ -301,7 +302,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 				<?php esc_html_e( 'WP Mail SMTP Settings', 'wp-mail-smtp' ); ?>
 			</h2>
 
-			<form method="post" action="<?php echo admin_url( 'options.php' ); ?>">
+			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php wp_nonce_field( 'email-options' ); ?>
 
 				<table class="form-table">
@@ -310,7 +311,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 							<label for="mail_from"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
 						</th>
 						<td>
-							<input name="mail_from" type="email" id="mail_from" value="<?php print( get_option( 'mail_from' ) ); ?>" size="40" class="regular-text"/>
+							<input name="mail_from" type="email" id="mail_from" value="<?php echo esc_attr( get_option( 'mail_from' ) ); ?>" size="40" class="regular-text"/>
 
 							<p class="description">
 								<?php
@@ -329,7 +330,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 							<label for="mail_from_name"><?php esc_html_e( 'From Name', 'wp-mail-smtp' ); ?></label>
 						</th>
 						<td>
-							<input name="mail_from_name" type="text" id="mail_from_name" value="<?php print( get_option( 'mail_from_name' ) ); ?>" size="40" class="regular-text"/>
+							<input name="mail_from_name" type="text" id="mail_from_name" value="<?php echo esc_attr( get_option( 'mail_from_name' ) ); ?>" size="40" class="regular-text"/>
 
 							<p class="description">
 								<?php esc_html_e( 'You can specify the name that emails should be sent from. If you leave this blank, the emails will be sent from WordPress.', 'wp-mail-smtp' ); ?>
@@ -439,7 +440,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_host"><?php esc_html_e( 'SMTP Host', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_host" type="text" id="smtp_host" value="<?php print( get_option( 'smtp_host' ) ); ?>" size="40" class="regular-text"/>
+								<input name="smtp_host" type="text" id="smtp_host" value="<?php echo intval( get_option( 'smtp_host' ) ); ?>" size="40" class="regular-text"/>
 							</td>
 						</tr>
 						<tr valign="top">
@@ -447,7 +448,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_port"><?php esc_html_e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_port" type="text" id="smtp_port" value="<?php print( get_option( 'smtp_port' ) ); ?>" size="6" class="regular-text"/>
+								<input name="smtp_port" type="text" id="smtp_port" value="<?php echo esc_attr( get_option( 'smtp_port' ) ); ?>" size="6" class="regular-text"/>
 							</td>
 						</tr>
 						<tr valign="top">
@@ -506,7 +507,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_user"><?php esc_html_e( 'Username', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_user" type="text" id="smtp_user" value="<?php print( get_option( 'smtp_user' ) ); ?>" size="40" class="code" autocomplete="off"/>
+								<input name="smtp_user" type="text" id="smtp_user" value="<?php echo esc_attr( get_option( 'smtp_user' ) ); ?>" size="40" class="code" autocomplete="off"/>
 							</td>
 						</tr>
 						<tr valign="top">
@@ -514,7 +515,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 								<label for="smtp_pass"><?php esc_html_e( 'Password', 'wp-mail-smtp' ); ?></label>
 							</th>
 							<td>
-								<input name="smtp_pass" type="password" id="smtp_pass" value="<?php print( get_option( 'smtp_pass' ) ); ?>" size="40" class="code" autocomplete="off"/>
+								<input name="smtp_pass" type="password" id="smtp_pass" value="<?php echo esc_attr( get_option( 'smtp_pass' ) ); ?>" size="40" class="code" autocomplete="off"/>
 
 								<p class="description">
 									<?php esc_html_e( 'This is in plain text because it must not be stored encrypted.', 'wp-mail-smtp' ); ?>
@@ -549,7 +550,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<label for="pepipost_user"><?php esc_html_e( 'Username', 'wp-mail-smtp' ); ?></label>
 								</th>
 								<td>
-									<input name="pepipost_user" type="text" id="pepipost_user" value="<?php print( get_option( 'pepipost_user' ) ); ?>" size="40" class="code"/>
+									<input name="pepipost_user" type="text" id="pepipost_user" value="<?php echo esc_attr( get_option( 'pepipost_user' ) ); ?>" size="40" class="code"/>
 								</td>
 							</tr>
 							<tr valign="top">
@@ -557,7 +558,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<label for="pepipost_pass"><?php esc_html_e( 'Password', 'wp-mail-smtp' ); ?></label>
 								</th>
 								<td>
-									<input name="pepipost_pass" type="text" id="pepipost_pass" value="<?php print( get_option( 'pepipost_pass' ) ); ?>" size="40" class="code"/>
+									<input name="pepipost_pass" type="text" id="pepipost_pass" value="<?php echo esc_attr( get_option( 'pepipost_pass' ) ); ?>" size="40" class="code"/>
 								</td>
 							</tr>
 							<tr valign="top">
@@ -565,7 +566,7 @@ if ( ! function_exists( 'wp_mail_smtp_options_page' ) ) :
 									<label for="pepipost_port"><?php esc_html_e( 'SMTP Port', 'wp-mail-smtp' ); ?></label>
 								</th>
 								<td>
-									<input name="pepipost_port" type="text" id="pepipost_port" value="<?php print( get_option( 'pepipost_port' ) ); ?>" size="6" class="regular-text"/>
+									<input name="pepipost_port" type="text" id="pepipost_port" value="<?php echo intval( get_option( 'pepipost_port' ) ); ?>" size="6" class="regular-text"/>
 								</td>
 							</tr>
 							<tr valign="top">

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2018-12-03
+### Fixed: 
+- Correctly process backslashes in SMTP passwords defined via constants.
+
+### Changed: 
+- Allow to send a Test Email when Default (none) mailer is selected in plugin settings.
+
 ## [1.4.0] - 2018-11-29
 ### Added:
 - New option: Do Not Send - block emails from being sent.

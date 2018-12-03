@@ -241,7 +241,8 @@ class Options {
 			}
 		}
 
-		if ( is_string( $value ) ) {
+		// Strip slashes only from values saved in DB. Consts should be processed as is.
+		if ( is_string( $value ) && ! $this->is_const_defined( $group, $key ) ) {
 			$value = stripslashes( $value );
 		}
 
@@ -594,6 +595,12 @@ class Options {
 						break;
 
 					case 'pass': // smtp.
+						$option_value = is_string( $option_value ) ? trim( $option_value ) : $option_value;
+
+						// Do not process as they may contain certain special characters, but allow to be overwritten using constants.
+						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, $option_value );
+						break;
+
 					case 'api_key': // mailgun/sendgrid.
 					case 'domain': // mailgun.
 					case 'client_id': // gmail.
@@ -602,7 +609,6 @@ class Options {
 					case 'access_token': // gmail.
 						$option_value = is_string( $option_value ) ? sanitize_text_field( $option_value ) : $option_value;
 
-						// Do not process as they may contain certain special characters, but allow to be overwritten using constants.
 						$options[ $mailer ][ $option_name ] = $this->get_const_value( $mailer, $option_name, $option_value );
 						break;
 				}

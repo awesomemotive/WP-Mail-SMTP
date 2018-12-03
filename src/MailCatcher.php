@@ -33,6 +33,7 @@ class MailCatcher extends \PHPMailer {
 	 * For others - init the correct provider and process it.
 	 *
 	 * @since 1.0.0
+	 * @since 1.4.0 Process "Do Not Send" option, but always allow test email.
 	 *
 	 * @throws \phpmailerException Throws when sending via PhpMailer fails for some reason.
 	 *
@@ -48,6 +49,7 @@ class MailCatcher extends \PHPMailer {
 			$is_emailing_blocked = true;
 		}
 
+		// Always allow a test email - check for the specific header.
 		foreach ( (array) $this->getCustomHeaders() as $header ) {
 			if (
 				! empty( $header[0] ) &&
@@ -55,7 +57,6 @@ class MailCatcher extends \PHPMailer {
 				$header[0] === 'X-Mailer-Type' &&
 				trim( $header[1] ) === 'WPMailSMTP\Admin\Test'
 			) {
-				// Se we are working with a test email - allow to send it.
 				$is_emailing_blocked = false;
 			}
 		};

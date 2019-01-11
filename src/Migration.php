@@ -124,19 +124,21 @@ class Migration {
 
 		foreach ( $this->old_keys as $old_key ) {
 
+			$old_value = isset($this->old_values[ $old_key ]) ? $this->old_values[ $old_key ] : null;
+
 			switch ( $old_key ) {
 				case 'pepipost_user':
 				case 'pepipost_pass':
 				case 'pepipost_port':
 				case 'pepipost_ssl':
 					// Do not migrate pepipost options if it's not activated at the moment.
-					if ( isset($this->old_values['mailer']) && 'pepipost' === $this->old_values['mailer'] ) {
+					if ( isset($this->old_values['mailer']) && 'pepipost' === $this->old_values['mailer']) {
 						$shortcut = explode( '_', $old_key );
 
-						if ( 'pepipost_ssl' === $old_key ) {
-							$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+						if ( 'pepipost_ssl' === $old_key) {
+							$converted[ $shortcut[0] ]['encryption'] = $old_value;
 						} else {
-							$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+							$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 						}
 					}
 					break;
@@ -149,30 +151,30 @@ class Migration {
 				case 'smtp_pass':
 					$shortcut = explode( '_', $old_key );
 
-					if ( 'smtp_ssl' === $old_key ) {
-						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
-					} elseif ( 'smtp_auth' === $old_key ) {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' ? 'yes' : 'no' );
+					if ( 'smtp_ssl' === $old_key) {
+						$converted[ $shortcut[0] ]['encryption'] = $old_value;
+					} elseif ( 'smtp_auth' === $old_key) {
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( 'true' === $old_value ? 'yes' : 'no' );
 					} else {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = isset($this->old_values[ $old_key ]) ? $this->old_values[ $old_key ] : null;
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 					}
 
 					break;
 
 				case 'mail_from':
-					$converted['mail']['from_email'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_email'] = $old_value;
 					break;
 				case 'mail_from_name':
-					$converted['mail']['from_name'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_name'] = $old_value;
 					break;
 				case 'mail_set_return_path':
-					$converted['mail']['return_path'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['mail']['return_path'] = ( 'true' === $old_value );
 					break;
 				case 'mailer':
-					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
+					$converted['mail']['mailer'] = $old_value;
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
-					$converted['general']['am_notifications_hidden'] = ( isset( $this->old_values[ $old_key ] ) && $this->old_values[ $old_key ] === 'true' );
+					$converted['general']['am_notifications_hidden'] = ( isset($old_value) && 'true' === $old_value);
 					break;
 			}
 		}

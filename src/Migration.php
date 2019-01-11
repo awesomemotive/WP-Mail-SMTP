@@ -130,10 +130,10 @@ class Migration {
 				case 'pepipost_port':
 				case 'pepipost_ssl':
 					// Do not migrate pepipost options if it's not activated at the moment.
-					if ( 'pepipost' === $this->old_values['mailer'] ) {
+					if ( isset($this->old_values['mailer']) && 'pepipost' === $this->old_values['mailer'] ) {
 						$shortcut = explode( '_', $old_key );
 
-						if ( $old_key === 'pepipost_ssl' ) {
+						if ( 'pepipost_ssl' === $old_key ) {
 							$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
 						} else {
 							$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
@@ -149,12 +149,12 @@ class Migration {
 				case 'smtp_pass':
 					$shortcut = explode( '_', $old_key );
 
-					if ( $old_key === 'smtp_ssl' ) {
+					if ( 'smtp_ssl' === $old_key ) {
 						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
-					} elseif ( $old_key === 'smtp_auth' ) {
+					} elseif ( 'smtp_auth' === $old_key ) {
 						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' ? 'yes' : 'no' );
 					} else {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = isset($this->old_values[ $old_key ]) ? $this->old_values[ $old_key ] : null;
 					}
 
 					break;

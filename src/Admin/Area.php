@@ -303,7 +303,7 @@ class Area {
 			return;
 		}
 
-		$this->pages[ $this->get_current_tab() ]->display();
+		$this->get_pages()[ $this->get_current_tab() ]->display();
 	}
 
 	/**
@@ -358,7 +358,7 @@ class Area {
 			return '';
 		}
 
-		return $this->pages[ $this->get_current_tab() ]->get_title();
+		return $this->get_pages()[ $this->get_current_tab() ]->get_title();
 	}
 
 	/**
@@ -400,11 +400,11 @@ class Area {
 				$post = array();
 			}
 
-			$this->pages[ $this->get_current_tab() ]->process_post( $post );
+			$this->get_pages()[ $this->get_current_tab() ]->process_post( $post );
 		}
 
 		// This won't do anything for most pages.
-		$this->pages[ $this->get_current_tab() ]->process_auth();
+		$this->get_pages()[ $this->get_current_tab() ]->process_auth();
 	}
 
 	/**

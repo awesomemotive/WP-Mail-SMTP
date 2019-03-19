@@ -554,7 +554,7 @@ class Core {
 	 */
 	protected function replace_w_fake_phpmailer( &$obj = null ) {
 
-		$obj = new MailCatcher();
+		$obj = new MailCatcher(true);
 
 		return $obj;
 	}

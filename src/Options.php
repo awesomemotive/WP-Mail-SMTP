@@ -170,29 +170,28 @@ class Options {
 	/**
 	 * Get all the options for a group.
 	 *
-	 * Options::init()->get_group('smtp') - will return only array of options (or empty array if a key doesn't exist).
+	 * Options::init()->get_group('smtp') - will return the array of options for the group, including defaults and constants.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $group
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function get_group( $group ) {
 
 		// Just to feel safe.
 		$group = sanitize_key( $group );
 
-		if ( isset( $this->_options[ $group ] ) ) {
+		$options = isset( $this->_options[ $group ] ) ? $this->_options[ $group ] : array();
 
-			foreach ( $this->_options[ $group ] as $g_key => $g_value ) {
-				$options[ $group ][ $g_key ] = $this->get( $group, $g_key );
+		if ( isset( self::$map[ $group ] ) ) {
+			foreach ( self::$map[ $group ] as $key ) {
+				$options[ $key ] = $this->get( $group, $key );
 			}
-
-			return apply_filters( 'wp_mail_smtp_options_get_group', $this->_options[ $group ], $group );
 		}
 
-		return array();
+		return apply_filters( 'wp_mail_smtp_options_get_group', $options, $group );
 	}
 
 	/**

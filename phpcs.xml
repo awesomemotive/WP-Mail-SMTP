@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WP-Mail-SMTP">
 	<description>The code standard for WP Mail SMTP.</description>
+    <exclude-pattern>/assets/</exclude-pattern>
     <exclude-pattern>/vendor/</exclude-pattern>
     <exclude-pattern>/node_modules/</exclude-pattern>
     <!-- Show sniff codes in all reports -->
@@ -9,29 +10,27 @@
 	<arg name="extensions" value="php"/>
     <file>.</file>
 	<rule ref="WordPress">
-		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
-		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch"/>
+
+        <exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
         <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
-        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
-        <exclude name="WordPress.XSS.EscapeOutput.UnsafePrintingFunction"/>
-        <exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
         <exclude name="Squiz.Commenting.FileComment.Missing"/>
-        <exclude name="WordPress.CSRF.NonceVerification"/>
         <exclude name="Squiz.PHP.CommentedOutCode.Found"/>
+        <exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace"/>
+
+        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
         <exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
-        <exclude name="WordPress.VIP"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+        <exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery"/>
+        <exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching"/>
+        <exclude name="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode"/>
 
-        <!--<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>-->
-        <!--<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>-->
-        <!--<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>-->
-        <!--<exclude name="Squiz.Commenting.InlineComment.SpacingAfter"/>-->
-		<!--<exclude name="Squiz.Commenting.FileComment.Missing"/>-->
-		<!--<exclude name="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket"/>-->
-		<!--<exclude name="WordPress.Classes.ClassInstantiation.MissingParenthesis"/>-->
-		<!--<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>-->
-		<!--<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.SpaceBeforeArrayCloser"/>-->
+        <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
+        <exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments"/>
+        <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
 	</rule>
 </ruleset>

@@ -41,7 +41,8 @@ class MailCatcher extends \PHPMailer {
 	 */
 	public function send() {
 
-		$options = new Options();
+		$options     = new Options();
+		$mail_mailer = sanitize_key( $options->get( 'mail', 'mailer' ) );
 
 		$is_emailing_blocked = false;
 
@@ -55,7 +56,7 @@ class MailCatcher extends \PHPMailer {
 				! empty( $header[0] ) &&
 				! empty( $header[1] ) &&
 				$header[0] === 'X-Mailer-Type' &&
-				trim( $header[1] ) === 'WPMailSMTP\Admin\Test'
+				trim( $header[1] ) === 'WPMailSMTP/Admin/Test'
 			) {
 				$is_emailing_blocked = false;
 			}
@@ -66,10 +67,8 @@ class MailCatcher extends \PHPMailer {
 			return false;
 		}
 
-		$mail_mailer = $options->get( 'mail', 'mailer' );
-
-		// Define a custom header, that will be used in Gmail/SMTP mailers.
-		$this->XMailer = 'WPMailSMTP/Mailer/' . sanitize_key( $mail_mailer ) . ' ' . WPMS_PLUGIN_VER;
+		// Define a custom header, that will be used to identify the plugin and the mailer.
+		$this->XMailer = 'WPMailSMTP/Mailer/' . $mail_mailer . ' ' . WPMS_PLUGIN_VER;
 
 		// Use the default PHPMailer, as we inject our settings there for certain providers.
 		if (
@@ -77,7 +76,25 @@ class MailCatcher extends \PHPMailer {
 			$mail_mailer === 'smtp' ||
 			$mail_mailer === 'pepipost'
 		) {
-			return parent::send();
+			try {
+				// Prepare all the headers.
+				if ( ! $this->preSend() ) {
+					return false;
+				}
+
+				// Allow to hook after all the preparation before the actual sending.
+				do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
+
+				return $this->postSend();
+			} catch ( \phpmailerException $e ) {
+				$this->mailHeader = '';
+				$this->setError( $e->getMessage() );
+				if ( $this->exceptions ) {
+					throw $e;
+				}
+
+				return false;
+			}
 		}
 
 		// We need this so that the \PHPMailer class will correctly prepare all the headers.
@@ -104,6 +121,25 @@ class MailCatcher extends \PHPMailer {
 		 */
 		$mailer->send();
 
-		return $mailer->is_email_sent();
+		$is_sent = $mailer->is_email_sent();
+
+		// Allow to perform any actions with the data.
+		do_action( 'wp_mail_smtp_mailcatcher_send_after', $mailer, $this );
+
+		return $is_sent;
+	}
+
+	/**
+	 * Returns all custom headers.
+	 * In older versions of \PHPMailer class this method didn't exist.
+	 * As we support WordPress 3.6+ - we need to make sure this method is always present.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return array
+	 */
+	public function getCustomHeaders() {
+
+		return $this->CustomHeader;
 	}
 }

@@ -20,13 +20,13 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/smtp.png',
+				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/smtp.svg',
 				'slug'        => 'smtp',
 				'title'       => esc_html__( 'Other SMTP', 'wp-mail-smtp' ),
-				/* translators: %1$s - opening link tag; %2$s - closing link tag. */
 				'description' => sprintf(
 					wp_kses(
-						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services as well as troubleshooting tips, check out our %1$sSMTP documentation%2$s.', 'wp-mail-smtp' ),
+						/* translators: %s - URL to a related article on WPForms.com. */
+						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP documentation</a>.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(
@@ -36,8 +36,7 @@ class Options extends OptionsAbstract {
 							),
 						)
 					),
-					'<a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" target="_blank" rel="noopener noreferrer">',
-					'</a>'
+					'https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/'
 				),
 			)
 		);

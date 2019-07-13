@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
+use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
@@ -68,7 +69,7 @@ class Test extends PageAbstract {
 					<input name="wp-mail-smtp[test][email]" value="<?php echo esc_attr( wp_get_current_user()->user_email ); ?>"
 						type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required>
 					<p class="desc">
-						<?php esc_html_e( 'Change an email address a test email will be sent to.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Enter email address where test email will be sent.', 'wp-mail-smtp' ); ?>
 					</p>
 				</div>
 			</div>
@@ -144,8 +145,14 @@ class Test extends PageAbstract {
 		// Set SMTPDebug level, default is 3 (commands + data + connection status).
 		$phpmailer->SMTPDebug = apply_filters( 'wp_mail_smtp_admin_test_email_smtp_debug', 3 );
 
+		/* translators: %s - email address a test email will be sent to. */
+		$subject = 'WP Mail SMTP: ' . sprintf( esc_html__( 'Test email to %s', 'wp-mail-smtp' ), $data['test']['email'] );
+
 		if ( $is_html ) {
 			add_filter( 'wp_mail_content_type', array( __CLASS__, 'set_test_html_content_type' ) );
+
+			/* translators: %s - email address a test email will be sent to. */
+			$subject = 'WP Mail SMTP: HTML ' . sprintf( esc_html__( 'Test email to %s', 'wp-mail-smtp' ), $data['test']['email'] );
 		}
 
 		// Start output buffering to grab smtp debugging output.
@@ -154,10 +161,11 @@ class Test extends PageAbstract {
 		// Send the test mail.
 		$result = wp_mail(
 			$data['test']['email'],
-			/* translators: %s - email address a test email will be sent to. */
-			'WP Mail SMTP: ' . sprintf( esc_html__( 'Test email to %s', 'wp-mail-smtp' ), $data['test']['email'] ),
+			$subject,
 			$this->get_email_message( $is_html ),
-			'X-Mailer-Type:WPMailSMTP\Admin\Test'
+			array(
+				'X-Mailer-Type:WPMailSMTP/Admin/Test',
+			)
 		);
 
 		$smtp_debug = ob_get_clean();
@@ -276,9 +284,9 @@ class Test extends PageAbstract {
 									<p class="text-large" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; text-align: left; mso-line-height-rule: exactly; line-height: 140%; margin: 0 0 15px 0; Margin: 0 0 15px 0; font-size: 16px;">
 										Thank you for trying out WP Mail SMTP. We're on a mission to make sure that your emails actually get delivered.
 									</p>
-									<?php if ( ! class_exists( 'WPForms_Pro', false ) ) : ?>
+									<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
 										<p class="text-large" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; text-align: left; mso-line-height-rule: exactly; line-height: 140%; margin: 0 0 15px 0; Margin: 0 0 15px 0; font-size: 16px;">
-											If you find this free plugin useful, please consider giving our sister plugin a try!
+											If you find this free plugin useful, please consider giving WP Mail SMTP Pro a try!
 										</p>
 									<?php endif; ?>
 									<p class="signature" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; text-align: left; margin: 20px 0 0 0; Margin: 20px 0 0 0;">
@@ -291,27 +299,19 @@ class Test extends PageAbstract {
 							</td>
 						</tr>
 						<!-- Aside -->
-						<?php if ( ! class_exists( 'WPForms_Pro', false ) ) : ?>
+						<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
 							<tr style="padding: 0; vertical-align: top; text-align: left;">
 								<td align="left" valign="top" class="aside upsell-mi" style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; margin: 0; Margin: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; background-color: #f8f8f8; border-top: 1px solid #dddddd; border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; border-left: 1px solid #dddddd; text-align: center !important; padding: 30px 75px 25px 75px;">
-									<table class="icon-wrap" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-spacing: 0; padding: 0; vertical-align: top; text-align: left; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
-										<tr style="padding: 0; vertical-align: top; text-align: left;">
-											<td style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; margin: 0; Margin: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; text-align: center; padding: 0 0 10px 0;">
-												<img src="<?php echo esc_url( wp_mail_smtp()->plugin_url . '/assets/images/email/wpforms-pro.png' ); ?>" width="90" alt="WPForms Logo" class="icon" style="outline: none; text-decoration: none; max-width: 100%; clear: both; -ms-interpolation-mode: bicubic; width: 90px; height: 90px; display: inline-block;">
-											</td>
-										</tr>
-									</table>
-									<h6 style="padding: 0; color: #444444; word-wrap: normal; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: bold; mso-line-height-rule: exactly; line-height: 130%; font-size: 18px; text-align: center; margin: 0 0 4px 0; Margin: 0 0 4px 0;">
-										Drag &amp; Drop WordPress Form Builder
+									<h6 style="padding: 0; color: #444444; word-wrap: normal; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: bold; mso-line-height-rule: exactly; line-height: 130%; font-size: 18px; text-align: center; margin: 0 0 15px 0; Margin: 0 0 15px 0;">
+										Unlock More Features with WP Mail SMTP Pro
 									</h6>
-									<p style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; margin: 0 0 15px 0; Margin: 0 0 15px 0; text-align: center;">
-										Finally, a WordPress form plugin that's both Easy and Powerful.
-									</p>
 									<p class="text-large" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; margin: 0 0 15px 0; Margin: 0 0 15px 0; font-size: 16px; text-align: center;">
-										Create a form and start collecting leads in under 5 minutes.
+										Email Logs and Notification Controls<br>
+										Amazon SES / Outlook.com / Office 365 integrations<br>
+										Access to our world class support team
 									</p>
-									<p class="text-large last" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; font-size: 16px; text-align: center; margin: 0 0 0 0; Margin: 0 0 0 0;">
-										Over 1 million websites use WPForms. See why it's the fastest growing WordPress forms plugin in the market.
+									<p class="text-large last" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; font-size: 13px; text-align: center; margin: 0 0 0 0; Margin: 0 0 0 0;">
+										WP Mail SMTP users get <span style="font-weight:700;color:#218900;">20% off</span>, automatically applied at checkout
 									</p>
 									<center style="width: 100%;">
 										<table class="button large expanded orange" style="border-collapse: collapse; border-spacing: 0; padding: 0; vertical-align: top; text-align: left; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #e27730; width: 100% !important;">
@@ -320,12 +320,8 @@ class Test extends PageAbstract {
 													<table style="border-collapse: collapse; border-spacing: 0; padding: 0; vertical-align: top; text-align: left; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 100% !important;">
 														<tr style="padding: 0; vertical-align: top; text-align: left;">
 															<td style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; margin: 0; Margin: 0; font-size: 14px; text-align: center; color: #ffffff; background: #e27730; border: 1px solid #c45e1b; border-bottom: 3px solid #c45e1b; mso-line-height-rule: exactly; line-height: 100%;">
-																<a href="https://wpforms.com/?discount=THANKYOU&utm_source=WordPress&utm_medium=email-cta&utm_campaign=smtpplugin" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0; Margin: 0; font-family: Helvetica, Arial, sans-serif; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; border: 0 solid #c45e1b; mso-line-height-rule: exactly; line-height: 100%; padding: 14px 20px 12px 20px; font-size: 20px; text-align: center; width: 100%; padding-left: 0; padding-right: 0;">
-																	<?php if ( class_exists( 'WPForms_Lite', false ) ) : ?>
-																		Upgrade to WPForms Pro Today
-																	<?php else : ?>
-																		Get WPForms Today
-																	<?php endif; ?>
+																<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( 'email-test' ) ); ?>" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0; Margin: 0; font-family: Helvetica, Arial, sans-serif; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; border: 0 solid #c45e1b; mso-line-height-rule: exactly; line-height: 100%; padding: 14px 20px 12px 20px; font-size: 20px; text-align: center; width: 100%; padding-left: 0; padding-right: 0;">
+																	Upgrade to WP Mail SMTP Pro Today
 																</a>
 															</td>
 														</tr>
@@ -354,55 +350,38 @@ class Test extends PageAbstract {
 	 * Get the plain text prepared message for test email.
 	 *
 	 * @since 1.4.0
+	 * @since 1.5.0 Display an upsell to WP Mail SMTP Pro if free version installed.
 	 *
 	 * @return string
 	 */
 	private function get_email_message_text() {
 
-		// Default message in case anything below will fail.
-		$message = sprintf(
-			/* translators: %s - mailer name. */
-			esc_html__( 'This email was sent by %s mailer, and WP Mail SMTP plugin by WPForms generated it.', 'wp-mail-smtp' ),
-			wp_mail_smtp()->get_providers()->get_options( Options::init()->get( 'mail', 'mailer' ) )->get_title()
-		);
-
 		// phpcs:disable
-		if ( ! function_exists( 'wpforms' ) ) {
-			// WPForms not installed.
+		if ( wp_mail_smtp()->is_pro() ) {
+			// WP Mail SMTP Pro & WPForms paid installed.
 			$message =
 'Congrats, test email was sent successfully!
 
 Thank you for trying out WP Mail SMTP. We are on a mission to make sure your emails actually get delivered.
-
-If you find this plugin useful, please consider giving our sister plugin, WPForms, a try!
-
-https://wpforms.com/
-
-WPForms is a drag & drop form builder plugin that is both easy and powerful. Trusted by over 1 million websites.
 
 - Jared Atchison
 Lead Developer, WP Mail SMTP';
-		} elseif ( class_exists( 'WPForms_Lite', false ) )  {
-			// WPForms Lite installed.
+		} else {
+			// Free WP Mail SMTP is installed.
 			$message =
 'Congrats, test email was sent successfully!
 
 Thank you for trying out WP Mail SMTP. We are on a mission to make sure your emails actually get delivered.
 
-If you find this plugin useful, please consider giving our sister plugin, WPForms Pro, a try!
+If you find this free plugin useful, please consider giving WP Mail SMTP Pro a try!
 
-https://wpforms.com/lite-upgrade/
+https://wpmailsmtp.com/lite-upgrade/
 
-Upgrade to WPForms Pro and unlock all the awesome features.
+Unlock More Features with WP Mail SMTP Pro:
 
-- Jared Atchison
-Lead Developer, WP Mail SMTP';
-		} elseif ( class_exists( 'WPForms_Pro', false ) )  {
-			// WPForms paid installed.
-			$message =
-'Congrats, test email was sent successfully!
-
-Thank you for trying out WP Mail SMTP. We are on a mission to make sure your emails actually get delivered.
++ Email Logs and Notification Controls
++ Amazon SES / Outlook.com / Office 365 integrations
++ Access to our world class support team
 
 - Jared Atchison
 Lead Developer, WP Mail SMTP';
@@ -436,7 +415,8 @@ Lead Developer, WP Mail SMTP';
 	 */
 	protected function get_debug_messages( $phpmailer, $smtp_debug ) {
 
-		$options = new Options();
+		$options   = new Options();
+		$conflicts = new Conflicts();
 
 		$this->debug['mailer'] = $options->get( 'mail', 'mailer' );
 
@@ -459,6 +439,9 @@ Lead Developer, WP Mail SMTP';
 
 		$mailer_text .= '<strong>Mailer:</strong> ' . $this->debug['mailer'] . '<br>';
 		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
+		if ( $conflicts->is_detected() ) {
+			$mailer_text .= '<strong>Conflicts:</strong> ' . esc_html( $conflicts->get_conflict_name() ) . '<br>';
+		}
 
 		// Display different debug info based on the mailer.
 		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $this->debug['mailer'], $phpmailer );
@@ -682,6 +665,21 @@ Lead Developer, WP Mail SMTP';
 					esc_html__( 'Verify with your SMTP host that your account has permissions to send emails using outside connections.', 'wp-mail-smtp' ),
 				),
 			),
+			// [mailgun] - Please activate your Mailgun account.
+			array(
+				'mailer'      => 'mailgun',
+				'errors'      => array(
+					array( 'Please activate your Mailgun account' ),
+				),
+				'description' => array(
+					'<strong>' . esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ) . '</strong>',
+					esc_html__( 'It seems that you forgot to activate your Mailgun account.', 'wp-mail-smtp' ),
+				),
+				'steps'       => array(
+					esc_html__( 'Check your inbox you used to create a Mailgun account. Click the activation link in an email from Mailgun.', 'wp-mail-smtp' ),
+					esc_html__( 'If you do not see activation email, go to your Mailgun control panel and resend the activation email.', 'wp-mail-smtp' ),
+				),
+			),
 			// [mailgun] - Forbidden.
 			array(
 				'mailer'      => 'mailgun',
@@ -707,7 +705,7 @@ Lead Developer, WP Mail SMTP';
 				'description' => array(
 					'<strong>' . esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Your Mailgun account does not have access to send emails.', 'wp-mail-smtp' ),
-					esc_html__( 'Typically this error is because you have not setup and/or complete domain name verification for your Mailgun account.', 'wp-mail-smtp' ),
+					esc_html__( 'Typically this error is because you have not set up and/or complete domain name verification for your Mailgun account.', 'wp-mail-smtp' ),
 				),
 				'steps'       => array(
 					sprintf(
@@ -1029,93 +1027,86 @@ Lead Developer, WP Mail SMTP';
 
 			<h2><?php esc_html_e( 'Need support?', 'wp-mail-smtp' ); ?></h2>
 
-			<?php if ( class_exists( 'WPForms_Pro', false ) ) : ?>
+			<?php if ( wp_mail_smtp()->is_pro() ) : ?>
 
-			<p>
-				<?php
-				printf(
-					wp_kses(
-						/* translators: %s - WPForms account area link. */
-						__( 'As a WPForms Pro user you have access to WP Mail SMTP priority support. Please log in to your WPForms.com account and <a href="%s" target="_blank" rel="noopener noreferrer">submit a support ticket</a>.', 'wp-mail-smtp' ),
-						array(
-							'a' => array(
-								'href'   => array(),
-								'rel'    => array(),
-								'target' => array(),
-							),
-						)
-					),
-					'https://wpforms.com/account/support/'
-				);
-				?>
-			</p>
+				<p>
+					<?php
+					printf(
+						wp_kses( /* translators: %s - WPMailSMTP.com account area link. */
+							__( 'As a WP Mail SMTP Pro user you have access to WP Mail SMTP priority support. Please log in to your WPMailSMTP.com account and <a href="%s" target="_blank" rel="noopener noreferrer">submit a support ticket</a>.', 'wp-mail-smtp' ),
+							array(
+								'a' => array(
+									'href'   => array(),
+									'rel'    => array(),
+									'target' => array(),
+								),
+							)
+						),
+						'https://wpmailsmtp.com/account/support/'
+					);
+					?>
+				</p>
 
 			<?php else : ?>
 
-			<p>
-				<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintains it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
-			</p>
+				<p>
+					<?php esc_html_e( 'WP Mail SMTP is a free plugin, and the team behind WPForms maintains it to give back to the WordPress community.', 'wp-mail-smtp' ); ?>
+				</p>
 
-			<p>
-				<?php
-				printf(
-					wp_kses(
-						/* translators: %s - WPForms URL. */
-						__( 'To access priority support from our team, please <a href="%s" target="_blank" rel="noopener noreferrer">purchase a WPForms license</a>. Along with getting priority support for WP Mail SMTP, you will also get access to the best drag & drop WordPress form builder plugin.', 'wp-mail-smtp' ),
-						array(
-							'a' => array(
-								'href'   => array(),
-								'rel'    => array(),
-								'target' => array(),
-							),
-						)
-					),
-					'https://wpforms.com/?discount=THANKYOU&utm_source=WordPress&utm_medium=debug-cta&utm_campaign=smtpplugin'
-				);
-				?>
-			</p>
+				<p>
+					<?php
+					printf(
+						wp_kses( /* translators: %s - WPMailSMTP.com URL. */
+							__( 'To access our world class support, please <a href="%s" target="_blank" rel="noopener noreferrer">upgrade to WP Mail SMTP Pro</a>. Along with getting expert support, you will also get Notification controls, Email Logging, and integrations for Amazon SES, Office 365, and Outlook.com.', 'wp-mail-smtp' ),
+							array(
+								'a' => array(
+									'href'   => array(),
+									'target' => array(),
+									'rel'    => array(),
+								),
+							)
+						),
+						esc_url( wp_mail_smtp()->get_upgrade_link( 'email-test-fail' ) )
+					)
+					?>
+				</p>
 
-			<p>
-				<?php
-				printf(
-					wp_kses(
-						/* translators: %s - Star icons. */
-						__( 'WPForms is being used on over 1 million websites and has over 2000+ five star ratings (%s).', 'wp-mail-smtp' ),
+				<p>
+					<?php esc_html_e( 'Additionally, you can take advantage of our White Glove Setup. Sit back and relax while we handle everything for you! If you simply don\'t have time or maybe you feel a bit in over your head - we got you covered.', 'wp-mail-smtp' ); ?>
+				</p>
+
+				<p>
+					<?php
+					echo wp_kses(
+						__( 'As a valued WP Mail SMTP user, you will get <span class="price-off">20% off regular pricing</span>, automatically applied at checkout!', 'wp-mail-smtp' ),
 						array(
 							'span' => array(
 								'class' => array(),
 							),
 						)
-					),
-					str_repeat( '<span class="dashicons dashicons-star-filled"></span>', 5 )
-				);
-				?>
-			</p>
+					);
+					?>
+				</p>
 
-			<p>
-				<?php esc_html_e( 'You will truly love the WPForms plugin, but most importantly your support will help us continue to maintain and add new features to the WP Mail SMTP plugin while keeping it free for the larger WordPress community.', 'wp-mail-smtp' ); ?>
-			</p>
-
-			<p>
-				<?php
-				printf(
-					wp_kses(
-						/* translators: %1$s - WP Mail SMTP support policy URL, %2$s - WP Mail SMTP support forum URL, %3$s - WPForms URL. */
-						__( 'Alternatively, we also offer <a href="%1$s" target="_blank" rel="noopener noreferrer">limited support</a> on the WordPress.org support forums. You can <a href="%2$s" target="_blank" rel="noopener noreferrer">create a support thread</a> there, but please understand that free support is not guaranteed and is limited to simple issues. If you have an urgent or complex issue, then please consider <a href="%3$s" target="_blank" rel="noopener noreferrer">purchasing a WPForms license</a> to access our priority support ticket system.', 'wp-mail-smtp' ),
-						array(
-							'a' => array(
-								'href'   => array(),
-								'rel'    => array(),
-								'target' => array(),
-							),
-						)
-					),
-					'https://wordpress.org/support/topic/wp-mail-smtp-support-policy/',
-					'https://wordpress.org/support/plugin/wp-mail-smtp/',
-					'https://wpforms.com/?discount=THANKYOU&utm_source=WordPress&utm_medium=debug-cta&utm_campaign=smtpplugin'
-				);
-				?>
-			</p>
+				<p>
+					<?php
+					printf(
+						wp_kses( /* translators: %1$s - WP Mail SMTP support policy URL, %2$s - WP Mail SMTP support forum URL, %3$s - WPMailSMTP.com URL. */
+							__( 'Alternatively, we also offer <a href="%1$s" target="_blank" rel="noopener noreferrer">limited support</a> on the WordPress.org support forums. You can <a href="%2$s" target="_blank" rel="noopener noreferrer">create a support thread</a> there, but please understand that free support is not guaranteed and is limited to simple issues. If you have an urgent or complex issue, then please consider <a href="%3$s" target="_blank" rel="noopener noreferrer">upgrading to WP Mail SMTP Pro</a> to access our priority support ticket system.', 'wp-mail-smtp' ),
+							array(
+								'a' => array(
+									'href'   => array(),
+									'rel'    => array(),
+									'target' => array(),
+								),
+							)
+						),
+						'https://wordpress.org/support/topic/wp-mail-smtp-support-policy/',
+						'https://wordpress.org/support/plugin/wp-mail-smtp/',
+						esc_url( wp_mail_smtp()->get_upgrade_link( 'email-test-fail' ) )
+					);
+					?>
+				</p>
 
 			<?php endif; ?>
 

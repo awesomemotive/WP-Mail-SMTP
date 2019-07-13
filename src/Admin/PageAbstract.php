@@ -22,7 +22,7 @@ abstract class PageAbstract implements PageInterface {
 			add_query_arg(
 				'tab',
 				$this->slug,
-				admin_url( 'options-general.php?page=' . Area::SLUG )
+				admin_url( 'admin.php?page=' . Area::SLUG )
 			)
 		);
 	}
@@ -62,5 +62,22 @@ abstract class PageAbstract implements PageInterface {
 	 */
 	public function check_admin_referer() {
 		check_admin_referer( Area::SLUG . '-' . $this->slug );
+	}
+
+	/**
+	 * Save button to be reused on other tabs.
+	 *
+	 * @since 1.5.0
+	 */
+	public function display_save_btn() {
+		?>
+
+		<p class="wp-mail-smtp-submit">
+			<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange">
+				<?php esc_html_e( 'Save Settings', 'wp-mail-smtp' ); ?>
+			</button>
+		</p>
+
+		<?php
 	}
 }

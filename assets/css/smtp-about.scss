@@ -1,0 +1,486 @@
+// About WP Mail SMTP - admin.php?page=wp-mail-smtp-about
+
+@import "include-media";
+@import "variables";
+
+.wp-mail-smtp-page-about {
+	padding: 0 !important;
+
+	*, *::before, *::after {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+
+	&.wp-mail-smtp-tab-about-about {
+
+		.wp-mail-smtp-admin-about-plugins {
+			padding: 0 10px;
+
+			.plugins-container {
+				margin-left: -20px;
+				margin-right: -20px;
+
+				.plugin-container {
+					padding: 0 10px;
+					float: left;
+					width: 33.333333%;
+
+					@include media("<1250px") {
+						width: 50%;
+					}
+
+					@include media("<tablet") {
+						width: 100%;
+						margin-bottom: 20px;
+					}
+				}
+
+				h5 {
+					font-size: 17px;
+					font-weight: 700;
+				}
+
+				.plugin-item {
+					background-color: #fff;
+					border: 1px solid #ddd;
+					border-radius: 3px;
+					margin: 0 0 40px 0;
+
+					@include media("<tablet") {
+						margin: 0 0
+					}
+
+					img {
+						border: 1px solid #eee;
+						float: left;
+						max-width: 75px;
+						padding: 10px;
+
+						&[src*="-mi"] {
+							padding: 13px;
+						}
+					}
+
+					h5 {
+						margin: 0 0 10px 100px;
+						font-size: 16px;
+					}
+
+					p {
+						margin: 0 0 0 100px;
+					}
+
+					.details {
+						padding: 20px;
+					}
+
+					.actions {
+						background-color: #f7f7f7;
+						border-top: 1px solid #ddd;
+						padding: 20px;
+						position: relative;
+
+						.msg {
+							background-color: #f7f7f7;
+							position: absolute;
+							text-align: center;
+							font-weight: 600;
+							top: 0;
+							left: 0;
+							height: 100%;
+							width: 100%;
+							z-index: 99;
+							padding: 20px;
+							display: -webkit-box;
+							display: -moz-box;
+							display: -ms-flexbox;
+							display: -webkit-flex;
+							display: flex;
+							-webkit-align-items: center;
+							-ms-align-items: center;
+							align-items: center;
+							justify-content: center;
+
+							&.success {
+								color: $green;
+							}
+
+							&.error {
+								color: red;
+							}
+						}
+					}
+
+					.status {
+						float: left;
+						padding-top: 8px;
+
+						.status-inactive {
+							color: red;
+						}
+
+						.status-download {
+							color: #666;
+						}
+
+						.status-active {
+							color: $green;
+						}
+					}
+
+					.action-button {
+						float: right;
+
+						button {
+							background: none;
+							cursor: pointer;
+							width: 140px;
+							text-align: center;
+							display: inline-block;
+							text-decoration: none;
+							font-size: 13px;
+							line-height: 26px;
+							height: 28px;
+							margin: 0;
+							padding: 0 10px 1px;
+							-webkit-appearance: none;
+							border-radius: 3px;
+							border: 1px solid #cccccc;
+							background: #f7f7f7;
+							box-shadow: 0 1px 0 #cccccc;
+							font-weight: normal;
+
+							&:hover, &:focus, &.loading {
+								background: #fafafa;
+								border-color: #999;
+								color: #23282d;
+							}
+
+							.fa {
+								margin-right: 8px;
+
+								&.fa-spinner {
+									margin-right: 0;
+								}
+							}
+
+							&.button-primary {
+								background: #0085ba;
+								border-color: #0073aa #006799 #006799;
+								box-shadow: 0 1px 0 #006799;
+								color: #fff;
+								text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
+
+								&:hover, &:focus {
+									background: #008ec2;
+									border-color: #006799;
+									color: #fff;
+								}
+
+								.fa-spinner {
+									color: #fff;
+								}
+							}
+
+							&.button-secondary {
+								color: #555;
+								border-color: #cccccc;
+								background: #f7f7f7;
+								box-shadow: 0 1px 0 #cccccc;
+
+								&:hover, &:focus  {
+									background: #fafafa;
+									border-color: #999;
+									color: #23282d;
+								}
+							}
+
+							&.status-active .fa {color: $green}
+							&.status-inactive .fa {color: red}
+							&.status-download .fa {color: #999}
+							&.loading .fa {color: #666}
+
+							&.disabled {cursor: default}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.wp-mail-smtp-admin-about-section {
+		margin: 0 0 20px;
+		padding: $padding-default;
+		background: #fff;
+		border: $border;
+		line-height: 2;
+
+		h1, h2, h3, h4, h5 {
+			margin-top: 0;
+			padding-top: 0;
+			line-height: 1.6;
+		}
+
+		h2 {
+			font-size: 24px;
+		}
+
+		h3 {
+			font-size: 18px;
+			margin-bottom: 30px;
+			color: #23282C;
+		}
+
+		ul, p {
+			font-size: 16px;
+		}
+
+		p {
+			margin-bottom: 20px;
+
+			&.bigger{
+				font-size: 18px;
+			}
+			&.smaller {
+				font-size: 14px;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		hr {
+			margin: $padding-default 0;
+		}
+
+		figure {
+			margin: 0;
+
+			img {
+				width: 100%;
+			}
+
+			figcaption {
+				font-size: 14px;
+				color: #888888;
+				margin-top: 5px;
+				text-align: center;
+				line-height: initial;
+			}
+		}
+
+		.wp-mail-smtp-admin-column-40 {
+			padding-left: $padding-default/2;
+
+			@include media("<tablet") {
+				width: 100%;
+				padding-left: 0;
+				padding-top: 20px;
+			}
+		}
+		.wp-mail-smtp-admin-column-60 {
+			padding-right: $padding-default/2;
+
+			@include media("<tablet") {
+				width: 100%;
+				padding-right: 0;
+			}
+		}
+
+		ul.list-plain {
+			margin-top: 0;
+			margin-bottom: 0;
+
+			li {
+				margin-bottom: 0;
+			}
+		}
+
+		ul.list-features {
+			li .fa {
+				color: #2a9b39;
+				margin: 0 8px 0 0;
+			}
+		}
+
+		.fa-star {color: gold}
+
+		.no-margin {margin: 0 !important}
+		.no-padding {padding: 0 !important}
+		.centered {text-align: center !important}
+	}
+
+	.wp-mail-smtp-admin-about-section-hero {
+		padding: 0;
+
+		.wp-mail-smtp-admin-about-section-hero-main,
+		.wp-mail-smtp-admin-about-section-hero-extra {
+			padding: $padding-default;
+		}
+
+		.wp-mail-smtp-admin-about-section-hero-extra {
+
+			table {
+				width: 100%;
+			}
+
+			.wp-mail-smtp-admin-column-50 {
+
+				@include media("<tablet") {
+					float: none;
+					width: 100%;
+				}
+			}
+		}
+
+		.wp-mail-smtp-admin-about-section-hero-main {
+			background-color: #FAFAFA;
+			border-bottom: $border;
+
+			&.no-border {
+				border-bottom: 0;
+			}
+
+			p {
+				color: #666;
+			}
+		}
+
+		h3.call-to-action {
+			margin-bottom: -10px;
+		}
+
+		span.price-off {
+			color: #6AB255;
+		}
+	}
+
+	.wp-mail-smtp-admin-about-section-squashed {
+		margin-bottom: 0;
+
+		&:not(:last-of-type) {
+			border-bottom: 0;
+		}
+	}
+
+	.wp-mail-smtp-admin-about-section-post {
+
+		h2 {
+			margin-bottom: -10px;
+		}
+
+		h3 {
+			margin-bottom: 15px;
+		}
+
+		p:last-of-type {
+			margin-bottom: 30px;
+		}
+
+		.wp-mail-smtp-admin-column-20 {
+			padding-right: 20px;
+			width: auto;
+
+			img {
+				width: 270px;
+			}
+
+			@include media("<tablet") {
+				width: 20%;
+				img {
+					width: auto;
+					max-width: 100%;
+				}
+			}
+		}
+
+		.wp-mail-smtp-admin-column-80 {
+			padding-left: 20px;
+			width: calc(100% - 20px - 270px);
+
+			@include media("<tablet") {
+				width: 80%;
+			}
+		}
+
+		.wp-mail-smtp-admin-about-section-post-link {
+			padding: 10px $padding-default/2;
+			background-color: #DF7739;
+			color: #fff;
+			border-radius: 3px;
+			text-decoration: none;
+			margin-top: 15px;
+			font-size: 14px;
+
+			&:hover {
+				background-color: #B85A1B;
+			}
+
+			.fa {
+				color: #EDBA9E;
+				vertical-align: middle;
+				margin-left: 8px;
+			}
+		}
+	}
+
+	.wp-mail-smtp-admin-about-section-table {
+
+		table {
+			border-collapse: collapse;
+
+			tr {
+				td {
+					border-bottom: $border;
+					border-right: $border;
+					padding: $padding-default;
+					vertical-align: top;
+
+					&:last-of-type {
+						border-right: 0;
+					}
+				}
+
+				&:last-child td {
+					border-bottom: none;
+				}
+			}
+
+			p {
+				background-repeat: no-repeat;
+				background-size: 15px auto;
+				background-position: 0 6px;
+				margin: 0;
+
+				&.features-full {
+					padding-left: $padding-default;
+					background-image: url(../images/about/icon-full.svg);
+				}
+				&.features-none {
+					padding-left: $padding-default;
+					background-image: url(../images/about/icon-none.svg);
+				}
+				&.features-partial {
+					padding-left: $padding-default;
+					background-position: -3px 0;
+					background-size: 23px auto;
+					background-image: url(../images/about/icon-partial.svg);
+				}
+			}
+		}
+
+		.wp-mail-smtp-admin-about-section-hero-main {
+			padding: 0;
+
+			h3 {
+				padding: $padding-default $padding-default $padding-default $padding-default*2;
+			}
+			.wp-mail-smtp-admin-column-33:first-child h3 {
+				padding: $padding-default;
+			}
+		}
+	}
+}
+

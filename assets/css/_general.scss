@@ -1,0 +1,15 @@
+// Core admin style overrides.
+#wpcontent {
+	padding-left: 0 !important;
+	position: relative;
+
+	@include media("<=phone") {
+		padding-top: 46px;
+	}
+}
+
+#wpbody {
+	@include media("<=phone") {
+		padding-top: 0;
+	}
+}

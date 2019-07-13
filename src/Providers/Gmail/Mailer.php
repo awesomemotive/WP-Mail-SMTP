@@ -80,11 +80,12 @@ class Mailer extends MailerAbstract {
 		$message = new \Google_Service_Gmail_Message();
 
 		// Get the raw MIME email using \MailCatcher data.
+		// We need here to make base64URL-safe string.
 		$base64 = str_replace(
 			array( '+', '/', '=' ),
 			array( '-', '_', '' ),
 			base64_encode( $this->phpmailer->getSentMIMEMessage() )
-		); // url safe.
+		);
 
 		$message->setRaw( $base64 );
 
@@ -108,11 +109,15 @@ class Mailer extends MailerAbstract {
 	 * Save response from the API to use it later.
 	 *
 	 * @since 1.0.0
+	 * @since 1.5.0 Added action "wp_mail_smtp_providers_gmail_mailer_process_response" with $response.
 	 *
 	 * @param \Google_Service_Gmail_Message $response
 	 */
 	protected function process_response( $response ) {
+
 		$this->response = $response;
+
+		do_action( 'wp_mail_smtp_providers_gmail_mailer_process_response', $this->response, $this->phpmailer );
 	}
 
 	/**

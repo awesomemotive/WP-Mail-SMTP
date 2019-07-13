@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpdox xmlns="http://xml.phpdox.net/config">
+    <project name="WP Mail SMTP" source="${basedir}/src" workdir="${basedir}/build/docs/phpdox">
+        <collector backend="parser"/>
+        <generator output="${basedir}">
+            <build engine="html" enabled="true" output="docs">
+                <template dir="${phpDox.home}/templates/html"/>
+                <file extension="html"/>
+            </build>
+            <enrich base="${basedir}">
+                <source type="phploc">
+                    <file name="build/docs/phploc.xml"/>
+                </source>
+            </enrich>
+        </generator>
+    </project>
+</phpdox>

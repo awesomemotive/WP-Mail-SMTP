@@ -42,7 +42,7 @@ class Misc extends PageAbstract {
 		<form method="POST" action="">
 			<?php $this->wp_nonce_field(); ?>
 
-			<!-- General Section Title -->
+			<!-- Section Title -->
 			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
 				<div class="wp-mail-smtp-setting-field">
 					<h2><?php esc_html_e( 'General', 'wp-mail-smtp' ); ?></h2>
@@ -118,9 +118,7 @@ class Misc extends PageAbstract {
 				</div>
 			</div>
 
-			<p class="wp-mail-smtp-submit">
-				<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange"><?php esc_html_e( 'Save Settings', 'wp-mail-smtp' ); ?></button>
-			</p>
+			<?php $this->display_save_btn(); ?>
 
 		</form>
 

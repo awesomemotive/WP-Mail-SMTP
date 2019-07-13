@@ -16,6 +16,8 @@ class Loader {
 	/**
 	 * Key is the mailer option, value is the path to its classes.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $providers = array(
@@ -28,7 +30,9 @@ class Loader {
 	);
 
 	/**
-	 * @var \WPMailSMTP\MailCatcher
+	 * @since 1.0.0
+	 *
+	 * @var MailCatcher
 	 */
 	private $phpmailer;
 
@@ -58,11 +62,14 @@ class Loader {
 	 * @return array
 	 */
 	public function get_provider_path( $provider ) {
+
 		$provider = sanitize_key( $provider );
+
+		$providers = $this->get_providers();
 
 		return apply_filters(
 			'wp_mail_smtp_providers_loader_get_provider_path',
-			isset( $this->providers[ $provider ] ) ? $this->providers[ $provider ] : null,
+			isset( $providers[ $provider ] ) ? $providers[ $provider ] : null,
 			$provider
 		);
 	}
@@ -74,9 +81,10 @@ class Loader {
 	 *
 	 * @param string $provider
 	 *
-	 * @return \WPMailSMTP\Providers\OptionsAbstract|null
+	 * @return OptionsAbstract|null
 	 */
 	public function get_options( $provider ) {
+
 		return $this->get_entity( $provider, 'Options' );
 	}
 
@@ -85,9 +93,10 @@ class Loader {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \WPMailSMTP\Providers\OptionsAbstract[]
+	 * @return OptionsAbstract[]
 	 */
 	public function get_options_all() {
+
 		$options = array();
 
 		foreach ( $this->get_providers() as $provider => $path ) {
@@ -116,10 +125,10 @@ class Loader {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $provider
+	 * @param string      $provider
 	 * @param MailCatcher $phpmailer
 	 *
-	 * @return \WPMailSMTP\Providers\MailerAbstract|null
+	 * @return MailerAbstract|null
 	 */
 	public function get_mailer( $provider, $phpmailer ) {
 
@@ -138,23 +147,24 @@ class Loader {
 	 *
 	 * @param string $provider
 	 *
-	 * @return \WPMailSMTP\Providers\AuthAbstract|null
+	 * @return AuthAbstract|null
 	 */
 	public function get_auth( $provider ) {
+
 		return $this->get_entity( $provider, 'Auth' );
 	}
 
 	/**
 	 * Get a generic entity based on the request.
 	 *
-	 * @uses ReflectionClass
+	 * @uses  \ReflectionClass
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $provider
 	 * @param string $request
 	 *
-	 * @return null
+	 * @return OptionsAbstract|MailerAbstract|AuthAbstract|null
 	 */
 	protected function get_entity( $provider, $request ) {
 
@@ -178,7 +188,8 @@ class Loader {
 					$entity = new $class();
 				}
 			}
-		} catch ( \Exception $e ) {
+		}
+		catch ( \Exception $e ) {
 			Debug::set( "There was a problem while retrieving {$request} for {$provider}: {$e->getMessage()}" );
 			$entity = null;
 		}

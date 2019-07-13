@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers\Sendgrid;
 
 use WPMailSMTP\Providers\MailerAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class Mailer.
@@ -14,12 +15,16 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Which response code from HTTP provider is considered to be successful?
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var int
 	 */
 	protected $email_sent_code = 202;
 
 	/**
 	 * URL to make an API request to.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
@@ -52,7 +57,7 @@ class Mailer extends MailerAbstract {
 
 		$body = parent::get_body();
 
-		return function_exists( 'wp_json_encode' ) ? wp_json_encode( $body ) : json_encode( $body ); // phpcs:ignore
+		return wp_json_encode( $body );
 	}
 
 	/**
@@ -187,8 +192,54 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Redefine the way custom headers are processed for this mailer - they should be in body.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param array $headers
+	 */
+	public function set_headers( $headers ) {
+
+		foreach ( $headers as $header ) {
+			$name  = isset( $header[0] ) ? $header[0] : false;
+			$value = isset( $header[1] ) ? $header[1] : false;
+
+			$this->set_body_header( $name, $value );
+		}
+
+		// Add custom PHPMailer-specific header.
+		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
+	}
+
+	/**
+	 * This mailer supports email-related custom headers inside a body of the message.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $name
+	 * @param string $value
+	 */
+	public function set_body_header( $name, $value ) {
+
+		$name = sanitize_text_field( $name );
+		if ( empty( $name ) ) {
+			return;
+		}
+
+		$headers = isset( $this->body['headers'] ) ? (array) $this->body['headers'] : array();
+
+		$headers[ $name ] = WP::sanitize_value( $value );
+
+		$this->set_body_param(
+			array(
+				'headers' => $headers,
+			)
+		);
+	}
+
+	/**
 	 * SendGrid accepts an array of files content in body, so we will include all files and send.
-	 * Doesn't handle exceeding the limits etc, as this is done and reported be SendGrid API.
+	 * Doesn't handle exceeding the limits etc, as this is done and reported by SendGrid API.
 	 *
 	 * @since 1.0.0
 	 *
@@ -211,7 +262,7 @@ class Mailer extends MailerAbstract {
 			 */
 			try {
 				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
-					$file = file_get_contents( $attachment[0] );
+					$file = file_get_contents( $attachment[0] ); // phpcs:ignore
 				}
 			}
 			catch ( \Exception $e ) {
@@ -269,8 +320,6 @@ class Mailer extends MailerAbstract {
 			if ( ! empty( $name ) ) {
 				$data['name'] = $name;
 			}
-
-			break;
 		}
 
 		if ( ! empty( $data ) ) {
@@ -288,10 +337,9 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $email
+	 * @param string $from_email
 	 */
-	public function set_return_path( $email ) {
-	}
+	public function set_return_path( $from_email ) {}
 
 	/**
 	 * Get a SendGrid-specific response with a helpful error.
@@ -328,15 +376,20 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get mailer debug information, that is helpful during support.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
 	 */
 	public function get_debug_info() {
 
 		$mg_text = array();
 
-		$options = $this->options->get_group( $this->mailer );
+		$options  = new \WPMailSMTP\Options();
+		$provider = $options->get_group( $this->mailer );
 
-		$mg_text[] = '<strong>Api Key:</strong> ' . ( ! empty( $options['api_key'] ) ? 'Yes' : 'No' );
+		$mg_text[] = '<strong>Api Key:</strong> ' . ( ! empty( $provider['api_key'] ) ? 'Yes' : 'No' );
 
 		return implode( '<br>', $mg_text );
 	}

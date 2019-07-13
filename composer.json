@@ -1,14 +1,7 @@
 {
   "name": "awesomemotive/wp-mail-smtp",
-  "description": "Reconfigures the wp_mail() function to use SMTP instead of mail().",
+  "description": "Reconfigures the wp_mail() function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.",
   "type": "wordpress-plugin",
-  "keywords": [
-    "mail",
-    "smtp",
-    "wp_mail",
-    "mailer",
-    "phpmailer"
-  ],
   "homepage": "https://wordpress.org/plugins/wp-mail-smtp/",
   "license": "GPL-3.0-or-later",
   "minimum-stability": "stable",
@@ -19,11 +12,28 @@
   "require": {
     "composer/installers": "~1.0",
     "php": ">=5.3.6",
-    "google/apiclient": "2.2.2"
+    "google/apiclient": "2.2.3"
   },
   "autoload": {
     "psr-4": {
       "WPMailSMTP\\": "src"
+    }
+  },
+  "require-dev": {
+    "wikimedia/composer-merge-plugin": "1.4.1"
+  },
+  "extra": {
+    "merge-plugin": {
+      "include": [
+        "src/Pro/composer.json"
+      ],
+      "recurse": true,
+      "replace": false,
+      "ignore-duplicates": false,
+      "merge-dev": true,
+      "merge-extra": true,
+      "merge-extra-deep": false,
+      "merge-scripts": true
     }
   }
 }

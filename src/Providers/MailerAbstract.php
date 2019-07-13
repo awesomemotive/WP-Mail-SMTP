@@ -2,9 +2,11 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
+use WPMailSMTP\WP;
 
 /**
  * Class MailerAbstract.
@@ -16,18 +18,26 @@ abstract class MailerAbstract implements MailerInterface {
 	/**
 	 * Which response code from HTTP provider is considered to be successful?
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var int
 	 */
 	protected $email_sent_code = 200;
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var Options
 	 */
 	protected $options;
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var MailCatcher
 	 */
 	protected $phpmailer;
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var string
 	 */
 	protected $mailer = '';
@@ -35,18 +45,26 @@ abstract class MailerAbstract implements MailerInterface {
 	/**
 	 * URL to make an API request to.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var string
 	 */
 	protected $url = '';
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $headers = array();
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $body = array();
 	/**
+	 * @since 1.0.0
+	 *
 	 * @var mixed
 	 */
 	protected $response = array();
@@ -63,7 +81,7 @@ abstract class MailerAbstract implements MailerInterface {
 		$this->options = new Options();
 		$this->mailer  = $this->options->get( 'mail', 'mailer' );
 
-		// Only non-SMTP mailers need URL.
+		// Only non-SMTP mailers need URL and extra processing for PHPMailer class.
 		if ( ! $this->options->is_mailer_smtp() && empty( $this->url ) ) {
 			return;
 		}
@@ -141,13 +159,14 @@ abstract class MailerAbstract implements MailerInterface {
 	/**
 	 * Set the request params, that goes to the body of the HTTP request.
 	 *
-	 * @since 1.0.0
+	 * @since    1.0.0
 	 *
 	 * @param array $param Key=>value of what should be sent to a 3rd party API.
 	 *
 	 * @internal param array $params
 	 */
 	protected function set_body_param( $param ) {
+
 		$this->body = Options::array_merge_recursive( $this->body, $param );
 	}
 
@@ -173,51 +192,25 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function set_header( $name, $value ) {
 
-		$process_value = function ( $value ) {
-			// Remove HTML tags.
-			$filtered = wp_strip_all_tags( $value, false );
-			// Remove multi-lines/tabs.
-			$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
-			// Remove whitespaces.
-			$filtered = trim( $filtered );
-
-			// Remove octets.
-			$found = false;
-			while ( preg_match( '/%[a-f0-9]{2}/i', $filtered, $match ) ) {
-				$filtered = str_replace( $match[0], '', $filtered );
-				$found    = true;
-			}
-
-			if ( $found ) {
-				// Strip out the whitespace that may now exist after removing the octets.
-				$filtered = trim( preg_replace( '/ +/', ' ', $filtered ) );
-			}
-
-			return $filtered;
-		};
-
 		$name = sanitize_text_field( $name );
-		if ( empty( $name ) ) {
-			return;
-		}
 
-		$value = $process_value( $value );
-
-		$this->headers[ $name ] = $value;
+		$this->headers[ $name ] = WP::sanitize_value( $value );
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_body() {
-		return apply_filters( 'wp_mail_smtp_providers_mailer_get_body', $this->body );
+
+		return apply_filters( 'wp_mail_smtp_providers_mailer_get_body', $this->body, $this->mailer );
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_headers() {
-		return apply_filters( 'wp_mail_smtp_providers_mailer_get_headers', $this->headers );
+
+		return apply_filters( 'wp_mail_smtp_providers_mailer_get_headers', $this->headers, $this->mailer );
 	}
 
 	/**
@@ -244,7 +237,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array|\WP_Error $response
+	 * @param mixed $response
 	 */
 	protected function process_response( $response ) {
 
@@ -258,7 +251,7 @@ abstract class MailerAbstract implements MailerInterface {
 			return;
 		}
 
-		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
+		if ( isset( $response['body'] ) && WP::is_json( $response['body'] ) ) {
 			$response['body'] = \json_decode( $response['body'] );
 		}
 
@@ -280,7 +273,8 @@ abstract class MailerAbstract implements MailerInterface {
 				'timeout'     => 15,
 				'httpversion' => '1.1',
 				'blocking'    => true,
-			)
+			),
+			$this->mailer
 		);
 	}
 
@@ -298,10 +292,14 @@ abstract class MailerAbstract implements MailerInterface {
 
 			if ( ! empty( $error ) ) {
 				// Add mailer to the beginning and save to display later.
-				Debug::set(
-					'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $this->mailer )->get_title() ) . "\r\n" .
-					$error
-				);
+				$message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $this->mailer )->get_title() ) . "\r\n";
+
+				$conflicts = new Conflicts();
+				if ( $conflicts->is_detected() ) {
+					$message .= 'Conflicts: ' . esc_html( $conflicts->get_conflict_name() ) . "\r\n";
+				}
+
+				Debug::set( $message . $error );
 			}
 		}
 
@@ -310,7 +308,7 @@ abstract class MailerAbstract implements MailerInterface {
 			Debug::clear();
 		}
 
-		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent );
+		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent, $this->mailer );
 	}
 
 	/**
@@ -321,6 +319,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @return string
 	 */
 	protected function get_response_error() {
+
 		return '';
 	}
 
@@ -335,19 +334,6 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * Check whether the string is a JSON or not.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $string
-	 *
-	 * @return bool
-	 */
-	protected function is_json( $string ) {
-		return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( json_last_error() === JSON_ERROR_NONE ) ? true : false;
-	}
-
-	/**
 	 * This method is relevant to SMTP and Pepipost.
 	 * All other custom mailers should override it with own information.
 	 *
@@ -356,12 +342,14 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @return string
 	 */
 	public function get_debug_info() {
+
 		global $phpmailer;
 
 		$smtp_text = array();
 
 		// Mail mailer has nothing to return.
 		if ( $this->options->is_mailer_smtp() ) {
+			// phpcs:disable
 			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( wp_strip_all_tags( $phpmailer->ErrorInfo ) );
 			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
 			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
@@ -369,8 +357,9 @@ abstract class MailerAbstract implements MailerInterface {
 			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Debug::pvar( $phpmailer->SMTPAutoTLS );
 			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Debug::pvar( $phpmailer->SMTPAuth );
 			if ( ! empty( $phpmailer->SMTPOptions ) ) {
-				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
+				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . wp_json_encode( $phpmailer->SMTPOptions ) . '</code>';
 			}
+			// phpcs:enable
 		}
 
 		$smtp_text[] = '<br><strong>Server:</strong>';

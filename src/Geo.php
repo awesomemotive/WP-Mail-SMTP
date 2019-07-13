@@ -1,0 +1,143 @@
+<?php
+
+namespace WPMailSMTP;
+
+/**
+ * Class Geo to work with location, domain, IPs etc.
+ *
+ * @since 1.5.0
+ */
+class Geo {
+
+	/**
+	 * Get the current site hostname.
+	 * Examples: example.com, localhost.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return string
+	 */
+	public static function get_site_domain() {
+
+		return ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
+	}
+
+	/**
+	 * Get the domain IP address.
+	 * Uses gethostbyname() which is quite slow, but this is done only one time.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $domain
+	 *
+	 * @return string
+	 */
+	public static function get_ip_by_domain( $domain ) {
+
+		if ( $domain === 'localhost' ) {
+			return '127.0.0.1';
+		}
+
+		return gethostbyname( $domain );
+	}
+
+	/**
+	 * Get the location coordinates by IP address.
+	 * We make a request to 3rd party services.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $ip
+	 *
+	 * @return array Empty array for localhost.
+	 */
+	public static function get_location_by_ip( $ip ) {
+
+		// Check for a non-local IP.
+		if ( empty( $ip ) || in_array( $ip, array( '127.0.0.1', '::1' ), true ) ) {
+			return array();
+		}
+
+		$request = wp_remote_get( 'https://ipapi.co/' . $ip . '/json' );
+
+		if ( ! is_wp_error( $request ) ) {
+
+			$request = json_decode( wp_remote_retrieve_body( $request ), true );
+
+			if ( ! empty( $request['latitude'] ) && ! empty( $request['longitude'] ) ) {
+
+				$data = array(
+					'latitude'  => sanitize_text_field( $request['latitude'] ),
+					'longitude' => sanitize_text_field( $request['longitude'] ),
+					'city'      => sanitize_text_field( $request['city'] ),
+					'region'    => sanitize_text_field( $request['region'] ),
+					'country'   => sanitize_text_field( $request['country'] ),
+					'postal'    => sanitize_text_field( $request['postal'] ),
+				);
+
+				return $data;
+			}
+		}
+
+		$request = wp_remote_get( 'https://tools.keycdn.com/geo.json?host=' . $ip );
+
+		if ( ! is_wp_error( $request ) ) {
+
+			$request = json_decode( wp_remote_retrieve_body( $request ), true );
+
+			if ( ! empty( $request['data']['geo']['latitude'] ) && ! empty( $request['data']['geo']['longitude'] ) ) {
+
+				$data = array(
+					'latitude'  => sanitize_text_field( $request['data']['geo']['latitude'] ),
+					'longitude' => sanitize_text_field( $request['data']['geo']['longitude'] ),
+					'city'      => sanitize_text_field( $request['data']['geo']['city'] ),
+					'region'    => sanitize_text_field( $request['data']['geo']['region_name'] ),
+					'country'   => sanitize_text_field( $request['data']['geo']['country_code'] ),
+					'postal'    => sanitize_text_field( $request['data']['geo']['postal_code'] ),
+				);
+
+				return $data;
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * This routine calculates the distance between two points (given the latitude/longitude of those points).
+	 * Definitions: South latitudes are negative, east longitudes are positive.
+	 *
+	 * @see   https://www.geodatasource.com/developers/php
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param float  $lat1 Latitude of point 1 (in decimal degrees).
+	 * @param float  $lon1 Longitude of point 1 (in decimal degrees).
+	 * @param float  $lat2 Latitude of point 2 (in decimal degrees).
+	 * @param float  $lon2 Longitude of point 2 (in decimal degrees).
+	 * @param string $unit Supported values: M, K, N. Miles by default.
+	 *
+	 * @return float|int
+	 */
+	public static function get_distance_between( $lat1, $lon1, $lat2, $lon2, $unit = 'M' ) {
+
+		if ( ( $lat1 === $lat2 ) && ( $lon1 === $lon2 ) ) {
+			return 0;
+		}
+
+		$theta = $lon1 - $lon2;
+		$dist  = sin( deg2rad( $lat1 ) ) * sin( deg2rad( $lat2 ) ) + cos( deg2rad( $lat1 ) ) * cos( deg2rad( $lat2 ) ) * cos( deg2rad( $theta ) );
+		$dist  = acos( $dist );
+		$dist  = rad2deg( $dist );
+		$miles = $dist * 60 * 1.1515;
+		$unit  = strtoupper( $unit );
+
+		if ( $unit === 'K' ) {
+			return ( $miles * 1.609344 );
+		} elseif ( $unit === 'N' ) {
+			return ( $miles * 0.8684 );
+		}
+
+		return $miles;
+	}
+}

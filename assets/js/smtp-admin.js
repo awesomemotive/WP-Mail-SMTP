@@ -50,18 +50,18 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 
-	$( '#wp-mail-smtp-wpforms-dismiss' ).on( 'click', function () {
+	$( '#wp-mail-smtp-pro-banner-dismiss' ).on( 'click', function () {
 		$.ajax( {
 			 url: ajaxurl,
 			 dataType: 'json',
 			 type: 'POST',
 			 data: {
 				 action: 'wp_mail_smtp_ajax',
-				 task: 'wpforms_dismiss'
+				 task: 'pro_banner_dismiss'
 			 }
 		 } )
 		 .always( function () {
-			 $( '#wp-mail-smtp-wpforms' ).fadeOut( 'fast' );
+			 $( '#wp-mail-smtp-pro-banner' ).fadeOut( 'fast' );
 		 } );
 	} );
 
@@ -73,7 +73,7 @@ jQuery( document ).ready( function ( $ ) {
 		$( '#wp-mail-smtp-debug .error-log-note' ).toggle();
 	} );
 
-	$( '#wp-mail-smtp-gmail-remove' ).on( 'click', function () {
-		return confirm( window.wp_mail_smtp.text_gmail_remove );
+	$( '.js-wp-mail-smtp-provider-remove' ).on( 'click', function () {
+		return confirm( window.wp_mail_smtp.text_provider_remove );
 	} );
 } );

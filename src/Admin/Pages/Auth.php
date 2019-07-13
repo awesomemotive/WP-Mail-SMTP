@@ -26,7 +26,11 @@ class Auth {
 
 		$auth = wp_mail_smtp()->get_providers()->get_auth( Options::init()->get( 'mail', 'mailer' ) );
 
-		if ( $auth && $auth instanceof AuthAbstract ) {
+		if (
+			$auth &&
+			$auth instanceof AuthAbstract &&
+			method_exists( $auth, 'process' )
+		) {
 			$auth->process();
 		}
 	}

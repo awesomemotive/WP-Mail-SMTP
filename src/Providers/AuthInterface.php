@@ -10,10 +10,21 @@ namespace WPMailSMTP\Providers;
 interface AuthInterface {
 
 	/**
-	 * Do something for this Auth implementation.
+	 * Whether user saved Client ID/App ID and Client Secret/App Password or not.
+	 * Both options are required.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @return bool
 	 */
-	public function process();
+	public function is_clients_saved();
 
+	/**
+	 * Whether we have an access and refresh tokens or not.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	public function is_auth_required();
 }

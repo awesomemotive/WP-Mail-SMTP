@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers\Mailgun;
 
 use WPMailSMTP\Providers\MailerAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class Mailer.
@@ -185,6 +186,42 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Redefine the way custom headers are process for this mailer - they should be in body.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param array $headers
+	 */
+	public function set_headers( $headers ) {
+
+		foreach ( $headers as $header ) {
+			$name  = isset( $header[0] ) ? $header[0] : false;
+			$value = isset( $header[1] ) ? $header[1] : false;
+
+			$this->set_body_header( $name, $value );
+		}
+
+		// Add custom PHPMailer-specific header.
+		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
+	}
+
+	/**
+	 * This mailer supports email-related custom headers inside a body of the message with a special prefix "h:".
+	 *
+	 * @since 1.5.0
+	 */
+	public function set_body_header( $name, $value ) {
+
+		$name = sanitize_text_field( $name );
+
+		$this->set_body_param(
+			array(
+				'h:' . $name => WP::sanitize_value( $value ),
+			)
+		);
+	}
+
+	/**
 	 * It's the last one, so we can modify the whole body.
 	 *
 	 * @since 1.0.0
@@ -211,7 +248,8 @@ class Mailer extends MailerAbstract {
 				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
 					$file = file_get_contents( $attachment[0] );
 				}
-			} catch ( \Exception $e ) {
+			}
+			catch ( \Exception $e ) {
 				$file = false;
 			}
 

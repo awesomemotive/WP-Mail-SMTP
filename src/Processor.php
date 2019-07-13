@@ -113,6 +113,7 @@ class Processor {
 	 * This method will be called every time 'smtp' and 'mail' mailers will be used to send emails.
 	 *
 	 * @since 1.3.0
+	 * @since 1.5.0 Added a do_action() to be able to hook into.
 	 *
 	 * @param bool $is_sent
 	 * @param array $to
@@ -133,6 +134,8 @@ class Processor {
 		} else {
 			Debug::clear();
 		}
+
+		do_action( 'wp_mail_smtp_mailcatcher_smtp_send_after', $is_sent, $to, $cc, $bcc, $subject, $body, $from );
 	}
 
 	/**
@@ -199,7 +202,7 @@ class Processor {
 	public function get_default_email() {
 
 		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
-		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
+		$server_name = Geo::get_site_domain();
 
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( $server_name );

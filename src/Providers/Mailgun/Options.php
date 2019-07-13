@@ -20,7 +20,7 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.png',
+				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.svg',
 				'slug'        => 'mailgun',
 				'title'       => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
 				'description' => sprintf(
@@ -57,11 +57,18 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'Private API Key', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]" type="text"
-					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
-					<?php echo $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ? 'disabled' : ''; ?>
-					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key" spellcheck="false"
-				/>
+				<?php if ( $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
+					<input type="text" disabled value="****************************************"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
+					/>
+					<?php $this->display_const_set_message( 'WPMS_MAILGUN_API_KEY' ); ?>
+				<?php else : ?>
+					<input type="text" spellcheck="false"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
+						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
+					/>
+				<?php endif; ?>
 				<p class="desc">
 					<?php
 					printf(

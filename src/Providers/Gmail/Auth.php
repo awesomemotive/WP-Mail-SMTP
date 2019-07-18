@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
@@ -35,6 +36,24 @@ class Auth extends AuthAbstract {
 
 			$this->client = $this->get_client();
 		}
+	}
+
+	/**
+	 * Get the url, that users will be redirected back to finish the OAuth process.
+	 *
+	 * @since 1.5.2 Returned to the old, pre-1.5, structure of the link to preserve BC.
+	 *
+	 * @return string
+	 */
+	public static function get_plugin_auth_url() {
+
+		return add_query_arg(
+			array(
+				'page' => Area::SLUG,
+				'tab'  => 'auth',
+			),
+			admin_url( 'options-general.php' )
+		);
 	}
 
 	/**
@@ -140,9 +159,16 @@ class Auth extends AuthAbstract {
 	 */
 	public function process() {
 
+		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) {
+			wp_safe_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
+			exit;
+		}
+
 		// We can't process without saved client_id/secret.
 		if ( ! $this->is_clients_saved() ) {
-			Debug::set( 'There was an error while processing the Google authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.' );
+			Debug::set(
+				esc_html__( 'There was an error while processing the Google authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.', 'wp-mail-smtp' )
+			);
 			wp_safe_redirect(
 				add_query_arg(
 					'error',

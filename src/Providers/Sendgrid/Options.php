@@ -38,7 +38,7 @@ class Options extends OptionsAbstract {
 					),
 					'<a href="https://sendgrid.com" target="_blank" rel="noopener noreferrer">',
 					'</a>',
-					'<a href="https://wpforms.com/fix-wordpress-email-notifications-with-sendgrid/" target="_blank" rel="noopener noreferrer">',
+					'<a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 			)

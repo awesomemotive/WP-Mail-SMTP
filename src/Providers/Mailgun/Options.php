@@ -38,7 +38,7 @@ class Options extends OptionsAbstract {
 					),
 					'<a href="https://www.mailgun.com" target="_blank" rel="noopener noreferrer">',
 					'</a>',
-					'<a href="https://wpforms.com/how-to-send-wordpress-emails-with-mailgun/" target="_blank" rel="noopener noreferrer">',
+					'<a href="https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 			)

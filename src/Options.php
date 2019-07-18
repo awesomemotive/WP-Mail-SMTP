@@ -146,6 +146,7 @@ class Options {
 			),
 			'smtp' => array(
 				'autotls' => true,
+				'auth'    => true,
 			),
 		);
 	}

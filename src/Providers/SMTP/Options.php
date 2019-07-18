@@ -36,7 +36,7 @@ class Options extends OptionsAbstract {
 							),
 						)
 					),
-					'https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/'
+					'https://wpmailsmtp.com/docs/how-to-set-up-the-other-smtp-mailer-in-wp-mail-smtp/'
 				),
 			)
 		);

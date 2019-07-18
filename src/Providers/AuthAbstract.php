@@ -51,6 +51,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 * @since 1.0.0
 	 */
 	protected function include_vendor_lib() {
+
 		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 	}
 
@@ -62,6 +63,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 * @return string
 	 */
 	public static function get_plugin_auth_url() {
+
 		return add_query_arg( 'tab', 'auth', wp_mail_smtp()->get_admin()->get_admin_page_url() );
 	}
 
@@ -132,6 +134,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 * @inheritdoc
 	 */
 	public function is_clients_saved() {
+
 		return ! empty( $this->options['client_id'] ) && ! empty( $this->options['client_secret'] );
 	}
 
@@ -139,6 +142,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 * @inheritdoc
 	 */
 	public function is_auth_required() {
+
 		return empty( $this->options['access_token'] ) || empty( $this->options['refresh_token'] );
 	}
 }

@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 Requires PHP: 5.3
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -59,7 +59,7 @@ Mailgun SMTP is a popular SMTP service provider that allows you to send large qu
 
 WP Mail SMTP plugin offers a native integration with MailGun. All you have to do is connect your Mailgun account, and you will improve your email deliverability.
 
-Read our <a href="https://wpforms.com/how-to-send-wordpress-emails-with-mailgun/" rel="friend">Mailgun documentation</a> for more details.
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/" rel="friend">Mailgun documentation</a> for more details.
 
 = Gmail SMTP =
 
@@ -69,13 +69,13 @@ This allows you to use your <a href="http://www.wpbeginner.com/beginners-guide/h
 
 Unlike other Gmail SMTP plugins, our Gmail SMTP option uses OAuth to authenticate your Google account, keeping your login information 100% secure.
 
-Read our <a href="https://wpforms.com/how-to-securely-send-wordpress-emails-using-gmail-smtp/" rel="friend">Gmail documentation</a> for more details.
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/" rel="friend">Gmail documentation</a> for more details.
 
 = SendGrid SMTP =
 
 SendGrid has a free SMTP plan that you can use to send up to 100 emails per day. With our native SendGrid SMTP integration, you can easily and securely set up SendGrid SMTP on your WordPress site.
 
-Read our <a href="https://wpforms.com/fix-wordpress-email-notifications-with-sendgrid/" rel="friend">SendGrid documentation</a> for more details.
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/" rel="friend">SendGrid documentation</a> for more details.
 
 = Microsoft SMTP (Outlook.com and Office 365) =
 
@@ -84,6 +84,8 @@ Many business use Outlook.com or Office 365 to their to power their email. For t
 = Amazon SES SMTP =
 
 Advanced or technical users can harness the power of Amazon AWS (Amazon Web Services) with the Amazon SES mailer. With this integration, you can send a high volume of emails at a very reasonable rate.
+
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-amazon-ses-mailer-in-wp-mail-smtp/" rel="friend">Amazon SES documentation</a> for more details.
 
 = Other SMTP =
 
@@ -97,7 +99,7 @@ You can set the following options:
 * Choose to use SMTP authentication or not.
 * Specify an SMTP username and password.
 
-To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" rel="friend">SMTP documentation</a>.
+To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-other-smtp-mailer-in-wp-mail-smtp/" rel="friend">SMTP documentation</a>.
 
 We hope that you find WP Mail SMTP plugin helpful!
 
@@ -194,6 +196,11 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 1.5.2 - 2019-07-18 =
+* Fixed: "Redirect URI mismatch" error for "Gmail" mailer when trying to re-authorize an account that was initially created with version < v1.5.0.
+* Changed: Make "Authentication" setting in "Other SMTP" mailer ON by default for new users.
+* Changed: Mailers docs links now point to wpmailsmtp.com own site.
 
 = 1.5.1 - 2019-07-12 =
 * Fixed: Duplicated emails sent to the first recipient in a loop (and others not receiving their emails).

@@ -597,7 +597,7 @@ Lead Developer, WP Mail SMTP';
 				'description' => array(
 					'<strong>' . esc_html__( 'Error due to unsolicited and/or bulk e-mail.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'This means the connection to your SMTP host was made successfully, but the host rejected the email.', 'wp-mail-smtp' ),
-					esc_html__( 'Typically this error is returned when your are sending too many e-mails or e-mails that have been identified as spam.', 'wp-mail-smtp' ),
+					esc_html__( 'Typically this error is returned when you are sending too many e-mails or e-mails that have been identified as spam.', 'wp-mail-smtp' ),
 				),
 				'steps'       => array(
 					esc_html__( 'Check the emails that are sending are sending individually. Example: email is not sending to 30 recipients. You can install any WordPress e-mail logging plugin to do that.', 'wp-mail-smtp' ),

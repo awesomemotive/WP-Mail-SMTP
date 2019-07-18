@@ -18,6 +18,7 @@ abstract class PageAbstract implements PageInterface {
 	 * @inheritdoc
 	 */
 	public function get_link() {
+
 		return esc_url(
 			add_query_arg(
 				'tab',
@@ -51,6 +52,7 @@ abstract class PageAbstract implements PageInterface {
 	 * @since 1.0.0
 	 */
 	public function wp_nonce_field() {
+
 		wp_nonce_field( Area::SLUG . '-' . $this->slug );
 	}
 
@@ -61,6 +63,7 @@ abstract class PageAbstract implements PageInterface {
 	 * @since 1.0.0
 	 */
 	public function check_admin_referer() {
+
 		check_admin_referer( Area::SLUG . '-' . $this->slug );
 	}
 
@@ -70,6 +73,7 @@ abstract class PageAbstract implements PageInterface {
 	 * @since 1.5.0
 	 */
 	public function display_save_btn() {
+
 		?>
 
 		<p class="wp-mail-smtp-submit">

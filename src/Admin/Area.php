@@ -731,6 +731,7 @@ class Area {
 	 * Get plugin admin area page URL.
 	 *
 	 * @since 1.0.0
+	 * @since 1.5.0 URL is changed to support the top level position of the plugin admin area.
 	 *
 	 * @param string $page
 	 *

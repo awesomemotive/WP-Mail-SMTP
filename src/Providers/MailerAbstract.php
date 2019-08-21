@@ -145,33 +145,11 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function set_subject( $subject ) {
-
-		$this->set_body_param(
-			array(
-				'subject' => $subject,
-			)
-		);
-	}
-
-	/**
-	 * Set the request params, that goes to the body of the HTTP request.
+	 * Set the email headers.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
-	 * @param array $param Key=>value of what should be sent to a 3rd party API.
-	 *
-	 * @internal param array $params
-	 */
-	protected function set_body_param( $param ) {
-
-		$this->body = Options::array_merge_recursive( $this->body, $param );
-	}
-
-	/**
-	 * @inheritdoc
+	 * @param array $headers List of key=>value pairs.
 	 */
 	public function set_headers( $headers ) {
 
@@ -188,7 +166,12 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set individual header key=>value pair for the email.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $name
+	 * @param string $value
 	 */
 	public function set_header( $name, $value ) {
 
@@ -198,7 +181,41 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set email subject.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $subject
+	 */
+	public function set_subject( $subject ) {
+
+		$this->set_body_param(
+			array(
+				'subject' => $subject,
+			)
+		);
+	}
+
+	/**
+	 * Set the request params, that goes to the body of the HTTP request.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $param Key=>value of what should be sent to a 3rd party API.
+	 *
+	 * @internal param array $params
+	 */
+	protected function set_body_param( $param ) {
+
+		$this->body = Options::array_merge_recursive( $this->body, $param );
+	}
+
+	/**
+	 * Get the email body.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string|array
 	 */
 	public function get_body() {
 

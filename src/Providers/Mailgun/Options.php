@@ -63,7 +63,7 @@ class Options extends OptionsAbstract {
 					/>
 					<?php $this->display_const_set_message( 'WPMS_MAILGUN_API_KEY' ); ?>
 				<?php else : ?>
-					<input type="text" spellcheck="false"
+					<input type="password" spellcheck="false"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
 						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
@@ -74,7 +74,7 @@ class Options extends OptionsAbstract {
 					printf(
 						/* translators: %s - API key link. */
 						esc_html__( 'Follow this link to get an API Key from Mailgun: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.mailgun.com/app/account/security" target="_blank" rel="noopener noreferrer">' .
+						'<a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get a Private API Key', 'wp-mail-smtp' ) .
 						'</a>'
 					);

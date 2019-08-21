@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP Pro
- * Version: 1.5.2
- * Plugin URI: https://wpforms.com/
+ * Version: 1.6.0
+ * Plugin URI: https://wpmailsmtp.com/
  * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
  * Author: WPForms
  * Author URI: https://wpforms.com/
@@ -24,6 +24,9 @@
  * Specifically aimed at WP Multisite users, you can set the options for this plugin as
  * constants in wp-config.php. Copy the code below into wp-config.php and tweak settings.
  * Values from constants are NOT stripslash()'ed.
+ *
+ * When enabled, make sure to comment out (at the beginning of the line using //) those constants that you do not need,
+ * or remove them completely, so they won't interfere with plugin settings.
  */
 
 /*
@@ -33,8 +36,20 @@ define( 'WPMS_MAIL_FROM', 'mail@example.com' );
 define( 'WPMS_MAIL_FROM_FORCE', true ); // True turns it on, false turns it off.
 define( 'WPMS_MAIL_FROM_NAME', 'From Name' );
 define( 'WPMS_MAIL_FROM_NAME_FORCE', true ); // True turns it on, false turns it off.
-define( 'WPMS_MAILER', 'smtp' ); // Possible values: 'mail', 'gmail', 'mailgun', 'sendgrid', 'smtp'.
-define( 'WPMS_SET_RETURN_PATH', true ); // Sets $phpmailer->Sender if true.
+define( 'WPMS_MAILER', 'sendinblue' ); // Possible values: 'mail', 'sendinblue', 'mailgun', 'sendgrid', 'gmail', 'smtp'.
+define( 'WPMS_SET_RETURN_PATH', true ); // Sets $phpmailer->Sender if true, relevant only for Other SMTP mailer.
+
+// Recommended mailer.
+define( 'WPMS_SENDINBLUE_API_KEY', '' );
+
+define( 'WPMS_MAILGUN_API_KEY', '' );
+define( 'WPMS_MAILGUN_DOMAIN', '' );
+define( 'WPMS_MAILGUN_REGION', 'US' ); // or 'EU' for Europe.
+
+define( 'WPMS_SENDGRID_API_KEY', '' );
+
+define( 'WPMS_GMAIL_CLIENT_ID', '' );
+define( 'WPMS_GMAIL_CLIENT_SECRET', '' );
 
 define( 'WPMS_SMTP_HOST', 'localhost' ); // The SMTP mail host.
 define( 'WPMS_SMTP_PORT', 25 ); // The SMTP server port number.
@@ -43,15 +58,6 @@ define( 'WPMS_SMTP_AUTH', true ); // True turns it on, false turns it off.
 define( 'WPMS_SMTP_USER', 'username' ); // SMTP authentication username, only used if WPMS_SMTP_AUTH is true.
 define( 'WPMS_SMTP_PASS', 'password' ); // SMTP authentication password, only used if WPMS_SMTP_AUTH is true.
 define( 'WPMS_SMTP_AUTOTLS', true ); // True turns it on, false turns it off.
-
-define( 'WPMS_GMAIL_CLIENT_ID', '' );
-define( 'WPMS_GMAIL_CLIENT_SECRET', '' );
-
-define( 'WPMS_MAILGUN_API_KEY', '' );
-define( 'WPMS_MAILGUN_DOMAIN', '' );
-define( 'WPMS_MAILGUN_REGION', 'US' ); // or 'EU' for Europe.
-
-define( 'WPMS_SENDGRID_API_KEY', '' );
 */
 
 /**
@@ -134,7 +140,7 @@ if ( ! function_exists( 'wp_mail_smtp_check_pro_loading_allowed' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '1.5.2' );
+	define( 'WPMS_PLUGIN_VER', '1.6.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.3.6' );

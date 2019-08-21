@@ -154,7 +154,7 @@ class Area {
 	public function display_setup_notice() {
 
 		// Bail if we're not on a plugin page.
-		if ( ! $this->is_admin_page() ) {
+		if ( ! $this->is_admin_page( 'general' ) ) {
 			return;
 		}
 
@@ -179,7 +179,7 @@ class Area {
 						'strong' => array(),
 					)
 				),
-				'#wp-mail-smtp-setting-row-mailer'
+				wp_mail_smtp()->get_admin()->get_admin_page_url( self::SLUG . '#wp-mail-smtp-setting-row-mailer' )
 			),
 			WP::ADMIN_NOTICE_INFO
 		);
@@ -233,7 +233,7 @@ class Area {
 	 * Enqueue admin area scripts and styles.
 	 *
 	 * @since 1.0.0
-	 * @since 1.5.0 Added ajax tasks for plugin installation/activation.
+	 * @since 1.5.0 Added new assets for new pages.
 	 *
 	 * @param string $hook
 	 */
@@ -273,7 +273,7 @@ class Area {
 		if ( $this->is_admin_page( 'logs' ) ) {
 			\wp_enqueue_style(
 				'wp-mail-smtp-admin-logs',
-				apply_filters( 'wp_mail_smtp_admin_enqueue_assets_logs_css', \wp_mail_smtp()->assets_url . '/css/smtp-logs.min.css' ),
+				apply_filters( 'wp_mail_smtp_admin_enqueue_assets_logs_css', '' ),
 				array( 'wp-mail-smtp-admin' ),
 				WPMS_PLUGIN_VER
 			);
@@ -538,10 +538,12 @@ class Area {
 
 		if ( empty( $this->pages ) ) {
 			$this->pages = array(
-				'settings' => new Pages\Settings(),
-				'test'     => new Pages\Test(),
-				'misc'     => new Pages\Misc(),
-				'auth'     => new Pages\Auth(),
+				'settings' => new Pages\SettingsTab(),
+				'test'     => new Pages\TestTab(),
+				'logs'     => new Pages\LogsTab(),
+				'control'  => new Pages\ControlTab(),
+				'misc'     => new Pages\MiscTab(),
+				'auth'     => new Pages\AuthTab(),
 			);
 		}
 
@@ -617,6 +619,26 @@ class Area {
 	}
 
 	/**
+	 * Give ability to use either admin area option or a filter to hide error notices about failed email delivery.
+	 * Filter has higher priority and overrides an option.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return bool
+	 */
+	public function is_error_delivery_notice_enabled() {
+
+		$is_hard_enabled = (bool) apply_filters( 'wp_mail_smtp_admin_is_error_delivery_notice_enabled', true );
+
+		// If someone changed the value to false using a filter - disable completely.
+		if ( ! $is_hard_enabled ) {
+			return false;
+		}
+
+		return ! (bool) Options::init()->get( 'general', 'email_delivery_errors_hidden' );
+	}
+
+	/**
 	 * All possible plugin forms manipulation will be done here.
 	 *
 	 * @since 1.0.0
@@ -670,7 +692,7 @@ class Area {
 			wp_send_json_error( $data );
 		}
 
-		$task = sanitize_key( $_POST['task'] );
+		$task = sanitize_key( $_POST['task'] ); // phpcs:ignore
 
 		switch ( $task ) {
 			case 'pro_banner_dismiss':
@@ -684,6 +706,17 @@ class Area {
 
 			case 'about_plugin_activate':
 				Pages\About::ajax_plugin_activate();
+				break;
+
+			case 'notice_dismiss':
+				$notice = sanitize_key( $_POST['notice'] ); // phpcs:ignore
+				$mailer = sanitize_key( $_POST['mailer'] ); // phpcs:ignore
+				if ( empty( $notice ) || empty( $mailer ) ) {
+					break;
+				}
+
+				update_user_meta( get_current_user_id(), "wp_mail_smtp_notice_{$notice}_for_{$mailer}_dismissed", true );
+				$data['message'] = esc_html__( 'Educational notice for this mailer was successfully dismissed.', 'wp-mail-smtp' );
 				break;
 
 			default:

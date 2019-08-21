@@ -46,6 +46,7 @@ class Geo {
 	 * We make a request to 3rd party services.
 	 *
 	 * @since 1.5.0
+	 * @since 1.6.0 Added new geo API endpoint, provided by WPForms.
 	 *
 	 * @param string $ip
 	 *
@@ -56,6 +57,24 @@ class Geo {
 		// Check for a non-local IP.
 		if ( empty( $ip ) || in_array( $ip, array( '127.0.0.1', '::1' ), true ) ) {
 			return array();
+		}
+
+		$request = wp_remote_get( 'https://geo.wpforms.com/v2/geolocate/json/' . $ip );
+
+		if ( ! is_wp_error( $request ) ) {
+			$request = json_decode( wp_remote_retrieve_body( $request ), true );
+			if ( ! empty( $request['latitude'] ) && ! empty( $request['longitude'] ) ) {
+				$data = array(
+					'latitude'  => sanitize_text_field( $request['latitude'] ),
+					'longitude' => sanitize_text_field( $request['longitude'] ),
+					'city'      => sanitize_text_field( $request['city'] ),
+					'region'    => sanitize_text_field( $request['region_name'] ),
+					'country'   => sanitize_text_field( $request['country_code'] ),
+					'postal'    => sanitize_text_field( $request['zip_code'] ),
+				);
+
+				return $data;
+			}
 		}
 
 		$request = wp_remote_get( 'https://ipapi.co/' . $ip . '/json' );

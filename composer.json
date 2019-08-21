@@ -10,9 +10,10 @@
     "sort-packages": true
   },
   "require": {
-    "composer/installers": "~1.0",
     "php": ">=5.3.6",
-    "google/apiclient": "2.2.3"
+    "composer/installers": "~1.0",
+    "google/apiclient": "2.2.3",
+    "sendinblue/api-v3-sdk": "^6.1.0"
   },
   "autoload": {
     "psr-4": {

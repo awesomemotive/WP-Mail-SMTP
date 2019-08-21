@@ -68,7 +68,7 @@ class Migration {
 
 		Options::init()->set( $this->new_values, true );
 
-		// Removing all options will be enabled some time in the future.
+		// Removing all old options will be enabled some time in the future.
 		// $this->clean_deprecated_data();
 	}
 

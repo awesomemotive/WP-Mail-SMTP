@@ -59,45 +59,23 @@ class Logs extends PageAbstract {
 			</h1>
 		</div>
 
-		<div class="wp-mail-smtp-page wp-mail-smtp-page-<?php echo esc_attr( $this->slug ); ?>">
+		<div class="wp-mail-smtp-page-upsell">
+			<h2><?php esc_html_e( 'Unlock Email Logging', 'wp-mail-smtp' ); ?></h2>
 
-			<h1 class="screen-reader-text">
-				<?php echo esc_html( $this->get_label() ); ?>
-			</h1>
+			<h3>
+				<?php esc_html_e( 'Keep track of every email sent from your WordPress site with email logging. ', 'wp-mail-smtp' ); ?><br>
+				<?php esc_html_e( 'Troubleshoot sending issues, recover lost emails, and more!', 'wp-mail-smtp' ); ?>
+			</h3>
 
-			<div class="wp-mail-smtp-logs-upsell">
-				<div class="wp-mail-smtp-logs-upsell-content">
-					<h2>
-						<?php esc_html_e( 'View and Manage All Sent Emails inside WordPress', 'wp-mail-smtp' ); ?>
-					</h2>
+			<div class="wp-mail-smtp-page-upsell-images">
+				<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/logs/archive.png' ); ?>" alt="<?php esc_attr_e( 'Logs Archive Page Screenshot', 'wp-mail-smtp' ); ?>">
+				<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/logs/single.png' ); ?>" alt="<?php esc_attr_e( 'Logs Single Page Screenshot', 'wp-mail-smtp' ); ?>">
+			</div>
 
-					<p>
-						<strong><?php esc_html_e( 'Sent emails are not stored in WP Mail SMTP Lite.', 'wp-mail-smtp' ); ?></strong><br>
-						<?php esc_html_e( 'Once you upgrade to WP Mail SMTP Pro, all future sent emails will be stored in your WordPress database and displayed on this Logs screen.', 'wp-mail-smtp' ); ?>
-					</p>
-
-					<div class="wp-mail-smtp-clear">
-						<ul class="left">
-							<li><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'View Sent Emails in Dashboard', 'wp-mail-smtp' ); ?></li>
-							<li><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'View Emails Sent Status', 'wp-mail-smtp' ); ?></li>
-						</ul>
-						<ul class="right">
-							<li><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Filter All Emails', 'wp-mail-smtp' ); ?></li>
-							<li><span class="dashicons dashicons-yes"></span> <?php esc_html_e( 'Search for Specific Emails', 'wp-mail-smtp' ); ?></li>
-						</ul>
-						<div class="clear"></div>
-					</div>
-				</div>
-
-				<div class="wp-mail-smtp-logs-upsell-button">
-					<a href="https://wpmailsmtp.com/lite-upgrade/?discount=LITEUPGRADE&amp;utm_source=WordPress&amp;utm_medium=logs&amp;utm_campaign=liteplugin" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange wp-mail-smtp-upgrade-modal" target="_blank" rel="noopener noreferrer">
-						<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro Now', 'wp-mail-smtp' ); ?>
-					</a>
-					<br>
-					<p style="margin: 10px 0 0;font-style:italic;font-size: 13px;">
-						<?php esc_html_e( 'and start logging all emails!', 'wp-mail-smtp' ); ?>
-					</p>
-				</div>
+			<div class="wp-mail-smtp-page-upsell-button">
+				<a href="https://wpmailsmtp.com/lite-upgrade/?discount=LITEUPGRADE&amp;utm_source=WordPress&amp;utm_medium=logs&amp;utm_campaign=liteplugin" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange wp-mail-smtp-upgrade-modal" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 
 		</div>

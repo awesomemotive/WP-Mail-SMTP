@@ -384,14 +384,9 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_debug_info() {
 
-		$mg_text = array();
+		$sendgrid_text[] = '<strong>Api Key:</strong> ' . ( $this->is_mailer_complete() ? 'Yes' : 'No' );
 
-		$options  = new \WPMailSMTP\Options();
-		$provider = $options->get_group( $this->mailer );
-
-		$mg_text[] = '<strong>Api Key:</strong> ' . ( ! empty( $provider['api_key'] ) ? 'Yes' : 'No' );
-
-		return implode( '<br>', $mg_text );
+		return implode( '<br>', $sendgrid_text );
 	}
 
 	/**

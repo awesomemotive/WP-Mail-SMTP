@@ -211,6 +211,7 @@ class Core {
 	 * Whether the Pro part of the plugin is allowed to be loaded.
 	 *
 	 * @since 1.5.0
+	 * @since 1.6.0 Added a filter.
 	 *
 	 * @return bool
 	 */
@@ -226,7 +227,7 @@ class Core {
 			$is_allowed = false;
 		}
 
-		return $is_allowed;
+		return apply_filters( 'wp_mail_smtp_core_is_pro_allowed', $is_allowed );
 	}
 
 	/**
@@ -404,6 +405,7 @@ class Core {
 	 * Display all debug mail-delivery related notices.
 	 *
 	 * @since 1.3.0
+	 * @since 1.6.0 Added a filter that allows to hide debug errors.
 	 */
 	public static function display_general_notices() {
 
@@ -434,57 +436,56 @@ class Core {
 			return;
 		}
 
-		$notice = Debug::get_last();
+		if ( wp_mail_smtp()->get_admin()->is_error_delivery_notice_enabled() ) {
 
-		if ( ! empty( $notice ) ) {
-			?>
+			$notice = Debug::get_last();
 
-			<div class="notice <?php echo esc_attr( WP::ADMIN_NOTICE_ERROR ); ?>">
-				<p>
-					<?php
-					printf(
-						wp_kses( /* translators: %s - plugin name and its version. */
-							__( '<strong>EMAIL DELIVERY ERROR:</strong> the plugin %s logged this error during the last time it tried to send an email:', 'wp-mail-smtp' ),
-							array(
-								'strong' => array(),
-							)
-						),
-						esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER )
-					);
-					?>
-				</p>
+			if ( ! empty( $notice ) ) {
+				?>
 
-				<blockquote>
-					<pre><?php echo $notice; ?></pre>
-				</blockquote>
-
-				<p>
-					<?php
-					if ( ! wp_mail_smtp()->get_admin()->is_admin_page() ) {
+				<div class="notice <?php echo esc_attr( WP::ADMIN_NOTICE_ERROR ); ?>">
+					<p>
+						<?php
 						printf(
-							wp_kses( /* translators: %s - plugin admin page URL. */
-								__( 'Please review your WP Mail SMTP settings in <a href="%s">plugin admin area</a>.' ) . ' ',
+							wp_kses( /* translators: %s - plugin name and its version. */
+								__( '<strong>EMAIL DELIVERY ERROR:</strong> the plugin %s logged this error during the last time it tried to send an email:', 'wp-mail-smtp' ),
 								array(
-									'a' => array(
-										'href' => array(),
-									),
+									'strong' => array(),
 								)
 							),
-							esc_url( wp_mail_smtp()->get_admin()->get_admin_page_url() )
+							esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER )
 						);
-					}
+						?>
+					</p>
 
-					esc_html_e( 'Consider running an email test after fixing it.', 'wp-mail-smtp' );
-					?>
-				</p>
-			</div>
+					<blockquote>
+						<pre><?php echo $notice; ?></pre>
+					</blockquote>
 
-			<?php
-			return;
+					<p>
+						<?php
+						if ( ! wp_mail_smtp()->get_admin()->is_admin_page() ) {
+							printf(
+								wp_kses( /* translators: %s - plugin admin page URL. */
+									__( 'Please review your WP Mail SMTP settings in <a href="%s">plugin admin area</a>.' ) . ' ',
+									array(
+										'a' => array(
+											'href' => array(),
+										),
+									)
+								),
+								esc_url( wp_mail_smtp()->get_admin()->get_admin_page_url() )
+							);
+						}
+
+						esc_html_e( 'Consider running an email test after fixing it.', 'wp-mail-smtp' );
+						?>
+					</p>
+				</div>
+
+				<?php
+			}
 		}
-		?>
-
-		<?php
 	}
 
 	/**

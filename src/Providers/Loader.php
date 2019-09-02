@@ -61,7 +61,7 @@ class Loader {
 	 *
 	 * @param string $provider
 	 *
-	 * @return array
+	 * @return string|null
 	 */
 	public function get_provider_path( $provider ) {
 

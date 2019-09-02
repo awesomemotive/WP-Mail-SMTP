@@ -163,13 +163,14 @@ class Core {
 		add_action( 'admin_init', array( $this, 'init_notifications' ) );
 
 		add_action( 'init', array( $this, 'init' ) );
+
+		add_action( 'plugins_loaded', array( $this, 'get_pro' ) );
 	}
 
 	/**
 	 * Initial plugin actions.
 	 *
 	 * @since 1.0.0
-	 * @since 1.5.0 Added Pro version initialization.
 	 */
 	public function init() {
 
@@ -198,13 +199,6 @@ class Core {
 			add_action( 'admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
 			add_action( 'admin_notices', array( $this, 'display_general_notices' ) );
 		}
-
-		/*
-		 * Should be the last thing here to be able to overwrite anything from the above.
-		 */
-		if ( $this->is_pro_allowed() ) {
-			$this->pro = new \WPMailSMTP\Pro\Pro();
-		}
 	}
 
 	/**
@@ -228,6 +222,26 @@ class Core {
 		}
 
 		return apply_filters( 'wp_mail_smtp_core_is_pro_allowed', $is_allowed );
+	}
+
+	/**
+	 * Get/Load the Pro code of the plugin if it exists.
+	 *
+	 * @since 1.6.2
+	 *
+	 * @return \WPMailSMTP\Pro\Pro
+	 */
+	public function get_pro() {
+
+		if ( ! $this->is_pro_allowed() ) {
+			return $this->pro;
+		}
+
+		if ( ! $this->is_pro() ) {
+			$this->pro = new \WPMailSMTP\Pro\Pro();
+		}
+
+		return $this->pro;
 	}
 
 	/**

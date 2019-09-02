@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "description": "Reconfigures the wp_mail() function to improve WordPress emails deliverability.",
   "private": true,
   "repository": {

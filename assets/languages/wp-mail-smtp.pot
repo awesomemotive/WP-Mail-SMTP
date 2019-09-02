@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 1.6.0\n"
+"Project-Id-Version: WP Mail SMTP 1.6.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-08-21T11:54:11+03:00\n"
+"POT-Creation-Date: 2019-09-02T17:20:06+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.2.0\n"
 "X-Domain: wp-mail-smtp\n"
@@ -1138,25 +1138,25 @@ msgid "<strong>Note:</strong> WP Mail SMTP plugin is disabled on your site until
 msgstr ""
 
 #. translators: %1$s - WP Mail SMTP plugin name; %2$s - WPForms.com URL to a related doc.
-#: src/Core.php:366
+#: src/Core.php:380
 msgid "Your site is running an outdated version of PHP that is no longer supported and may cause issues with %1$s. <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Read more</a> for additional information."
 msgstr ""
 
-#: src/Core.php:380
+#: src/Core.php:394
 msgid "<strong>Please Note:</strong> Support for PHP 5.3-5.5 will be discontinued in 2019. After this, if no further action is taken, WP Mail SMTP functionality will be disabled."
 msgstr ""
 
 #. translators: %1$s - plugin name and its version, %2$s - plugin Misc settings page.
-#: src/Core.php:420
+#: src/Core.php:434
 msgid "<strong>EMAILING DISABLED:</strong> The %1$s is currently blocking all emails from being sent. To send emails, go to plugin <a href=\"%2$s\">Misc settings</a> and disable the \"Do Not Send\" option."
 msgstr ""
 
 #. translators: %s - plugin name and its version.
-#: src/Core.php:451
+#: src/Core.php:465
 msgid "<strong>EMAIL DELIVERY ERROR:</strong> the plugin %s logged this error during the last time it tried to send an email:"
 msgstr ""
 
-#: src/Core.php:481
+#: src/Core.php:495
 msgid "Consider running an email test after fixing it."
 msgstr ""
 

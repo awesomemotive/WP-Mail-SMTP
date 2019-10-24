@@ -56,7 +56,7 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->assets_url . '/images/sendinblue.svg',
+				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/sendinblue.svg',
 				'slug'        => self::SLUG,
 				'title'       => esc_html__( 'Sendinblue', 'wp-mail-smtp' ),
 				'description' => $description,

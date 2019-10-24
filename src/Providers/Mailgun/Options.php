@@ -20,7 +20,7 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->plugin_url . '/assets/images/mailgun.svg',
+				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/mailgun.svg',
 				'slug'        => 'mailgun',
 				'title'       => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
 				'description' => sprintf(

@@ -15,99 +15,99 @@ class Conflicts {
 	 * @var array List of plugins WP Mail SMTP may be conflicting with.
 	 */
 	public static $plugins = array(
-		'swpsmtp_init_smtp'    => array(
+		'swpsmtp_init_smtp'     => array(
 			'name' => 'Easy WP SMTP',
 		),
-		'postman_start'        => array(
+		'postman_start'         => array(
 			'name' => 'Postman SMTP',
 		),
-		'post_start'           => array(
+		'post_start'            => array(
 			'name' => 'Post SMTP Mailer/Email Log',
 		),
-		'mail_bank'            => array(
+		'mail_bank'             => array(
 			'name' => 'WP Mail Bank',
 		),
-		'SMTP_MAILER'          => array(
+		'SMTP_MAILER'           => array(
 			'name'  => 'SMTP Mailer',
 			'class' => true,
 		),
-		'GMAIL_SMTP'           => array(
+		'GMAIL_SMTP'            => array(
 			'name'  => 'Gmail SMTP',
 			'class' => true,
 		),
-		'WP_Email_Smtp'        => array(
+		'WP_Email_Smtp'         => array(
 			'name'  => 'WP Email SMTP',
 			'class' => true,
 		),
-		'smtpmail_include'     => array(
+		'smtpmail_include'      => array(
 			'name' => 'SMTP Mail',
 		),
-		'bwssmtp_init'         => array(
+		'bwssmtp_init'          => array(
 			'name' => 'SMTP by BestWebSoft',
 		),
-		'WPSendGrid_SMTP'      => array(
+		'WPSendGrid_SMTP'       => array(
 			'name'  => 'WP SendGrid SMTP',
 			'class' => true,
 		),
-		'sar_friendly_smtp'    => array(
+		'sar_friendly_smtp'     => array(
 			'name' => 'SAR Friendly SMTP',
 		),
-		'WPGmail_SMTP'         => array(
+		'WPGmail_SMTP'          => array(
 			'name'  => 'WP Gmail SMTP',
 			'class' => true,
 		),
-		'st_smtp_check_config' => array(
+		'st_smtp_check_config'  => array(
 			'name' => 'Cimy Swift SMTP',
 		),
-		'WP_Easy_SMTP'         => array(
+		'WP_Easy_SMTP'          => array(
 			'name'  => 'WP Easy SMTP',
 			'class' => true,
 		),
-		'WPMailgun_SMTP'       => array(
+		'WPMailgun_SMTP'        => array(
 			'name'  => 'WP Mailgun SMTP',
 			'class' => true,
 		),
-		'my_smtp_wp'           => array(
+		'my_smtp_wp'            => array(
 			'name' => 'MY SMTP WP',
 		),
-		'mail_booster'         => array(
+		'mail_booster'          => array(
 			'name' => 'WP Mail Booster',
 		),
-		'Sendgrid_Settings'    => array(
+		'Sendgrid_Settings'     => array(
 			'name'  => 'SendGrid',
 			'class' => true,
 		),
-		'WPMS_php_mailer'      => array(
+		'WPMS_php_mailer'       => array(
 			'name' => 'WP Mail Smtp Mailer',
 		),
-		'WPAmazonSES_SMTP'     => array(
+		'WPAmazonSES_SMTP'      => array(
 			'name'  => 'WP Amazon SES SMTP',
 			'class' => true,
 		),
-		'Postmark_Mail'        => array(
+		'Postmark_Mail'         => array(
 			'name'  => 'Postmark for WordPress',
 			'class' => true,
 		),
-		'Mailgun'              => array(
+		'Mailgun'               => array(
 			'name'  => 'Mailgun',
 			'class' => true,
 		),
-		'SparkPost'            => array(
+		'WPSparkPost\SparkPost' => array(
 			'name'  => 'SparkPost',
 			'class' => true,
 		),
-		'WPYahoo_SMTP'         => array(
+		'WPYahoo_SMTP'          => array(
 			'name'  => 'WP Yahoo SMTP',
 			'class' => true,
 		),
-		'wpses_init'           => array(
+		'wpses_init'            => array(
 			'name'  => 'WP SES',
 			'class' => true,
 		),
-		'TSPHPMailer'          => array(
+		'TSPHPMailer'           => array(
 			'name' => 'turboSMTP',
 		),
-		'WP_SMTP'              => array(
+		'WP_SMTP'               => array(
 			'name'  => 'WP SMTP',
 			'class' => true,
 		),
@@ -155,8 +155,7 @@ class Conflicts {
 		}
 
 		WP::add_admin_notice(
-			\sprintf(
-				/* translators: %1$s - Plugin name causing conflict; %2$s - Plugin name causing conflict. */
+			\sprintf( /* translators: %1$s - Plugin name causing conflict; %2$s - Plugin name causing conflict. */
 				\esc_html__( 'Heads up! WP Mail SMTP has detected %1$s is activated. Please deactivate %2$s to prevent conflicts.', 'wp-mail-smtp' ),
 				$this->get_conflict_name(),
 				$this->get_conflict_name()

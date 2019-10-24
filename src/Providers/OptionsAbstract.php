@@ -40,6 +40,12 @@ abstract class OptionsAbstract implements OptionsInterface {
 	 */
 	private $recommended = false;
 	/**
+	 * @since 1.7.0
+	 *
+	 * @var bool
+	 */
+	private $disabled = false;
+	/**
 	 * @var string
 	 */
 	private $php = WPMS_PHP_VER;
@@ -99,8 +105,11 @@ abstract class OptionsAbstract implements OptionsInterface {
 			}
 		}
 
-		if ( ! empty( $params['recommended'] ) ) {
+		if ( isset( $params['recommended'] ) ) {
 			$this->recommended = (bool) $params['recommended'];
+		}
+		if ( isset( $params['disabled'] ) ) {
+			$this->disabled = (bool) $params['disabled'];
 		}
 
 		if ( ! empty( $params['php'] ) ) {
@@ -366,6 +375,19 @@ abstract class OptionsAbstract implements OptionsInterface {
 	public function is_recommended() {
 
 		return (bool) apply_filters( 'wp_mail_smtp_providers_provider_is_recommended', $this->recommended, $this );
+	}
+
+	/**
+	 * Whether this mailer is disabled or not.
+	 * Used for displaying Pro mailers inside Lite plugin.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	public function is_disabled() {
+
+		return (bool) apply_filters( 'wp_mail_smtp_providers_provider_is_disabled', $this->disabled, $this );
 	}
 
 	/**

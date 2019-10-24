@@ -234,6 +234,7 @@ class Area {
 	 *
 	 * @since 1.0.0
 	 * @since 1.5.0 Added new assets for new pages.
+	 * @since 1.7.0 Added jQuery Confirm library css/js files.
 	 *
 	 * @param string $hook
 	 */
@@ -264,7 +265,43 @@ class Area {
 			'wp_mail_smtp',
 			array(
 				'text_provider_remove' => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
+				'education'            => array(
+					'upgrade_icon_lock' => '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z"></path></svg>',
+					'upgrade_title'     => esc_html__( '%name% is a PRO Feature', 'wp-mail-smtp' ),
+					'upgrade_button'    => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
+					'upgrade_url'       => 'https://wpmailsmtp.com/lite-upgrade/?discount=SMTPLITEUPGRADE&utm_source=WordPress&utm_medium=plugin-settings&utm_campaign=liteplugin',
+					'upgrade_bonus'     => '<p>' .
+											wp_kses(
+												__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>20% off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
+												array(
+													'strong' => true,
+													'span'   => true,
+													'br'     => true,
+												)
+											)
+											. '</p>',
+					'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">
+												' . esc_html__( 'Already purchased?', 'wp-mail-smtp' ) . '
+											</a>',
+				),
 			)
+		);
+
+		/*
+		 * jQuery Confirm library v3.3.4.
+		 */
+		\wp_enqueue_style(
+			'wp-mail-smtp-admin-jconfirm',
+			\wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.css',
+			array( 'wp-mail-smtp-admin' ),
+			'3.3.4'
+		);
+		\wp_enqueue_script(
+			'wp-mail-smtp-admin-jconfirm',
+			\wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.js',
+			array( 'wp-mail-smtp-admin' ),
+			'3.3.4',
+			false
 		);
 
 		/*

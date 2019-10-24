@@ -27,7 +27,7 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->assets_url . '/images/google.svg',
+				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/google.svg',
 				'slug'        => self::SLUG,
 				'title'       => esc_html__( 'Gmail', 'wp-mail-smtp' ),
 				'description' => sprintf(

@@ -143,28 +143,34 @@ class Processor {
 	 *
 	 * @since 1.0.0
 	 * @since 1.3.0 Forcing email rewrite if option is selected.
+	 * @since 1.7.0 Default email may be empty, so pay attention to that as well.
 	 *
-	 * @param string $email
+	 * @param string $wp_email
 	 *
 	 * @return string
 	 */
-	public function filter_mail_from_email( $email ) {
+	public function filter_mail_from_email( $wp_email ) {
 
-		$options = new Options();
-		$force   = $options->get( 'mail', 'from_email_force' );
+		$options    = new Options();
+		$force      = $options->get( 'mail', 'from_email_force' );
+		$from_email = $options->get( 'mail', 'from_email' );
+		$def_email  = $this->get_default_email();
 
-		// If the FROM EMAIL is not the default and not forced, return it unchanged.
-		if ( ! $force && $email !== $this->get_default_email() ) {
-			return $email;
+		// Return FROM EMAIL if forced in settings.
+		if ( $force & ! empty( $from_email ) ) {
+			return $from_email;
 		}
 
-		$from_email = $options->get( 'mail', 'from_email' );
+		// If the FROM EMAIL is not the default, return it unchanged.
+		if ( ! empty( $def_email ) && $wp_email !== $def_email ) {
+			return $wp_email;
+		}
 
 		if ( ! empty( $from_email ) ) {
-			$email = $from_email;
+			$wp_email = $from_email;
 		}
 
-		return $email;
+		return $wp_email;
 	}
 
 	/**
@@ -196,15 +202,19 @@ class Processor {
 	 * Get the default email address based on domain name.
 	 *
 	 * @since 1.0.0
+	 * @since 1.7.0 May return an empty string.
 	 *
-	 * @return string
+	 * @return string Empty string when we aren't able to get the site domain (CLI, misconfigured server etc).
 	 */
 	public function get_default_email() {
 
-		// In case of CLI we don't have SERVER_NAME, so use host name instead, may be not a domain name.
 		$server_name = Geo::get_site_domain();
 
-		// Get the site domain and get rid of www.
+		if ( empty( $sitename ) ) {
+			return '';
+		}
+
+		// Get rid of www.
 		$sitename = strtolower( $server_name );
 		if ( substr( $sitename, 0, 4 ) === 'www.' ) {
 			$sitename = substr( $sitename, 4 );

@@ -339,6 +339,7 @@ class Options {
 	 * @since 1.4.0 Added WPMS_MAILGUN_REGION.
 	 * @since 1.5.0 Added Outlook/AmazonSES, license key support.
 	 * @since 1.6.0 Added Sendinblue.
+	 * @since 1.7.0 Added Do Not Send.
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -513,6 +514,16 @@ class Options {
 
 				break;
 
+			case 'general':
+				switch ( $key ) {
+					case 'do_not_send':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_DO_NOT_SEND : $value;
+						break;
+				}
+
+				break;
+
 			default:
 				// Always return the default value if nothing from above matches the request.
 				$return = $value;
@@ -544,6 +555,7 @@ class Options {
 	 * @since 1.0.0
 	 * @since 1.5.0 Added a filter, Outlook/AmazonSES, license key support.
 	 * @since 1.6.0 Added Sendinblue.
+	 * @since 1.7.0 Added Do Not Send.
 	 *
 	 * @param string $group
 	 * @param string $key
@@ -689,6 +701,16 @@ class Options {
 				switch ( $key ) {
 					case 'key':
 						$return = defined( 'WPMS_LICENSE_KEY' ) && WPMS_LICENSE_KEY;
+						break;
+				}
+
+				break;
+
+			case 'general':
+				switch ( $key ) {
+					case 'do_not_send':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = defined( 'WPMS_DO_NOT_SEND' ) && WPMS_DO_NOT_SEND;
 						break;
 				}
 

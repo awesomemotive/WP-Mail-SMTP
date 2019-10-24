@@ -20,7 +20,7 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url' => wp_mail_smtp()->plugin_url . '/assets/images/php.svg',
+				'logo_url' => wp_mail_smtp()->assets_url . '/images/providers/php.svg',
 				'slug'     => 'mail',
 				'title'    => esc_html__( 'Default (none)', 'wp-mail-smtp' ),
 			)

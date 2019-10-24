@@ -213,12 +213,20 @@ class SettingsTab extends PageAbstract {
 								</div>
 
 								<div class="wp-mail-smtp-mailer-text">
-									<input id="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>"
-										type="radio" name="wp-mail-smtp[mail][mailer]"
-										value="<?php echo esc_attr( $provider->get_slug() ); ?>"
-										<?php checked( $provider->get_slug(), $mailer ); ?>
-										<?php echo $options->is_const_defined( 'mail', 'mailer' ) ? 'disabled' : ''; ?>
-									/>
+									<?php if ( $provider->is_disabled() ) : ?>
+										<input type="radio" name="wp-mail-smtp[mail][mailer]" disabled class="educate"
+											id="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>"
+											value="<?php echo esc_attr( $provider->get_slug() ); ?>"
+										/>
+									<?php else : ?>
+										<input id="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>"
+											type="radio" name="wp-mail-smtp[mail][mailer]"
+											value="<?php echo esc_attr( $provider->get_slug() ); ?>"
+											<?php checked( $provider->get_slug(), $mailer ); ?>
+											<?php echo $options->is_const_defined( 'mail', 'mailer' ) || $provider->is_disabled() ? 'disabled' : ''; ?>
+											<?php echo $provider->is_disabled() ? 'class="educate"' : ''; ?>
+										/>
+									<?php endif; ?>
 									<label for="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>">
 										<?php echo esc_html( $provider->get_title() ); ?>
 									</label>
@@ -238,30 +246,34 @@ class SettingsTab extends PageAbstract {
 					<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
 
 						<!-- Mailer Title/Notice/Description -->
-						<?php $provider_desc = $provider->get_description(); ?>
 						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php echo empty( $provider_desc ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
 							<div class="wp-mail-smtp-setting-field">
-								<h2><?php echo $provider->get_title(); ?></h2>
+								<?php if ( $provider->is_disabled() ) : ?>
+									<?php $provider->display_options(); ?>
+								<?php else : ?>
+									<h2><?php echo $provider->get_title(); ?></h2>
 
-								<?php
-								$provider_edu_notice = $provider->get_notice( 'educational' );
-								$is_dismissed        = (bool) get_user_meta( get_current_user_id(), "wp_mail_smtp_notice_educational_for_{$provider->get_slug()}_dismissed", true );
-								if ( ! empty( $provider_edu_notice ) && ! $is_dismissed ) :
-									?>
-									<p class="inline-notice inline-edu-notice"
-										data-notice="educational"
-										data-mailer="<?php echo esc_attr( $provider->get_slug() ); ?>">
-										<a href="#" title="<?php esc_attr_e( 'Dismiss this notice', 'wp-mail-smtp' ); ?>"
-											class="wp-mail-smtp-mailer-notice-dismiss js-wp-mail-smtp-mailer-notice-dismiss">
-											<span class="dashicons dashicons-dismiss"></span>
-										</a>
+									<?php
+									$provider_desc       = $provider->get_description();
+									$provider_edu_notice = $provider->get_notice( 'educational' );
+									$is_dismissed        = (bool) get_user_meta( get_current_user_id(), "wp_mail_smtp_notice_educational_for_{$provider->get_slug()}_dismissed", true );
+									if ( ! empty( $provider_edu_notice ) && ! $is_dismissed ) :
+										?>
+										<p class="inline-notice inline-edu-notice"
+											data-notice="educational"
+											data-mailer="<?php echo esc_attr( $provider->get_slug() ); ?>">
+											<a href="#" title="<?php esc_attr_e( 'Dismiss this notice', 'wp-mail-smtp' ); ?>"
+												class="wp-mail-smtp-mailer-notice-dismiss js-wp-mail-smtp-mailer-notice-dismiss">
+												<span class="dashicons dashicons-dismiss"></span>
+											</a>
 
-										<?php echo $provider_edu_notice; ?>
-									</p>
-								<?php endif; ?>
+											<?php echo $provider_edu_notice; ?>
+										</p>
+									<?php endif; ?>
 
-								<?php if ( ! empty( $provider_desc ) ) : ?>
-									<p class="desc"><?php echo $provider_desc; ?></p>
+									<?php if ( ! empty( $provider_desc ) ) : ?>
+										<p class="desc"><?php echo $provider_desc; ?></p>
+									<?php endif; ?>
 								<?php endif; ?>
 							</div>
 						</div>

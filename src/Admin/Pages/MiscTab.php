@@ -57,9 +57,9 @@ class MiscTab extends PageAbstract {
 					</label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
-					<input name="wp-mail-smtp[general][do_not_send]" type="checkbox"
-						value="true" <?php checked( true, $options->get( 'general', 'do_not_send' ) ); ?>
-						id="wp-mail-smtp-setting-do_not_send"
+					<input name="wp-mail-smtp[general][do_not_send]" type="checkbox" value="true" id="wp-mail-smtp-setting-do_not_send"
+						<?php echo $options->is_const_defined( 'general', 'do_not_send' ) ? 'disabled' : ''; ?>
+						<?php checked( true, $options->get( 'general', 'do_not_send' ) ); ?>
 					>
 					<label for="wp-mail-smtp-setting-do_not_send">
 						<?php esc_html_e( 'Check this if you would like to stop sending all emails.', 'wp-mail-smtp' ); ?>
@@ -68,7 +68,7 @@ class MiscTab extends PageAbstract {
 						<?php
 						printf(
 							wp_kses(
-								__( 'Some plugins, like BuddyPress and Events Manager, are using own email delivery solutions. By default, this option does not block their emails, as those plugins do not use default <code>wp_mail()</code> function to send emails.', 'wp-mail-smtp' ),
+								__( 'Some plugins, like BuddyPress and Events Manager, are using their own email delivery solutions. By default, this option does not block their emails, as those plugins do not use default <code>wp_mail()</code> function to send emails.', 'wp-mail-smtp' ),
 								array(
 									'code' => array(),
 								)
@@ -79,6 +79,22 @@ class MiscTab extends PageAbstract {
 						<?php esc_html_e( 'You will need to consult with their documentation to switch them to use default WordPress email delivery.', 'wp-mail-smtp' ); ?>
 						<br>
 						<?php esc_html_e( 'Test emails are allowed to be sent, regardless of this option.', 'wp-mail-smtp' ); ?>
+						<br>
+						<?php
+						if ( $options->is_const_defined( 'general', 'do_not_send' ) ) {
+							printf( /* translators: %1$s - constant that was used; %2$s - file where it was used. */
+								esc_html__( 'The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation.', 'wp-mail-smtp' ),
+								'<code>WPMS_DO_NOT_SEND</code>',
+								'<code>wp-config.php</code>'
+							);
+						} else {
+							printf( /* translators: %1$s - constant to use; %2$s - file to put that constant in. */
+								esc_html__( 'If you want to disable using a constant, put %1$s in your %2$s file.', 'wp-mail-smtp' ),
+								'<code>define( \'WPMS_DO_NOT_SEND\', true );</code>',
+								'<code>wp-config.php</code>'
+							);
+						}
+						?>
 					</p>
 				</div>
 			</div>

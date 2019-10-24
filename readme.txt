@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 1.6.2
+Stable tag: 1.7.0
 Requires PHP: 5.3
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -207,6 +207,12 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 1.7.0 - 2019-10-24 =
+* Added: Add a new constant `WPMS_DO_NOT_SEND` to block email sending.
+* Fixed: Default email (wordpress@example.com) rewriting in CLI mode.
+* Fixed: Incorrect conflicts detection with certain plugins.
+* Fixed: various typos in plugin settings.
 
 = 1.6.2 - 2019-09-02 =
 * Fixed: Race condition when loading with certain plugins, that send emails very early. Makes email delivery more reliable.

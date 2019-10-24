@@ -64,7 +64,14 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 			} );
 
 			$( '.wp-mail-smtp-mailer input', app.pageHolder ).click( function () {
-				if ( $( this ).prop( 'disabled' ) ) {
+				var $input = $( this );
+
+				if ( $input.prop( 'disabled' ) ) {
+					// Educational Popup.
+					if ( $input.hasClass( 'educate' ) ) {
+						app.education.upgradeMailer( $input );
+					}
+
 					return false;
 				}
 
@@ -88,7 +95,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 					 type: 'POST',
 					 data: {
 						 action: 'wp_mail_smtp_ajax',
-						 task: 'pro_banner_dismiss',
+						 task: 'pro_banner_dismiss'
 					 }
 				 } )
 				 .always( function () {
@@ -96,7 +103,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 				 } );
 			} );
 
-			// Dismis educational notices for certain users.
+			// Dismis educational notices for certain mailers.
 			$( '.js-wp-mail-smtp-mailer-notice-dismiss', app.pageHolder ).on( 'click', function ( e ) {
 				e.preventDefault();
 
@@ -152,6 +159,42 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 
 				document.execCommand( 'Copy' );
 			} );
+		},
+
+		education: {
+			upgradeMailer: function( $input ) {
+
+				$.alert( {
+					backgroundDismiss: true,
+					escapeKey: true,
+					animationBounce: 1,
+					theme: 'modern',
+					animateFromElement: false,
+					draggable: false,
+					closeIcon: true,
+					useBootstrap: false,
+					title: wp_mail_smtp.education.upgrade_title.replace( /%name%/g, $input.siblings( 'label' ).text().trim() ),
+					icon: '"></i>' + wp_mail_smtp.education.upgrade_icon_lock + '<i class="',
+					content: $( '.wp-mail-smtp-mailer-options .wp-mail-smtp-mailer-option-' + $input.val() + ' .wp-mail-smtp-setting-field' ).html(),
+					boxWidth: '550px',
+					onOpenBefore: function() {
+						this.$btnc.after( '<div class="discount-note">' + wp_mail_smtp.education.upgrade_bonus + wp_mail_smtp.education.upgrade_doc + '</div>' );
+					},
+					buttons     : {
+						confirm: {
+							text    : wp_mail_smtp.education.upgrade_button,
+							btnClass: 'btn-confirm',
+							keys    : [ 'enter' ],
+							action  : function () {
+								window.open(
+									wp_mail_smtp.education.upgrade_url + '&utm_content=' + encodeURI( $input.val() ),
+									'_blank'
+								);
+							}
+						}
+					}
+				} );
+			}
 		},
 
 		/**

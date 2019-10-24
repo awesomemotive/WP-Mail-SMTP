@@ -119,7 +119,7 @@ class Core {
 					<br><br>
 					<?php
 					printf(
-						wp_kses( /* translators: %s - WPForms.com URL for documentation with more details. */
+						wp_kses( /* translators: %s - WPForms.com docs URL with more details. */
 							__( '<strong>Note:</strong> WP Mail SMTP plugin is disabled on your site until you fix the issue. <a href="%s" target="_blank" rel="noopener noreferrer">Read more for additional information.</a>', 'wp-mail-smtp' ),
 							array(
 								'a'      => array(
@@ -407,12 +407,6 @@ class Core {
 		if ( Options::init()->get( 'general', 'am_notifications_hidden' ) ) {
 			return;
 		}
-
-		static $notification;
-
-		if ( ! isset( $notification ) ) {
-			$notification = new AM_Notification( 'smtp', WPMS_PLUGIN_VER );
-		}
 	}
 
 	/**
@@ -423,25 +417,48 @@ class Core {
 	 */
 	public static function display_general_notices() {
 
-		if ( Options::init()->get( 'general', 'do_not_send' ) ) {
+		if ( wp_mail_smtp()->is_blocked() ) {
 			?>
 
 			<div class="notice <?php echo esc_attr( WP::ADMIN_NOTICE_ERROR ); ?>">
 				<p>
 					<?php
-					printf(
-						wp_kses( /* translators: %1$s - plugin name and its version, %2$s - plugin Misc settings page. */
-							__( '<strong>EMAILING DISABLED:</strong> The %1$s is currently blocking all emails from being sent. To send emails, go to plugin <a href="%2$s">Misc settings</a> and disable the "Do Not Send" option.', 'wp-mail-smtp' ),
+					$notices[] = sprintf(
+						wp_kses( /* translators: %s - plugin name and its version. */
+							__( '<strong>EMAILING DISABLED:</strong> The %s is currently blocking all emails from being sent.', 'wp-mail-smtp' ),
 							array(
-								'strong' => array(),
-								'a'      => array(
-									'href' => array(),
-								),
+								'strong' => true,
 							)
 						),
-						esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER ),
-						esc_url( add_query_arg( 'tab', 'misc', wp_mail_smtp()->get_admin()->get_admin_page_url() ) )
+						esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER )
 					);
+
+					if ( Options::init()->is_const_defined( 'general', 'do_not_send' ) ) {
+						$notices[] = sprintf(
+							wp_kses( /* translators: %1$s - constant name; %2$s - constant value. */
+								__( 'To send emails, change the value of the %1$s constant to %2$s.', 'wp-mail-smtp' ),
+								array(
+									'code' => true,
+								)
+							),
+							'<code>WPMS_DO_NOT_SEND</code>',
+							'<code>false</code>'
+						);
+					} else {
+						$notices[] = sprintf(
+							wp_kses( /* translators: %s - plugin Misc settings page URL. */
+								__( 'To send emails, go to plugin <a href="%s">Misc settings</a> and disable the "Do Not Send" option.', 'wp-mail-smtp' ),
+								array(
+									'a' => array(
+										'href' => true,
+									),
+								)
+							),
+							esc_url( add_query_arg( 'tab', 'misc', wp_mail_smtp()->get_admin()->get_admin_page_url() ) )
+						);
+					}
+
+					echo implode( ' ', $notices );
 					?>
 				</p>
 			</div>
@@ -686,5 +703,17 @@ class Core {
 			'wp_mail_smtp_core_get_upgrade_link',
 			'https://wpmailsmtp.com/lite-upgrade/?utm_source=' . esc_attr( $source ) . '&utm_medium=' . esc_attr( $medium ) . '&utm_campaign=' . esc_attr( $campaign ) . '&utm_content=' . esc_attr( $content )
 		);
+	}
+
+	/**
+	 * Whether the emailing functionality is blocked, with either an option or a constatnt.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	public function is_blocked() {
+
+		return (bool) Options::init()->get( 'general', 'do_not_send' );
 	}
 }

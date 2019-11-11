@@ -1,26 +1,14 @@
 <?php
+
 namespace WPMailSMTP\Admin;
 
 /**
  * WordPress class extended for on-the-fly plugin installations.
  *
  * @since 1.5.0
+ * @since 1.7.1 Removed feedback() method override to be compatible with PHP5.3+ and WP5.3.
  */
 class PluginsInstallSkin extends \WP_Upgrader_Skin {
-
-	/**
-	 * Set the upgrader object and store it as a property in the parent class.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param object $upgrader The upgrader object (passed by reference).
-	 */
-	public function set_upgrader( &$upgrader ) {
-
-		if ( is_object( $upgrader ) ) {
-			$this->upgrader =& $upgrader;
-		}
-	}
 
 	/**
 	 * Empty out the header of its HTML content and only check to see if it has
@@ -52,17 +40,6 @@ class PluginsInstallSkin extends \WP_Upgrader_Skin {
 		if ( ! empty( $errors ) ) {
 			wp_send_json_error( $errors );
 		}
-	}
-
-	/**
-	 * Empty out the feedback method to prevent outputting HTML strings as the install
-	 * is progressing.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $string The feedback string.
-	 */
-	public function feedback( $string ) {
 	}
 
 	/**

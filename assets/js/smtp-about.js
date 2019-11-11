@@ -120,8 +120,10 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || (function ( document, window,
 				};
 
 				$.post( wp_mail_smtp_about.ajax_url, data, function( res ) {
+					var is_install_successful;
 
 					if ( res.success ) {
+						is_install_successful = true;
 						if ( 'about_plugin_install' === task ) {
 							$btn.attr( 'data-plugin', res.data.basename );
 							successText = res.data.msg;
@@ -144,25 +146,32 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || (function ( document, window,
 							.removeClass( 'button button-primary button-secondary disabled' )
 							.addClass( cssClass ).html( buttonText );
 					} else {
+						is_install_successful = false;
+
 						if (
-							res.hasOwnProperty('data') &&
-							res.data.hasOwnProperty(0) &&
-							res.data[0].hasOwnProperty('code') &&
-							res.data[0].code === 'download_failed'
+							res.hasOwnProperty( 'data' ) &&
+							res.data.hasOwnProperty( 0 ) &&
+							res.data[ 0 ].hasOwnProperty( 'code' ) &&
+							res.data[ 0 ].code === 'download_failed'
 						) {
 							// Specific server-returned error.
-							$plugin.find( '.actions' ).append( '<div class="msg error">'+wp_mail_smtp_about.plugin_install_error+'</div>' );
-						} else {
-							// Generic error.
-							$plugin.find( '.actions' ).append( '<div class="msg error">'+res.data+'</div>' );
+							$plugin.find( '.actions' ).append( '<div class="msg error">' + wp_mail_smtp_about.plugin_install_error + '</div>' );
 						}
-						$btn.html( errorText );
+						else {
+							// Generic error.
+							$plugin.find( '.actions' ).append( '<div class="msg error">' + res.data + '</div>' );
+						}
+
+						$btn.html( wp_mail_smtp_about.plugin_download_btn );
 					}
 
-					$btn.prop( 'disabled', false ).removeClass( 'loading' );
+					if ( is_install_successful ) {
+						$btn.prop( 'disabled', false );
+					}
+					$btn.removeClass( 'loading' );
 
 					// Automatically clear plugin messages after 3 seconds.
-					setTimeout( function() {
+					setTimeout( function () {
 						$( '.plugin-item .msg' ).remove();
 					}, 3000 );
 

@@ -5,7 +5,7 @@ namespace WPMailSMTP\Admin\Pages;
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Admin\PluginsInstallSkin;
-use WPMailSMTP\WP;
+use WPMailSMTP\Admin\PluginsInstallUpgrader;
 
 /**
  * Class About to display a page with About Us and Versus content.
@@ -447,14 +447,11 @@ class About extends PageAbstract {
 			\wp_send_json_error( $error );
 		}
 
-		// We do not need any extra credentials if we have gotten this far, so let's install the plugin.
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-
 		// Do not allow WordPress to search/download translations, as this will break JS output.
 		\remove_action( 'upgrader_process_complete', array( 'Language_Pack_Upgrader', 'async_upgrade' ), 20 );
 
 		// Create the plugin upgrader with our custom skin.
-		$installer = new \Plugin_Upgrader( new PluginsInstallSkin() );
+		$installer = new PluginsInstallUpgrader( new PluginsInstallSkin() );
 
 		// Error check.
 		if ( ! \method_exists( $installer, 'install' ) || empty( $_POST['plugin'] ) ) {

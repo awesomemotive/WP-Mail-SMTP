@@ -356,6 +356,7 @@ class Area {
 				'plugin_install_error'        => \esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
 				'plugin_install_activate_btn' => \esc_html__( 'Install and Activate', 'wp-mail-smtp' ),
 				'plugin_activate_btn'         => \esc_html__( 'Activate', 'wp-mail-smtp' ),
+				'plugin_download_btn'         => \esc_html__( 'Download', 'wp-mail-smtp' ),
 			);
 
 			\wp_localize_script(

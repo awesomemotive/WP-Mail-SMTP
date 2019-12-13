@@ -20,9 +20,9 @@ class Options extends OptionsAbstract {
 
 		parent::__construct(
 			array(
-				'logo_url' => wp_mail_smtp()->assets_url . '/images/providers/pepipost.png',
+				'logo_url' => wp_mail_smtp()->assets_url . '/images/providers/pepipost-smtp.png',
 				'slug'     => 'pepipost',
-				'title'    => esc_html__( 'Pepipost', 'wp-mail-smtp' ),
+				'title'    => esc_html__( 'Pepipost SMTP', 'wp-mail-smtp' ),
 			)
 		);
 	}

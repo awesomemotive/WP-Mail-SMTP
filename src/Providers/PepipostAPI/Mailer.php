@@ -1,21 +1,22 @@
 <?php
 
-namespace WPMailSMTP\Providers\Sendgrid;
+namespace WPMailSMTP\Providers\PepipostAPI;
 
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
 
 /**
- * Class Mailer.
+ * Class Mailer is basically a Sendgrid copy-paste, as Pepipost support SG migration.
+ * In the future we may rewrite the class to use the native Pepipost API.
  *
- * @since 1.0.0
+ * @since 1.8.0
  */
 class Mailer extends MailerAbstract {
 
 	/**
 	 * Which response code from HTTP provider is considered to be successful?
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 *
 	 * @var int
 	 */
@@ -24,16 +25,16 @@ class Mailer extends MailerAbstract {
 	/**
 	 * URL to make an API request to.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 *
 	 * @var string
 	 */
-	protected $url = 'https://api.sendgrid.com/v3/mail/send';
+	protected $url = 'https://sgapi.pepipost.com/v3/mail/send';
 
 	/**
 	 * Mailer constructor.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 *
 	 * @param \WPMailSMTP\MailCatcher $phpmailer
 	 */
@@ -49,9 +50,11 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Redefine the way email body is returned.
 	 * By default we are sending an array of data.
-	 * SendGrid requires a JSON, so we encode the body.
+	 * Pepipost requires a JSON, so we encode the body.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
+	 *
+	 * @return string
 	 */
 	public function get_body() {
 
@@ -61,7 +64,12 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set the FROM header of the email.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param string $email From mail.
+	 * @param string $name  From name.
 	 */
 	public function set_from( $email, $name = '' ) {
 
@@ -83,7 +91,11 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set the names/emails of people who will receive the email.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param array $recipients List of recipients: cc/bcc/to.
 	 */
 	public function set_recipients( $recipients ) {
 
@@ -132,11 +144,23 @@ class Mailer extends MailerAbstract {
 					'personalizations' => array( $data ),
 				)
 			);
+
+			if ( ! empty( $data['bcc'] ) ) {
+				// Only the 1st BCC email address, ignore the rest - is not supported by Pepipost.
+				$bcc['mail_settings']['bcc']['email'] = $data['bcc'][0]['email'];
+				$this->set_body_param(
+					$bcc
+				);
+			}
 		}
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set the email content.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param array|string $content Email content.
 	 */
 	public function set_content( $content ) {
 
@@ -194,7 +218,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Redefine the way custom headers are processed for this mailer - they should be in body.
 	 *
-	 * @since 1.5.0
+	 * @since 1.8.0
 	 *
 	 * @param array $headers
 	 */
@@ -214,7 +238,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * This mailer supports email-related custom headers inside a body of the message.
 	 *
-	 * @since 1.5.0
+	 * @since 1.8.0
 	 *
 	 * @param string $name
 	 * @param string $value
@@ -238,10 +262,10 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * SendGrid accepts an array of files content in body, so we will include all files and send.
+	 * Pepipost accepts an array of files content in body, so we will include all files and send.
 	 * Doesn't handle exceeding the limits etc, as this is done and reported by SendGrid API.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 *
 	 * @param array $attachments
 	 */
@@ -273,14 +297,11 @@ class Mailer extends MailerAbstract {
 				continue;
 			}
 
-			$filetype = str_replace( ';', '', trim( $attachment[4] ) );
-
 			$data[] = array(
-				'content'     => base64_encode( $file ), // string, 1 character.
-				'type'        => $filetype, // string, no ;, no CRLF.
-				'filename'    => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ), // required string, no CRLF.
-				'disposition' => in_array( $attachment[6], array( 'inline', 'attachment' ), true ) ? $attachment[6] : 'attachment', // either inline or attachment.
-				'content_id'  => empty( $attachment[7] ) ? '' : trim( (string) $attachment[7] ), // string, no CRLF.
+				'content'     => base64_encode( $file ),
+				'type'        => $attachment[4],
+				'filename'    => $attachment[2],
+				'disposition' => $attachment[6],
 			);
 		}
 
@@ -294,7 +315,11 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Set the reply-to property of the email.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param array $reply_to Name/email for reply-to feature.
 	 */
 	public function set_reply_to( $reply_to ) {
 
@@ -335,19 +360,21 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * SendGrid doesn't support sender or return_path params.
+	 * Pepipost doesn't support sender or return_path params.
 	 * So we do nothing.
 	 *
-	 * @since 1.0.0
+	 * @since 1.8.0
 	 *
 	 * @param string $from_email
 	 */
 	public function set_return_path( $from_email ) {}
 
 	/**
-	 * Get a SendGrid-specific response with a helpful error.
+	 * Get a Pepipost-specific response with a helpful error.
 	 *
-	 * @since 1.2.0
+	 * @see https://developers.pepipost.com/migration-api/new-subpage/errorcodes
+	 *
+	 * @since 1.8.0
 	 *
 	 * @return string
 	 */
@@ -381,7 +408,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Get mailer debug information, that is helpful during support.
 	 *
-	 * @since 1.2.0
+	 * @since 1.8.0
 	 *
 	 * @return string
 	 */
@@ -393,7 +420,11 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Whether the mailer has all its settings correctly set up and saved.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @return bool
 	 */
 	public function is_mailer_complete() {
 

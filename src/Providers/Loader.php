@@ -23,15 +23,16 @@ class Loader {
 	 * @var array
 	 */
 	protected $providers = array(
-		'mail'       => 'WPMailSMTP\Providers\Mail\\',
-		'sendinblue' => 'WPMailSMTP\Providers\Sendinblue\\',
-		'mailgun'    => 'WPMailSMTP\Providers\Mailgun\\',
-		'sendgrid'   => 'WPMailSMTP\Providers\Sendgrid\\',
-		'amazonses'  => 'WPMailSMTP\Providers\AmazonSES\\',
-		'gmail'      => 'WPMailSMTP\Providers\Gmail\\',
-		'outlook'    => 'WPMailSMTP\Providers\Outlook\\',
-		'smtp'       => 'WPMailSMTP\Providers\SMTP\\',
-		'pepipost'   => 'WPMailSMTP\Providers\Pepipost\\',
+		'mail'        => 'WPMailSMTP\Providers\Mail\\',
+		'pepipostapi' => 'WPMailSMTP\Providers\PepipostAPI\\',
+		'sendinblue'  => 'WPMailSMTP\Providers\Sendinblue\\',
+		'mailgun'     => 'WPMailSMTP\Providers\Mailgun\\',
+		'sendgrid'    => 'WPMailSMTP\Providers\Sendgrid\\',
+		'amazonses'   => 'WPMailSMTP\Providers\AmazonSES\\',
+		'gmail'       => 'WPMailSMTP\Providers\Gmail\\',
+		'outlook'     => 'WPMailSMTP\Providers\Outlook\\',
+		'smtp'        => 'WPMailSMTP\Providers\SMTP\\',
+		'pepipost'    => 'WPMailSMTP\Providers\Pepipost\\',
 	);
 
 	/**

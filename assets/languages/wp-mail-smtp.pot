@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 1.7.1\n"
+"Project-Id-Version: WP Mail SMTP 1.8.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-11-11T16:59:39+02:00\n"
+"POT-Creation-Date: 2019-12-13T13:37:05+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.2.0\n"
 "X-Domain: wp-mail-smtp\n"
@@ -478,7 +478,7 @@ msgid "Check this if you would like to remove ALL WP Mail SMTP data upon plugin 
 msgstr ""
 
 #: src/Admin/Pages/MiscTab.php:215
-#: src/Admin/Pages/SettingsTab.php:533
+#: src/Admin/Pages/SettingsTab.php:542
 msgid "Settings were successfully saved."
 msgstr ""
 
@@ -578,93 +578,98 @@ msgstr ""
 msgid "Mailer"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:265
+#: src/Admin/Pages/SettingsTab.php:241
+#: src/Admin/Pages/SettingsTab.php:245
+msgid "Suggest a Mailer"
+msgstr ""
+
+#: src/Admin/Pages/SettingsTab.php:274
 msgid "Dismiss this notice"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:307
+#: src/Admin/Pages/SettingsTab.php:316
 msgid "You're using WP Mail SMTP Lite - no license needed. Enjoy!"
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com upgrade URL.
-#: src/Admin/Pages/SettingsTab.php:313
+#: src/Admin/Pages/SettingsTab.php:322
 msgid "To unlock more features consider <strong><a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"wp-mail-smtp-upgrade-modal\">upgrading to PRO</a></strong>."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:332
+#: src/Admin/Pages/SettingsTab.php:341
 msgid "As a valued WP Mail SMTP Lite user you receive <strong>20% off</strong>, automatically applied at checkout!"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:393
+#: src/Admin/Pages/SettingsTab.php:402
 msgid "Get WP Mail SMTP Pro and Unlock all the Powerful Features"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:397
+#: src/Admin/Pages/SettingsTab.php:406
 msgid "Thanks for being a loyal WP Mail SMTP user. Upgrade to WP Mail SMTP Pro to unlock more awesome features and experience why WP Mail SMTP is the most popular SMTP plugin."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:401
+#: src/Admin/Pages/SettingsTab.php:410
 msgid "We know that you will truly love WP Mail SMTP. It's used by over 1,000,000 websites."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:404
+#: src/Admin/Pages/SettingsTab.php:413
 msgid "Pro Features:"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:408
+#: src/Admin/Pages/SettingsTab.php:417
 msgid "Manage Notifications - control which emails your site sends"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:409
+#: src/Admin/Pages/SettingsTab.php:418
 msgid "Email Logging - keep track of every email sent from your site"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:410
+#: src/Admin/Pages/SettingsTab.php:419
 msgid "Office 365 - send emails using your Office 365 account"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:411
+#: src/Admin/Pages/SettingsTab.php:420
 msgid "Amazon SES - harness the power of AWS"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:412
+#: src/Admin/Pages/SettingsTab.php:421
 msgid "Outlook.com - send emails using your Outlook.com account"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:413
+#: src/Admin/Pages/SettingsTab.php:422
 msgid "Access to our world class support team"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:416
+#: src/Admin/Pages/SettingsTab.php:425
 msgid "White Glove Setup - sit back and relax while we handle everything for you"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:417
+#: src/Admin/Pages/SettingsTab.php:426
 msgid "Install WP Mail SMTP Pro plugin"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:418
+#: src/Admin/Pages/SettingsTab.php:427
 msgid "Set up domain name verification (DNS)"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:419
+#: src/Admin/Pages/SettingsTab.php:428
 msgid "Configure Mailgun service"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:420
+#: src/Admin/Pages/SettingsTab.php:429
 msgid "Set up WP Mail SMTP Pro plugin"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:421
+#: src/Admin/Pages/SettingsTab.php:430
 msgid "Test and verify email delivery"
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com URL.
-#: src/Admin/Pages/SettingsTab.php:429
+#: src/Admin/Pages/SettingsTab.php:438
 msgid "<a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Get WP Mail SMTP Pro Today and Unlock all the Powerful Features &raquo;</a>"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:447
+#: src/Admin/Pages/SettingsTab.php:456
 msgid "<strong>Bonus:</strong> WP Mail SMTP users get <span class=\"price-off\">20% off regular price</span>, automatically applied at checkout."
 msgstr ""
 
@@ -1445,7 +1450,42 @@ msgid "We're sorry, the Microsoft Outlook mailer is not available on your plan. 
 msgstr ""
 
 #: src/Providers/Pepipost/Options.php:25
+msgid "Pepipost SMTP"
+msgstr ""
+
+#. translators: %1$s - URL to pepipost.com site.
+#: src/Providers/PepipostAPI/Options.php:31
+msgid "<strong><a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Pepipost</a> is a recommended transactional email service.</strong> Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.  Pepipost provides users 30,000 free emails the first 30 days, then 100 emails per day."
+msgstr ""
+
+#. translators: %1$s - URL to wpmailsmtp.com doc.
+#: src/Providers/PepipostAPI/Options.php:34
+msgid "Read our <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Pepipost documentation</a> to learn how to configure Pepipost and improve your email deliverability."
+msgstr ""
+
+#: src/Providers/PepipostAPI/Options.php:53
+msgid "Get Pepipost Now (Free)"
+msgstr ""
+
+#: src/Providers/PepipostAPI/Options.php:61
 msgid "Pepipost"
+msgstr ""
+
+#: src/Providers/PepipostAPI/Options.php:88
+#: src/Providers/Sendgrid/Options.php:57
+#: src/Providers/Sendinblue/Options.php:88
+msgid "API Key"
+msgstr ""
+
+#. translators: %s - pepipost.com link to get an API Key.
+#. translators: %s - sendinblue.com link to get an API Key.
+#: src/Providers/PepipostAPI/Options.php:107
+#: src/Providers/Sendinblue/Options.php:107
+msgid "Follow this link to get an API Key: %s."
+msgstr ""
+
+#: src/Providers/PepipostAPI/Options.php:109
+msgid "Get the API Key"
 msgstr ""
 
 #: src/Providers/Sendgrid/Options.php:25
@@ -1455,11 +1495,6 @@ msgstr ""
 #. translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag.
 #: src/Providers/Sendgrid/Options.php:29
 msgid "%1$sSendGrid%2$s is one of the leading transactional email services, sending over 35 billion emails every month. They provide users 100 free emails per day.<br><br>Read our %3$sSendGrid documentation%4$s to learn how to set up SendGrid and improve your email deliverability."
-msgstr ""
-
-#: src/Providers/Sendgrid/Options.php:57
-#: src/Providers/Sendinblue/Options.php:88
-msgid "API Key"
 msgstr ""
 
 #. translators: %s - API key link.
@@ -1478,7 +1513,7 @@ msgstr ""
 
 #. translators: %1$s - URL to sendinblue.com site.
 #: src/Providers/Sendinblue/Options.php:31
-msgid "<strong><a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sendinblue</a> is our recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day."
+msgid "<strong><a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sendinblue</a> is a recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day."
 msgstr ""
 
 #. translators: %2$s - URL to wpmailsmtp.com doc.
@@ -1492,11 +1527,6 @@ msgstr ""
 
 #: src/Providers/Sendinblue/Options.php:61
 msgid "Sendinblue"
-msgstr ""
-
-#. translators: %s - sendinblue.com link to get an API Key.
-#: src/Providers/Sendinblue/Options.php:107
-msgid "Follow this link to get an API Key: %s."
 msgstr ""
 
 #: src/Providers/Sendinblue/Options.php:109
@@ -1662,6 +1692,6 @@ msgstr ""
 msgid "Your site is running an outdated version of PHP that is no longer supported and may cause issues with %1$s. %2$sRead more%3$s for additional information."
 msgstr ""
 
-#: wp_mail_smtp.php:130
+#: wp_mail_smtp.php:131
 msgid "Please deactivate the free version of the WP Mail SMTP plugin before activating WP Mail SMTP Pro."
 msgstr ""

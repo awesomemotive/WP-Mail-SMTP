@@ -20,6 +20,7 @@ var plugin = {
 	files: [
 		'**',
 		// Exclude all the files/dirs below. Note the double negate (when ! is used inside the exclusion) - we may actually need some things.
+		'!src/**/_*.php',
 		'!**/*.map',
 		'!LICENSE',
 		'!assets/**/*.scss',
@@ -209,14 +210,14 @@ gulp.task( 'zip:pro', function () {
  * Update composer with Lite and/or Pro dependencies.
  */
 gulp.task( 'composer:lite', function ( cb ) {
-	exec( 'composer update --quiet --no-plugins', function ( err, stdout, stderr ) {
+	exec( 'composer update --root-reqs --no-dev --no-suggest --no-plugins', function ( err, stdout, stderr ) {
 		console.log( stdout );
 		console.log( stderr );
 		cb( err );
 	} );
 } );
 gulp.task( 'composer:pro', function ( cb ) {
-	exec( 'composer update --quiet', function ( err, stdout, stderr ) {
+	exec( 'composer update --root-reqs --no-suggest', function ( err, stdout, stderr ) {
 		console.log( stdout );
 		console.log( stderr );
 		cb( err );

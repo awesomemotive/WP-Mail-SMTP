@@ -235,6 +235,17 @@ class SettingsTab extends PageAbstract {
 
 						<?php endforeach; ?>
 
+						<!-- Suggest a mailer -->
+						<div class="wp-mail-smtp-mailer suggest-new">
+							<a href="https://wpmailsmtp.com/suggest-a-mailer" class="wp-mail-smtp-mailer-image" target="_blank" rel="noopener noreferrer">
+								<?php esc_html_e( 'Suggest a Mailer', 'wp-mail-smtp' ); ?>
+							</a>
+
+							<div class="wp-mail-smtp-mailer-text">
+								<label><?php esc_html_e( 'Suggest a Mailer', 'wp-mail-smtp' ); ?></label>
+							</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
@@ -242,7 +253,7 @@ class SettingsTab extends PageAbstract {
 			<!-- Mailer Options -->
 			<div class="wp-mail-smtp-mailer-options">
 				<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all() as $provider ) : ?>
-
+					<?php $provider_desc = $provider->get_description(); ?>
 					<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
 
 						<!-- Mailer Title/Notice/Description -->
@@ -252,9 +263,7 @@ class SettingsTab extends PageAbstract {
 									<?php $provider->display_options(); ?>
 								<?php else : ?>
 									<h2><?php echo $provider->get_title(); ?></h2>
-
 									<?php
-									$provider_desc       = $provider->get_description();
 									$provider_edu_notice = $provider->get_notice( 'educational' );
 									$is_dismissed        = (bool) get_user_meta( get_current_user_id(), "wp_mail_smtp_notice_educational_for_{$provider->get_slug()}_dismissed", true );
 									if ( ! empty( $provider_edu_notice ) && ! $is_dismissed ) :

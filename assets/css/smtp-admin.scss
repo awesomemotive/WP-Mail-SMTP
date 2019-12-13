@@ -287,83 +287,87 @@
 				padding-bottom: 20px;
 
 				.wp-mail-smtp-mailers {
-					width: 680px;
-				}
 
-				.wp-mail-smtp-mailer {
-					display: inline-block;
-					width: 150px;
-					margin-right: 15px;
-					margin-bottom: 15px;
-					position: relative;
-
-					.wp-mail-smtp-mailer-recommended {
-						position: absolute;
-						right: -1px;
-						width: 99px;
-						top: 2px;
-						z-index: 1;
-					}
-
-					&:last-child {
-						margin-right: 0;
-					}
-
-					.wp-mail-smtp-mailer-image {
-						background: #fff;
-						text-align: center;
-						border: 2px solid #E5E5E5;
-						border-radius: $border-radius;
-						cursor: pointer;
-						height: 76px;
+					.wp-mail-smtp-mailer {
+						display: inline-block;
+						width: 140px;
+						margin-right: 12px;
+						margin-bottom: 12px;
 						position: relative;
-						margin-bottom: 10px;
-						-webkit-transition: all 0.2s ease-in-out;
-						-moz-transition:    all 0.2s ease-in-out;
-						-ms-transition:     all 0.2s ease-in-out;
-						transition:         all 0.2s ease-in-out;
 
-						&.is-recommended {
-							background-image: url(../images/recommended.svg);
-							background-repeat: no-repeat;
-							background-size: 60%;
-							background-position: top right -2px;
-						}
-
-						img {
-							max-width: 90%;
-							max-height: 40px;
-							display: block;
-							position: relative;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-							opacity: 0.6;
-							-webkit-transition: all 0.2s ease-in-out;
-							-moz-transition:    all 0.2s ease-in-out;
-							-ms-transition:     all 0.2s ease-in-out;
-							transition:         all 0.2s ease-in-out;
-						}
-					}
-
-					&.wp-mail-smtp-mailer-smtp .wp-mail-smtp-mailer-image img { max-height: 30px }
-
-					&.active {
 						.wp-mail-smtp-mailer-image {
-							border-color: $orange;
+							background: #fff;
+							text-align: center;
+							border: 2px solid #E5E5E5;
+							border-radius: $border-radius;
+							cursor: pointer;
+							height: 76px;
+							position: relative;
+							margin-bottom: 10px;
+							-webkit-transition: all 0.2s ease-in-out;
+							-moz-transition: all 0.2s ease-in-out;
+							-ms-transition: all 0.2s ease-in-out;
+							transition: all 0.2s ease-in-out;
+
+							&.is-recommended {
+								background-image: url(../images/recommended.svg);
+								background-repeat: no-repeat;
+								background-size: 60%;
+								background-position: top right -2px;
+							}
 
 							img {
-								opacity: 1;
+								max-width: 90%;
+								max-height: 40px;
+								display: block;
+								position: relative;
+								top: 50%;
+								left: 50%;
+								transform: translate(-50%, -50%);
+								opacity: 0.6;
+								-webkit-transition: all 0.2s ease-in-out;
+								-moz-transition: all 0.2s ease-in-out;
+								-ms-transition: all 0.2s ease-in-out;
+								transition: all 0.2s ease-in-out;
 							}
 						}
-					}
 
-					&:hover {
-						.wp-mail-smtp-mailer-image {
-							border-color: #ccc;
+						&.wp-mail-smtp-mailer-smtp .wp-mail-smtp-mailer-image img {
+							max-height: 30px
+						}
 
-							img {
-								opacity: 1;
+						&.suggest-new {
+							a.wp-mail-smtp-mailer-image {
+								min-width: 140px;
+								display: table-cell;
+								color: #777777;
+								text-decoration: underline;
+								vertical-align: middle;
+								bottom: 10px;
+							}
+
+							.wp-mail-smtp-mailer-text {
+								visibility: hidden;
+							}
+						}
+
+						&.active {
+							.wp-mail-smtp-mailer-image {
+								border-color: $orange;
+
+								img {
+									opacity: 1;
+								}
+							}
+						}
+
+						&:hover {
+							.wp-mail-smtp-mailer-image {
+								border-color: #ccc;
+
+								img {
+									opacity: 1;
+								}
 							}
 						}
 					}
@@ -499,6 +503,7 @@
 				margin: 0 10px 0 0;
 				width: 400px;
 				min-height: 35px;
+				line-height: 1.3;
 
 				@include media("<desktop") {
 					width: 300px;

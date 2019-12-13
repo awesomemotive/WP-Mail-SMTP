@@ -1,6 +1,6 @@
 <?php
 
-namespace WPMailSMTP\Providers\Sendinblue;
+namespace WPMailSMTP\Providers\PepipostAPI;
 
 use WPMailSMTP\Providers\OptionsAbstract;
 use WPMailSMTP\Options as PluginOptions;
@@ -8,30 +8,30 @@ use WPMailSMTP\Options as PluginOptions;
 /**
  * Class Options.
  *
- * @since 1.6.0
+ * @since 1.8.0
  */
 class Options extends OptionsAbstract {
 
 	/**
 	 * Mailer slug.
 	 *
-	 * @since 1.6.0
+	 * @since 1.8.0
 	 */
-	const SLUG = 'sendinblue';
+	const SLUG = 'pepipostapi';
 
 	/**
 	 * Options constructor.
 	 *
-	 * @since 1.6.0
+	 * @since 1.8.0
 	 */
 	public function __construct() {
 
 		$description = sprintf(
-			wp_kses( /* translators: %1$s - URL to sendinblue.com site. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is a recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day.', 'wp-mail-smtp' ) .
+			wp_kses( /* translators: %1$s - URL to pepipost.com site. */
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Pepipost</a> is a recommended transactional email service.</strong> Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.  Pepipost provides users 30,000 free emails the first 30 days, then 100 emails per day.', 'wp-mail-smtp' ) .
 				'<br><br>' .
-				/* translators: %2$s - URL to wpmailsmtp.com doc. */
-				__( 'Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a> to learn how to configure Sendinblue and improve your email deliverability.', 'wp-mail-smtp' ),
+				/* translators: %1$s - URL to wpmailsmtp.com doc. */
+				__( 'Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Pepipost documentation</a> to learn how to configure Pepipost and improve your email deliverability.', 'wp-mail-smtp' ),
 				array(
 					'br'     => true,
 					'strong' => true,
@@ -42,26 +42,26 @@ class Options extends OptionsAbstract {
 					),
 				)
 			),
-			'https://wpmailsmtp.com/go/sendinblue/',
-			'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp'
+			'https://wpmailsmtp.com/go/pepipost/',
+			'https://wpmailsmtp.com/docs/how-to-set-up-the-pepipost-mailer-in-wp-mail-smtp'
 		);
 
 		$api_key = PluginOptions::init()->get( self::SLUG, 'api_key' );
 
 		if ( empty( $api_key ) ) {
-			$description .= '</p><p class="buttonned"><a href="https://wpmailsmtp.com/go/sendinblue/" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">' .
-							esc_html__( 'Get Sendinblue Now (Free)', 'wp-mail-smtp' ) .
+			$description .= '</p><p class="buttonned"><a href="https://wpmailsmtp.com/go/pepipost/" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">' .
+								esc_html__( 'Get Pepipost Now (Free)', 'wp-mail-smtp' ) .
 							'</a></p>';
 		}
 
 		parent::__construct(
 			array(
-				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/sendinblue.svg',
+				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/pepipost.png',
 				'slug'        => self::SLUG,
-				'title'       => esc_html__( 'Sendinblue', 'wp-mail-smtp' ),
+				'title'       => esc_html__( 'Pepipost', 'wp-mail-smtp' ),
 				'description' => $description,
 				'recommended' => true,
-				'php'         => '5.6',
+				'php'         => '5.3',
 			)
 		);
 	}
@@ -69,7 +69,7 @@ class Options extends OptionsAbstract {
 	/**
 	 * Output the mailer provider options.
 	 *
-	 * @since 1.6.0
+	 * @since 1.8.0
 	 */
 	public function display_options() {
 
@@ -92,7 +92,7 @@ class Options extends OptionsAbstract {
 					<input type="text" disabled value="****************************************"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
-					<?php $this->display_const_set_message( 'WPMS_SENDINBLUE_API_KEY' ); ?>
+					<?php $this->display_const_set_message( 'WPMS_PEPIPOST_API_KEY' ); ?>
 				<?php else : ?>
 					<input type="password" spellcheck="false"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
@@ -103,10 +103,10 @@ class Options extends OptionsAbstract {
 
 				<p class="desc">
 					<?php
-					printf( /* translators: %s - sendinblue.com link to get an API Key. */
+					printf( /* translators: %s - pepipost.com link to get an API Key. */
 						esc_html__( 'Follow this link to get an API Key: %s.', 'wp-mail-smtp' ),
-						'<a href="https://account.sendinblue.com/advanced/api" target="_blank" rel="noopener noreferrer">' .
-						esc_html__( 'Get v3 API Key', 'wp-mail-smtp' ) .
+						'<a href="https://app.pepipost.com/app/settings/integration" target="_blank" rel="noopener noreferrer">' .
+						esc_html__( 'Get the API Key', 'wp-mail-smtp' ) .
 						'</a>'
 					);
 					?>

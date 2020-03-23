@@ -86,7 +86,7 @@ class Debug {
 		$all = self::get();
 
 		if ( ! empty( $all ) && is_array( $all ) ) {
-			return (string) $all[ count( $all ) - 1 ];
+			return (string) end( $all );
 		}
 
 		return '';

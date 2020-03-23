@@ -180,8 +180,8 @@ class About extends PageAbstract {
 					<?php
 					printf(
 						wp_kses(
-							/* translators: %1$s - WPBeginner URL, %2$s - OptinMonster URL, %3$s - MonsterInsights URL. */
-							__( 'WP Mail SMTP is brought to you by the same team that\'s behind the most user friendly WordPress forms, <a href="%1$s" target="_blank" rel="noopener noreferrer">WPForms</a>, the largest WordPress resource site, <a href="%2$s" target="_blank" rel="noopener noreferrer">WPBeginner</a>, the most popular lead-generation software, <a href="%3$s" target="_blank" rel="noopener noreferrer">OptinMonster</a>, and the best WordPress analytics plugin, <a href="%4$s" target="_blank" rel="noopener noreferrer">MonsterInsights</a>.', 'wp-mail-smtp' ),
+							/* translators: %1$s - WPForms URL, %2$s - WPBeginner URL, %3$s - OptinMonster URL, %4$s - MonsterInsights URL, %5$s - RafflePress URL */
+							__( 'WP Mail SMTP is brought to you by the same team that\'s behind the most user friendly WordPress forms, <a href="%1$s" target="_blank" rel="noopener noreferrer">WPForms</a>, the largest WordPress resource site, <a href="%2$s" target="_blank" rel="noopener noreferrer">WPBeginner</a>, the most popular lead-generation software, <a href="%3$s" target="_blank" rel="noopener noreferrer">OptinMonster</a>, the best WordPress analytics plugin, <a href="%4$s" target="_blank" rel="noopener noreferrer">MonsterInsights</a>, and the most powerful WordPress contest plugin, <a href="%5$s" target="_blank" rel="noopener noreferrer">RafflePress</a>.', 'wp-mail-smtp' ),
 							array(
 								'a' => array(
 									'href'   => array(),
@@ -193,7 +193,8 @@ class About extends PageAbstract {
 						'https://wpforms.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://www.wpbeginner.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://optinmonster.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
-						'https://www.monsterinsights.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp'
+						'https://www.monsterinsights.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
+						'https://rafflepress.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp'
 					);
 					?>
 				</p>
@@ -333,7 +334,7 @@ class About extends PageAbstract {
 	private function get_am_plugins() {
 
 		$data = array(
-			'mi'      => array(
+			'mi'          => array(
 				'path' => 'google-analytics-for-wordpress/googleanalytics.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
 				'name' => \esc_html__( 'MonsterInsights', 'wp-mail-smtp' ),
@@ -347,14 +348,14 @@ class About extends PageAbstract {
 					'url'  => 'https://www.monsterinsights.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
 				),
 			),
-			'om'      => array(
+			'om'          => array(
 				'path' => 'optinmonster/optin-monster-wp-api.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-om.png',
 				'name' => \esc_html__( 'OptinMonster', 'wp-mail-smtp' ),
 				'desc' => \esc_html__( 'Our high-converting optin forms like Exit-Intent® popups, Fullscreen Welcome Mats, and Scroll boxes help you dramatically boost conversions and get more email subscribers.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
 			),
-			'wpforms' => array(
+			'wpforms'     => array(
 				'path' => 'wpforms-lite/wpforms.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-wpf.png',
 				'name' => \esc_html__( 'Contact Forms by WPForms', 'wp-mail-smtp' ),
@@ -366,6 +367,20 @@ class About extends PageAbstract {
 					'name' => \esc_html__( 'WPForms Pro', 'wp-mail-smtp' ),
 					'desc' => \esc_html__( 'The best WordPress contact form plugin. Drag & Drop online form builder that helps you create beautiful contact forms with just a few clicks.', 'wp-mail-smtp' ),
 					'url'  => 'https://wpforms.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'rafflepress' => array(
+				'path' => 'rafflepress/rafflepress.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
+				'name' => \esc_html__( 'RafflePress', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Turn your visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with powerful viral giveaways & contests.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/rafflepress.zip',
+				'pro'  => array(
+					'path' => 'rafflepress-pro/rafflepress-pro.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
+					'name' => \esc_html__( 'RafflePress Pro', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'Turn your visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with powerful viral giveaways & contests.', 'wp-mail-smtp' ),
+					'url'  => 'https://rafflepress.com/pricing/',
 				),
 			),
 		);

@@ -1,9 +1,9 @@
 === WP Mail SMTP by WPForms ===
 Contributors: wpforms, jaredatch, smub, slaFFik
-Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp
+Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, pepipost, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.3
-Stable tag: 1.8.1
+Stable tag: 1.9.0
 Requires PHP: 5.3
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -62,7 +62,7 @@ Pepipost is a recommended transactional email service.
 Every month they delivers over 8 billion emails from 20,000+ customers.
 
 Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.
-Pepipost provides users 30,000 emails the first 30 days, then 100 emails per day.
+Pepipost provides users 30,000 emails the first 30 days.
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-pepipost-mailer-in-wp-mail-smtp/" rel="friend">Pepipost documentation</a> for more details.
 
@@ -78,7 +78,7 @@ Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-maile
 
 = Mailgun SMTP =
 
-Mailgun SMTP is a popular SMTP service provider that allows you to send large quantities of emails. They allow you to send your first 10,000 emails for free every month.
+Mailgun SMTP is a popular SMTP service provider that allows you to send large quantities of emails. They provide 5,000 free emails per month for 3 months.
 
 WP Mail SMTP plugin offers a native integration with MailGun. All you have to do is connect your Mailgun account, and you will improve your email deliverability.
 
@@ -219,6 +219,13 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 1.9.0 - 2020-03-23 =
+* Added: Add various Status tests and Info section on Tools > Site Health page.
+* Added: Notify admin if there are unsaved changes in plugin admin area options.
+* Fixed: Test email now has a proper bottom margin for better look.
+* Changed: Update "About us" plugin page with relevant information.
+* Changed: Save default WordPress FROM Email address when incorrect FROM Email address is saved by a user.
 
 = 1.8.1 - 2019-12-13 =
 * Fixed: Revert Guzzle version to 6.4.1 because Sendinblue and Gmail mailers may experience issues under certain circumstances while sending emails (not all sites are affected).

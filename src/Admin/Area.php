@@ -264,8 +264,9 @@ class Area {
 			'wp-mail-smtp-admin',
 			'wp_mail_smtp',
 			array(
-				'text_provider_remove' => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
-				'education'            => array(
+				'text_provider_remove'    => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
+				'text_settings_not_saved' => esc_html__( 'Changes that you made to the settings are not saved!', 'wp-mail-smtp' ),
+				'education'               => array(
 					'upgrade_icon_lock' => '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z"></path></svg>',
 					'upgrade_title'     => esc_html__( '%name% is a PRO Feature', 'wp-mail-smtp' ),
 					'upgrade_button'    => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
@@ -390,6 +391,7 @@ class Area {
 		}
 		?>
 
+		<div id="wp-mail-smtp-header-temp"></div>
 		<div id="wp-mail-smtp-header">
 			<!--suppress HtmlUnknownTarget -->
 			<img class="wp-mail-smtp-header-logo" src="<?php echo esc_url( wp_mail_smtp()->assets_url ); ?>/images/logo.svg" alt="WP Mail SMTP"/>

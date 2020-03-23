@@ -29,6 +29,16 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 	 */
 	var app = {
 		/**
+		 * State attribute showing if one of the plugin settings
+		 * changed and was not yet saved.
+		 *
+		 * @since {VERSION}
+		 *
+		 * @type {boolean}
+		 */
+		pluginSettingsChanged: false,
+
+		/**
 		 * Start the engine. DOM is not ready yet, use only to init something.
 		 *
 		 * @since 1.6.0
@@ -48,6 +58,9 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 
 			app.pageHolder = $( '.wp-mail-smtp-tab-settings' );
 
+			// If there are screen options we have to move them.
+			$( '#screen-meta-links, #screen-meta' ).prependTo( '#wp-mail-smtp-header-temp' ).show();
+
 			app.bindActions();
 		},
 
@@ -60,7 +73,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 
 			// Mailer selection.
 			$( '.wp-mail-smtp-mailer-image', app.pageHolder ).click( function () {
-				$( this ).parents('.wp-mail-smtp-mailer').find( 'input' ).trigger( 'click' );
+				$( this ).parents( '.wp-mail-smtp-mailer' ).find( 'input' ).trigger( 'click' );
 			} );
 
 			$( '.wp-mail-smtp-mailer input', app.pageHolder ).click( function () {
@@ -159,10 +172,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 
 				document.execCommand( 'Copy' );
 			} );
+
+			app.triggerExitNotice();
 		},
 
 		education: {
-			upgradeMailer: function( $input ) {
+			upgradeMailer: function ( $input ) {
 
 				$.alert( {
 					backgroundDismiss: true,
@@ -177,19 +192,16 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 					icon: '"></i>' + wp_mail_smtp.education.upgrade_icon_lock + '<i class="',
 					content: $( '.wp-mail-smtp-mailer-options .wp-mail-smtp-mailer-option-' + $input.val() + ' .wp-mail-smtp-setting-field' ).html(),
 					boxWidth: '550px',
-					onOpenBefore: function() {
+					onOpenBefore: function () {
 						this.$btnc.after( '<div class="discount-note">' + wp_mail_smtp.education.upgrade_bonus + wp_mail_smtp.education.upgrade_doc + '</div>' );
 					},
-					buttons     : {
+					buttons: {
 						confirm: {
-							text    : wp_mail_smtp.education.upgrade_button,
+							text: wp_mail_smtp.education.upgrade_button,
 							btnClass: 'btn-confirm',
-							keys    : [ 'enter' ],
-							action  : function () {
-								window.open(
-									wp_mail_smtp.education.upgrade_url + '&utm_content=' + encodeURI( $input.val() ),
-									'_blank'
-								);
+							keys: [ 'enter' ],
+							action: function () {
+								window.open( wp_mail_smtp.education.upgrade_url + '&utm_content=' + encodeURI( $input.val() ), '_blank' );
 							}
 						}
 					}
@@ -232,6 +244,33 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || (function ( document, w
 					} );
 				}
 			}
+		},
+
+		/**
+		 * Exit notice JS code when plugin settings are not saved.
+		 *
+		 * @since {VERSION}
+		 */
+		triggerExitNotice: function () {
+
+			var $settingPages = $( '.wp-mail-smtp-page-general:not( .wp-mail-smtp-tab-test )' );
+
+			// Display an exit notice, if settings are not saved.
+			$( window ).on( 'beforeunload', function () {
+				if ( app.pluginSettingsChanged ) {
+					return wp_mail_smtp.text_settings_not_saved;
+				}
+			} );
+
+			// Set settings changed attribute, if any input was changed.
+			$( ':input:not( #wp-mail-smtp-setting-license-key )', $settingPages ).on( 'change', function () {
+				app.pluginSettingsChanged = true;
+			} );
+
+			// Clear the settings changed attribute, if the settings are about to be saved.
+			$( 'form', $settingPages ).on( 'submit', function () {
+				app.pluginSettingsChanged = false;
+			} );
 		}
 	};
 

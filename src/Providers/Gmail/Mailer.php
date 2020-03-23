@@ -79,7 +79,20 @@ class Mailer extends MailerAbstract {
 		$auth    = new Auth();
 		$message = new \Google_Service_Gmail_Message();
 
-		// Get the raw MIME email using \MailCatcher data.
+		/*
+		 * Right now Gmail doesn't allow to redefine From and Sender email headers.
+		 * It always uses the email address that was used to connect to its API.
+		 * With code below we are making sure that Email Log archive and single Email Log
+		 * have the save value for From email header.
+		 */
+		$gmail_creds = $auth->get_user_info();
+
+		if ( ! empty( $gmail_creds['email'] ) ) {
+			$this->phpmailer->From   = $gmail_creds['email'];
+			$this->phpmailer->Sender = $gmail_creds['email'];
+		}
+
+		// Get the raw MIME email using MailCatcher data.
 		// We need here to make base64URL-safe string.
 		$base64 = str_replace(
 			array( '+', '/', '=' ),

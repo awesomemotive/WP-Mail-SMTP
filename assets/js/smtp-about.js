@@ -88,7 +88,7 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || (function ( document, window,
 					errorText,
 					successText;
 
-				$btn.prop( 'disabled', true ).addClass( 'loading' );
+				$btn.addClass( 'loading disabled' );
 				$btn.text( wp_mail_smtp_about.plugin_processing );
 
 				if ( $btn.hasClass( 'status-inactive' ) ) {
@@ -165,8 +165,8 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || (function ( document, window,
 						$btn.html( wp_mail_smtp_about.plugin_download_btn );
 					}
 
-					if ( is_install_successful ) {
-						$btn.prop( 'disabled', false );
+					if ( ! is_install_successful ) {
+						$btn.removeClass( 'disabled' );
 					}
 					$btn.removeClass( 'loading' );
 

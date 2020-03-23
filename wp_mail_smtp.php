@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WP Mail SMTP
- * Version: 1.8.1
+ * Plugin Name: WP Mail SMTP Pro
+ * Version: 1.9.0
  * Plugin URI: https://wpmailsmtp.com/
  * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
  * Author: WPForms
@@ -13,7 +13,7 @@
 
 /**
  * @author    WPForms
- * @copyright WPForms, 2007-19, All Rights Reserved
+ * @copyright WPForms, 2007-20, All Rights Reserved
  * This code is released under the GPL licence version 3 or later, available here
  * https://www.gnu.org/licenses/gpl.txt
  */
@@ -143,7 +143,7 @@ if ( ! function_exists( 'wp_mail_smtp_check_pro_loading_allowed' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '1.8.1' );
+	define( 'WPMS_PLUGIN_VER', '1.9.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.3.6' );

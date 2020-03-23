@@ -441,7 +441,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 			<?php
 			printf(
 				/* translators: %s - Provider name. */
-				esc_html__( '%s requires a SSL certificate on a site to work and does not support you current installation. Please contact your host and request a SSL certificate or install a free one, like Let\'s Encrypt.', 'wp-mail-smtp' ),
+				esc_html__( '%s requires a SSL certificate on a site to work and does not support your current installation. Please contact your host and request a SSL certificate or install a free one, like Let\'s Encrypt.', 'wp-mail-smtp' ),
 				esc_html( $this->get_title() )
 			);
 			?>

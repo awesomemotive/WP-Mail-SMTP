@@ -229,4 +229,24 @@ class Processor {
 	public function get_default_name() {
 		return 'WordPress';
 	}
+
+	/**
+	 * Get or create the phpmailer.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return \WPMailSMTP\MailCatcher
+	 */
+	public function get_phpmailer() {
+
+		global $phpmailer;
+
+		// Make sure the PHPMailer class has been instantiated.
+		if ( ! is_object( $phpmailer ) || ! is_a( $phpmailer, 'PHPMailer' ) ) {
+			require_once ABSPATH . WPINC . '/class-phpmailer.php';
+			$phpmailer = new MailCatcher( true ); // phpcs:ignore
+		}
+
+		return $phpmailer;
+	}
 }

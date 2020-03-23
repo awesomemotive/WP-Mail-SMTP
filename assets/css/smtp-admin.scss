@@ -3,6 +3,22 @@
 @import "general";
 @import "confirm";
 
+// Screen options are hidden on load, then made visible with JS, to
+// prevent it from "jumping".
+#screen-meta-links,
+#screen-meta {
+	display: none;
+}
+
+#wp-mail-smtp-header-temp {
+	position: absolute;
+	margin: 0;
+	top: -1px;
+	left: 20px;
+	right: 20px;
+	z-index: 99;
+}
+
 #wp-mail-smtp-header {
 	border-top: 3px solid $orange;
 	padding: $content-padding;

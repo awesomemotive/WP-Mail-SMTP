@@ -28,7 +28,7 @@ class Options extends OptionsAbstract {
 
 		$description = sprintf(
 			wp_kses( /* translators: %1$s - URL to pepipost.com site. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Pepipost</a> is a recommended transactional email service.</strong> Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.  Pepipost provides users 30,000 free emails the first 30 days, then 100 emails per day.', 'wp-mail-smtp' ) .
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Pepipost</a> is a recommended transactional email service.</strong> Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.  Pepipost provides users 30,000 free emails the first 30 days.', 'wp-mail-smtp' ) .
 				'<br><br>' .
 				/* translators: %1$s - URL to wpmailsmtp.com doc. */
 				__( 'Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Pepipost documentation</a> to learn how to configure Pepipost and improve your email deliverability.', 'wp-mail-smtp' ),

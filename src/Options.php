@@ -772,6 +772,10 @@ class Options {
 							case 'from_email':
 								if ( filter_var( $option_value, FILTER_VALIDATE_EMAIL ) ) {
 									$options[ $group ][ $option_name ] = sanitize_email( $option_value );
+								} else {
+									$options[ $group ][ $option_name ] = sanitize_email(
+										wp_mail_smtp()->get_processor()->get_default_email()
+									);
 								}
 								break;
 							case 'return_path':

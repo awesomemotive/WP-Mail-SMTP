@@ -26,7 +26,7 @@ class Options extends OptionsAbstract {
 				'description' => sprintf(
 					wp_kses(
 						/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
-						__( '%1$sMailgun%2$s is one of the leading transactional email services trusted by over 10,000 website and application developers. They provide users 10,000 free emails per month.<br><br>Read our %3$sMailgun documentation%4$s to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
+						__( '%1$sMailgun%2$s is one of the leading transactional email services trusted by over 150,000+ businesses. They provide 5,000 free emails per month for 3 months.<br><br>Read our %3$sMailgun documentation%4$s to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(

@@ -192,6 +192,7 @@ class Core {
 		// In admin area, regardless of AJAX or not AJAX request.
 		if ( is_admin() ) {
 			$this->get_admin();
+			$this->get_site_health()->init();
 		}
 
 		// Plugin admin area notices. Display to "admins" only.
@@ -359,6 +360,24 @@ class Core {
 	}
 
 	/**
+	 * Get the plugin's WP Site Health object.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return SiteHealth
+	 */
+	public function get_site_health() {
+
+		static $site_health;
+
+		if ( ! isset( $site_health ) ) {
+			$site_health = apply_filters( 'wp_mail_smtp_core_get_site_health', new SiteHealth() );
+		}
+
+		return $site_health;
+	}
+
+	/**
 	 * Display various notifications to a user
 	 *
 	 * @since 1.0.0
@@ -391,7 +410,7 @@ class Core {
 				) .
 				'<br><br><em>' .
 				wp_kses(
-					__( '<strong>Please Note:</strong> Support for PHP 5.3-5.5 will be discontinued in 2019. After this, if no further action is taken, WP Mail SMTP functionality will be disabled.', 'wp-mail-smtp' ),
+					__( '<strong>Please Note:</strong> Support for PHP 5.3-5.5 will be discontinued in 2020. After this, if no further action is taken, WP Mail SMTP functionality will be disabled.', 'wp-mail-smtp' ),
 					array(
 						'strong' => array(),
 						'em'     => array(),

@@ -64,6 +64,10 @@ class Options {
 		'sendgrid'    => array(
 			'api_key',
 		),
+		'smtpcom'     => array(
+			'api_key',
+			'channel',
+		),
 		'sendinblue'  => array(
 			'api_key',
 		),
@@ -407,11 +411,11 @@ class Options {
 						break;
 					case 'auth':
 						/** @noinspection PhpUndefinedConstantInspection */
-						$return = $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTH : $value;
+						$return = $this->is_const_defined( $group, $key ) ? (bool) WPMS_SMTP_AUTH : $value;
 						break;
 					case 'autotls':
 						/** @noinspection PhpUndefinedConstantInspection */
-						$return = $this->is_const_defined( $group, $key ) ? WPMS_SMTP_AUTOTLS : $value;
+						$return = $this->is_const_defined( $group, $key ) ? (bool) WPMS_SMTP_AUTOTLS : $value;
 						break;
 					case 'user':
 						/** @noinspection PhpUndefinedConstantInspection */
@@ -494,6 +498,20 @@ class Options {
 					case 'api_key':
 						/** @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ? WPMS_SENDGRID_API_KEY : $value;
+						break;
+				}
+
+				break;
+
+			case 'smtpcom':
+				switch ( $key ) {
+					case 'api_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SMTPCOM_API_KEY : $value;
+						break;
+					case 'channel':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SMTPCOM_CHANNEL : $value;
 						break;
 				}
 
@@ -626,10 +644,10 @@ class Options {
 						$return = defined( 'WPMS_SSL' );
 						break;
 					case 'auth':
-						$return = defined( 'WPMS_SMTP_AUTH' ) && WPMS_SMTP_AUTH;
+						$return = defined( 'WPMS_SMTP_AUTH' );
 						break;
 					case 'autotls':
-						$return = defined( 'WPMS_SMTP_AUTOTLS' ) && ( WPMS_SMTP_AUTOTLS === 'true' || WPMS_SMTP_AUTOTLS === true );
+						$return = defined( 'WPMS_SMTP_AUTOTLS' );
 						break;
 					case 'user':
 						$return = defined( 'WPMS_SMTP_USER' ) && WPMS_SMTP_USER;
@@ -699,6 +717,18 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						$return = defined( 'WPMS_SENDGRID_API_KEY' ) && WPMS_SENDGRID_API_KEY;
+						break;
+				}
+
+				break;
+
+			case 'smtpcom':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_SMTPCOM_API_KEY' ) && WPMS_SMTPCOM_API_KEY;
+						break;
+					case 'channel':
+						$return = defined( 'WPMS_SMTPCOM_CHANNEL' ) && WPMS_SMTPCOM_CHANNEL;
 						break;
 				}
 
@@ -805,7 +835,7 @@ class Options {
 		if (
 			! empty( $options['mail']['mailer'] ) &&
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], array( 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'sendinblue', 'mailgun', 'gmail', 'outlook' ), true )
+			in_array( $options['mail']['mailer'], array( 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook' ), true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
@@ -833,11 +863,12 @@ class Options {
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : trim( (string) $option_value );
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom.
 					case 'domain': // mailgun.
 					case 'client_id': // gmail/outlook/amazonses.
 					case 'client_secret': // gmail/outlook/amazonses.
 					case 'auth_code': // gmail/outlook.
+					case 'channel': // smtpcom.
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : sanitize_text_field( $option_value );
 						break;
 

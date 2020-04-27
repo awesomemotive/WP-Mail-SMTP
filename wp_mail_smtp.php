@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WP Mail SMTP Pro
- * Version: 1.9.0
+ * Plugin Name: WP Mail SMTP
+ * Version: 2.0.0
  * Plugin URI: https://wpmailsmtp.com/
  * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
  * Author: WPForms
@@ -38,11 +38,15 @@ define( 'WPMS_MAIL_FROM', 'mail@example.com' );
 define( 'WPMS_MAIL_FROM_FORCE', true ); // True turns it on, false turns it off.
 define( 'WPMS_MAIL_FROM_NAME', 'From Name' );
 define( 'WPMS_MAIL_FROM_NAME_FORCE', true ); // True turns it on, false turns it off.
-define( 'WPMS_MAILER', 'sendinblue' ); // Possible values: 'mail', 'sendinblue', 'mailgun', 'sendgrid', 'gmail', 'smtp'.
+define( 'WPMS_MAILER', 'sendinblue' ); // Possible values: 'mail', 'smtpcom', 'sendinblue', 'mailgun', 'sendgrid', 'gmail', 'smtp'.
 define( 'WPMS_SET_RETURN_PATH', true ); // Sets $phpmailer->Sender if true, relevant only for Other SMTP mailer.
 
 // Recommended mailers.
+define( 'WPMS_SMTPCOM_API_KEY', '' );
+define( 'WPMS_SMTPCOM_CHANNEL', '' );
+
 define( 'WPMS_PEPIPOST_API_KEY', '' );
+
 define( 'WPMS_SENDINBLUE_API_KEY', '' );
 
 define( 'WPMS_MAILGUN_API_KEY', '' );
@@ -142,26 +146,82 @@ if ( ! function_exists( 'wp_mail_smtp_check_pro_loading_allowed' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
+	/**
+	 * Display admin notice, if the server is using old/insecure PHP version.
+	 *
+	 * @since 2.0.0
+	 */
+	function wp_mail_smtp_insecure_php_version_notice() {
+
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php
+				printf(
+					wp_kses( /* translators: %1$s - WPBeginner URL for recommended WordPress hosting. */
+						__( 'Your site is running an <strong>insecure version</strong> of PHP that is no longer supported. Please contact your web hosting provider to update your PHP version or switch to a <a href="%1$s" target="_blank" rel="noopener noreferrer">recommended WordPress hosting company</a>.', 'wp-mail-smtp' ),
+						array(
+							'a'      => array(
+								'href'   => array(),
+								'target' => array(),
+								'rel'    => array(),
+							),
+							'strong' => array(),
+						)
+					),
+					'https://www.wpbeginner.com/wordpress-hosting/'
+				);
+				?>
+				<br><br>
+				<?php
+				printf(
+					wp_kses( /* translators: %s - WPMailSMTP.com docs URL with more details. */
+						__( '<strong>WP Mail SMTP plugin is disabled</strong> on your site until you fix the issue. <a href="%s" target="_blank" rel="noopener noreferrer">Read more for additional information.</a>', 'wp-mail-smtp' ),
+						array(
+							'a'      => array(
+								'href'   => array(),
+								'target' => array(),
+								'rel'    => array(),
+							),
+							'strong' => array(),
+						)
+					),
+					'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/'
+				);
+				?>
+			</p>
+		</div>
+
+		<?php
+
+		// In case this is on plugin activation.
+		if ( isset( $_GET['activate'] ) ) { //phpcs:ignore
+			unset( $_GET['activate'] ); //phpcs:ignore
+		}
+	}
+}
+
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '1.9.0' );
+	define( 'WPMS_PLUGIN_VER', '2.0.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
-	define( 'WPMS_PHP_VER', '5.3.6' );
+	define( 'WPMS_PHP_VER', '5.5.0' );
+}
+if ( ! defined( 'WPMS_PLUGIN_FILE' ) ) {
+	define( 'WPMS_PLUGIN_FILE', __FILE__ );
 }
 
 /**
- * Newer PHP version 5.3+ will be handled a lot differently,
- * with better code and newer logic.
+ * Display admin notice and prevent plugin code execution, if the server is
+ * using old/insecure PHP version.
  *
- * @since 1.0.0
+ * @since 2.0.0
  */
-if ( version_compare( phpversion(), WPMS_PHP_VER, '>=' ) ) {
-	require_once dirname( __FILE__ ) . '/wp-mail-smtp.php';
+if ( version_compare( phpversion(), WPMS_PHP_VER, '<' ) ) {
+	add_action( 'admin_notices', 'wp_mail_smtp_insecure_php_version_notice' );
 
 	return;
 }
 
-/**
- * PHP 5.2 only.
- */
-require_once dirname( __FILE__ ) . '/wp-mail-smtp-0.11.2.php';
+require_once dirname( __FILE__ ) . '/wp-mail-smtp.php';

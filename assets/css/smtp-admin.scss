@@ -158,6 +158,7 @@
 
 				input[type=checkbox] + label {
 					margin: 0 0 0 8px;
+					vertical-align: baseline;
 				}
 
 				.desc {
@@ -235,7 +236,7 @@
 						}
 
 						&:disabled + .wp-mail-smtp-setting-toggle-switch {
-							background-color: lighten(#46B450, 10);
+							background-color: lighten(#46B450, 25);
 							cursor: default;
 						}
 
@@ -350,21 +351,6 @@
 
 						&.wp-mail-smtp-mailer-smtp .wp-mail-smtp-mailer-image img {
 							max-height: 30px
-						}
-
-						&.suggest-new {
-							a.wp-mail-smtp-mailer-image {
-								min-width: 140px;
-								display: table-cell;
-								color: #777777;
-								text-decoration: underline;
-								vertical-align: middle;
-								bottom: 10px;
-							}
-
-							.wp-mail-smtp-mailer-text {
-								visibility: hidden;
-							}
 						}
 
 						&.active {
@@ -559,7 +545,6 @@
 			label {
 				display: block;
 				font-weight: 600;
-				font-size: 1.1em;
 			}
 		}
 

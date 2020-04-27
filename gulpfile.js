@@ -54,14 +54,19 @@ var plugin = {
 		'!**/*.sh',
 		'!**/*.rst',
 		'!**/*.xml',
-		'loco.xml',
 		'!**/*.yml',
 		'!**/*.dist',
 		'!**/*.json',
 		'!**/*.lock',
 		'!**/gulpfile.js',
-		'!**/Makefile',
+		'!**/.eslintrc.js',
+		'!**/.eslintignore.js',
 		'!**/AUTHORS',
+		'!**/Copying',
+		'!**/Dockerfile',
+		'!**/Makefile',
+		'!.packages/**',
+		'!.packages/',
 		'!vendor/composer/!(*.php)/**',
 		'!vendor/firebase/**',
 		'!vendor/firebase/',
@@ -77,16 +82,33 @@ var plugin = {
 		'!vendor/phpseclib/phpseclib/phpseclib/File',
 		'!vendor/phpseclib/phpseclib/phpseclib/System/**',
 		'!vendor/phpseclib/phpseclib/phpseclib/System',
+		// We don't need certain dev packages.
+		'!vendor/dealerdirect/**',
+		'!vendor/dealerdirect/',
+		'!vendor/seld/**',
+		'!vendor/seld/',
+		'!vendor/squizlabs/**',
+		'!vendor/squizlabs/',
 		'!vendor/wikimedia/**',
-		'!vendor/wikimedia/'
+		'!vendor/wikimedia/',
+		'!vendor/wp-coding-standards/**',
+		'!vendor/wp-coding-standards/',
+		'!vendor/wpforms/**',
+		'!vendor/wpforms/',
 	],
-	not_pro: [
+	lite_files: [
 		'!assets/pro/**',
 		'!src/Pro/**'
+	],
+	pro_files: [
+		'loco.xml',
+		'!readme.txt'
 	],
 	php: [
 		'**/*.php',
 		'!vendor/**',
+		'!vendors/**',
+		"!vendor_prefixed/**",
 		'!tests/**'
 	],
 	scss: [
@@ -103,6 +125,19 @@ var plugin = {
 		'assets/images/**/*',
 		'assets/pro/images/**/*',
 		'assets/wporg/**/*'
+	],
+	files_replace_ver: [
+		"**/*.php",
+		"**/*.js",
+		"!**/*.min.js",
+		"!gulpfile.js",
+		"!assets/js/vendor/**",
+		"!assets/pro/js/vendor/**",
+		"!build/**",
+		"!vendor/**",
+		"!vendors/**",
+		"!vendor_prefixed/**",
+		"!node_modules/**"
 	]
 };
 
@@ -179,31 +214,34 @@ gulp.task( 'pot:pro', function ( cb ) {
 		cb( err );
 	} );
 } );
+gulp.task( 'pot', gulp.parallel( 'pot:lite', 'pot:pro' ) );
 
 /**
  * Generate a .zip file.
  */
 gulp.task( 'zip:lite', function () {
-	var files = plugin.files.concat( plugin.not_pro );
+	var files = plugin.files.concat( plugin.lite_files );
 
 	// Modifying 'base' to include plugin directory in a zip.
 	return gulp.src( files, { base: '.' } )
-			   .pipe( rename( function ( file ) {
-				   file.dirname = plugin.slug + '/' + file.dirname;
-			   } ) )
-			   .pipe( zip( plugin.slug + '-' + packageJSON.version + '.zip' ) )
-			   .pipe( gulp.dest( './build' ) )
-			   .pipe( debug( { title: '[zip]' } ) );
+		.pipe( rename( function ( file ) {
+			file.dirname = plugin.slug + '/' + file.dirname;
+		} ) )
+		.pipe( zip( plugin.slug + '-' + packageJSON.version + '.zip' ) )
+		.pipe( gulp.dest( './build' ) )
+		.pipe( debug( { title: '[zip]' } ) );
 } );
 gulp.task( 'zip:pro', function () {
+	var files = plugin.files.concat( plugin.pro_files );
+
 	// Modifying 'base' to include plugin directory in a zip.
-	return gulp.src( plugin.files, { base: '.' } )
-			   .pipe( rename( function ( file ) {
-				   file.dirname = plugin.slug + '-pro/' + file.dirname;
-			   } ) )
-			   .pipe( zip( plugin.slug + '-pro-' + packageJSON.version + '.zip' ) )
-			   .pipe( gulp.dest( './build' ) )
-			   .pipe( debug( { title: '[zip]' } ) );
+	return gulp.src( files, { base: '.' } )
+		.pipe( rename( function ( file ) {
+			file.dirname = plugin.slug + '-pro/' + file.dirname;
+		} ) )
+		.pipe( zip( plugin.slug + '-pro-' + packageJSON.version + '.zip' ) )
+		.pipe( gulp.dest( './build' ) )
+		.pipe( debug( { title: '[zip]' } ) );
 } );
 
 /**
@@ -245,32 +283,47 @@ gulp.task( 'rename:pro', function () {
 } );
 
 /**
- * Replace plugin version with one from package.json.
+ * Replace plugin version with one from package.json in the main plugin file.
  */
-gulp.task( 'replace_ver', function () {
+gulp.task( 'replace_plugin_file_ver', function () {
 	return gulp.src( [ 'wp_mail_smtp.php' ] )
-			   .pipe(
-				   // File header.
-				   replace(
-					   /Version: ((\*)|([0-9]+(\.((\*)|([0-9]+(\.((\*)|([0-9]+)))?)))?))/gm,
-					   'Version: ' + packageJSON.version
-				   )
-			   )
-			   .pipe(
-				   // PHP constant.
-				   replace(
-					   /define\( 'WPMS_PLUGIN_VER', '((\*)|([0-9]+(\.((\*)|([0-9]+(\.((\*)|([0-9]+)))?)))?))' \);/gm,
-					   'define( \'WPMS_PLUGIN_VER\', \'' + packageJSON.version + '\' );'
-				   )
-			   )
-			   .pipe( gulp.dest( './' ) );
+		.pipe(
+			// File header.
+			replace(
+				/Version: ((\*)|([0-9]+(\.((\*)|([0-9]+(\.((\*)|([0-9]+)))?)))?))/gm,
+				'Version: ' + packageJSON.version
+			)
+		)
+		.pipe(
+			// PHP constant.
+			replace(
+				/define\( 'WPMS_PLUGIN_VER', '((\*)|([0-9]+(\.((\*)|([0-9]+(\.((\*)|([0-9]+)))?)))?))' \);/gm,
+				'define( \'WPMS_PLUGIN_VER\', \'' + packageJSON.version + '\' );'
+			)
+		)
+		.pipe( gulp.dest( './' ) );
 } );
+/**
+ * Replace plugin version with one from package.json in @since comments in plugin PHP and JS files.
+ */
+gulp.task( 'replace_since_ver', function () {
+	return gulp.src( plugin.files_replace_ver )
+		.pipe(
+			replace(
+				/@since {VERSION}/g,
+				'@since ' + packageJSON.version
+			)
+		)
+		.pipe( gulp.dest( './' ) );
+} );
+gulp.task( 'replace_ver', gulp.series( 'replace_plugin_file_ver', 'replace_since_ver' ) );
 
 /**
  * Task: build.
  */
 gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot:lite' ), 'replace_ver', 'rename:lite', 'composer:lite', 'zip:lite' ) );
 gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot:lite', 'pot:pro' ), 'replace_ver', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build:test', gulp.series( 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot:lite', 'pot:pro' ), 'replace_ver', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 
 /**

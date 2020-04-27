@@ -1,1 +1,13 @@
 /composer.lock -merge
+* text=auto
+
+*.js text eol=lf
+*.css text eol=lf
+*.php text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.lock text eol=lf
+*.xml text eol=lf
+*.pot text eol=lf
+*.po text eol=lf

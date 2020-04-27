@@ -2,9 +2,9 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, pepipost, sendinblue, wp smtp
 Requires at least: 4.9
-Tested up to: 5.3
-Stable tag: 1.9.0
-Requires PHP: 5.3
+Tested up to: 5.4
+Stable tag: 2.0.0
+Requires PHP: 5.5.0
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
 
@@ -42,18 +42,29 @@ This helps you fix all WordPress not sending email issues.
 
 WP Mail SMTP plugin includes many different SMTP setup options:
 
-1. Pepipost SMTP <strong>(Recommended)</strong>
-2. Sendinblue SMTP <strong>(Recommended)</strong>
-3. Mailgun SMTP
-4. SendGrid SMTP
-5. Gmail SMTP
-6. Microsoft SMTP (Outlook.com and Office 365) <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
-7. Amazon SES SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
-8. All Other SMTP
+1. SMTP.com <strong>(Recommended)</strong>
+2. Pepipost SMTP <strong>(Recommended)</strong>
+3. Sendinblue SMTP
+4. Mailgun SMTP
+5. SendGrid SMTP
+6. Gmail SMTP
+7. Microsoft SMTP (Outlook.com and Office 365) <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
+8. Amazon SES SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
+9. All Other SMTP
 
 For all options, you can specify the "from name" and "email address" for outgoing emails.
 
 Instead of having users use different SMTP plugins and workflows for different SMTP providers, we decided to bring it all in one. This is what makes WP Mail SMTP, the best SMTP solution for WordPress.
+
+= SMTP.COM =
+
+SMTP.com is a recommended transactional email service.
+
+With over 22 years of email delivery expertise, SMTP.com has been around for almost as long as email itself. They are known among internet providers as one of the most reliable senders on the internet.
+
+Their easy integration process lets you start sending emails in minutes and benefit from years of experience. SMTP.com provides users 10,000 free emails the first 30 days.
+
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp" rel="friend">SMTP.com documentation</a> for more details.
 
 = Pepipost SMTP =
 
@@ -67,8 +78,6 @@ Pepipost provides users 30,000 emails the first 30 days.
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-pepipost-mailer-in-wp-mail-smtp/" rel="friend">Pepipost documentation</a> for more details.
 
 = Sendinblue SMTP =
-
-Sendinblue is a recommended transactional email service.
 
 They serve 80,000+ growing companies around the world and send over 30 million emails each day.
 
@@ -154,7 +163,7 @@ You can sit back and relax while we set up everything for you. White glove setup
 
 The WP Mail SMTP team takes security very seriously. Not only does the plugin follow all security best practices, but we have several options available to ensure your site is safe and secure.
 
-- Direct SMTP mailer integrations (recommended), such as Google and Mailgun, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
+- Direct SMTP mailer integrations (recommended), such as SMTP.com, Pepipost and Mailgun, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
 
 - When using Other SMTP mailer, we provide the option to insert your password in your `wp-config.php` file, so it's not visible in your WordPress settings or saved in the database.
 
@@ -188,7 +197,7 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 Yes! We have extensive documentation that covers setting up SMTP most popular email services.
 
-<a href="https://wpforms.com/docs/how-to-set-up-smtp-using-the-wp-mail-smtp-plugin/" rel="friend">Read our docs</a> to see the correct SMTP settings for each service.
+<a href="https://wpmailsmtp.com/docs/a-complete-guide-to-wp-mail-smtp-mailers/" rel="friend">Read our docs</a> to see the correct SMTP settings for each service.
 
 = Help! I need support or have an issue. =
 
@@ -219,6 +228,13 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 2.0.0 - 2020-04-27 =
+* IMPORTANT: Support for PHP 5.2-5.4 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.0. Failure to do that will disable WP Mail SMTP functionality.
+* Added: new mailer - SMTP.com integration.
+* Changed: Plugin filters that change the FROM Name/Email in emails are now always running last.
+* Fixed: `false` value of the `WPMS_SMTP_AUTH`/`WPMS_SMTP_AUTOTLS` constants was not properly handled in UI.
+* Fixed: various minor code and internal links improvements.
 
 = 1.9.0 - 2020-03-23 =
 * Added: Add various Status tests and Info section on Tools > Site Health page.

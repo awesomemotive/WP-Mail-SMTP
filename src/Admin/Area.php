@@ -57,7 +57,7 @@ class Area {
 	protected function hooks() {
 
 		// Add the Settings link to a plugin on Plugins page.
-		add_filter( 'plugin_action_links', array( $this, 'add_plugin_action_link' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . plugin_basename( WPMS_PLUGIN_FILE ), array( $this, 'add_plugin_action_link' ), 10, 1 );
 
 		// Add the options page.
 		add_action( 'admin_menu', array( $this, 'add_admin_options_page' ) );
@@ -219,14 +219,17 @@ class Area {
 			self::SLUG . '-logs',
 			array( $this, 'display' )
 		);
-		\add_submenu_page(
-			self::SLUG,
-			\esc_html__( 'About Us', 'wp-mail-smtp' ),
-			\esc_html__( 'About Us', 'wp-mail-smtp' ),
-			'manage_options',
-			self::SLUG . '-about',
-			array( $this, 'display' )
-		);
+
+		if ( ! wp_mail_smtp()->is_white_labeled() ) {
+			\add_submenu_page(
+				self::SLUG,
+				\esc_html__( 'About Us', 'wp-mail-smtp' ),
+				\esc_html__( 'About Us', 'wp-mail-smtp' ),
+				'manage_options',
+				self::SLUG . '-about',
+				array( $this, 'display' )
+			);
+		}
 	}
 
 	/**
@@ -273,7 +276,7 @@ class Area {
 					'upgrade_url'       => 'https://wpmailsmtp.com/lite-upgrade/?discount=SMTPLITEUPGRADE&utm_source=WordPress&utm_medium=plugin-settings&utm_campaign=liteplugin',
 					'upgrade_bonus'     => '<p>' .
 											wp_kses(
-												__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>20% off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
+												__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>$50 off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
 												array(
 													'strong' => true,
 													'span'   => true,
@@ -368,7 +371,7 @@ class Area {
 
 			\wp_enqueue_script(
 				'wp-mail-smtp-admin-about-matchheight',
-				\wp_mail_smtp()->assets_url . '/js/jquery.matchHeight.min.js',
+				\wp_mail_smtp()->assets_url . '/js/vendor/jquery.matchHeight.min.js',
 				array( 'wp-mail-smtp-admin' ),
 				'0.7.2',
 				false
@@ -394,7 +397,7 @@ class Area {
 		<div id="wp-mail-smtp-header-temp"></div>
 		<div id="wp-mail-smtp-header">
 			<!--suppress HtmlUnknownTarget -->
-			<img class="wp-mail-smtp-header-logo" src="<?php echo esc_url( wp_mail_smtp()->assets_url ); ?>/images/logo.svg" alt="WP Mail SMTP"/>
+			<img class="wp-mail-smtp-header-logo" src="<?php echo esc_url( wp_mail_smtp()->assets_url ); ?>/images/logo<?php echo wp_mail_smtp()->is_white_labeled() ? '-whitelabel' : ''; ?>.svg" alt="WP Mail SMTP"/>
 		</div>
 
 		<?php
@@ -775,29 +778,38 @@ class Area {
 	}
 
 	/**
-	 * Add a link to Settings page of a plugin on Plugins page.
+	 * Add plugin action links on Plugins page (lite version only).
 	 *
 	 * @since 1.0.0
 	 * @since 1.5.0 Added a link to Email Log.
+	 * @since 2.0.0 Adjusted links. Process only the Lite plugin.
 	 *
-	 * @param array $links
-	 * @param string $file
+	 * @param array $links Existing plugin action links.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	public function add_plugin_action_link( $links, $file ) {
+	public function add_plugin_action_link( $links ) {
 
-		// Will target both pro and lite version of a plugin.
-		if ( strpos( $file, 'wp-mail-smtp' ) === false ) {
+		// Do not register lite plugin action links if on pro version.
+		if ( wp_mail_smtp()->is_pro() ) {
 			return $links;
 		}
 
-		$settings_link = '<a href="' . esc_url( $this->get_admin_page_url() ) . '">' . esc_html__( 'Settings', 'wp-mail-smtp' ) . '</a>';
-		$logs_link     = '<a href="' . esc_url( $this->get_admin_page_url( self::SLUG . '-logs' ) ) . '">' . esc_html__( 'Email Log', 'wp-mail-smtp' ) . '</a>';
+		$custom['settings'] = sprintf(
+			'<a href="%s" aria-label="%s">%s</a>',
+			esc_url( $this->get_admin_page_url() ),
+			esc_attr__( 'Go to WP Mail SMTP Settings page', 'wp-mail-smtp' ),
+			esc_html__( 'Settings', 'wp-mail-smtp' )
+		);
 
-		array_unshift( $links, $settings_link, $logs_link );
+		$custom['support'] = sprintf(
+			'<a href="%1$s" aria-label="%2$s" style="font-weight:bold;">%3$s</a>',
+			esc_url( add_query_arg( 'tab','versus', $this->get_admin_page_url( Area::SLUG . '-about' ) ) ),
+			esc_attr__( 'Go to WP Mail SMTP Lite vs Pro comparison page', 'wp-mail-smtp' ),
+			esc_html__( 'Premium Support', 'wp-mail-smtp' )
+		);
 
-		return $links;
+		return array_merge( $custom, (array) $links );
 	}
 
 	/**

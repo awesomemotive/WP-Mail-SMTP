@@ -50,7 +50,7 @@ class Options extends OptionsAbstract {
 
 		if ( empty( $api_key ) ) {
 			$description .= '</p><p class="buttonned"><a href="https://wpmailsmtp.com/go/pepipost/" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">' .
-								esc_html__( 'Get Pepipost Now (Free)', 'wp-mail-smtp' ) .
+								esc_html__( 'Get Started with Pepipost', 'wp-mail-smtp' ) .
 							'</a></p>';
 		}
 
@@ -103,7 +103,7 @@ class Options extends OptionsAbstract {
 
 				<p class="desc">
 					<?php
-					printf( /* translators: %s - pepipost.com link to get an API Key. */
+					printf( /* translators: %s - link to get an API Key. */
 						esc_html__( 'Follow this link to get an API Key: %s.', 'wp-mail-smtp' ),
 						'<a href="https://app.pepipost.com/app/settings/integration" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get the API Key', 'wp-mail-smtp' ) .

@@ -253,7 +253,7 @@ class TestTab extends PageAbstract {
 						<!-- Header -->
 						<tr style="padding: 0; vertical-align: top; text-align: left;">
 							<td align="center" valign="middle" class="header" style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; margin: 0; Margin: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; text-align: center; padding: 30px 30px 22px 30px;">
-								<img src="<?php echo esc_url( wp_mail_smtp()->plugin_url . '/assets/images/email/wp-mail-smtp.png' ); ?>" width="250" alt="WP Mail SMTP Logo" style="outline: none; text-decoration: none; max-width: 100%; clear: both; -ms-interpolation-mode: bicubic; display: inline-block !important; width: 250px;">
+								<img src="<?php echo esc_url( wp_mail_smtp()->plugin_url . '/assets/images/email/wp-mail-smtp' . ( wp_mail_smtp()->is_white_labeled() ? '-whitelabel' : '' ) . '.png' ); ?>" width="250" alt="WP Mail SMTP Logo" style="outline: none; text-decoration: none; max-width: 100%; clear: both; -ms-interpolation-mode: bicubic; display: inline-block !important; width: 250px;">
 							</td>
 						</tr>
 						<!-- Content -->
@@ -296,7 +296,7 @@ class TestTab extends PageAbstract {
 										Access to our world class support team
 									</p>
 									<p class="text-large last" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; font-size: 13px; text-align: center; margin: 0 0 0 0; Margin: 0 0 0 0;">
-										WP Mail SMTP users get <span style="font-weight:700;color:#218900;">20% off</span>, automatically applied at checkout
+										WP Mail SMTP users get <span style="font-weight:700;color:#218900;">$50 off</span>, automatically applied at checkout
 									</p>
 									<center style="width: 100%;">
 										<table class="button large expanded orange" style="border-collapse: collapse; border-spacing: 0; padding: 0; vertical-align: top; text-align: left; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #e27730; width: 100% !important;">
@@ -343,7 +343,7 @@ class TestTab extends PageAbstract {
 
 		// phpcs:disable
 		if ( wp_mail_smtp()->is_pro() ) {
-			// WP Mail SMTP Pro & WPForms paid installed.
+			// WP Mail SMTP Pro paid installed.
 			$message =
 'Congrats, test email was sent successfully!
 
@@ -705,7 +705,7 @@ Lead Developer, WP Mail SMTP';
 								),
 							)
 						),
-						'https://wpforms.com/how-to-send-wordpress-emails-with-mailgun/'
+						'https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/'
 					),
 					esc_html__( 'Complete the steps in section "2. Verify Your Domain".', 'wp-mail-smtp' ),
 				),
@@ -893,7 +893,7 @@ Lead Developer, WP Mail SMTP';
 					esc_html__( 'Make sure that the used Client ID/Secret correspond to a proper project that has Gmail API enabled.', 'wp-mail-smtp' ),
 					sprintf(
 						wp_kses(
-							/* translators: %s - WPForms.com tutorial URL. */
+							/* translators: %s - Gmail documentation URL. */
 							esc_html__( 'Please follow our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail tutorial</a> to be sure that all the correct project and data is applied.', 'wp-mail-smtp' ),
 							array(
 								'a' => array(
@@ -903,7 +903,7 @@ Lead Developer, WP Mail SMTP';
 								),
 							)
 						),
-						'https://wpforms.com/how-to-securely-send-wordpress-emails-using-gmail-smtp/'
+						'https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/'
 					),
 				),
 			),
@@ -1063,7 +1063,7 @@ Lead Developer, WP Mail SMTP';
 				<p>
 					<?php
 					echo wp_kses(
-						__( 'As a valued WP Mail SMTP user, you will get <span class="price-off">20% off regular pricing</span>, automatically applied at checkout!', 'wp-mail-smtp' ),
+						__( 'As a valued WP Mail SMTP user, you will get <span class="price-off">$50 off regular pricing</span>, automatically applied at checkout!', 'wp-mail-smtp' ),
 						array(
 							'span' => array(
 								'class' => array(),

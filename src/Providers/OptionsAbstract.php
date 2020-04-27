@@ -464,7 +464,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 
 		<p class="desc">
 			<?php
-			printf( /* translators: %1$s - constant name, %2$s - file name. */
+			printf( /* translators: %1$s - constant that was used; %2$s - file where it was used. */
 				esc_html__( 'The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation.', 'wp-mail-smtp' ),
 				'<code>' . esc_attr( $constant ) . '</code>',
 				'<code>wp-config.php</code>'

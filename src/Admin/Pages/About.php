@@ -598,7 +598,7 @@ class About extends PageAbstract {
 					<p class="centered">
 						<?php
 						echo \wp_kses(
-							\__( 'Bonus: WP Mail SMTP Lite users get <span class="price-off">20% off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
+							\__( 'Bonus: WP Mail SMTP Lite users get <span class="price-off">$50 off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
 							array(
 								'span' => array(
 									'class' => array(),

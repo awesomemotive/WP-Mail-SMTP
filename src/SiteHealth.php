@@ -5,7 +5,7 @@ namespace WPMailSMTP;
 /**
  * Class SiteHealth adds the plugin status and information to the WP Site Health admin page.
  *
- * @since {VERSION}
+ * @since 1.9.0
  */
 class SiteHealth {
 
@@ -15,7 +15,7 @@ class SiteHealth {
 	 *
 	 * @see https://make.wordpress.org/core/2019/04/25/site-health-check-in-5-2/
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 */
 	const BADGE_COLOR = 'blue';
 
@@ -24,14 +24,14 @@ class SiteHealth {
 	 * This should be a plugin unique string, which will be used in the WP Site Health page,
 	 * for the "info" tab and will present the plugin info section.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 */
 	const DEBUG_INFO_SLUG = 'wp_mail_smtp';
 
 	/**
 	 * Translatable string for the plugin label.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 *
 	 * @return string
 	 */
@@ -43,7 +43,7 @@ class SiteHealth {
 	/**
 	 * Initialize the site heath functionality.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 */
 	public function init() {
 
@@ -55,7 +55,7 @@ class SiteHealth {
 	 * Register plugin WP site health tests.
 	 * This will be displayed in the "Status" tab of the WP Site Health page.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 *
 	 * @param array $tests The array with all WP site health tests.
 	 *
@@ -75,7 +75,7 @@ class SiteHealth {
 	 * Register plugin WP Site Health debug information.
 	 * This will be displayed in the "Info" tab of the WP Site Health page.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 *
 	 * @param array $debug_info Array of existing debug information.
 	 *
@@ -109,7 +109,7 @@ class SiteHealth {
 	/**
 	 * Perform the WP site health test for checking, if the mailer setup is complete.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 */
 	public function mailer_setup_complete_test() {
 

@@ -234,18 +234,16 @@ class SettingsTab extends PageAbstract {
 							</div>
 
 						<?php endforeach; ?>
+					</div>
 
-						<!-- Suggest a mailer -->
-						<div class="wp-mail-smtp-mailer suggest-new">
-							<a href="https://wpmailsmtp.com/suggest-a-mailer" class="wp-mail-smtp-mailer-image" target="_blank" rel="noopener noreferrer">
+					<!-- Suggest a mailer -->
+					<div class="wp-mail-smtp-suggest-new-mailer">
+						<p class="desc">
+							<?php esc_html_e( 'Don\'t see what you\'re looking for?', 'wp-mail-smtp' ); ?>
+							<a href="https://wpmailsmtp.com/suggest-a-mailer" target="_blank" rel="noopener noreferrer">
 								<?php esc_html_e( 'Suggest a Mailer', 'wp-mail-smtp' ); ?>
 							</a>
-
-							<div class="wp-mail-smtp-mailer-text">
-								<label><?php esc_html_e( 'Suggest a Mailer', 'wp-mail-smtp' ); ?></label>
-							</div>
-						</div>
-
+						</p>
 					</div>
 				</div>
 			</div>
@@ -338,7 +336,7 @@ class SettingsTab extends PageAbstract {
 		<p class="desc">
 			<?php
 			echo wp_kses(
-				__( 'As a valued WP Mail SMTP Lite user you receive <strong>20% off</strong>, automatically applied at checkout!', 'wp-mail-smtp' ),
+				__( 'As a valued WP Mail SMTP Lite user you receive <strong>$50 off</strong>, automatically applied at checkout!', 'wp-mail-smtp' ),
 				array(
 					'strong' => array(),
 					'br'     => array(),
@@ -453,7 +451,7 @@ class SettingsTab extends PageAbstract {
 			<p>
 				<?php
 				echo wp_kses(
-					__( '<strong>Bonus:</strong> WP Mail SMTP users get <span class="price-off">20% off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
+					__( '<strong>Bonus:</strong> WP Mail SMTP users get <span class="price-off">$50 off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
 					array(
 						'strong' => array(),
 						'span'   => array(

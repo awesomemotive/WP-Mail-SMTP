@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "description": "Reconfigures the wp_mail() function to improve WordPress emails deliverability.",
   "private": true,
   "repository": {
@@ -13,6 +13,11 @@
   },
   "homepage": "https://github.com/awesomemotive/wp-mail-smtp#readme",
   "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "cross-env": "^7.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-wordpress": "^2.0.0",
+    "eslint-plugin-jsdoc": "^22.1.0",
     "gulp": "^4.0.2",
     "gulp-cached": "^1.1.1",
     "gulp-debug": "^4.0.0",
@@ -24,11 +29,21 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify": "^3.0.2",
     "gulp-watch": "^5.0.1",
-    "gulp-zip": "^4.2.0"
+    "gulp-zip": "^4.2.0",
+    "husky": "^4.2.3",
+    "lint-diff": "file:.packages/npm/lint-diff",
+    "npm-run-all": "^4.1.5"
   },
   "scripts": {
     "gulp": "node ./node_modules/gulp/bin/gulp.js",
-    "docs": "phploc -q --log-xml=build/docs/phploc.xml src && phpdox"
+    "lint-diff": "cross-env node node_modules/lint-diff/dist/lint-diff.js",
+    "phpcs-diff": "cross-env vendor/bin/phpcs-diff",
+    "cs": "run-s --silent --continue-on-error lint-diff phpcs-diff"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run --silent cs"
+    }
   },
   "dependencies": {}
 }

@@ -27,8 +27,9 @@ class Processor {
 
 		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
 
-		add_filter( 'wp_mail_from', array( $this, 'filter_mail_from_email' ), 1000 );
-		add_filter( 'wp_mail_from_name', array( $this, 'filter_mail_from_name' ), 1000 );
+		// High priority number tries to ensure our plugin code executes last and respects previous hooks, if not forced.
+		add_filter( 'wp_mail_from', array( $this, 'filter_mail_from_email' ), PHP_INT_MAX );
+		add_filter( 'wp_mail_from_name', array( $this, 'filter_mail_from_name' ), PHP_INT_MAX );
 	}
 
 	/**
@@ -233,7 +234,7 @@ class Processor {
 	/**
 	 * Get or create the phpmailer.
 	 *
-	 * @since {VERSION}
+	 * @since 1.9.0
 	 *
 	 * @return \WPMailSMTP\MailCatcher
 	 */

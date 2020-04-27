@@ -200,7 +200,7 @@ class WP {
 
 	/**
 	 * Sanitize the value, similar to sanitize_text_field(), but a bit differently.
-	 * It preserves < and > for non-HTML tags.
+	 * It preserves `<` and `>` for non-HTML tags.
 	 *
 	 * @since 1.5.0
 	 *

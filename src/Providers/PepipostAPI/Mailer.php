@@ -186,6 +186,8 @@ class Mailer extends MailerAbstract {
 
 				if ( $type === 'html' ) {
 					$content_type = 'text/html';
+				} else {
+					$content_value = nl2br( $content_value );
 				}
 
 				$data[] = array(
@@ -204,7 +206,8 @@ class Mailer extends MailerAbstract {
 			$data['value'] = $content;
 
 			if ( $this->phpmailer->ContentType === 'text/plain' ) {
-				$data['type'] = 'text/plain';
+				$data['type']  = 'text/plain';
+				$data['value'] = nl2br( $data['value'] );
 			}
 
 			$this->set_body_param(

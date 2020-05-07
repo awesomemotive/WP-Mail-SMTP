@@ -88,14 +88,19 @@ class MiscTab extends PageAbstract {
 								'<code>wp-config.php</code>'
 							);
 						} else {
-							printf( /* translators: %1$s - constant to use; %2$s - file to put that constant in. */
-								esc_html__( 'If you want to disable using a constant, put %1$s in your %2$s file.', 'wp-mail-smtp' ),
-								'<code>define( \'WPMS_DO_NOT_SEND\', true );</code>',
+							printf( /* translators: %s - file to put that constant in. */
+								esc_html__( 'If you want to enable this option using constants, put the lines below to your %s file:', 'wp-mail-smtp' ),
 								'<code>wp-config.php</code>'
 							);
 						}
 						?>
 					</p>
+					<?php if ( ! $options->is_const_defined( 'general', 'do_not_send' ) ) : ?>
+						<pre>
+							define( 'WPMS_ON', true );
+							define( 'WPMS_DO_NOT_SEND', true );
+						</pre>
+					<?php endif; ?>
 				</div>
 			</div>
 

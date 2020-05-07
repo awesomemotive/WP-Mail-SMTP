@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 2.0.0\n"
+"Project-Id-Version: WP Mail SMTP 2.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-04-27T12:51:41+03:00\n"
+"POT-Creation-Date: 2020-05-07T15:56:11+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wp-mail-smtp\n"
@@ -465,45 +465,45 @@ msgstr ""
 msgid "The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation."
 msgstr ""
 
-#. translators: %1$s - constant to use; %2$s - file to put that constant in.
+#. translators: %s - file to put that constant in.
 #: src/Admin/Pages/MiscTab.php:92
-msgid "If you want to disable using a constant, put %1$s in your %2$s file."
+msgid "If you want to enable this option using constants, put the lines below to your %s file:"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:106
+#: src/Admin/Pages/MiscTab.php:111
 msgid "Hide Announcements"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:115
+#: src/Admin/Pages/MiscTab.php:120
 msgid "Check this if you would like to hide plugin announcements and update details."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:125
+#: src/Admin/Pages/MiscTab.php:130
 msgid "Hide Email Delivery Errors"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:141
+#: src/Admin/Pages/MiscTab.php:146
 msgid "Check this if you would like to hide warnings alerting of email delivery errors."
 msgstr ""
 
 #. translators: %s - filter that was used to disabled.
-#: src/Admin/Pages/MiscTab.php:148
+#: src/Admin/Pages/MiscTab.php:153
 msgid "Email Delivery Errors were disabled using a %s filter."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:157
+#: src/Admin/Pages/MiscTab.php:162
 msgid "<strong>This is not recommended</strong> and should only be done for staging or development sites."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:172
+#: src/Admin/Pages/MiscTab.php:177
 msgid "Uninstall WP Mail SMTP"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:180
+#: src/Admin/Pages/MiscTab.php:185
 msgid "Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:215
+#: src/Admin/Pages/MiscTab.php:220
 #: src/Admin/Pages/SettingsTab.php:540
 msgid "Settings were successfully saved."
 msgstr ""

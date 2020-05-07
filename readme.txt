@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, pepipost, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 Requires PHP: 5.5.0
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -228,6 +228,11 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 2.0.1 - 2020-05-07 =
+* Changed: Improved description of the "Do Not Send" plugin option.
+* Fixed: Due to Pepipost API changes we now convert new lines so they are preserved in plain text emails.
+* Fixed: Downgrade internal Guzzle dependency to 6.4 to temporarily fix compatibility issues with WordPress and Guzzle 6.5. Affects Gmail mailer.
 
 = 2.0.0 - 2020-04-27 =
 * IMPORTANT: Support for PHP 5.2-5.4 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.0. Failure to do that will disable WP Mail SMTP functionality.

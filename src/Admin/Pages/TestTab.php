@@ -98,12 +98,12 @@ class TestTab extends PageAbstract {
 				$disabled  = '';
 				$help_text = '';
 
-				if (
-					! wp_mail_smtp()->get_providers()->get_mailer(
-						Options::init()->get( 'mail', 'mailer' ),
-						wp_mail_smtp()->get_processor()->get_phpmailer()
-					)->is_mailer_complete()
-				) {
+				$mailer = wp_mail_smtp()->get_providers()->get_mailer(
+					Options::init()->get( 'mail', 'mailer' ),
+					wp_mail_smtp()->get_processor()->get_phpmailer()
+				);
+
+				if ( ! $mailer || ! $mailer->is_mailer_complete() ) {
 					$btn      = 'wp-mail-smtp-btn-red';
 					$disabled = 'disabled';
 
@@ -435,6 +435,18 @@ Lead Developer, WP Mail SMTP';
 			$mailer_text .= $mailer->get_debug_info();
 		}
 
+		$phpmailer_error = $phpmailer->ErrorInfo; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+		// Append any PHPMailer errors to the mailer debug (except SMTP mailer, which has the full error output below).
+		if (
+			! empty( $phpmailer_error ) &&
+			! $options->is_mailer_smtp()
+		) {
+			$mailer_text .= '<br><br><strong>PHPMailer Debug:</strong><br>' .
+			                wp_strip_all_tags( $phpmailer_error ) .
+			                '<br>';
+		}
+
 		/*
 		 * General Debug.
 		 */
@@ -486,137 +498,163 @@ Lead Developer, WP Mail SMTP';
 		$smtp_port       = $options->get( 'smtp', 'port' );
 		$smtp_encryption = $options->get( 'smtp', 'encryption' );
 
-		$details = array(
+		$details = [
 			// [any] - cURL error 60/77.
-			array(
+			[
 				'mailer'      => 'any',
-				'errors'      => array(
-					array( 'cURL error 60' ),
-					array( 'cURL error 77' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'cURL error 60' ],
+					[ 'cURL error 77' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'SSL certificate issue.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'This means your web server cannot reliably make secure connections (make requests to HTTPS sites).', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned when web server is not configured properly.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Contact your web hosting provider and inform them your site has an issue with SSL certificates.', 'wp-mail-smtp' ),
 					esc_html__( 'The exact error you can provide them is in the Error log, available at the bottom of this page.', 'wp-mail-smtp' ),
 					esc_html__( 'Ask them to resolve the issue then try again.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [any] - cURL error 6/7.
-			array(
+			[
 				'mailer'      => 'any',
-				'errors'      => array(
-					array( 'cURL error 6' ),
-					array( 'cURL error 7' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'cURL error 6' ],
+					[ 'cURL error 7' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Could not connect to host.', 'wp-mail-smtp' ) . '</strong>',
 					! empty( $smtp_host )
-						? sprintf(
-							/* translators: %s - SMTP host address. */
+						? sprintf( /* translators: %s - SMTP host address. */
 							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
 							$smtp_host
 						)
 						: esc_html__( 'This means your web server was unable to connect to the host server.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned your web server is blocking the connections or the SMTP host denying the request.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
-					sprintf(
-						/* translators: %s - SMTP host address. */
+				],
+				'steps'       => [
+					sprintf( /* translators: %s - SMTP host address. */
 						esc_html__( 'Contact your web hosting provider and ask them to verify your server can connect to %s. Additionally, ask them if a firewall or security policy may be preventing the connection.', 'wp-mail-smtp' ),
 						$smtp_host
 					),
 					esc_html__( 'If using "Other SMTP" Mailer, triple check your SMTP settings including host address, email, and password.', 'wp-mail-smtp' ),
 					esc_html__( 'If using "Other SMTP" Mailer, contact your SMTP host to confirm they are accepting outside connections with the settings you have configured (address, username, port, security, etc).', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [any] - cURL error XX (other).
-			array(
+			[
 				'mailer'      => 'any',
-				'errors'      => array(
-					array( 'cURL error' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'cURL error' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Could not connect to your host.', 'wp-mail-smtp' ) . '</strong>',
 					! empty( $smtp_host )
-						? sprintf(
-							/* translators: %s - SMTP host address. */
+						? sprintf( /* translators: %s - SMTP host address. */
 							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
 							$smtp_host
 						)
 						: esc_html__( 'This means your web server was unable to connect to the host server.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned when web server is not configured properly.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Contact your web hosting provider and inform them you are having issues making outbound connections.', 'wp-mail-smtp' ),
 					esc_html__( 'The exact error you can provide them is in the Error log, available at the bottom of this page.', 'wp-mail-smtp' ),
 					esc_html__( 'Ask them to resolve the issue then try again.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [smtp] - SMTP Error: Count not authenticate.
-			array(
+			[
 				'mailer'      => 'smtp',
-				'errors'      => array(
-					array( 'SMTP Error: Could not authenticate.' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'SMTP Error: Could not authenticate.' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Could not authenticate your SMTP account.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'This means we were able to connect to your SMTP host, but were not able to proceed using the email/password in the settings.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned when the email or password is not correct or is not what the SMTP host is expecting.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Triple check your SMTP settings including host address, email, and password. If you have recently reset your password you will need to update the settings.', 'wp-mail-smtp' ),
 					esc_html__( 'Contact your SMTP host to confirm you are using the correct username and password.', 'wp-mail-smtp' ),
 					esc_html__( 'Verify with your SMTP host that your account has permissions to send emails using outside connections.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [smtp] - Sending bulk email, hitting rate limit.
-			array(
+			[
 				'mailer'      => 'smtp',
-				'errors'      => array(
-					array( 'We do not authorize the use of this system to transport unsolicited' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'We do not authorize the use of this system to transport unsolicited' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Error due to unsolicited and/or bulk e-mail.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'This means the connection to your SMTP host was made successfully, but the host rejected the email.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is returned when you are sending too many e-mails or e-mails that have been identified as spam.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Check the emails that are sending are sending individually. Example: email is not sending to 30 recipients. You can install any WordPress e-mail logging plugin to do that.', 'wp-mail-smtp' ),
 					esc_html__( 'Contact your SMTP host to ask about sending/rate limits.', 'wp-mail-smtp' ),
 					esc_html__( 'Verify with them your SMTP account is in good standing and your account has not been flagged.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [smtp] - Unauthenticated senders not allowed.
-			array(
+			[
 				'mailer'      => 'smtp',
-				'errors'      => array(
-					array( 'Unauthenticated senders not allowed' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'Unauthenticated senders not allowed' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Unauthenticated senders are not allowed.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'This means the connection to your SMTP host was made successfully, but you should enable Authentication and provide correct Username and Password.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Go to WP Mail SMTP plugin Settings page.', 'wp-mail-smtp' ),
 					esc_html__( 'Enable Authentication', 'wp-mail-smtp' ),
 					esc_html__( 'Enter correct SMTP Username (usually this is an email address) and Password in the appropriate fields.', 'wp-mail-smtp' ),
-				),
-			),
-			// [smtp] - SMTP connect() failed.
-			array(
+				],
+			],
+			// [smtp] - certificate verify failed.
+			// Has to be defined before "SMTP connect() failed" error, since this is a more specific error,
+			// which contains the "SMTP connect() failed" error message as well.
+			[
 				'mailer'      => 'smtp',
-				'errors'      => array(
-					array( 'SMTP connect() failed' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'certificate verify failed' ],
+				],
+				'description' => [
+					'<strong>' . esc_html__( 'Misconfigured server certificate.', 'wp-mail-smtp' ) . '</strong>',
+					esc_html__( 'This means OpenSSL on your server isn\'t able to verify the host certificate.', 'wp-mail-smtp' ),
+					esc_html__( 'There are a few reasons why this is happening. It could be that the host certificate is misconfigured, or this server\'s OpenSSL is using an outdated CA bundle.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					esc_html__( 'Verify that the host\'s SSL certificate is valid.', 'wp-mail-smtp' ),
+					sprintf(
+						wp_kses( /* translators: %s - URL to the PHP openssl manual */
+							__( 'Contact your hosting support, show them the "full Error Log for debugging" below and share this <a href="%s" target="_blank" rel="noopener noreferrer">link</a> with them.', 'wp-mail-smtp' ),
+							[
+								'a' => [
+									'href'   => [],
+									'target' => [],
+									'rel'    => [],
+								],
+							]
+						),
+						'https://www.php.net/manual/en/migration56.openssl.php'
+					),
+				],
+			],
+			// [smtp] - SMTP connect() failed.
+			[
+				'mailer'      => 'smtp',
+				'errors'      => [
+					[ 'SMTP connect() failed' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Could not connect to the SMTP host.', 'wp-mail-smtp' ) . '</strong>',
 					! empty( $smtp_host )
-						? sprintf(
-							/* translators: %s - SMTP host address. */
+						? sprintf( /* translators: %s - SMTP host address. */
 							esc_html__( 'This means your web server was unable to connect to %s.', 'wp-mail-smtp' ),
 							$smtp_host
 						)
@@ -625,22 +663,21 @@ Lead Developer, WP Mail SMTP';
 					'-' . esc_html__( 'SMTP settings are incorrect (wrong port, security setting, incorrect host).', 'wp-mail-smtp' ) . '<br>' .
 					'-' . esc_html__( 'Your web server is blocking the connection.', 'wp-mail-smtp' ) . '<br>' .
 					'-' . esc_html__( 'Your SMTP host is rejecting the connection.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Triple check your SMTP settings including host address, email, and password, port, and security.', 'wp-mail-smtp' ),
 					sprintf(
-						wp_kses(
-							/* translators: %1$s - SMTP host address, %2$s - SMTP port, %3$s - SMTP encryption. */
+						wp_kses( /* translators: %1$s - SMTP host address, %2$s - SMTP port, %3$s - SMTP encryption. */
 							__( 'Contact your web hosting provider and ask them to verify your server can connect to %1$s on port %2$s using %3$s encryption. Additionally, ask them if a firewall or security policy may be preventing the connection - many shared hosts block certain ports.<br><strong>Note: this is the most common cause of this issue.</strong>', 'wp-mail-smtp' ),
-							array(
-								'a'      => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-								'strong' => array(),
-								'br'     => array(),
-							)
+							[
+								'a'      => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+								'strong' => [],
+								'br'     => [],
+							]
 						),
 						$smtp_host,
 						$smtp_port,
@@ -648,281 +685,332 @@ Lead Developer, WP Mail SMTP';
 					),
 					esc_html__( 'Contact your SMTP host to confirm you are using the correct username and password.', 'wp-mail-smtp' ),
 					esc_html__( 'Verify with your SMTP host that your account has permissions to send emails using outside connections.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [mailgun] - Please activate your Mailgun account.
-			array(
+			[
 				'mailer'      => 'mailgun',
-				'errors'      => array(
-					array( 'Please activate your Mailgun account' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'Please activate your Mailgun account' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'It seems that you forgot to activate your Mailgun account.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Check your inbox you used to create a Mailgun account. Click the activation link in an email from Mailgun.', 'wp-mail-smtp' ),
 					esc_html__( 'If you do not see activation email, go to your Mailgun control panel and resend the activation email.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [mailgun] - Forbidden.
-			array(
+			[
 				'mailer'      => 'mailgun',
-				'errors'      => array(
-					array( 'Forbidden' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'Forbidden' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Typically this error is because there is an issue with your Mailgun settings, in many cases the API key.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Verify your API key is correct.', 'wp-mail-smtp' ),
 					esc_html__( 'Go to your Mailgun account and view your API key.', 'wp-mail-smtp' ),
 					esc_html__( 'Note that the API key includes the "key" prefix, so make sure that it is in the WP Mail SMTP Mailgun API setting.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [mailgun] - Free accounts are for test purposes only.
-			array(
+			[
 				'mailer'      => 'mailgun',
-				'errors'      => array(
-					array( 'Free accounts are for test purposes only' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'Free accounts are for test purposes only' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Your Mailgun account does not have access to send emails.', 'wp-mail-smtp' ),
 					esc_html__( 'Typically this error is because you have not set up and/or complete domain name verification for your Mailgun account.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					sprintf(
-						wp_kses(
-							/* translators: %s - Mailgun documentation URL. */
+						wp_kses( /* translators: %s - Mailgun documentation URL. */
 							__( 'Go to our how-to guide for setting up <a href="%s" target="_blank" rel="noopener noreferrer">Mailgun with WP Mail SMTP</a>.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
 						),
 						'https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/'
 					),
 					esc_html__( 'Complete the steps in section "2. Verify Your Domain".', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [gmail] - 401: Login Required.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( '401', 'Login Required' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ '401', 'Login Required' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'You have not properly configured Gmail mailer.', 'wp-mail-smtp' ),
 					esc_html__( 'Make sure that you have clicked the "Allow plugin to send emails using your Google account" button under Gmail settings.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Go to plugin Settings page and click the "Allow plugin to send emails using your Google account" button.', 'wp-mail-smtp' ),
 					esc_html__( 'After the click you should be redirected to a Gmail authorization screen, where you will be asked a permission to send emails on your behalf.', 'wp-mail-smtp' ),
 					esc_html__( 'Please click "Agree", if you see that button. If not - you will need to enable less secure apps first:', 'wp-mail-smtp' )
 					. '<ul>'
 						. '<li>' .
 							sprintf(
-								wp_kses(
-									/* translators: %s - Google support article URL. */
+								wp_kses( /* translators: %s - Google support article URL. */
 									__( 'if you are using regular Gmail account, please <a href="%s" target="_blank" rel="noopener noreferrer">read this article</a> to proceed.', 'wp-mail-smtp' ),
-									array(
-										'a' => array(
-											'href'   => array(),
-											'target' => array(),
-											'rel'    => array(),
-										),
-									)
+									[
+										'a' => [
+											'href'   => [],
+											'target' => [],
+											'rel'    => [],
+										],
+									]
 								),
 								'https://support.google.com/accounts/answer/6010255?hl=en'
 							)
 						. '</li>'
 						. '<li>' .
 							sprintf(
-								wp_kses(
-									/* translators: %s - Google support article URL. */
+								wp_kses( /* translators: %s - Google support article URL. */
 									__( 'if you are using G Suite, please <a href="%s" target="_blank" rel="noopener noreferrer">read this article</a> to proceed.', 'wp-mail-smtp' ),
-									array(
-										'a' => array(
-											'href'   => array(),
-											'target' => array(),
-											'rel'    => array(),
-										),
-									)
+									[
+										'a' => [
+											'href'   => [],
+											'target' => [],
+											'rel'    => [],
+										],
+									]
 								),
 								'https://support.google.com/cloudidentity/answer/6260879?hl=en'
 							)
 						. '</li>'
 					. '</ul>',
-				),
-			),
+				],
+			],
 			// [gmail] - 400: Recipient address required.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( '400', 'Recipient address required' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ '400', 'Recipient address required' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Typically this error is because address the email was sent to is invalid or was empty.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Check the "Send To" email address used and confirm it is a valid email and was not empty.', 'wp-mail-smtp' ),
-					sprintf(
-						/* translators: 1 - correct email address example. 2 - incorrect email address example. */
+					sprintf( /* translators: 1 - correct email address example. 2 - incorrect email address example. */
 						esc_html__( 'It should be something like this: %1$s. These are incorrect values: %2$s.', 'wp-mail-smtp' ),
 						'<code>info@example.com</code>',
 						'<code>info@localhost</code>, <code>info@192.168.1.1</code>'
 					),
 					esc_html__( 'Make sure that the generated email has a TO header, useful when you are responsible for email creation.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [gmail] - Token has been expired or revoked.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( 'invalid_grant', 'Token has been expired or revoked' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'invalid_grant', 'Token has been expired or revoked' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Unfortunately, this error can be due to many different reasons.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					sprintf(
-						wp_kses(
-							/* translators: %s - Blog article URL. */
+						wp_kses( /* translators: %s - Blog article URL. */
 							__( 'Please <a href="%s" target="_blank" rel="noopener noreferrer">read this article</a> to learn more about what can cause this error and how it can be resolved.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'target' => array(),
-									'rel'    => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'target' => [],
+									'rel'    => [],
+								],
+							]
 						),
 						'https://blog.timekit.io/google-oauth-invalid-grant-nightmare-and-how-to-fix-it-9f4efaf1da35'
 					),
-				),
-			),
+				],
+			],
 			// [gmail] - Code was already redeemed.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( 'invalid_grant', 'Code was already redeemed' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'invalid_grant', 'Code was already redeemed' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Authentication code that Google returned to you has already been used on your previous auth attempt.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Make sure that you are not trying to manually clean up the plugin options to retry the "Allow..." step.', 'wp-mail-smtp' ),
 					esc_html__( 'Reinstall the plugin with clean plugin data turned on on Misc page. This will remove all the plugin options and you will be safe to retry.', 'wp-mail-smtp' ),
 					esc_html__( 'Make sure there is no aggressive caching on site admin area pages or try to clean cache between attempts.', 'wp-mail-smtp' ),
-				),
-			),
+				],
+			],
 			// [gmail] - 400: Mail service not enabled.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( '400', 'Mail service not enabled' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ '400', 'Mail service not enabled' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'There are various reasons for that, please review the steps below.', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					sprintf(
-						wp_kses(
-							/* translators: %s - Google G Suite Admin area URL. */
+						wp_kses( /* translators: %s - Google G Suite Admin area URL. */
 							__( 'Make sure that your G Suite trial period has not expired. You can check the status <a href="%s" target="_blank" rel="noopener noreferrer">here</a>.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
 						),
 						'https://admin.google.com'
 					),
 					sprintf(
-						wp_kses(
-							/* translators: %s - Google G Suite Admin area URL. */
+						wp_kses( /* translators: %s - Google G Suite Admin area URL. */
 							__( 'Make sure that Gmail app in your G Suite is actually enabled. You can check that in Apps list in <a href="%s" target="_blank" rel="noopener noreferrer">G Suite Admin</a> area.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
 						),
 						'https://admin.google.com'
 					),
 					sprintf(
-						wp_kses(
-							/* translators: %s - Google Developers Console URL. */
+						wp_kses( /* translators: %s - Google Developers Console URL. */
 							__( 'Make sure that you have Gmail API enabled, and you can do that <a href="%s" target="_blank" rel="noopener noreferrer">here</a>.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
 						),
 						'https://console.developers.google.com/'
 					),
-				),
-			),
+				],
+			],
 			// [gmail] - 403: Project X is not found and cannot be used for API calls.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( '403', 'is not found and cannot be used for API calls' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ '403', 'is not found and cannot be used for API calls' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Make sure that the used Client ID/Secret correspond to a proper project that has Gmail API enabled.', 'wp-mail-smtp' ),
 					sprintf(
-						wp_kses(
-							/* translators: %s - Gmail documentation URL. */
+						wp_kses( /* translators: %s - Gmail documentation URL. */
 							esc_html__( 'Please follow our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail tutorial</a> to be sure that all the correct project and data is applied.', 'wp-mail-smtp' ),
-							array(
-								'a' => array(
-									'href'   => array(),
-									'rel'    => array(),
-									'target' => array(),
-								),
-							)
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
 						),
 						'https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/'
 					),
-				),
-			),
+				],
+			],
 			// [gmail] - The OAuth client was disabled.
-			array(
+			[
 				'mailer'      => 'gmail',
-				'errors'      => array(
-					array( 'disabled_client', 'The OAuth client was disabled' ),
-				),
-				'description' => array(
+				'errors'      => [
+					[ 'disabled_client', 'The OAuth client was disabled' ],
+				],
+				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'You may have added a new API to a project', 'wp-mail-smtp' ),
-				),
-				'steps'       => array(
+				],
+				'steps'       => [
 					esc_html__( 'Make sure that the used Client ID/Secret correspond to a proper project that has Gmail API enabled.', 'wp-mail-smtp' ),
 					esc_html__( 'Try to use a separate project for your emails, so the project has only 1 Gmail API in it enabled. You will need to remove the old project and create a new one from scratch.', 'wp-mail-smtp' ),
-				),
-			),
-		);
+				],
+			],
+			// [SMTP.com] - The "channel - not found" issue.
+			[
+				'mailer'      => 'smtpcom',
+				'errors'      => [
+					[ 'channel - not found' ],
+				],
+				'description' => [
+					'<strong>' . esc_html__( 'SMTP.com API Error.', 'wp-mail-smtp' ) . '</strong>',
+					esc_html__( 'Your Sender Name option is incorrect.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					esc_html__( 'Please make sure you entered an accurate Sender Name in WP Mail SMTP plugin settings.', 'wp-mail-smtp' ),
+				],
+			],
+			// [gmail] - GuzzleHttp requires cURL, the allow_url_fopen ini setting, or a custom HTTP handler.
+			[
+				'mailer'      => 'gmail',
+				'errors'      => [
+					[ 'GuzzleHttp requires cURL, the allow_url_fopen ini setting, or a custom HTTP handler' ],
+				],
+				'description' => [
+					'<strong>' . esc_html__( 'GuzzleHttp requirements.', 'wp-mail-smtp' ) . '</strong>',
+					esc_html__( 'GuzzleHttp requires cURL, the allow_url_fopen ini setting, or a custom HTTP handler.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					esc_html__( 'Edit your php.ini file on your hosting server.', 'wp-mail-smtp' ),
+					esc_html__( '(Recommended) Enable PHP extension: cURL, by adding "extension=curl" to the php.ini file (without the quotation marks) OR', 'wp-mail-smtp' ),
+					esc_html__( '(If cURL can\'t be enabled on your hosting server) Enable PHP setting: allow_url_fopen, by adding "allow_url_fopen = On" to the php.ini file (without the quotation marks)', 'wp-mail-smtp' ),
+					esc_html__( 'If you don\'t know how to do the above we strongly suggest contacting your hosting support and provide them the "full Error Log for debugging" below and these steps. They should be able to fix this issue for you.', 'wp-mail-smtp' ),
+				],
+			],
+		];
+
+		/**
+		 * [any] - PHP 7.4.x and PCRE library issues.
+		 *
+		 * @see https://wordpress.org/support/topic/cant-send-emails-using-php-7-4/
+		 */
+		if (
+			version_compare( phpversion(), '7.4', '>=' ) &&
+			defined( 'PCRE_VERSION' ) &&
+			version_compare( PCRE_VERSION, '10.0', '>' ) &&
+			version_compare( PCRE_VERSION, '10.32', '<=' )
+		) {
+			$details[] = [
+				'mailer'      => 'any',
+				'errors'      => [
+					[ 'Invalid address:  (setFrom)' ],
+				],
+				'description' => [
+					'<strong>' . esc_html__( 'PCRE library issue', 'wp-mail-smtp' ) . '</strong>',
+					esc_html__( 'It looks like your server is running PHP version 7.4.x with an outdated PCRE library (libpcre2) that has a known issue with email address validation.', 'wp-mail-smtp' ),
+					esc_html__( 'There is a known issue with PHP version 7.4.x, when using libpcre2 library version lower than 10.33.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					esc_html__( 'Contact your web hosting provider and inform them you are having issues with libpcre2 library on PHP 7.4.', 'wp-mail-smtp' ),
+					esc_html__( 'They should be able to resolve this issue for you.', 'wp-mail-smtp' ),
+					esc_html__( 'For a quick fix, until your web hosting resolves this, you can downgrade to PHP version 7.3 on your server.', 'wp-mail-smtp' ),
+				],
+			];
+		}
 
 		// Error detection logic.
 		foreach ( $details as $data ) {
@@ -953,27 +1041,27 @@ Lead Developer, WP Mail SMTP';
 		}
 
 		// Return defaults.
-		return array(
-			'description' => array(
+		return [
+			'description' => [
 				'<strong>' . esc_html__( 'An issue was detected.', 'wp-mail-smtp' ) . '</strong>',
 				esc_html__( 'This means your test email was unable to be sent.', 'wp-mail-smtp' ),
 				esc_html__( 'Typically this error is returned for one of the following reasons:', 'wp-mail-smtp' ),
 				'- ' . esc_html__( 'Plugin settings are incorrect (wrong SMTP settings, invalid Mailer configuration, etc).', 'wp-mail-smtp' ) . '<br>' .
 				'- ' . esc_html__( 'Your web server is blocking the connection.', 'wp-mail-smtp' ) . '<br>' .
 				'- ' . esc_html__( 'Your host is rejecting the connection.', 'wp-mail-smtp' ),
-			),
-			'steps'       => array(
+			],
+			'steps'       => [
 				esc_html__( 'Triple check the plugin settings, consider reconfiguring to make sure everything is correct (eg bad copy and paste).', 'wp-mail-smtp' ),
 				wp_kses(
 					__( 'Contact your web hosting provider and ask them to verify your server can make outside connections. Additionally, ask them if a firewall or security policy may be preventing the connection - many shared hosts block certain ports.<br><strong>Note: this is the most common cause of this issue.</strong>', 'wp-mail-smtp' ),
-					array(
-						'strong' => array(),
-						'br'     => array(),
-					)
+					[
+						'strong' => [],
+						'br'     => [],
+					]
 				),
 				esc_html__( 'Try using a different mailer.', 'wp-mail-smtp' ),
-			),
-		);
+			],
+		];
 	}
 
 	/**

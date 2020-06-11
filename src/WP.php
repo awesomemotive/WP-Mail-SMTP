@@ -18,24 +18,32 @@ class WP {
 	 */
 	protected static $admin_notices = array();
 	/**
+	 * CSS class for a success notice.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
 	const ADMIN_NOTICE_SUCCESS = 'notice-success';
 	/**
+	 * CSS class for an error notice.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
 	const ADMIN_NOTICE_ERROR = 'notice-error';
 	/**
+	 * CSS class for an info notice.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
 	const ADMIN_NOTICE_INFO = 'notice-info';
 	/**
+	 * CSS class for a warning notice.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @var string
@@ -43,7 +51,7 @@ class WP {
 	const ADMIN_NOTICE_WARNING = 'notice-warning';
 
 	/**
-	 * True is WP is processing an AJAX call.
+	 * True if WP is processing an AJAX call.
 	 *
 	 * @since 1.0.0
 	 *
@@ -103,7 +111,7 @@ class WP {
 
 			<div class="notice wp-mail-smtp-notice <?php echo esc_attr( $notice['class'] ); ?> notice <?php echo esc_attr( $dismissible ); ?>">
 				<p>
-					<?php echo $notice['message']; ?>
+					<?php echo wp_kses_post( $notice['message'] ); ?>
 				</p>
 			</div>
 
@@ -160,7 +168,7 @@ class WP {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param string $string
+	 * @param string $string String we want to test if it's json.
 	 *
 	 * @return bool
 	 */
@@ -178,8 +186,7 @@ class WP {
 	 */
 	public static function datetime_format() {
 
-		return sprintf(
-			/* translators: %1$s - date, \a\t - specially escaped "at", %2$s - time. */
+		return sprintf( /* translators: %1$s - date, \a\t - specially escaped "at", %2$s - time. */
 			esc_html__( '%1$s \a\t %2$s', 'wp-mail-smtp' ),
 			get_option( 'date_format' ),
 			get_option( 'time_format' )
@@ -199,14 +206,14 @@ class WP {
 	}
 
 	/**
-	 * Sanitize the value, similar to sanitize_text_field(), but a bit differently.
+	 * Sanitize the value, similar to `sanitize_text_field()`, but a bit differently.
 	 * It preserves `<` and `>` for non-HTML tags.
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param string $value
+	 * @param string $value String we want to sanitize.
 	 *
-	 * @return mixed|string|string[]|null
+	 * @return string
 	 */
 	public static function sanitize_value( $value ) {
 

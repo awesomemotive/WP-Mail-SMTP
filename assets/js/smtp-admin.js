@@ -168,6 +168,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			} );
 
 			app.triggerExitNotice();
+			app.beforeSaveChecks();
 		},
 
 		education: {
@@ -178,6 +179,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					escapeKey: true,
 					animationBounce: 1,
 					theme: 'modern',
+					type: 'blue',
 					animateFromElement: false,
 					draggable: false,
 					closeIcon: true,
@@ -262,6 +264,54 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			// Clear the settings changed attribute, if the settings are about to be saved.
 			$( 'form', $settingPages ).on( 'submit', function() {
 				app.pluginSettingsChanged = false;
+			} );
+		},
+
+		/**
+		 * Perform any checks before the settings are saved.
+		 *
+		 * Checks:
+		 * - warn users if they try to save the settings with the default (PHP) mailer selected.
+		 *
+		 * @since 2.1.0
+		 */
+		beforeSaveChecks: function() {
+
+			$( 'form', app.pageHolder ).on( 'submit', function() {
+				if ( $( '.wp-mail-smtp-mailer input:checked', app.pageHolder ).val() === 'mail' ) {
+					var $thisForm = $( this );
+
+					$.alert( {
+						backgroundDismiss: false,
+						escapeKey: false,
+						animationBounce: 1,
+						theme: 'modern',
+						type: 'orange',
+						animateFromElement: false,
+						draggable: false,
+						closeIcon: false,
+						useBootstrap: false,
+						icon: '"></i><img src="' + wp_mail_smtp.plugin_url + '/assets/images/font-awesome/exclamation-circle-solid-orange.svg" style="width: 40px; height: 40px;" alt="' + wp_mail_smtp.default_mailer_notice.icon_alt + '"><i class="',
+						title: wp_mail_smtp.default_mailer_notice.title,
+						content: wp_mail_smtp.default_mailer_notice.content,
+						boxWidth: '550px',
+						buttons: {
+							confirm: {
+								text: wp_mail_smtp.default_mailer_notice.save_button,
+								btnClass: 'btn-confirm',
+								keys: [ 'enter' ],
+								action: function() {
+									$thisForm.off( 'submit' ).submit();
+								}
+							},
+							cancel: {
+								text: wp_mail_smtp.default_mailer_notice.cancel_button,
+							},
+						}
+					} );
+
+					return false;
+				}
 			} );
 		}
 	};

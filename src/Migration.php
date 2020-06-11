@@ -2,12 +2,38 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Tasks\Meta;
+
 /**
- * Class Migration helps migrate all plugin options saved into DB to a new storage location.
+ * Class Migration helps migrate plugin options, DB tables and more.
  *
- * @since 1.0.0
+ * @since 1.0.0 Migrate all plugin options saved from separate WP options into one.
+ * @since 2.1.0 Major overhaul of this class to use DB migrations (or any other migrations per version).
  */
 class Migration {
+
+	/**
+	 * Version of the latest migration.
+	 *
+	 * @since 2.1.0
+	 */
+	const VERSION = 2;
+
+	/**
+	 * Option key where we save the current migration version.
+	 *
+	 * @since 2.1.0
+	 */
+	const OPTION_NAME = 'wp_mail_smtp_migration_version';
+
+	/**
+	 * Current migration version, received from self::OPTION_NAME WP option
+	 *
+	 * @since 2.1.0
+	 *
+	 * @var int
+	 */
+	protected $cur_ver;
 
 	/**
 	 * All old values for pre 1.0 version of a plugin.
@@ -56,8 +82,107 @@ class Migration {
 	 * Migration constructor.
 	 *
 	 * @since 1.0.0
+	 * @since 2.1.0 Redefined constructor - major overhaul.
 	 */
 	public function __construct() {
+
+		$this->cur_ver = self::get_cur_version();
+
+		$this->maybe_migrate();
+	}
+
+	/**
+	 * Static on purpose, to get current migration version without __construct() and validation.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return int
+	 */
+	public static function get_cur_version() {
+
+		return (int) get_option( self::OPTION_NAME, 0 );
+	}
+
+	/**
+	 * Run the migration if needed.
+	 *
+	 * @since 2.1.0
+	 */
+	protected function maybe_migrate() {
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		if ( version_compare( $this->cur_ver, self::VERSION, '<' ) ) {
+			$this->run( self::VERSION );
+		}
+	}
+
+	/**
+	 * Actual migration launcher.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $version The version of migration to run.
+	 */
+	protected function run( $version ) {
+
+		$function_version = (int) $version;
+
+		if ( method_exists( $this, 'migrate_to_' . $function_version ) ) {
+			$this->{'migrate_to_' . $function_version}();
+		} else {
+			$message = sprintf( /* translators: %1$s - WP Mail SMTP, %2$s - error message. */
+				esc_html__( 'There was an error while upgrading the database. Please contact %1$s support with this information: %2$s.', 'wp-mail-smtp' ),
+				'<strong>WP Mail SMTP</strong>',
+				'<code>migration from v' . self::get_cur_version() . ' to v' . self::VERSION . ' failed. Plugin version: v' . WPMS_PLUGIN_VER . '</code>'
+			);
+
+			WP::add_admin_notice( $message, WP::ADMIN_NOTICE_ERROR );
+		}
+	}
+
+	/**
+	 * Update migration version in options table.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $version Migration version.
+	 */
+	protected function update_db_ver( $version ) {
+
+		if ( empty( $version ) ) {
+			$version = self::VERSION;
+		}
+
+		// Autoload it, because this value is checked all the time
+		// and no need to request it separately from all autoloaded options.
+		update_option( self::OPTION_NAME, $version, true );
+	}
+
+	/**
+	 * Prevent running the same migration twice.
+	 * Run migration only when required.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $version The version of migration to check for potential execution.
+	 */
+	protected function maybe_required_older_migrations( $version ) {
+
+		if ( version_compare( $this->cur_ver, $version, '<' ) ) {
+			$this->run( $version );
+		}
+	}
+
+	/**
+	 * Migration from 0.x to 1.0.0.
+	 * Move separate plugin WP options to one main plugin WP option setting.
+	 *
+	 * @since 2.1.0
+	 */
+	private function migrate_to_1() {
 
 		if ( $this->is_migrated() ) {
 			return;
@@ -68,8 +193,27 @@ class Migration {
 
 		Options::init()->set( $this->new_values, true );
 
-		// Removing all old options will be enabled some time in the future.
-		// $this->clean_deprecated_data();
+		$this->update_db_ver( 1 );
+	}
+
+	/**
+	 * Migration from 1.x to 2.1.0.
+	 * Create Tasks\Meta table, if it does not exist.
+	 *
+	 * @since 2.1.0
+	 */
+	private function migrate_to_2() {
+
+		$this->maybe_required_older_migrations( 1 );
+
+		$meta = new Meta();
+
+		// Create the table if it doesn't exist.
+		if ( $meta && ! $meta->table_exists() ) {
+			$meta->create_table();
+		}
+
+		$this->update_db_ver( 2 );
 	}
 
 	/**

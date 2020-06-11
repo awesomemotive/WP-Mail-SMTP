@@ -42,6 +42,7 @@
 	}
 
 	.wp-mail-smtp-page-title {
+		height: 58px;
 		background-color: #fff;
 		font-size: 14px;
 		margin: 0 0 20px 0;
@@ -78,7 +79,7 @@
 			display: inline-block;
 			font-size: 23px;
 			margin: 0;
-			padding: 15px 20px 15px 0;
+			padding: 20px 20px 20px 0;
 		}
 	}
 
@@ -882,7 +883,7 @@
 			color: #72777C;
 			line-height: 1.5em;
 			margin-top: 0;
-			margin-bottom: 25px;
+			margin-bottom: 6px;
 			text-align: center;
 		}
 
@@ -914,12 +915,20 @@
 					}
 
 					.wp-mail-smtp-page-upsell-feature-image {
-						width: 65px;
-						text-align: center;
+						display: flex;
+						align-items: center;
 
-						img {
-							display: block;
-							margin: 5px auto 0;
+						svg {
+							height: 64px;
+							width: 64px;
+						}
+
+						.st0 {
+							fill: #C3D0D7;
+						}
+
+						.st1 {
+							fill: #809DB0;
 						}
 					}
 
@@ -941,16 +950,18 @@
 		}
 
 		.wp-mail-smtp-page-upsell-images {
-			margin-bottom: 20px;
+			margin-top: $content-padding;
+			margin-bottom: $padding-default;
 			text-align: center;
 
 			img	{
 				width: 380px;
 				height: auto;
-				margin-right: $content-padding;
+				margin-right: $padding-default;
 				border: 5px solid #fff;
 				border-radius: 5px;
-				box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.15);
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+				float: left;
 
 				&:last-child {
 					margin-right: 0;

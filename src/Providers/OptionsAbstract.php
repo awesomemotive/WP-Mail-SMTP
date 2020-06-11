@@ -344,20 +344,12 @@ abstract class OptionsAbstract implements OptionsInterface {
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" spellcheck="false" autocomplete="new-password"
 					/>
 					<p class="desc">
-						<?php esc_html_e( 'The password is stored in plain text. We highly recommend you set up your password in your WordPress configuration file for improved security.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'The password will be stored in plain text. For improved security, we highly recommend using your site\'s WordPress configuration file to set your password.', 'wp-mail-smtp' ); ?>
 						<br>
-						<?php
-						printf(
-							/* translators: %s - wp-config.php. */
-							esc_html__( 'To do this add the lines below to your %s file:', 'wp-mail-smtp' ),
-							'<code>wp-config.php</code>'
-						);
-						?>
+						<a href="https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/" target="_blank" rel="noopener noreferrer">
+							<strong><?php esc_html_e( 'Learn More', 'wp-mail-smtp' ); ?></strong>
+						</a>
 					</p>
-					<pre>
-						define( 'WPMS_ON', true );
-						define( 'WPMS_SMTP_PASS', 'your_password' );
-					</pre>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -440,13 +432,21 @@ abstract class OptionsAbstract implements OptionsInterface {
 		<blockquote>
 			<?php
 			printf(
-				/* translators: %s - Provider name. */
-				esc_html__( '%s requires a SSL certificate on a site to work and does not support your current installation. Please contact your host and request a SSL certificate or install a free one, like Let\'s Encrypt.', 'wp-mail-smtp' ),
+				wp_kses( /* translators: %s - Provider name */
+					__( '%s requires an SSL certificate, and so is not currently compatible with your site. Please contact your host to request a SSL certificate, or check out <a href="https://www.wpbeginner.com/wp-tutorials/how-to-add-ssl-and-https-in-wordpress/" target="_blank">WPBeginner\'s tutorial on how to set up SSL</a>.', 'wp-mail-smtp' ),
+					[
+						'a' => [
+							'href'   => [],
+							'target' => [],
+						],
+					]
+				),
 				esc_html( $this->get_title() )
 			);
 			?>
 			<br>
-			<?php esc_html_e( 'Meanwhile you can switch to some other mailers.', 'wp-mail-smtp' ); ?>
+			<br>
+			<?php esc_html_e( 'If you\'d prefer not to set up SSL, or need an SMTP solution in the meantime, please select a different mailer option.', 'wp-mail-smtp' ); ?>
 		</blockquote>
 
 		<?php

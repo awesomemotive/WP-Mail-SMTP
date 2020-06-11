@@ -132,8 +132,8 @@ class Loader {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string      $provider
-	 * @param MailCatcher $phpmailer
+	 * @param string                 $provider  The provider name.
+	 * @param MailCatcher|\PHPMailer $phpmailer The MailCatcher object.
 	 *
 	 * @return MailerAbstract|null
 	 */

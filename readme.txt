@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, pepipost, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.4
-Stable tag: 2.0.1
+Stable tag: 2.1.1
 Requires PHP: 5.5.0
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -62,7 +62,7 @@ SMTP.com is a recommended transactional email service.
 
 With over 22 years of email delivery expertise, SMTP.com has been around for almost as long as email itself. They are known among internet providers as one of the most reliable senders on the internet.
 
-Their easy integration process lets you start sending emails in minutes and benefit from years of experience. SMTP.com provides users 10,000 free emails the first 30 days.
+Their easy integration process lets you start sending emails in minutes and benefit from years of experience. SMTP.com provides users 50,000 free emails the first 30 days.
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp" rel="friend">SMTP.com documentation</a> for more details.
 
@@ -228,6 +228,24 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 2.1.1 - 2020-06-08 =
+* Changed: Remove current automatic default reply-to address and add WP filter `wp_mail_smtp_processor_set_default_reply_to` for setting default reply-to addresses.
+* Changed: Improve description for several options with links to an article about how to properly use constants.
+* Fixed: PHP parse error connected to Monolog library on PHP versions < 7.x.
+
+= 2.1.0 - 2020-06-04 =
+* Added: Async/scheduled tasks management support.
+* Added: New warning notification for selecting the "Default (none)" mailer and saving the plugin settings.
+* Changed: Set the original From Email as Reply-To address if it was overwritten by the Force From Email option.
+* Changed: The Force From Email option is now enabled by default, for new plugin installs.
+* Changed: Reply-To header is now set when not provided, equals to From Name/Email.
+* Fixed: Display a non-empty PHPMailer error when some non-SMTP mailers generate errors.
+* Fixed: Display a more accurate message, when the "channel - not found" error is triggered by SMTP.com API.
+* Fixed: Save and display debug errors for the "Other SMTP" mailer.
+* Fixed: Improve the debug details for the "Invalid address (setFrom)" error in the Email Test tab.
+* Fixed: Improve the debug details for SMTP CA verification fail, Gmail Guzzle requirements, and Gmail invalid grant errors.
+* Fixed: Improve the uninstall cleanup procedure.
 
 = 2.0.1 - 2020-05-07 =
 * Changed: Improved description of the "Do Not Send" plugin option.

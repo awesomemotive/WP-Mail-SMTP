@@ -26,8 +26,9 @@
     "php": ">=5.5.0",
     "composer/installers": "~1.0",
     "google/apiclient": "2.4.1",
-    "guzzlehttp/guzzle": "6.4.1",
-    "sendinblue/api-v3-sdk": "6.2.0"
+    "monolog/monolog": "^1.0",
+    "sendinblue/api-v3-sdk": "6.2.0",
+    "woocommerce/action-scheduler": "3.1.6"
   },
   "autoload": {
     "psr-4": {
@@ -42,6 +43,9 @@
     "wpforms/phpcs-diff": "^1.2"
   },
   "extra": {
+    "installer-paths": {
+      "vendor/{$vendor}/{$name}/": ["woocommerce/action-scheduler"]
+    },
     "merge-plugin": {
       "include": [
         "src/Pro/composer.json"

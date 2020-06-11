@@ -88,19 +88,22 @@ class MiscTab extends PageAbstract {
 								'<code>wp-config.php</code>'
 							);
 						} else {
-							printf( /* translators: %s - file to put that constant in. */
-								esc_html__( 'If you want to enable this option using constants, put the lines below to your %s file:', 'wp-mail-smtp' ),
-								'<code>wp-config.php</code>'
+							printf(
+								wp_kses( /* translators: %s - The URL to the constants support article. */
+									__( 'Please read this <a href="%s" target="_blank" rel="noopener noreferrer">support article</a> if you want to enable this option using constants.', 'wp-mail-smtp' ),
+									[
+										'a' => [
+											'href'   => [],
+											'target' => [],
+											'rel'    => [],
+										],
+									]
+								),
+								'https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/'
 							);
 						}
 						?>
 					</p>
-					<?php if ( ! $options->is_const_defined( 'general', 'do_not_send' ) ) : ?>
-						<pre>
-							define( 'WPMS_ON', true );
-							define( 'WPMS_DO_NOT_SEND', true );
-						</pre>
-					<?php endif; ?>
 				</div>
 			</div>
 

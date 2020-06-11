@@ -89,6 +89,15 @@ class MailCatcher extends \PHPMailer {
 			} catch ( \phpmailerException $e ) {
 				$this->mailHeader = '';
 				$this->setError( $e->getMessage() );
+
+				// Set the debug error, but not for default PHP mailer.
+				if ( $mail_mailer !== 'mail' ) {
+					Debug::set(
+						'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . PHP_EOL .
+						$e->getMessage()
+					);
+				}
+
 				if ( $this->exceptions ) {
 					throw $e;
 				}

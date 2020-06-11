@@ -19,21 +19,22 @@ class Options {
 	 * @since 1.4.0 Added Mailgun:region.
 	 * @since 1.5.0 Added Outlook/AmazonSES.
 	 * @since 1.8.0 Added Pepipost API.
+	 * @since 2.0.0 Added SMTP.com API.
 	 *
 	 * @since
 	 *
 	 * @var array Map of all the default options of the plugin.
 	 */
-	private static $map = array(
-		'mail'        => array(
+	private static $map = [
+		'mail'        => [
 			'from_name',
 			'from_email',
 			'mailer',
 			'return_path',
 			'from_name_force',
 			'from_email_force',
-		),
-		'smtp'        => array(
+		],
+		'smtp'        => [
 			'host',
 			'port',
 			'encryption',
@@ -41,61 +42,63 @@ class Options {
 			'auth',
 			'user',
 			'pass',
-		),
-		'gmail'       => array(
+		],
+		'gmail'       => [
 			'client_id',
 			'client_secret',
-		),
-		'outlook'     => array(
+		],
+		'outlook'     => [
 			'client_id',
 			'client_secret',
-		),
-		'amazonses'   => array(
+		],
+		'amazonses'   => [
 			'client_id',
 			'client_secret',
 			'region',
 			'emails_pending',
-		),
-		'mailgun'     => array(
+		],
+		'mailgun'     => [
 			'api_key',
 			'domain',
 			'region',
-		),
-		'sendgrid'    => array(
+		],
+		'sendgrid'    => [
 			'api_key',
-		),
-		'smtpcom'     => array(
+		],
+		'smtpcom'     => [
 			'api_key',
 			'channel',
-		),
-		'sendinblue'  => array(
+		],
+		'sendinblue'  => [
 			'api_key',
-		),
-		'pepipostapi' => array(
+		],
+		'pepipostapi' => [
 			'api_key',
-		),
-		'pepipost'    => array(
+		],
+		'pepipost'    => [
 			'host',
 			'port',
 			'encryption',
 			'auth',
 			'user',
 			'pass',
-		),
-		'license'     => array(
+		],
+		'license'     => [
 			'key',
-		),
-	);
+		],
+	];
 
 	/**
 	 * That's where plugin options are saved in wp_options table.
 	 *
-	 * @var string
+	 * @since 1.0.0
 	 */
 	const META_KEY = 'wp_mail_smtp';
 
 	/**
 	 * All the plugin options.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
@@ -141,6 +144,7 @@ class Options {
 	 * Default options that are saved on plugin activation.
 	 *
 	 * @since 1.3.0
+	 * @since 2.1.0 Set the Force from email to "on" by default.
 	 *
 	 * @return array
 	 */
@@ -152,7 +156,7 @@ class Options {
 				'from_name'        => get_bloginfo( 'name' ),
 				'mailer'           => 'mail',
 				'return_path'      => false,
-				'from_email_force' => false,
+				'from_email_force' => true,
 				'from_name_force'  => false,
 			),
 			'smtp' => array(
@@ -784,7 +788,7 @@ class Options {
 	 * @since 1.5.0 Added Outlook/AmazonSES, Email Log. Stop saving const values into DB.
 	 *
 	 * @param array $options Plugin options to save.
-	 * @param bool $once Whether to update existing options or to add these options only once.
+	 * @param bool  $once    Whether to update existing options or to add these options only once.
 	 */
 	public function set( $options, $once = false ) {
 		/*

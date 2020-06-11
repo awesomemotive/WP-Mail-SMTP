@@ -38,7 +38,7 @@ class Options extends OptionsAbstract {
 
 		$description  = sprintf(
 			wp_kses( /* translators: %s - URL to smtp.com site. */
-				__( '<strong><a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com</a> is a recommended transactional email service.</strong> With over 22 years of email delivery expertise, SMTP.com has been around for almost as long as email itself. They are known among internet providers as one of the most reliable senders on the internet. Their easy integration process lets you start sending emails in minutes and benefit from years of experience. SMTP.com provides users 10,000 free emails the first 30 days.', 'wp-mail-smtp' ),
+				__( '<strong><a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com</a> is a recommended transactional email service.</strong> With a 22 years of track record of reliable email delivery, SMTP.com is a premiere solution for WordPress developers and website owners. SMTP.com has been around for almost as long as email itself. Their super simple integration interface makes it easy to get started while a powerful API and robust documentation make it a preferred choice among developers. Start a 30-day free trial with 50,000 emails.', 'wp-mail-smtp' ),
 				$allowed_kses_html
 			),
 			'https://wpmailsmtp.com/go/smtp/'

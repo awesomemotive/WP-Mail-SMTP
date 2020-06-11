@@ -1,0 +1,203 @@
+<?php
+
+namespace WPMailSMTP\Admin;
+
+use WPMailSMTP\Options;
+
+/**
+ * Class for admin notice requesting plugin review.
+ *
+ * @since 2.1.0
+ */
+class Review {
+
+	/**
+	 * The name of the WP option for the review notice data.
+	 *
+	 * Data attributes:
+	 * - time
+	 * - dismissed
+	 *
+	 * @since 2.1.0
+	 */
+	const NOTICE_OPTION = 'wp_mail_smtp_review_notice';
+
+	/**
+	 * Days the plugin waits before displaying a review request.
+	 *
+	 * @since 2.1.0
+	 */
+	const WAIT_PERIOD = 14;
+
+	/**
+	 * Initialize hooks.
+	 *
+	 * @since 2.1.0
+	 */
+	public function hooks() {
+
+		add_action( 'admin_notices', array( $this, 'review_request' ) );
+		add_action( 'wp_ajax_wp_mail_smtp_review_dismiss', array( $this, 'review_dismiss' ) );
+	}
+
+	/**
+	 * Add admin notices as needed for reviews.
+	 *
+	 * @since 2.1.0
+	 */
+	public function review_request() {
+
+		// Only consider showing the review request to admin users.
+		if ( ! is_super_admin() ) {
+			return;
+		}
+
+		// Verify that we can do a check for reviews.
+		$review = get_option( self::NOTICE_OPTION );
+		$time   = time();
+		$load   = false;
+
+		if ( empty( $review ) ) {
+			$review = [
+				'time'      => $time,
+				'dismissed' => false,
+			];
+			update_option( self::NOTICE_OPTION, $review );
+		} else {
+			// Check if it has been dismissed or not.
+			if ( isset( $review['dismissed'] ) && ! $review['dismissed'] ) {
+				$load = true;
+			}
+		}
+
+		// If we cannot load, return early.
+		if ( ! $load ) {
+			return;
+		}
+
+		$this->review();
+	}
+
+	/**
+	 * Maybe show review request.
+	 *
+	 * @since 2.1.0
+	 */
+	private function review() {
+
+		// Get the currently selected mailer.
+		$mailer = Options::init()->get( 'mail', 'mailer' );
+
+		// Skip if the default mailer is selected.
+		if ( $mailer === 'mail' ) {
+			return;
+		}
+
+		// Fetch when plugin was initially activated.
+		$activated = get_option( 'wp_mail_smtp_activated_time' );
+
+		// Skip if the plugin activated time is not set.
+		if ( empty( $activated ) ) {
+			return;
+		}
+
+		// Check if mailer setup is complete.
+		$mailer_setup_complete = wp_mail_smtp()
+			->get_providers()
+			->get_mailer( $mailer, wp_mail_smtp()->get_processor()->get_phpmailer() )
+			->is_mailer_complete();
+
+		// Skip if the mailer is not set or the plugin is active for less then a defined number of days.
+		if ( ! $mailer_setup_complete || ( $activated + ( DAY_IN_SECONDS * self::WAIT_PERIOD ) ) > time() ) {
+			return;
+		}
+
+		// We have a candidate! Output a review message.
+		?>
+		<div class="notice notice-info is-dismissible wp-mail-smtp-review-notice">
+			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-1">
+				<p><?php esc_html_e( 'Are you enjoying WP Mail SMTP?', 'wp-mail-smtp' ); ?></p>
+				<p>
+					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="3"><?php esc_html_e( 'Yes', 'wp-mail-smtp' ); ?></a><br />
+					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="2"><?php esc_html_e( 'Not Really', 'wp-mail-smtp' ); ?></a>
+				</p>
+			</div>
+			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-2" style="display: none">
+				<p><?php esc_html_e( 'We\'re sorry to hear you aren\'t enjoying WP Mail SMTP. We would love a chance to improve. Could you take a minute and let us know what we can do better?', 'wp-mail-smtp' ); ?></p>
+				<p>
+					<a href="https://wpmailsmtp.com/plugin-feedback/" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e( 'Give Feedback', 'wp-mail-smtp' ); ?>
+					</a><br>
+					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e( 'No thanks', 'wp-mail-smtp' ); ?>
+					</a>
+				</p>
+			</div>
+			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-3" style="display: none">
+				<p><?php esc_html_e( 'That’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'wp-mail-smtp' ); ?></p>
+				<p><strong><?php echo wp_kses( __( '~ Jared Atchison<br>Lead Developer, WP Mail SMTP', 'wp-mail-smtp' ), [ 'br' => [] ] ); ?></strong></p>
+				<p>
+					<a href="https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e( 'Ok, you deserve it', 'wp-mail-smtp' ); ?>
+					</a><br>
+					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Nope, maybe later', 'wp-mail-smtp' ); ?></a><br>
+					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'I already did', 'wp-mail-smtp' ); ?></a>
+				</p>
+			</div>
+		</div>
+		<script type="text/javascript">
+			jQuery( document ).ready( function ( $ ) {
+				$( document ).on( 'click', '.wp-mail-smtp-dismiss-review-notice, .wp-mail-smtp-review-notice button', function( e ) {
+					if ( ! $( this ).hasClass( 'wp-mail-smtp-review-out' ) ) {
+						e.preventDefault();
+					}
+					$.post( ajaxurl, { action: 'wp_mail_smtp_review_dismiss' } );
+					$( '.wp-mail-smtp-review-notice' ).remove();
+				} );
+
+				$( document ).on( 'click', '.wp-mail-smtp-review-switch-step', function( e ) {
+					e.preventDefault();
+					var target = parseInt( $( this ).attr( 'data-step' ), 10 );
+
+					if ( target ) {
+						var $notice = $( this ).closest( '.wp-mail-smtp-review-notice' );
+						var $review_step = $notice.find( '.wp-mail-smtp-review-step-' + target );
+
+						if ( $review_step.length > 0 ) {
+							$notice.find( '.wp-mail-smtp-review-step:visible' ).fadeOut( function() {
+								$review_step.fadeIn();
+							} );
+						}
+					}
+				} );
+			} );
+		</script>
+		<?php
+	}
+
+	/**
+	 * Dismiss the review admin notice.
+	 *
+	 * @since 2.1.0
+	 */
+	public function review_dismiss() {
+
+		$review              = get_option( self::NOTICE_OPTION, [] );
+		$review['time']      = time();
+		$review['dismissed'] = true;
+		update_option( self::NOTICE_OPTION, $review );
+
+		if ( is_super_admin() && is_multisite() ) {
+			$site_list = get_sites();
+			foreach ( (array) $site_list as $site ) {
+				switch_to_blog( $site->blog_id );
+
+				update_option( self::NOTICE_OPTION, $review );
+
+				restore_current_blog();
+			}
+		}
+
+		wp_send_json_success();
+	}
+}

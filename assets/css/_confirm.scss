@@ -51,7 +51,7 @@ body.toplevel_page_wp-mail-smtp {
 
 				.jconfirm-title {
 					display: block;
-					color: #333;
+					color: #444;
 				}
 
 				.jconfirm-icon-c + span.jconfirm-title {
@@ -70,7 +70,7 @@ body.toplevel_page_wp-mail-smtp {
 
 			div.jconfirm-content {
 				font-size: 16px;
-				color: #555;
+				color: #777;
 				line-height: 1.4;
 
 				&.lite-upgrade {
@@ -81,8 +81,8 @@ body.toplevel_page_wp-mail-smtp {
 				}
 
 				p {
-					margin: 0 0 16px;
-					font-size: 18px;
+					margin: 0 0 20px;
+					font-size: 16px;
 					line-height: 1.5;
 
 					&:last-of-type {
@@ -138,21 +138,16 @@ body.toplevel_page_wp-mail-smtp {
 					position: relative;
 
 					&:after {
-						content: '\f058';
-						display: inline-block;
-						font: normal normal normal 14px/1 FontAwesome;
+						content: url(../images/font-awesome/check-circle-solid-green.svg);
+						width: 40px;
+						height: 40px;
 						background-color: #fff;
-						font-size: 26px;
 						border-radius: 50%;
 						padding: 5px 6px;
-						text-rendering: auto;
-						-webkit-font-smoothing: antialiased;
-						-moz-osx-font-smoothing: grayscale;
 						position: absolute;
 						top: -20px;;
 						right: 50%;
 						margin-right: -18px;
-						color: #3abc01;
 					}
 				}
 

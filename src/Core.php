@@ -95,6 +95,9 @@ class Core {
 	 */
 	public function hooks() {
 
+		// Action Scheduler requires a special early loading procedure.
+		add_action( 'plugins_loaded', array( $this, 'load_action_scheduler' ), -10 );
+
 		// Activation hook.
 		register_activation_hook( WPMS_PLUGIN_FILE, array( $this, 'activate' ) );
 
@@ -106,6 +109,9 @@ class Core {
 		add_action( 'admin_init', array( $this, 'init_notifications' ) );
 
 		add_action( 'init', array( $this, 'init' ) );
+
+		// Initialize Action Scheduler tasks.
+		add_action( 'init', array( $this, 'get_tasks' ), 5 );
 
 		add_action( 'plugins_loaded', array( $this, 'get_pro' ) );
 	}
@@ -186,6 +192,25 @@ class Core {
 		}
 
 		return $this->pro;
+	}
+
+	/**
+	 * Get/Load the Tasks code of the plugin.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return \WPMailSMTP\Tasks\Tasks
+	 */
+	public function get_tasks() {
+
+		static $tasks;
+
+		if ( ! isset( $tasks ) ) {
+			$tasks = apply_filters( 'wp_mail_smtp_core_get_tasks', new Tasks\Tasks() );
+			$tasks->init();
+		}
+
+		return $tasks;
 	}
 
 	/**
@@ -573,6 +598,13 @@ class Core {
 
 		// Save default options, only once.
 		Options::init()->set( Options::get_defaults(), true );
+
+		/**
+		 * Store the timestamp of first plugin activation.
+		 *
+		 * @since 2.1.0
+		 */
+		add_option( 'wp_mail_smtp_activated_time', time(), '', false );
 	}
 
 	/**
@@ -688,5 +720,17 @@ class Core {
 	public function is_white_labeled() {
 
 		return (bool) apply_filters( 'wp_mail_smtp_is_white_labeled', false );
+	}
+
+	/**
+	 * Require the action scheduler in an early plugins_loaded hook (-10).
+	 *
+	 * @see https://actionscheduler.org/usage/#load-order
+	 *
+	 * @since 2.1.0
+	 */
+	public function load_action_scheduler() {
+
+		require_once $this->plugin_path . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
 	}
 }

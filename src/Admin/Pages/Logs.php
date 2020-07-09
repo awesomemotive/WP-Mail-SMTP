@@ -4,11 +4,10 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class Logs
- *
- * @since 1.5.0
  */
 class Logs extends PageAbstract {
 
@@ -34,7 +33,7 @@ class Logs extends PageAbstract {
 		return add_query_arg(
 			'tab',
 			$this->slug,
-			admin_url( 'admin.php?page=' . Area::SLUG )
+			WP::admin_url( 'admin.php?page=' . Area::SLUG )
 		);
 	}
 

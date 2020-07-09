@@ -2,14 +2,16 @@
 
 namespace WPMailSMTP\Providers\PepipostAPI;
 
+use WPMailSMTP\MailCatcherInterface;
+use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
 
 /**
- * Class Mailer is basically a Sendgrid copy-paste, as Pepipost support SG migration.
- * In the future we may rewrite the class to use the native Pepipost API.
+ * Pepipost API mailer.
  *
- * @since 1.8.0
+ * @since 1.8.0 Pepipost - SendGrid migration API.
+ * @since 2.2.0 Rewrote this class to use native Pepipost API.
  */
 class Mailer extends MailerAbstract {
 
@@ -26,24 +28,26 @@ class Mailer extends MailerAbstract {
 	 * URL to make an API request to.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Changed the API url to Pepipost API v5.
 	 *
 	 * @var string
 	 */
-	protected $url = 'https://sgapi.pepipost.com/v3/mail/send';
+	protected $url = 'https://api.pepipost.com/v5/mail/send';
 
 	/**
 	 * Mailer constructor.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Changed the API key header (API v5 changes).
 	 *
-	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher instance.
 	 */
 	public function __construct( $phpmailer ) {
 
-		// We want to prefill everything from \WPMailSMTP\MailCatcher class, which extends \PHPMailer.
+		// We want to prefill everything from MailCatcher class, which extends PHPMailer.
 		parent::__construct( $phpmailer );
 
-		$this->set_header( 'Authorization', 'Bearer ' . $this->options->get( $this->mailer, 'api_key' ) );
+		$this->set_header( 'api_key', $this->options->get( $this->mailer, 'api_key' ) );
 		$this->set_header( 'content-type', 'application/json' );
 	}
 
@@ -67,6 +71,7 @@ class Mailer extends MailerAbstract {
 	 * Set the FROM header of the email.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Changed the attribute names (API v5 changes).
 	 *
 	 * @param string $email From mail.
 	 * @param string $name  From name.
@@ -84,9 +89,9 @@ class Mailer extends MailerAbstract {
 		}
 
 		$this->set_body_param(
-			array(
+			[
 				'from' => $from,
-			)
+			]
 		);
 	}
 
@@ -94,6 +99,7 @@ class Mailer extends MailerAbstract {
 	 * Set the names/emails of people who will receive the email.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 change the attribute names (API v5 changes).
 	 *
 	 * @param array $recipients List of recipients: cc/bcc/to.
 	 */
@@ -103,62 +109,29 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		// Allow for now only these recipient types.
-		$default = array( 'to', 'cc', 'bcc' );
-		$data    = array();
+		$data = [];
 
-		foreach ( $recipients as $type => $emails ) {
-			if (
-				! in_array( $type, $default, true ) ||
-				empty( $emails ) ||
-				! is_array( $emails )
-			) {
-				continue;
-			}
-
-			$data[ $type ] = array();
-
-			// Iterate over all emails for each type.
-			// There might be multiple cc/to/bcc emails.
-			foreach ( $emails as $email ) {
-				$holder = array();
-				$addr   = isset( $email[0] ) ? $email[0] : false;
-				$name   = isset( $email[1] ) ? $email[1] : false;
-
-				if ( ! filter_var( $addr, FILTER_VALIDATE_EMAIL ) ) {
-					continue;
-				}
-
-				$holder['email'] = $addr;
-				if ( ! empty( $name ) ) {
-					$holder['name'] = $name;
-				}
-
-				array_push( $data[ $type ], $holder );
-			}
+		if ( ! empty( $recipients['to'] ) ) {
+			$data['to'] = $this->prepare_list_of_to_emails( $recipients['to'] );
 		}
 
-		if ( ! empty( $data ) ) {
-			$this->set_body_param(
-				array(
-					'personalizations' => array( $data ),
-				)
-			);
-
-			if ( ! empty( $data['bcc'] ) ) {
-				// Only the 1st BCC email address, ignore the rest - is not supported by Pepipost.
-				$bcc['mail_settings']['bcc']['email'] = $data['bcc'][0]['email'];
-				$this->set_body_param(
-					$bcc
-				);
-			}
+		if ( ! empty( $recipients['cc'] ) ) {
+			$data['cc'] = $this->prepare_list_of_emails( $recipients['cc'] );
 		}
+
+		if ( ! empty( $recipients['bcc'] ) ) {
+			$data['bcc'] = $this->prepare_list_of_emails( $recipients['bcc'] );
+		}
+
+		$this->set_body_personalizations( $data );
 	}
 
 	/**
 	 * Set the email content.
+	 * Pepipost API only supports HTML emails, so we have to replace new lines in plain text emails with <br>.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Change the way the content is prepared (API v5 changes).
 	 *
 	 * @param array|string $content Email content.
 	 */
@@ -168,109 +141,70 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		if ( is_array( $content ) ) {
+		$html = '';
 
-			$default = array( 'text', 'html' );
-			$data    = array();
-
-			foreach ( $content as $type => $body ) {
-				if (
-					! in_array( $type, $default, true ) ||
-					empty( $body )
-				) {
-					continue;
-				}
-
-				$content_type  = 'text/plain';
-				$content_value = $body;
-
-				if ( $type === 'html' ) {
-					$content_type = 'text/html';
-				} else {
-					$content_value = nl2br( $content_value );
-				}
-
-				$data[] = array(
-					'type'  => $content_type,
-					'value' => $content_value,
-				);
-			}
-
-			$this->set_body_param(
-				array(
-					'content' => $data,
-				)
-			);
-		} else {
-			$data['type']  = 'text/html';
-			$data['value'] = $content;
+		if ( ! is_array( $content ) ) {
+			$html = $content;
 
 			if ( $this->phpmailer->ContentType === 'text/plain' ) {
-				$data['type']  = 'text/plain';
-				$data['value'] = nl2br( $data['value'] );
+				$html = nl2br( $html );
 			}
+		} else {
 
-			$this->set_body_param(
-				array(
-					'content' => array( $data ),
-				)
-			);
+			if ( ! empty( $content['html'] ) ) {
+				$html = $content['html'];
+			} elseif ( ! empty( $content['text'] ) ) {
+				$html = nl2br( $content['text'] );
+			}
 		}
+
+		$this->set_body_param(
+			[
+				'content' => [
+					[
+						'type'  => 'html',
+						'value' => $html,
+					],
+				],
+			]
+		);
 	}
 
 	/**
-	 * Redefine the way custom headers are processed for this mailer - they should be in body.
+	 * Redefine the way custom headers are processed for this mailer - they should be in body (personalizations).
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Change the way the headers are processed (API v5 changes).
 	 *
-	 * @param array $headers
+	 * @param array $headers The email headers to be applied.
 	 */
 	public function set_headers( $headers ) {
+
+		$valid_headers = [];
 
 		foreach ( $headers as $header ) {
 			$name  = isset( $header[0] ) ? $header[0] : false;
 			$value = isset( $header[1] ) ? $header[1] : false;
 
-			$this->set_body_header( $name, $value );
+			$valid_headers[ $name ] = WP::sanitize_value( $value );
 		}
 
 		// Add custom PHPMailer-specific header.
-		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
-	}
+		$valid_headers['X-Mailer'] = WP::sanitize_value( 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
 
-	/**
-	 * This mailer supports email-related custom headers inside a body of the message.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param string $name
-	 * @param string $value
-	 */
-	public function set_body_header( $name, $value ) {
-
-		$name = sanitize_text_field( $name );
-		if ( empty( $name ) ) {
-			return;
+		if ( ! empty( $valid_headers ) ) {
+			$this->set_body_personalizations( [ 'headers' => $valid_headers ] );
 		}
-
-		$headers = isset( $this->body['headers'] ) ? (array) $this->body['headers'] : array();
-
-		$headers[ $name ] = WP::sanitize_value( $value );
-
-		$this->set_body_param(
-			array(
-				'headers' => $headers,
-			)
-		);
 	}
 
 	/**
-	 * Pepipost accepts an array of files content in body, so we will include all files and send.
-	 * Doesn't handle exceeding the limits etc, as this is done and reported by SendGrid API.
+	 * Pepipost API accepts an array of files content in body, so we will include all files and send.
+	 * Doesn't handle exceeding the limits etc, as this will be reported by the API response.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Change the way the attachments are processed (API v5 changes).
 	 *
-	 * @param array $attachments
+	 * @param array $attachments The list of attachments data.
 	 */
 	public function set_attachments( $attachments ) {
 
@@ -278,7 +212,29 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$data = array();
+		$data = $this->prepare_attachments( $attachments );
+
+		if ( ! empty( $data ) ) {
+			$this->set_body_param(
+				[
+					'attachments' => $data,
+				]
+			);
+		}
+	}
+
+	/**
+	 * Prepare the attachments data for Pepipost API.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $attachments Array of attachments.
+	 *
+	 * @return array
+	 */
+	protected function prepare_attachments( $attachments ) {
+
+		$data = [];
 
 		foreach ( $attachments as $attachment ) {
 			$file = false;
@@ -291,8 +247,7 @@ class Mailer extends MailerAbstract {
 				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
 					$file = file_get_contents( $attachment[0] ); // phpcs:ignore
 				}
-			}
-			catch ( \Exception $e ) {
+			} catch ( \Exception $e ) {
 				$file = false;
 			}
 
@@ -300,27 +255,21 @@ class Mailer extends MailerAbstract {
 				continue;
 			}
 
-			$data[] = array(
-				'content'     => base64_encode( $file ),
-				'type'        => $attachment[4],
-				'filename'    => $attachment[2],
-				'disposition' => $attachment[6],
-			);
+			$data[] = [
+				'content' => base64_encode( $file ), // phpcs:ignore
+				'name'    => $attachment[2],
+			];
 		}
 
-		if ( ! empty( $data ) ) {
-			$this->set_body_param(
-				array(
-					'attachments' => $data,
-				)
-			);
-		}
+		return $data;
 	}
 
 	/**
 	 * Set the reply-to property of the email.
+	 * Pepipost API only supports one reply_to email, so we take the first one and discard the rest.
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Change the way the reply_to is processed (API v5 changes).
 	 *
 	 * @param array $reply_to Name/email for reply-to feature.
 	 */
@@ -330,54 +279,44 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$data = array();
+		$email_array = array_shift( $reply_to );
 
-		foreach ( $reply_to as $key => $emails ) {
-			if (
-				empty( $emails ) ||
-				! is_array( $emails )
-			) {
-				continue;
-			}
-
-			$addr = isset( $emails[0] ) ? $emails[0] : false;
-			$name = isset( $emails[1] ) ? $emails[1] : false;
-
-			if ( ! filter_var( $addr, FILTER_VALIDATE_EMAIL ) ) {
-				continue;
-			}
-
-			$data['email'] = $addr;
-			if ( ! empty( $name ) ) {
-				$data['name'] = $name;
-			}
+		if ( empty( $email_array[0] ) ) {
+			return;
 		}
 
-		if ( ! empty( $data ) ) {
+		$email = $email_array[0];
+
+		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+			return;
+		}
+
+		if ( ! empty( $email ) ) {
 			$this->set_body_param(
-				array(
-					'reply_to' => $data,
-				)
+				[
+					'reply_to' => $email,
+				]
 			);
 		}
 	}
 
 	/**
-	 * Pepipost doesn't support sender or return_path params.
+	 * Pepipost API doesn't support sender or return_path params.
 	 * So we do nothing.
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param string $from_email
+	 * @param string $from_email The from email address.
 	 */
 	public function set_return_path( $from_email ) {}
 
 	/**
 	 * Get a Pepipost-specific response with a helpful error.
 	 *
-	 * @see https://developers.pepipost.com/migration-api/new-subpage/errorcodes
+	 * @see https://developers.pepipost.com/email-api/email-api/sendemail#responses
 	 *
 	 * @since 1.8.0
+	 * @since 2.2.0 Change the way the response error message is processed (API v5 changes).
 	 *
 	 * @return string
 	 */
@@ -385,27 +324,26 @@ class Mailer extends MailerAbstract {
 
 		$body = (array) wp_remote_retrieve_body( $this->response );
 
-		$error_text = array();
+		$error   = ! empty( $body['error'] ) ? $body['error'] : '';
+		$info    = ! empty( $body['info'] ) ? $body['info'] : '';
+		$message = '';
 
-		if ( ! empty( $body['errors'] ) ) {
-			foreach ( $body['errors'] as $error ) {
-				if ( property_exists( $error, 'message' ) ) {
-					// Prepare additional information from SendGrid API.
-					$extra = '';
-					if ( property_exists( $error, 'field' ) && ! empty( $error->field ) ) {
-						$extra .= $error->field . '; ';
-					}
-					if ( property_exists( $error, 'help' ) && ! empty( $error->help ) ) {
-						$extra .= $error->help;
-					}
+		if ( is_string( $error ) ) {
+			$message = $error . ( ( ! empty( $info ) ) ? ' - ' . $info : '' );
+		} elseif ( is_array( $error ) ) {
+			$message = '';
 
-					// Assign both the main message and perhaps extra information, if exists.
-					$error_text[] = $error->message . ( ! empty( $extra ) ? ' - ' . $extra : '' );
-				}
+			foreach ( $error as $item ) {
+				$message .= sprintf(
+					'%1$s (%2$s - %3$s)',
+					! empty( $item->description ) ? $item->description : esc_html__( 'General error', 'wp-mail-smtp' ),
+					! empty( $item->message ) ? $item->message : esc_html__( 'Error', 'wp-mail-smtp' ),
+					! empty( $item->field ) ? $item->field : ''
+				) . PHP_EOL;
 			}
 		}
 
-		return implode( '<br>', array_map( 'esc_textarea', $error_text ) );
+		return $message;
 	}
 
 	/**
@@ -439,5 +377,99 @@ class Mailer extends MailerAbstract {
 		}
 
 		return false;
+	}
+
+	/**
+	 * A special set method for Pepipost API "personalizations" attribute.
+	 * We are sending one email at a time, so we should set just the first
+	 * personalization item.
+	 *
+	 * Mainly used in set_headers and set_recipients.
+	 *
+	 * @see https://developers.pepipost.com/email-api/email-api/sendemail
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $data The personalizations array of data (array of arrays).
+	 */
+	private function set_body_personalizations( $data ) {
+
+		if ( empty( $data ) ) {
+			return;
+		}
+
+		if ( ! empty( $this->body['personalizations'][0] ) ) {
+			$this->body['personalizations'][0] = PluginOptions::array_merge_recursive(
+				$this->body['personalizations'][0],
+				$data
+			);
+		} else {
+			$this->set_body_param(
+				[
+					'personalizations' => [
+						$data,
+					],
+				]
+			);
+		}
+	}
+
+	/**
+	 * Prepare list of emails by filtering valid emails first.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $items A 2D array of email and name pair items (0 = email, 1 = name).
+	 *
+	 * @return array 2D array with 'email' keys.
+	 */
+	private function prepare_list_of_emails( $items ) {
+
+		$valid_emails = array_filter(
+			array_column( $items, 0 ),
+			function ( $email ) {
+				return filter_var( $email, FILTER_VALIDATE_EMAIL );
+			}
+		);
+
+		return array_map(
+			function( $email ) {
+				return [ 'email' => $email ];
+			},
+			$valid_emails
+		);
+	}
+
+	/**
+	 * Prepare list of TO emails by filtering valid emails first
+	 * and returning array of arrays (email, name).
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $items A 2D array of email and name pair items (0 = email, 1 = name).
+	 *
+	 * @return array 2D array with 'email' and optional 'name' attributes.
+	 */
+	private function prepare_list_of_to_emails( $items ) {
+
+		$data = [];
+
+		foreach ( $items as $item ) {
+			$email = filter_var( $item[0], FILTER_VALIDATE_EMAIL );
+
+			if ( empty( $email ) ) {
+				continue;
+			}
+
+			$pair['email'] = $email;
+
+			if ( ! empty( $item[1] ) ) {
+				$pair['name'] = $item[1];
+			}
+
+			$data[] = $pair;
+		}
+
+		return $data;
 	}
 }

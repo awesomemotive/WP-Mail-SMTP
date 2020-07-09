@@ -195,7 +195,7 @@ class Task {
 		$this->meta_id = $task_meta->add(
 			[
 				'action' => $this->action,
-				'data'   => $this->params,
+				'data'   => isset( $this->params ) ? $this->params : [],
 			]
 		);
 

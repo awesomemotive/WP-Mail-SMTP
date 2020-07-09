@@ -4,7 +4,7 @@ namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
-use WPMailSMTP\MailCatcher;
+use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -32,7 +32,7 @@ abstract class MailerAbstract implements MailerInterface {
 	/**
 	 * @since 1.0.0
 	 *
-	 * @var MailCatcher
+	 * @var MailCatcherInterface
 	 */
 	protected $phpmailer;
 	/**
@@ -74,9 +74,9 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
-	public function __construct( MailCatcher $phpmailer ) {
+	public function __construct( MailCatcherInterface $phpmailer ) {
 
 		$this->options = new Options();
 		$this->mailer  = $this->options->get( 'mail', 'mailer' );
@@ -94,15 +94,12 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
 	public function process_phpmailer( $phpmailer ) {
 
-		// Make sure that we have access to MailCatcher class methods.
-		if (
-			! $phpmailer instanceof MailCatcher &&
-			! $phpmailer instanceof \PHPMailer
-		) {
+		// Make sure that we have access to PHPMailer class methods.
+		if ( ! wp_mail_smtp()->is_valid_phpmailer( $phpmailer ) ) {
 			return;
 		}
 

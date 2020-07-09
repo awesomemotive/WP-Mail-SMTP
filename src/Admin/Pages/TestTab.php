@@ -4,7 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
-use WPMailSMTP\MailCatcher;
+use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 use WPMailSMTP\Admin\PageAbstract;
@@ -393,8 +393,8 @@ Lead Developer, WP Mail SMTP';
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param MailCatcher $phpmailer
-	 * @param string $smtp_debug
+	 * @param MailCatcherInterface $phpmailer  The MailCatcher object.
+	 * @param string               $smtp_debug The SMTP debug message.
 	 *
 	 * @return string
 	 */

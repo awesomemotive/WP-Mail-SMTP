@@ -68,6 +68,11 @@ class SiteHealth {
 			'test'  => array( $this, 'mailer_setup_complete_test' ),
 		);
 
+		$tests['direct']['wp_mail_smtp_db_tables_exist'] = array(
+			'label' => esc_html__( 'Do WP Mail SMTP DB tables exist?', 'wp-mail-smtp' ),
+			'test'  => [ $this, 'db_tables_test' ],
+		);
+
 		return $tests;
 	}
 
@@ -84,24 +89,30 @@ class SiteHealth {
 	public function register_debug_information( $debug_info ) {
 
 		$debug_notices = Debug::get();
+		$db_tables     = $this->get_db_tables( 'existing' );
 
-		$debug_info[ self::DEBUG_INFO_SLUG ] = array(
+		$debug_info[ self::DEBUG_INFO_SLUG ] = [
 			'label'  => $this->get_label(),
-			'fields' => array(
-				'version'          => array(
+			'fields' => [
+				'version'          => [
 					'label' => esc_html__( 'Version', 'wp-mail-smtp' ),
 					'value' => WPMS_PLUGIN_VER,
-				),
-				'license_key_type' => array(
+				],
+				'license_key_type' => [
 					'label' => esc_html__( 'License key type', 'wp-mail-smtp' ),
 					'value' => wp_mail_smtp()->get_license_type(),
-				),
-				'debug'            => array(
+				],
+				'debug'            => [
 					'label' => esc_html__( 'Debug', 'wp-mail-smtp' ),
 					'value' => ! empty( $debug_notices ) ? implode( '. ', $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
-				),
-			),
-		);
+				],
+				'db_tables'        => [
+					'label' => esc_html__( 'DB tables', 'wp-mail-smtp' ),
+					'value' => ! empty( $db_tables ) ?
+						implode( ', ', $db_tables ) : esc_html__( 'No DB tables found.', 'wp-mail-smtp' ),
+				],
+			],
+		];
 
 		return $debug_info;
 	}
@@ -176,5 +187,76 @@ class SiteHealth {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Perform the test for checking if all custom plugin DB tables exist.
+	 *
+	 * @since 2.1.2
+	 *
+	 * @return array
+	 */
+	public function db_tables_test() {
+
+		$result = array(
+			'label'       => esc_html__( 'WP Mail SMTP DB tables are created', 'wp-mail-smtp' ),
+			'status'      => 'good',
+			'badge'       => array(
+				'label' => $this->get_label(),
+				'color' => self::BADGE_COLOR,
+			),
+			'description' => esc_html__( 'WP Mail SMTP is using custom database tables for some of its features. In order to work properly, the custom tables should be created, and it looks like they exist in your database.', 'wp-mail-smtp' ),
+			'actions'     => '',
+			'test'        => 'wp_mail_smtp_db_tables_exist',
+		);
+
+		$missing_tables = $this->get_db_tables( 'missing' );
+
+		if ( ! empty( $missing_tables ) ) {
+			$result['label']          = esc_html__( 'WP Mail SMTP DB tables check has failed', 'wp-mail-smtp' );
+			$result['status']         = 'critical';
+			$result['badge']['color'] = 'red';
+			$result['description']    = sprintf(
+				'<p>%s</p><p>%s</p>',
+				sprintf( /* translators: %s - the list of missing tables separated by comma. */
+					esc_html( _n( 'Missing table: %s', 'Missing tables: %s', count( $missing_tables ), 'wp-mail-smtp' ) ),
+					esc_html( implode( ', ', $missing_tables ) )
+				),
+				esc_html__( 'WP Mail SMTP is using custom database tables for some of its features. In order to work properly, the custom tables should be created, and it seems they are missing. Please try to re-install the WP Mail SMTP plugin. If this issue persists, please contact our support.', 'wp-mail-smtp' )
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Check DB:
+	 * - if any required plugin DB table is missing,
+	 * - which of the required plugin DB tables exist.
+	 *
+	 * @since 2.1.2
+	 *
+	 * @param string $check Which type of tables to return: 'missing' or 'existing'.
+	 *
+	 * @return array Missing or existing tables.
+	 */
+	private function get_db_tables( $check = 'missing' ) {
+
+		global $wpdb;
+
+		$tables = wp_mail_smtp()->get_custom_db_tables();
+
+		$missing_tables  = [];
+		$existing_tables = [];
+
+		foreach ( $tables as $table ) {
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) { // phpcs:ignore
+				$missing_tables[] = $table;
+			} else {
+				$existing_tables[] = $table;
+			}
+		}
+
+		return ( $check === 'existing' ) ? $existing_tables : $missing_tables;
 	}
 }

@@ -271,7 +271,7 @@ class Area {
 	 * @since 1.5.0 Added new assets for new pages.
 	 * @since 1.7.0 Added jQuery Confirm library css/js files.
 	 *
-	 * @param string $hook
+	 * @param string $hook Current hook.
 	 */
 	public function enqueue_assets( $hook ) {
 
@@ -305,9 +305,7 @@ class Area {
 					'title'         => esc_html__( 'Heads up!', 'wp-mail-smtp' ),
 					'content'       => wp_kses(
 						__( '<p>The Default (PHP) mailer is currently selected, but is not recommended because in most cases it does not resolve email delivery issues.</p><p>Please consider selecting and configuring one of the other mailers.</p>', 'wp-mail-smtp' ),
-						array(
-							'p' => true,
-						)
+						[ 'p' => [] ]
 					),
 					'save_button'   => esc_html__( 'Save Settings', 'wp-mail-smtp' ),
 					'cancel_button' => esc_html__( 'Cancel', 'wp-mail-smtp' ),
@@ -322,11 +320,11 @@ class Area {
 					'upgrade_bonus'     => '<p>' .
 											wp_kses(
 												__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>$50 off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
-												array(
-													'strong' => true,
-													'span'   => true,
-													'br'     => true,
-												)
+												[
+													'strong' => [],
+													'span'   => [],
+													'br'     => [],
+												]
 											)
 											. '</p>',
 					'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">
@@ -893,7 +891,7 @@ class Area {
 		return add_query_arg(
 			'page',
 			$page,
-			admin_url( 'admin.php' )
+			WP::admin_url( 'admin.php' )
 		);
 	}
 

@@ -321,10 +321,10 @@ gulp.task( 'replace_ver', gulp.series( 'replace_plugin_file_ver', 'replace_since
 /**
  * Task: build.
  */
-gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot:lite' ), 'replace_ver', 'rename:lite', 'composer:lite', 'zip:lite' ) );
-gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot' ), 'replace_ver', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
+gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build:test', gulp.series( 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
-gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'pot' ), 'replace_ver', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 
 /**
  * Look out for relevant sass/js changes.

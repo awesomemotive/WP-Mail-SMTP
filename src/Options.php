@@ -170,9 +170,11 @@ class Options {
 	 * Retrieve all options of the plugin.
 	 *
 	 * @since 1.0.0
+	 * @since 2.2.0 Added the filter.
 	 */
 	protected function populate_options() {
-		$this->_options = get_option( self::META_KEY, array() );
+
+		$this->_options = apply_filters( 'wp_mail_smtp_populate_options', get_option( self::META_KEY, [] ) );
 	}
 
 	/**

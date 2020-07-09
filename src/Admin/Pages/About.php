@@ -6,6 +6,7 @@ use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Admin\PluginsInstallSkin;
 use WPMailSMTP\Admin\PluginsInstallUpgrader;
+use WPMailSMTP\WP;
 
 /**
  * Class About to display a page with About Us and Versus content.
@@ -42,7 +43,7 @@ class About extends PageAbstract {
 		return add_query_arg(
 			'tab',
 			$this->get_defined_tab( $tab ),
-			admin_url( 'admin.php?page=' . Area::SLUG . '-' . $this->slug )
+			WP::admin_url( 'admin.php?page=' . Area::SLUG . '-' . $this->slug )
 		);
 	}
 
@@ -214,6 +215,24 @@ class About extends PageAbstract {
 
 		</div>
 
+		<?php
+
+		// Do not display the plugin section if the user can't install or activate them.
+		if ( ! current_user_can( 'install_plugins' ) && ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
+		$this->display_plugins();
+	}
+
+	/**
+	 * Display the plugins section.
+	 *
+	 * @since 2.2.0
+	 */
+	protected function display_plugins() {
+		?>
+
 		<div class="wp-mail-smtp-admin-about-plugins">
 			<div class="plugins-container">
 				<?php
@@ -229,11 +248,16 @@ class About extends PageAbstract {
 						$data = array_merge( $data, $this->get_about_plugins_data( $plugin, true ) );
 					}
 
+					// Do not display a plugin which has to be installed and the user can't install it.
+					if ( ! current_user_can( 'install_plugins' ) && $data['status_class'] === 'status-download' ) {
+						continue;
+					}
+
 					?>
 					<div class="plugin-container">
 						<div class="plugin-item">
 							<div class="details wp-mail-smtp-clear">
-								<img src="<?php echo \esc_url( $plugin['icon'] ); ?>">
+								<img src="<?php echo \esc_url( $plugin['icon'] ); ?>" alt="<?php esc_attr_e( 'Plugin icon', 'wp-mail-smtp' ); ?>">
 								<h5 class="plugin-name">
 									<?php echo $plugin['name']; ?>
 								</h5>
@@ -430,7 +454,7 @@ class About extends PageAbstract {
 		$error = \esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' );
 
 		// Check for permissions.
-		if ( ! \current_user_can( 'activate_plugins' ) ) {
+		if ( ! \current_user_can( 'install_plugins' ) ) {
 			\wp_send_json_error( $error );
 		}
 

@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, pepipost, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.4
-Stable tag: 2.1.1
+Stable tag: 2.2.1
 Requires PHP: 5.5.0
 
 The most popular WordPress SMTP and PHP Mailer plugin. Trusted by over 1 million sites.
@@ -228,6 +228,14 @@ By all means please contact us to discuss features or options you'd like to see 
 6. Send a Test Email
 
 == Changelog ==
+
+= 2.2.1 - 2020-07-09 =
+* Added: Gmail mailer now supports aliases.
+* Added: Support both old PHPMailer v5 (WordPress <=5.4) and PHPMailer v6 (WordPress >=5.5).
+* Changed: Pepipost mailer is now using the native API v5 instead of the SendGrid migration API.
+* Fixed: Incorrect Mailgun Domain Name option was not showing an email delivery error.
+* Fixed: Empty debug errors for the Sendinblue mailer are no more.
+* Fixed: Properly compare From Email option value with a correct default email address from WP core.
 
 = 2.1.1 - 2020-06-08 =
 * Changed: Remove current automatic default reply-to address and add WP filter `wp_mail_smtp_processor_set_default_reply_to` for setting default reply-to addresses.

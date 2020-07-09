@@ -2,6 +2,9 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\MailCatcher;
+use WPMailSMTP\MailCatcherV6;
+
 /**
  * Interface MailerInterface.
  *
@@ -77,7 +80,7 @@ interface MailerInterface {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
 	public function process_phpmailer( $phpmailer );
 }

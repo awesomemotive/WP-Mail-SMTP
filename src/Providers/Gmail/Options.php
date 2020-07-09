@@ -181,6 +181,23 @@ class Options extends OptionsAbstract {
 					?>
 				</span>
 				<p class="desc">
+					<?php
+					printf(
+						wp_kses( /* translators: %s - URL to Google Gmail alias documentation page. */
+							__( 'If you want to use a different From Email address you can set-up a Google email alias. <a href="%s" target="_blank" rel="noopener noreferrer">Follow these instructions</a> and then select the From Email at the top of this page.', 'wp-mail-smtp' ),
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
+						),
+						'https://support.google.com/a/answer/33327'
+					);
+					?>
+				</p>
+				<p class="desc">
 					<?php esc_html_e( 'Removing the connection will give you an ability to redo the connection or link to another Google account.', 'wp-mail-smtp' ); ?>
 				</p>
 

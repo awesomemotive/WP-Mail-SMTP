@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\SMTPcom;
 
+use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
 
@@ -37,11 +38,11 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
 	public function __construct( $phpmailer ) {
 
-		// We want to prefill everything from \WPMailSMTP\MailCatcher class, which extends \PHPMailer.
+		// We want to prefill everything from MailCatcher class, which extends PHPMailer.
 		parent::__construct( $phpmailer );
 
 		// Set mailer specific headers.

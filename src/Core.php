@@ -59,6 +59,10 @@ class Core {
 		if ( $this->is_not_loadable() ) {
 			add_action( 'admin_notices', 'wp_mail_smtp_insecure_php_version_notice' );
 
+			if ( WP::use_global_plugin_settings() ) {
+				add_action( 'network_admin_notices', 'wp_mail_smtp_insecure_php_version_notice' );
+			}
+
 			return;
 		}
 
@@ -95,8 +99,13 @@ class Core {
 	 */
 	public function hooks() {
 
+		// Force from_email_force to always return true if current mailer is Gmail.
+		if ( ( new Options() )->get( 'mail', 'mailer' ) === 'gmail' ) {
+			add_filter( 'wp_mail_smtp_options_get', [ $this, 'gmail_mailer_get_from_email_force' ], 1, 3 );
+		}
+
 		// Action Scheduler requires a special early loading procedure.
-		add_action( 'plugins_loaded', array( $this, 'load_action_scheduler' ), -10 );
+		add_action( 'plugins_loaded', array( $this, 'load_action_scheduler' ), - 10 );
 
 		// Activation hook.
 		register_activation_hook( WPMS_PLUGIN_FILE, array( $this, 'activate' ) );
@@ -148,6 +157,11 @@ class Core {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
 			add_action( 'admin_notices', array( $this, 'display_general_notices' ) );
+
+			if ( WP::use_global_plugin_settings() ) {
+				add_action( 'network_admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
+				add_action( 'network_admin_notices', array( $this, 'display_general_notices' ) );
+			}
 		}
 	}
 
@@ -455,7 +469,6 @@ class Core {
 		}
 
 		if ( wp_mail_smtp()->get_admin()->is_error_delivery_notice_enabled() ) {
-
 			$notice = Debug::get_last();
 
 			if ( ! empty( $notice ) ) {
@@ -556,7 +569,7 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \WPMailSMTP\MailCatcher
+	 * @return MailCatcherInterface
 	 */
 	public function replace_phpmailer() {
 
@@ -573,11 +586,11 @@ class Core {
 	 *
 	 * @param null $obj PhpMailer object to override with own implementation.
 	 *
-	 * @return \WPMailSMTP\MailCatcher
+	 * @return MailCatcherInterface
 	 */
 	protected function replace_w_fake_phpmailer( &$obj = null ) {
 
-		$obj = new MailCatcher( true );
+		$obj = $this->generate_mail_catcher( true );
 
 		return $obj;
 	}
@@ -725,12 +738,107 @@ class Core {
 	/**
 	 * Require the action scheduler in an early plugins_loaded hook (-10).
 	 *
-	 * @see https://actionscheduler.org/usage/#load-order
+	 * @see   https://actionscheduler.org/usage/#load-order
 	 *
 	 * @since 2.1.0
 	 */
 	public function load_action_scheduler() {
 
 		require_once $this->plugin_path . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
+	}
+
+	/**
+	 * Get the list of all custom DB tables that should be present in the DB.
+	 *
+	 * @since 2.1.2
+	 *
+	 * @return array List of table names.
+	 */
+	public function get_custom_db_tables() {
+
+		$tables = [
+			\WPMailSMTP\Tasks\Meta::get_table_name(),
+		];
+
+		return apply_filters( 'wp_mail_smtp_core_get_custom_db_tables', $tables );
+	}
+
+	/**
+	 * Generate the correct MailCatcher object based on the PHPMailer version used in WP.
+	 *
+	 * Also conditionally require the needed class files.
+	 *
+	 * @see   https://make.wordpress.org/core/2020/07/01/external-library-updates-in-wordpress-5-5-call-for-testing/
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param bool $exceptions True if external exceptions should be thrown.
+	 *
+	 * @return MailCatcherInterface
+	 */
+	public function generate_mail_catcher( $exceptions = null ) {
+
+		if ( version_compare( get_bloginfo( 'version' ), '5.5-alpha', '<' ) ) {
+			if ( ! class_exists( '\PHPMailer', false ) ) {
+				require_once ABSPATH . WPINC . '/class-phpmailer.php';
+			}
+
+			$mail_catcher = new MailCatcher( $exceptions );
+		} else {
+			if ( ! class_exists( '\PHPMailer\PHPMailer\PHPMailer', false ) ) {
+				require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+			}
+
+			if ( ! class_exists( '\PHPMailer\PHPMailer\Exception', false ) ) {
+				require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+			}
+
+			if ( ! class_exists( '\PHPMailer\PHPMailer\SMTP', false ) ) {
+				require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+			}
+
+			$mail_catcher = new MailCatcherV6( $exceptions );
+		}
+
+		return $mail_catcher;
+	}
+
+	/**
+	 * Check if the passed object is a valid PHPMailer object.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param object $phpmailer A potential PHPMailer object to be tested.
+	 *
+	 * @return bool
+	 */
+	public function is_valid_phpmailer( $phpmailer ) {
+
+		return $phpmailer instanceof MailCatcherInterface ||
+		       $phpmailer instanceof \PHPMailer ||
+		       $phpmailer instanceof \PHPMailer\PHPMailer\PHPMailer;
+	}
+
+	/**
+	 * Force the `mail.from_email_force` plugin option to always return true if the current saved mailer is Gmail.
+	 * Alters the plugin options retrieving via the Options::get method.
+	 *
+	 * The gmail mailer check is performed when this filter is added.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param mixed  $value The value of the plugin option that is being retrieved via Options::get method.
+	 * @param string $group The group of the plugin option that is being retrieved via Options::get method.
+	 * @param string $key   The key of the plugin option that is being retrieved via Options::get method.
+	 *
+	 * @return mixed
+	 */
+	public function gmail_mailer_get_from_email_force( $value, $group, $key ) {
+
+		if ( $group === 'mail' && $key === 'from_email_force' ) {
+			$value = true;
+		}
+
+		return $value;
 	}
 }

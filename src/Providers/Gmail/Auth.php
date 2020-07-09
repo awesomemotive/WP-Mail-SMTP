@@ -15,6 +15,15 @@ use WPMailSMTP\Providers\AuthAbstract;
 class Auth extends AuthAbstract {
 
 	/**
+	 * List of all possible "from email" email addresses (aliases).
+	 *
+	 * @since 2.2.0
+	 *
+	 * @var null|array
+	 */
+	private $aliases = null;
+
+	/**
 	 * Auth constructor.
 	 *
 	 * @since 1.0.0
@@ -47,12 +56,15 @@ class Auth extends AuthAbstract {
 	 */
 	public static function get_plugin_auth_url() {
 
-		return add_query_arg(
-			array(
-				'page' => Area::SLUG,
-				'tab'  => 'auth',
-			),
-			admin_url( 'options-general.php' )
+		return apply_filters(
+			'wp_mail_smtp_gmail_get_plugin_auth_url',
+			add_query_arg(
+				array(
+					'page' => Area::SLUG,
+					'tab'  => 'auth',
+				),
+				admin_url( 'options-general.php' )
+			)
 		);
 	}
 
@@ -279,5 +291,41 @@ class Auth extends AuthAbstract {
 		}
 
 		return array( 'email' => $email );
+	}
+
+	/**
+	 * Get the registered email addresses that the user can use as the "from email".
+	 *
+	 * @since 2.2.0
+	 *
+	 * @return array The list of possible from email addresses.
+	 */
+	public function get_user_possible_send_from_addresses() {
+
+		if ( isset( $this->aliases ) ) {
+			return $this->aliases;
+		}
+
+		$gmail = new \Google_Service_Gmail( $this->get_client() );
+
+		try {
+			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' ); // phpcs:ignore
+
+			// phpcs:disable
+			if ( isset( $response->sendAs ) ) {
+				$this->aliases = array_map(
+					function( $sendAsObject ) {
+						return $sendAsObject->sendAsEmail;
+					},
+					$response->sendAs
+				);
+			}
+			// phpcs:enable
+
+		} catch ( \Exception $exception ) {
+			$this->aliases = [];
+		}
+
+		return $this->aliases;
 	}
 }

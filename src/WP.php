@@ -238,4 +238,63 @@ class WP {
 
 		return $filtered;
 	}
+
+	/**
+	 * Get default email address.
+	 *
+	 * This is the same code as used in WP core for getting the default email address.
+	 *
+	 * @see https://github.com/WordPress/WordPress/blob/master/wp-includes/pluggable.php#L332
+	 *
+	 * @since 2.2.0
+	 *
+	 * @return string
+	 */
+	public static function get_default_email() {
+
+		$sitename = strtolower( $_SERVER['SERVER_NAME'] ); // phpcs:ignore
+
+		if ( 'www.' === substr( $sitename, 0, 4 ) ) {
+			$sitename = substr( $sitename, 4 );
+		}
+
+		return 'wordpress@' . $sitename;
+	}
+
+	/**
+	 * Wrapper for the WP `admin_url` method that should be used in the plugin.
+	 *
+	 * We can filter into it, to maybe call `network_admin_url` for multisite support.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param string $path   Optional path relative to the admin URL.
+	 * @param string $scheme The scheme to use. Default is 'admin', which obeys force_ssl_admin() and is_ssl().
+	 *                       'http' or 'https' can be passed to force those schemes.
+	 *
+	 * @return string Admin URL link with optional path appended.
+	 */
+	public static function admin_url( $path = '', $scheme = 'admin' ) {
+
+		return apply_filters( 'wp_mail_smtp_admin_url', \admin_url( $path, $scheme ), $path, $scheme );
+	}
+
+	/**
+	 * Check if the global plugin option in a multisite should be used.
+	 * If the global plugin option "multisite" is set and true.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @return bool
+	 */
+	public static function use_global_plugin_settings() {
+
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		$main_site_options = get_blog_option( get_main_site_id(), Options::META_KEY, [] );
+
+		return ! empty( $main_site_options['general']['network_wide'] );
+	}
 }

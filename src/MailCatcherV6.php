@@ -2,18 +2,13 @@
 
 namespace WPMailSMTP;
 
-// Load PHPMailer class, so we can subclass it.
-if ( ! class_exists( 'PHPMailer', false ) ) {
-	require_once ABSPATH . WPINC . '/class-phpmailer.php';
-}
-
 /**
- * Class MailCatcher replaces the \PHPMailer and modifies the email sending logic.
- * Thus, we can use other mailers API to do what we need, or stop emails completely.
+ * Class MailCatcher replaces the \PHPMailer\PHPMailer\PHPMailer introduced in WP 5.5 and
+ * modifies the email sending logic. Thus, we can use other mailers API to do what we need, or stop emails completely.
  *
- * @since 1.0.0
+ * @since 2.2.0
  */
-class MailCatcher extends \PHPMailer implements MailCatcherInterface {
+class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatcherInterface {
 
 	/**
 	 * Callback Action function name.
@@ -21,7 +16,7 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	 * The function that handles the result of the send email action.
 	 * It is called out by send() for each email sent.
 	 *
-	 * @since 1.3.0
+	 * @since 2.2.0
 	 *
 	 * @var string
 	 */
@@ -32,14 +27,13 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	 * For those mailers, that relies on PHPMailer class - call it directly.
 	 * For others - init the correct provider and process it.
 	 *
-	 * @since 1.0.0
-	 * @since 1.4.0 Process "Do Not Send" option, but always allow test email.
+	 * @since 2.2.0
 	 *
-	 * @throws \phpmailerException When sending via PhpMailer fails for some reason.
+	 * @throws \PHPMailer\PHPMailer\Exception When sending via PhpMailer fails for some reason.
 	 *
 	 * @return bool
 	 */
-	public function send() {
+	public function send() { // phpcs:ignore
 
 		$options     = new Options();
 		$mail_mailer = sanitize_key( $options->get( 'mail', 'mailer' ) );
@@ -68,7 +62,7 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 		}
 
 		// Define a custom header, that will be used to identify the plugin and the mailer.
-		$this->XMailer = 'WPMailSMTP/Mailer/' . $mail_mailer . ' ' . WPMS_PLUGIN_VER;
+		$this->XMailer = 'WPMailSMTP/Mailer/' . $mail_mailer . ' ' . WPMS_PLUGIN_VER; // phpcs:ignore
 
 		// Use the default PHPMailer, as we inject our settings there for certain providers.
 		if (
@@ -89,8 +83,8 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 				do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
 
 				return $this->postSend();
-			} catch ( \phpmailerException $e ) {
-				$this->mailHeader = '';
+			} catch ( \PHPMailer\PHPMailer\Exception $e ) {
+				$this->mailHeader = ''; // phpcs:ignore
 				$this->setError( $e->getMessage() );
 
 				// Set the debug error, but not for default PHP mailer.
@@ -109,8 +103,8 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 			}
 		}
 
-		// We need this so that the \PHPMailer class will correctly prepare all the headers.
-		$this->Mailer = 'mail';
+		// We need this so that the PHPMailer class will correctly prepare all the headers.
+		$this->Mailer = 'mail'; // phpcs:ignore
 
 		// Prepare everything (including the message) for sending.
 		if ( ! $this->preSend() ) {
@@ -129,7 +123,7 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 
 		/*
 		 * Send the actual email.
-		 * We reuse everything, that was preprocessed for usage in \PHPMailer.
+		 * We reuse everything, that was preprocessed for usage in PHPMailer.
 		 */
 		$mailer->send();
 
@@ -142,20 +136,6 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	}
 
 	/**
-	 * Returns all custom headers.
-	 * In older versions of \PHPMailer class this method didn't exist.
-	 * As we support WordPress 3.6+ - we need to make sure this method is always present.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array
-	 */
-	public function getCustomHeaders() {
-
-		return $this->CustomHeader;
-	}
-
-	/**
 	 * Get the PHPMailer line ending.
 	 *
 	 * @since 2.2.0
@@ -164,6 +144,6 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	 */
 	public function get_line_ending() {
 
-		return $this->LE; // phpcs:ignore
+		return static::$LE; // phpcs:ignore
 	}
 }

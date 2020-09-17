@@ -1,0 +1,23 @@
+// Custom style for the plugin SVG loader.
+.wp-mail-smtp-loading {
+	animation: 0.65s linear infinite wp-mail-smtp-loading-spin;
+}
+
+.wp-mail-smtp-loading-md {
+	width: 32px;
+	height: 32px;
+}
+
+.wp-mail-smtp-loading-sm {
+	width: 16px;
+	height: 16px;
+}
+
+@keyframes wp-mail-smtp-loading-spin {
+	0% {
+		transform: rotateZ(270deg);
+	}
+	100% {
+		transform: rotateZ(630deg)
+	}
+}

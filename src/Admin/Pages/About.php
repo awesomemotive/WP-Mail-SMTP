@@ -142,6 +142,8 @@ class About extends PageAbstract {
 				<?php echo \esc_html( $this->get_label( $this->get_current_tab() ) ); ?>
 			</h1>
 
+			<?php do_action( 'wp_mail_smtp_admin_pages_before_content' ); ?>
+
 			<?php
 			$callback = 'display_' . $this->get_current_tab();
 
@@ -647,12 +649,13 @@ class About extends PageAbstract {
 	 */
 	private function get_license_features() {
 
-		return array(
-			'log'     => \esc_html__( 'Email Log', 'wp-mail-smtp' ),
-			'control' => \esc_html__( 'Email Controls', 'wp-mail-smtp' ),
-			'mailers' => \esc_html__( 'Additional Mailers', 'wp-mail-smtp' ),
-			'support' => \esc_html__( 'Customer Support', 'wp-mail-smtp' ),
-		);
+		return [
+			'log'       => \esc_html__( 'Email Log', 'wp-mail-smtp' ),
+			'control'   => \esc_html__( 'Email Controls', 'wp-mail-smtp' ),
+			'mailers'   => \esc_html__( 'Mailer Options', 'wp-mail-smtp' ),
+			'multisite' => \esc_html__( 'WordPress Multisite', 'wp-mail-smtp' ),
+			'support'   => \esc_html__( 'Customer Support', 'wp-mail-smtp' ),
+		];
 	}
 
 	/**
@@ -667,64 +670,78 @@ class About extends PageAbstract {
 	 */
 	private function get_license_data( $feature, $license ) {
 
-		$data = array(
-			'log'     => array(
-				'lite' => array(
+		$data = [
+			'log'       => [
+				'lite' => [
 					'status' => 'none',
-					'text'   => array(
+					'text'   => [
 						'<strong>' . esc_html__( 'Emails are not logged', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-				'pro'  => array(
+					],
+				],
+				'pro'  => [
 					'status' => 'full',
-					'text'   => array(
-						'<strong>' . esc_html__( 'Complete Email Log management inside WordPress', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-			),
-			'control' => array(
-				'lite' => array(
+					'text'   => [
+						'<strong>' . esc_html__( 'Access to all Email Logging options right inside WordPress', 'wp-mail-smtp' ) . '</strong>',
+					],
+				],
+			],
+			'control'   => [
+				'lite' => [
 					'status' => 'none',
-					'text'   => array(
+					'text'   => [
 						'<strong>' . esc_html__( 'No controls over whether default WordPress emails are sent', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-				'pro'  => array(
+					],
+				],
+				'pro'  => [
 					'status' => 'full',
-					'text'   => array(
+					'text'   => [
 						'<strong>' . esc_html__( 'Complete Email Controls management for most default WordPress emails', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-			),
-			'mailers' => array(
-				'lite' => array(
+					],
+				],
+			],
+			'mailers'   => [
+				'lite' => [
 					'status' => 'none',
-					'text'   => array(
-						'<strong>' . esc_html__( 'Only default list of mailers', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-				'pro'  => array(
+					'text'   => [
+						'<strong>' . esc_html__( 'Limited Mailers', 'wp-mail-smtp' ) . '</strong><br>' . esc_html__( 'Access is limited to standard mailer options only', 'wp-mail-smtp' ),
+					],
+				],
+				'pro'  => [
 					'status' => 'full',
-					'text'   => array(
-						'<strong>' . esc_html__( 'Additional mailers: Microsoft Outlook (with Office365 support) and Amazon SES', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-			),
-			'support' => array(
-				'lite' => array(
+					'text'   => [
+						'<strong>' . esc_html__( 'Additional Mailer Options', 'wp-mail-smtp' ) . '</strong><br>' . esc_html__( 'Microsoft Outlook (with Office365 support), Amazon SES and Zoho Mail', 'wp-mail-smtp' ),
+					],
+				],
+			],
+			'multisite' => [
+				'lite' => [
 					'status' => 'none',
-					'text'   => array(
+					'text'   => [
+						'<strong>' . esc_html__( 'No Global Network Settings', 'wp-mail-smtp' ) . '</strong>',
+					],
+				],
+				'pro'  => [
+					'status' => 'full',
+					'text'   => [
+						'<strong>' . esc_html__( 'All Global Network Settings', 'wp-mail-smtp' ) . '</strong><br>' . esc_html__( 'Optionally configure settings at the network level or manage separately for each subsite', 'wp-mail-smtp' ),
+					],
+				],
+			],
+			'support'   => [
+				'lite' => [
+					'status' => 'none',
+					'text'   => [
 						'<strong>' . esc_html__( 'Limited Support', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-				'pro'  => array(
+					],
+				],
+				'pro'  => [
 					'status' => 'full',
-					'text'   => array(
+					'text'   => [
 						'<strong>' . esc_html__( 'Priority Support', 'wp-mail-smtp' ) . '</strong>',
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 
 		// Wrong feature?
 		if ( ! isset( $data[ $feature ] ) ) {

@@ -227,7 +227,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $attachments
+	 * @param array $attachments The array of attachments data.
 	 */
 	public function set_attachments( $attachments ) {
 
@@ -249,8 +249,7 @@ class Mailer extends MailerAbstract {
 				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
 					$file = file_get_contents( $attachment[0] );
 				}
-			}
-			catch ( \Exception $e ) {
+			} catch ( \Exception $e ) {
 				$file = false;
 			}
 
@@ -267,7 +266,7 @@ class Mailer extends MailerAbstract {
 		if ( ! empty( $data ) ) {
 
 			// First, generate a boundary for the multipart message.
-			$boundary = base_convert( uniqid( 'boundary', true ), 10, 36 );
+			$boundary = $this->phpmailer->generate_id();
 
 			// Iterate through pre-built params and build a payload.
 			foreach ( $this->body as $key => $value ) {

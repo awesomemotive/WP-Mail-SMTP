@@ -2,6 +2,7 @@
 @import "variables";
 @import "general";
 @import "confirm";
+@import "education";
 
 // Screen options are hidden on load, then made visible with JS, to
 // prevent it from "jumping".
@@ -215,30 +216,46 @@
 					label {
 						vertical-align: middle;
 						display: inline-block;
-
-						&:hover {
-							.wp-mail-smtp-setting-toggle-switch {
-								background-color: #999;
-							}
-						}
 					}
 
 					input[type=checkbox] {
-						display: none;
+						position: absolute;
+						top: auto;
+						overflow: hidden;
+						clip: rect(1px, 1px, 1px, 1px);
+						width: 1px;
+						height: 1px;
+						white-space: nowrap;
 
 						&:checked + .wp-mail-smtp-setting-toggle-switch {
 							background-color: #46B450;
 
 							&:before {
-								-webkit-transform: translateX(19px);
-								-ms-transform: translateX(19px);
-								transform: translateX(19px);
+								-webkit-transform: translateX(16px);
+								-ms-transform: translateX(16px);
+								transform: translateX(16px);
 							}
 						}
 
-						&:disabled + .wp-mail-smtp-setting-toggle-switch {
-							background-color: lighten(#46B450, 25);
-							cursor: default;
+						&:disabled {
+							&:checked:hover + .wp-mail-smtp-setting-toggle-switch,
+							&:not(:checked):hover + .wp-mail-smtp-setting-toggle-switch {
+								box-shadow: none;
+							}
+
+							&:not(:checked):hover + .wp-mail-smtp-setting-toggle-switch {
+								background-color: #ddd;
+							}
+
+							& + .wp-mail-smtp-setting-toggle-switch {
+								background-color: #ddd;
+								cursor: default;
+							}
+
+							&:checked + .wp-mail-smtp-setting-toggle-switch {
+								background-color: lighten(#46B450, 25);
+								cursor: default;
+							}
 						}
 
 						&:checked + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-checked-label {
@@ -248,9 +265,25 @@
 						&:checked + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-checked-label + .wp-mail-smtp-setting-toggle-unchecked-label {
 							display: none;
 						}
+
 						&:disabled + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-checked-label,
 						&:disabled + .wp-mail-smtp-setting-toggle-switch + .wp-mail-smtp-setting-toggle-unchecked-label {
 							color: lighten(#444, 40);
+						}
+
+						&:checked:hover,
+						&:checked:focus {
+							& + .wp-mail-smtp-setting-toggle-switch {
+								box-shadow: 0 0 0 1px #fff, 0 0 0 3px #46B450;
+							}
+						}
+
+						&:not(:checked):hover,
+						&:not(:checked):focus {
+							& + .wp-mail-smtp-setting-toggle-switch {
+								background-color: #999;
+								box-shadow: 0 0 0 1px #fff, 0 0 0 3px #999;
+							}
 						}
 					}
 
@@ -276,19 +309,18 @@
 						-ms-transition:     all 0.2s ease-in-out;
 						transition:         all 0.2s ease-in-out;
 						vertical-align: middle;
-						position: relative;
 						display: inline-block;
 						margin: 0 5px 0 0;
-						width: 40px;
+						width: 36px;
 						height: 20px;
 
 						&:before {
 							position: absolute;
 							content: "";
-							height: 14px;
-							width: 14px;
-							left: 3px;
-							top: 3px;
+							height: 16px;
+							width: 16px;
+							left: 2px;
+							top: 2px;
 							background-color: #fff;
 							border-radius: 50%;
 							-webkit-transition: all 0.2s ease-in-out;
@@ -476,7 +508,8 @@
 								margin-right: 5px;
 								text-decoration: none;
 
-								&[class*=delete] {
+								&[class*=delete],
+								&[class*=error] {
 									color: $red;
 
 									&:hover, &:active, &:focus {
@@ -494,10 +527,11 @@
 			input[type=text],
 			input[type=email],
 			input[type=number],
-			input[type=password] {
+			input[type=password],
+			select {
 				background-color: #fff;
 				border: 1px solid #ddd;
-				border-radius: 3px;
+				border-radius: 4px;
 				box-shadow: none;
 				color: #333;
 				display: inline-block;
@@ -521,11 +555,34 @@
 				}
 
 				&:focus {
-					border-color: #bbb;
+					border: 1px solid #016AAB;
+					box-shadow: 0 0 0 1px #016AAB;
+					outline: none;
 				}
 
 				&:disabled {
 					opacity: 0.6;
+				}
+			}
+
+			input[type=checkbox],
+			input[type=radio] {
+				&:focus {
+					border: 1px solid #016AAB;
+					box-shadow: 0 0 0 1px #016AAB;
+					outline: none;
+				}
+			}
+
+			// Animate dashicon yes icon when clicking on copy button.
+			.dashicons-yes-alt {
+				&.wp-mail-smtp-animate {
+					-webkit-animation: wp-mail-smtp-fade-in-stop-out 1s linear;
+					animation: wp-mail-smtp-fade-in-stop-out 1s linear;
+				}
+
+				&.wp-mail-smtp-success {
+					color: #46b450;
 				}
 			}
 		}
@@ -1025,6 +1082,10 @@
 			background-color: $orange_dark;
 			border-color: $orange_dark;
 		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $orange_dark;
+		}
 	}
 
 	&.wp-mail-smtp-btn-red {
@@ -1037,6 +1098,10 @@
 		&:focus {
 			background-color: darkred;
 			border-color: darkred;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px darkred;
 		}
 	}
 
@@ -1078,6 +1143,10 @@
 			background-color: #395360;
 			border-color: #395360;
 			color: #fff;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #395360;
 		}
 	}
 }

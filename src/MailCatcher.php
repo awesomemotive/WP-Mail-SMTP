@@ -166,4 +166,16 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 
 		return $this->LE; // phpcs:ignore
 	}
+
+	/**
+	 * Create a unique ID to use for multipart email boundaries.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string
+	 */
+	public function generate_id() {
+
+		return $this->generateId();
+	}
 }

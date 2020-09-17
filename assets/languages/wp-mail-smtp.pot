@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 2.2.1\n"
+"Project-Id-Version: WP Mail SMTP 2.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-07-09T12:48:03+03:00\n"
+"POT-Creation-Date: 2020-09-17T12:40:51+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wp-mail-smtp\n"
@@ -33,7 +33,7 @@ msgid "https://wpforms.com/"
 msgstr ""
 
 #. translators: %s - error code, returned by Google API.
-#: src/Admin/Area.php:125
+#: src/Admin/Area.php:126
 msgid "There was an error while processing the authentication request: %s. Please try again."
 msgstr ""
 
@@ -49,125 +49,121 @@ msgstr ""
 msgid "You have successfully linked the current site with your Google API project. Now you can start sending emails through Gmail."
 msgstr ""
 
-#: src/Admin/Area.php:155
-msgid "You have successfully linked the current site with your Microsoft API project. Now you can start sending emails through Outlook."
-msgstr ""
-
 #. translators: %s - Mailer anchor link.
-#: src/Admin/Area.php:186
+#: src/Admin/Area.php:180
 msgid "Thanks for using WP Mail SMTP! To complete the plugin setup and start sending emails, <strong>please select and configure your <a href=\"%s\">Mailer</a></strong>."
 msgstr ""
 
-#: src/Admin/Area.php:209
-#: src/Admin/Area.php:210
+#: src/Admin/Area.php:203
+#: src/Admin/Area.php:204
 #: src/SiteHealth.php:40
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: src/Admin/Area.php:220
-#: src/Admin/Area.php:221
+#: src/Admin/Area.php:214
+#: src/Admin/Area.php:215
 #: src/Admin/Area.php:862
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Area.php:228
-#: src/Admin/Area.php:229
-#: src/Admin/Pages/About.php:651
+#: src/Admin/Area.php:222
+#: src/Admin/Area.php:223
+#: src/Admin/Pages/About.php:653
 #: src/Admin/Pages/Logs.php:48
 #: src/Admin/Pages/LogsTab.php:30
 msgid "Email Log"
 msgstr ""
 
-#: src/Admin/Area.php:238
-#: src/Admin/Area.php:239
+#: src/Admin/Area.php:232
+#: src/Admin/Area.php:233
 #: src/Admin/Pages/About.php:106
 msgid "About Us"
 msgstr ""
 
-#: src/Admin/Area.php:302
+#: src/Admin/Area.php:296
 msgid "Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails."
 msgstr ""
 
-#: src/Admin/Area.php:303
+#: src/Admin/Area.php:297
 msgid "Changes that you made to the settings are not saved!"
 msgstr ""
 
-#: src/Admin/Area.php:305
+#: src/Admin/Area.php:299
 msgid "Heads up!"
 msgstr ""
 
-#: src/Admin/Area.php:307
+#: src/Admin/Area.php:301
 msgid "<p>The Default (PHP) mailer is currently selected, but is not recommended because in most cases it does not resolve email delivery issues.</p><p>Please consider selecting and configuring one of the other mailers.</p>"
 msgstr ""
 
-#: src/Admin/Area.php:310
+#: src/Admin/Area.php:304
 #: src/Admin/PageAbstract.php:83
 msgid "Save Settings"
 msgstr ""
 
-#: src/Admin/Area.php:311
+#: src/Admin/Area.php:305
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/Area.php:312
+#: src/Admin/Area.php:306
 msgid "Warning icon"
 msgstr ""
 
-#: src/Admin/Area.php:317
+#: src/Admin/Area.php:311
 msgid "%name% is a PRO Feature"
 msgstr ""
 
-#: src/Admin/Area.php:318
+#: src/Admin/Area.php:312
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: src/Admin/Area.php:322
+#: src/Admin/Area.php:316
 msgid "<strong>Bonus:</strong> WP Mail SMTP users get <span>$50 off</span> regular price,<br>applied at checkout."
 msgstr ""
 
-#: src/Admin/Area.php:331
+#: src/Admin/Area.php:325
 msgid "Already purchased?"
 msgstr ""
 
-#: src/Admin/Area.php:398
-#: src/Admin/Area.php:405
-#: src/Admin/Pages/About.php:332
+#: src/Admin/Area.php:394
+#: src/Admin/Area.php:401
+#: src/Admin/Pages/About.php:334
 msgid "Activate"
 msgstr ""
 
-#: src/Admin/Area.php:399
-#: src/Admin/Pages/About.php:324
+#: src/Admin/Area.php:395
+#: src/Admin/Pages/About.php:326
 msgid "Activated"
 msgstr ""
 
-#: src/Admin/Area.php:400
-#: src/Admin/Pages/About.php:321
+#: src/Admin/Area.php:396
+#: src/Admin/Pages/About.php:323
 msgid "Active"
 msgstr ""
 
-#: src/Admin/Area.php:401
-#: src/Admin/Pages/About.php:329
+#: src/Admin/Area.php:397
+#: src/Admin/Pages/About.php:331
 msgid "Inactive"
 msgstr ""
 
-#: src/Admin/Area.php:402
+#: src/Admin/Area.php:398
 msgid "Processing..."
 msgstr ""
 
-#: src/Admin/Area.php:403
+#: src/Admin/Area.php:399
 msgid "Could not install a plugin. Please download from WordPress.org and install manually."
 msgstr ""
 
-#: src/Admin/Area.php:404
+#: src/Admin/Area.php:400
 msgid "Install and Activate"
 msgstr ""
 
-#: src/Admin/Area.php:406
+#: src/Admin/Area.php:402
 msgid "Download"
 msgstr ""
 
 #. translators: %1$s - WP.org link; %2$s - same WP.org link.
-#: src/Admin/Area.php:466
+#: src/Admin/Area.php:464
 msgid "Please rate <strong>WP Mail SMTP</strong> <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">WordPress.org</a> to help us spread the word. Thank you from the WP Mail SMTP team!"
 msgstr ""
 
@@ -191,187 +187,232 @@ msgstr ""
 msgid "Premium Support"
 msgstr ""
 
+#. translators: %s - WPMailSMTP.com Upgrade page URL.
+#: src/Admin/Education.php:69
+msgid "You’re using WP Mail SMTP Lite. To unlock more features consider <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">upgrading to Pro</a>."
+msgstr ""
+
+#: src/Admin/Education.php:80
+msgid "Dismiss this message."
+msgstr ""
+
+#: src/Admin/Notifications.php:442
+msgid "Dismiss this message"
+msgstr ""
+
+#: src/Admin/Notifications.php:445
+msgid "Previous message"
+msgstr ""
+
+#: src/Admin/Notifications.php:446
+msgid "Next message"
+msgstr ""
+
 #. translators: %s - plugin current license type.
 #: src/Admin/Pages/About.php:99
-#: src/Admin/Pages/About.php:550
+#: src/Admin/Pages/About.php:552
 msgid "%s vs Pro"
 msgstr ""
 
-#: src/Admin/Pages/About.php:171
+#: src/Admin/Pages/About.php:173
 msgid "Hello and welcome to WP Mail SMTP, the easiest and most popular WordPress SMTP plugin. We build software that helps your site reliably deliver emails every time."
 msgstr ""
 
-#: src/Admin/Pages/About.php:175
+#: src/Admin/Pages/About.php:177
 msgid "Email deliverability has been a well-documented problem for all WordPress websites. However as WPForms grew, we became more aware of this painful issue that affects our users and the larger WordPress community. So we decided to solve this problem and make a solution that's beginner friendly."
 msgstr ""
 
-#: src/Admin/Pages/About.php:178
+#: src/Admin/Pages/About.php:180
 msgid "Our goal is to make reliable email deliverability easy for WordPress."
 msgstr ""
 
 #. translators: %1$s - WPForms URL, %2$s - WPBeginner URL, %3$s - OptinMonster URL, %4$s - MonsterInsights URL, %5$s - RafflePress URL
-#: src/Admin/Pages/About.php:185
+#: src/Admin/Pages/About.php:187
 msgid "WP Mail SMTP is brought to you by the same team that's behind the most user friendly WordPress forms, <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">WPForms</a>, the largest WordPress resource site, <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">WPBeginner</a>, the most popular lead-generation software, <a href=\"%3$s\" target=\"_blank\" rel=\"noopener noreferrer\">OptinMonster</a>, the best WordPress analytics plugin, <a href=\"%4$s\" target=\"_blank\" rel=\"noopener noreferrer\">MonsterInsights</a>, and the most powerful WordPress contest plugin, <a href=\"%5$s\" target=\"_blank\" rel=\"noopener noreferrer\">RafflePress</a>."
 msgstr ""
 
-#: src/Admin/Pages/About.php:203
+#: src/Admin/Pages/About.php:205
 msgid "Yup, we know a thing or two about building awesome products that customers love."
 msgstr ""
 
-#: src/Admin/Pages/About.php:209
+#: src/Admin/Pages/About.php:211
 msgid "The WPForms Team photo"
 msgstr ""
 
-#: src/Admin/Pages/About.php:211
+#: src/Admin/Pages/About.php:213
 msgid "The WPForms Team"
 msgstr ""
 
-#: src/Admin/Pages/About.php:260
+#: src/Admin/Pages/About.php:262
 msgid "Plugin icon"
 msgstr ""
 
 #. translators: %s - status HTML text.
-#: src/Admin/Pages/About.php:274
+#: src/Admin/Pages/About.php:276
 msgid "Status: %s"
 msgstr ""
 
-#: src/Admin/Pages/About.php:340
+#: src/Admin/Pages/About.php:342
 msgid "Not Installed"
 msgstr ""
 
-#: src/Admin/Pages/About.php:343
+#: src/Admin/Pages/About.php:345
 msgid "Install Plugin"
 msgstr ""
 
-#: src/Admin/Pages/About.php:364
+#: src/Admin/Pages/About.php:366
 msgid "MonsterInsights"
 msgstr ""
 
-#: src/Admin/Pages/About.php:365
-#: src/Admin/Pages/About.php:371
+#: src/Admin/Pages/About.php:367
+#: src/Admin/Pages/About.php:373
 msgid "MonsterInsights makes it “effortless” to properly connect your WordPress site with Google Analytics, so you can start making data-driven decisions to grow your business."
 msgstr ""
 
-#: src/Admin/Pages/About.php:370
+#: src/Admin/Pages/About.php:372
 msgid "MonsterInsights Pro"
 msgstr ""
 
-#: src/Admin/Pages/About.php:378
+#: src/Admin/Pages/About.php:380
 msgid "OptinMonster"
 msgstr ""
 
-#: src/Admin/Pages/About.php:379
+#: src/Admin/Pages/About.php:381
 msgid "Our high-converting optin forms like Exit-Intent® popups, Fullscreen Welcome Mats, and Scroll boxes help you dramatically boost conversions and get more email subscribers."
 msgstr ""
 
-#: src/Admin/Pages/About.php:385
+#: src/Admin/Pages/About.php:387
 msgid "Contact Forms by WPForms"
 msgstr ""
 
-#: src/Admin/Pages/About.php:386
-#: src/Admin/Pages/About.php:392
+#: src/Admin/Pages/About.php:388
+#: src/Admin/Pages/About.php:394
 msgid "The best WordPress contact form plugin. Drag & Drop online form builder that helps you create beautiful contact forms with just a few clicks."
 msgstr ""
 
-#: src/Admin/Pages/About.php:391
+#: src/Admin/Pages/About.php:393
 msgid "WPForms Pro"
 msgstr ""
 
-#: src/Admin/Pages/About.php:399
+#: src/Admin/Pages/About.php:401
 msgid "RafflePress"
 msgstr ""
 
-#: src/Admin/Pages/About.php:400
-#: src/Admin/Pages/About.php:406
+#: src/Admin/Pages/About.php:402
+#: src/Admin/Pages/About.php:408
 msgid "Turn your visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with powerful viral giveaways & contests."
 msgstr ""
 
-#: src/Admin/Pages/About.php:405
+#: src/Admin/Pages/About.php:407
 msgid "RafflePress Pro"
 msgstr ""
 
-#: src/Admin/Pages/About.php:425
+#: src/Admin/Pages/About.php:427
 msgid "Could not activate the plugin. Please activate it from the Plugins page."
 msgstr ""
 
-#: src/Admin/Pages/About.php:437
+#: src/Admin/Pages/About.php:439
 msgid "Plugin activated."
 msgstr ""
 
-#: src/Admin/Pages/About.php:454
+#: src/Admin/Pages/About.php:456
 msgid "Could not install the plugin."
 msgstr ""
 
-#: src/Admin/Pages/About.php:515
+#: src/Admin/Pages/About.php:517
 msgid "Plugin installed & activated."
 msgstr ""
 
-#: src/Admin/Pages/About.php:523
+#: src/Admin/Pages/About.php:525
 msgid "Plugin installed."
 msgstr ""
 
-#: src/Admin/Pages/About.php:558
+#: src/Admin/Pages/About.php:560
 msgid "Get the most out of WP Mail SMTP by upgrading to Pro and unlocking all of the powerful features."
 msgstr ""
 
-#: src/Admin/Pages/About.php:567
+#: src/Admin/Pages/About.php:569
 msgid "Feature"
 msgstr ""
 
-#: src/Admin/Pages/About.php:577
+#: src/Admin/Pages/About.php:579
 msgid "Pro"
 msgstr ""
 
-#: src/Admin/Pages/About.php:618
+#: src/Admin/Pages/About.php:620
 msgid "Get WP Mail SMTP Pro Today and Unlock all of these Powerful Features"
 msgstr ""
 
-#: src/Admin/Pages/About.php:625
+#: src/Admin/Pages/About.php:627
 msgid "Bonus: WP Mail SMTP Lite users get <span class=\"price-off\">$50 off regular price</span>, automatically applied at checkout."
 msgstr ""
 
-#: src/Admin/Pages/About.php:652
+#: src/Admin/Pages/About.php:654
 #: src/Admin/Pages/ControlTab.php:27
 msgid "Email Controls"
 msgstr ""
 
-#: src/Admin/Pages/About.php:653
-msgid "Additional Mailers"
+#: src/Admin/Pages/About.php:655
+msgid "Mailer Options"
 msgstr ""
 
-#: src/Admin/Pages/About.php:654
+#: src/Admin/Pages/About.php:656
+msgid "WordPress Multisite"
+msgstr ""
+
+#: src/Admin/Pages/About.php:657
 msgid "Customer Support"
 msgstr ""
 
-#: src/Admin/Pages/About.php:675
+#: src/Admin/Pages/About.php:678
 msgid "Emails are not logged"
 msgstr ""
 
-#: src/Admin/Pages/About.php:681
-msgid "Complete Email Log management inside WordPress"
+#: src/Admin/Pages/About.php:684
+msgid "Access to all Email Logging options right inside WordPress"
 msgstr ""
 
-#: src/Admin/Pages/About.php:689
+#: src/Admin/Pages/About.php:692
 msgid "No controls over whether default WordPress emails are sent"
 msgstr ""
 
-#: src/Admin/Pages/About.php:695
+#: src/Admin/Pages/About.php:698
 msgid "Complete Email Controls management for most default WordPress emails"
 msgstr ""
 
-#: src/Admin/Pages/About.php:703
-msgid "Only default list of mailers"
+#: src/Admin/Pages/About.php:706
+msgid "Limited Mailers"
 msgstr ""
 
-#: src/Admin/Pages/About.php:709
-msgid "Additional mailers: Microsoft Outlook (with Office365 support) and Amazon SES"
+#: src/Admin/Pages/About.php:706
+msgid "Access is limited to standard mailer options only"
 msgstr ""
 
-#: src/Admin/Pages/About.php:717
+#: src/Admin/Pages/About.php:712
+msgid "Additional Mailer Options"
+msgstr ""
+
+#: src/Admin/Pages/About.php:712
+msgid "Microsoft Outlook (with Office365 support), Amazon SES and Zoho Mail"
+msgstr ""
+
+#: src/Admin/Pages/About.php:720
+msgid "No Global Network Settings"
+msgstr ""
+
+#: src/Admin/Pages/About.php:726
+msgid "All Global Network Settings"
+msgstr ""
+
+#: src/Admin/Pages/About.php:726
+msgid "Optionally configure settings at the network level or manage separately for each subsite"
+msgstr ""
+
+#: src/Admin/Pages/About.php:734
 msgid "Limited Support"
 msgstr ""
 
-#: src/Admin/Pages/About.php:723
+#: src/Admin/Pages/About.php:740
 msgid "Priority Support"
 msgstr ""
 
@@ -432,7 +473,7 @@ msgid "Email Controls allows you to granularly manage emails sent by WordPress.�
 msgstr ""
 
 #: src/Admin/Pages/ControlTab.php:119
-#: src/Admin/Pages/LogsTab.php:67
+#: src/Admin/Pages/LogsTab.php:68
 msgid "Upgrade to WP Mail SMTP Pro"
 msgstr ""
 
@@ -456,76 +497,84 @@ msgstr ""
 msgid "Logs Single Page Screenshot"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:24
+#: src/Admin/Pages/MiscTab.php:25
 msgid "Misc"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:56
+#: src/Admin/Pages/MiscTab.php:57
 msgid "Do Not Send"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:65
+#: src/Admin/Pages/MiscTab.php:66
 msgid "Check this if you would like to stop sending all emails."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:71
+#: src/Admin/Pages/MiscTab.php:72
 msgid "Some plugins, like BuddyPress and Events Manager, are using their own email delivery solutions. By default, this option does not block their emails, as those plugins do not use default <code>wp_mail()</code> function to send emails."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:79
+#: src/Admin/Pages/MiscTab.php:80
 msgid "You will need to consult with their documentation to switch them to use default WordPress email delivery."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:81
+#: src/Admin/Pages/MiscTab.php:82
 msgid "Test emails are allowed to be sent, regardless of this option."
 msgstr ""
 
 #. translators: %1$s - constant that was used; %2$s - file where it was used.
-#: src/Admin/Pages/MiscTab.php:86
-#: src/Providers/OptionsAbstract.php:468
+#: src/Admin/Pages/MiscTab.php:87
+#: src/Providers/OptionsAbstract.php:480
 msgid "The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation."
 msgstr ""
 
 #. translators: %s - The URL to the constants support article.
-#: src/Admin/Pages/MiscTab.php:93
+#: src/Admin/Pages/MiscTab.php:94
 msgid "Please read this <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">support article</a> if you want to enable this option using constants."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:114
+#: src/Admin/Pages/MiscTab.php:115
 msgid "Hide Announcements"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:123
+#: src/Admin/Pages/MiscTab.php:124
 msgid "Check this if you would like to hide plugin announcements and update details."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:133
+#: src/Admin/Pages/MiscTab.php:134
 msgid "Hide Email Delivery Errors"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:149
+#: src/Admin/Pages/MiscTab.php:150
 msgid "Check this if you would like to hide warnings alerting of email delivery errors."
 msgstr ""
 
 #. translators: %s - filter that was used to disabled.
-#: src/Admin/Pages/MiscTab.php:156
+#: src/Admin/Pages/MiscTab.php:157
 msgid "Email Delivery Errors were disabled using a %s filter."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:165
+#: src/Admin/Pages/MiscTab.php:166
 msgid "<strong>This is not recommended</strong> and should only be done for staging or development sites."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:180
+#: src/Admin/Pages/MiscTab.php:181
 msgid "Uninstall WP Mail SMTP"
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:188
+#: src/Admin/Pages/MiscTab.php:189
 msgid "Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable."
 msgstr ""
 
-#: src/Admin/Pages/MiscTab.php:234
-#: src/Admin/Pages/SettingsTab.php:583
+#: src/Admin/Pages/MiscTab.php:199
+msgid "Allow Usage Tracking"
+msgstr ""
+
+#: src/Admin/Pages/MiscTab.php:207
+msgid "By allowing us to track usage data we can better help you because we know with which WordPress configurations, themes and plugins we should test."
+msgstr ""
+
+#: src/Admin/Pages/MiscTab.php:257
+#: src/Admin/Pages/SettingsTab.php:597
 msgid "Settings were successfully saved."
 msgstr ""
 
@@ -533,193 +582,193 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:67
+#: src/Admin/Pages/SettingsTab.php:73
 msgid "License"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:70
+#: src/Admin/Pages/SettingsTab.php:76
 msgid "Your license key provides access to updates and support."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:78
+#: src/Admin/Pages/SettingsTab.php:84
 msgid "License Key"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:88
+#: src/Admin/Pages/SettingsTab.php:94
 msgid "Mail"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:95
+#: src/Admin/Pages/SettingsTab.php:101
 msgid "From Email"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:113
+#: src/Admin/Pages/SettingsTab.php:120
 msgid "Please first authorize the Gmail mailer below"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:127
+#: src/Admin/Pages/SettingsTab.php:134
 msgid "The email address which emails are sent from."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:128
+#: src/Admin/Pages/SettingsTab.php:135
 msgid "If you're using an email provider (Yahoo, Outlook.com, etc) this should be your email address for that account."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:131
+#: src/Admin/Pages/SettingsTab.php:138
 msgid "Please note that other plugins can change this, to prevent this use the setting below."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:149
+#: src/Admin/Pages/SettingsTab.php:158
 msgid "Force From Email"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:156
+#: src/Admin/Pages/SettingsTab.php:165
 msgid "Current provider will automatically force From Email to be the email address that you use to set up the connection below."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:158
+#: src/Admin/Pages/SettingsTab.php:167
 msgid "Gmail mailer will automatically force From Email to be the email address that you selected above."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:164
+#: src/Admin/Pages/SettingsTab.php:173
 msgid "If checked, the From Email setting above will be used for all emails, ignoring values set by other plugins."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:174
+#: src/Admin/Pages/SettingsTab.php:183
 msgid "From Name"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:185
+#: src/Admin/Pages/SettingsTab.php:195
 msgid "The name which emails are sent from."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:197
+#: src/Admin/Pages/SettingsTab.php:209
 msgid "Force From Name"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:202
+#: src/Admin/Pages/SettingsTab.php:214
 msgid "Current provider doesn't support setting and forcing From Name. Emails will be sent on behalf of the account name used to setup the connection below."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:206
+#: src/Admin/Pages/SettingsTab.php:218
 msgid "If checked, the From Name setting above will be used for all emails, ignoring values set by other plugins."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:215
+#: src/Admin/Pages/SettingsTab.php:228
 msgid "Return Path"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:224
+#: src/Admin/Pages/SettingsTab.php:237
 msgid "Set the return-path to match the From Email"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:228
+#: src/Admin/Pages/SettingsTab.php:241
 msgid "Return Path indicates where non-delivery receipts - or bounce messages - are to be sent."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:229
+#: src/Admin/Pages/SettingsTab.php:242
 msgid "If unchecked, bounce messages may be lost. Some providers may ignore this option."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:237
+#: src/Admin/Pages/SettingsTab.php:250
 msgid "Mailer"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:278
+#: src/Admin/Pages/SettingsTab.php:292
 msgid "Don't see what you're looking for?"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:280
+#: src/Admin/Pages/SettingsTab.php:294
 msgid "Suggest a Mailer"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:308
+#: src/Admin/Pages/SettingsTab.php:322
 msgid "Dismiss this notice"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:355
+#: src/Admin/Pages/SettingsTab.php:369
 msgid "You're using WP Mail SMTP Lite - no license needed. Enjoy!"
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com upgrade URL.
-#: src/Admin/Pages/SettingsTab.php:361
+#: src/Admin/Pages/SettingsTab.php:375
 msgid "To unlock more features consider <strong><a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"wp-mail-smtp-upgrade-modal\">upgrading to PRO</a></strong>."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:380
+#: src/Admin/Pages/SettingsTab.php:394
 msgid "As a valued WP Mail SMTP Lite user you receive <strong>$50 off</strong>, automatically applied at checkout!"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:441
+#: src/Admin/Pages/SettingsTab.php:455
 msgid "Get WP Mail SMTP Pro and Unlock all the Powerful Features"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:445
+#: src/Admin/Pages/SettingsTab.php:459
 msgid "Thanks for being a loyal WP Mail SMTP user. Upgrade to WP Mail SMTP Pro to unlock more awesome features and experience why WP Mail SMTP is the most popular SMTP plugin."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:449
+#: src/Admin/Pages/SettingsTab.php:463
 msgid "We know that you will truly love WP Mail SMTP. It's used by over 1,000,000 websites."
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:452
+#: src/Admin/Pages/SettingsTab.php:466
 msgid "Pro Features:"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:456
+#: src/Admin/Pages/SettingsTab.php:470
 msgid "Manage Notifications - control which emails your site sends"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:457
+#: src/Admin/Pages/SettingsTab.php:471
 msgid "Email Logging - keep track of every email sent from your site"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:458
+#: src/Admin/Pages/SettingsTab.php:472
 msgid "Office 365 - send emails using your Office 365 account"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:459
+#: src/Admin/Pages/SettingsTab.php:473
 msgid "Amazon SES - harness the power of AWS"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:460
+#: src/Admin/Pages/SettingsTab.php:474
 msgid "Outlook.com - send emails using your Outlook.com account"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:461
+#: src/Admin/Pages/SettingsTab.php:475
 msgid "Access to our world class support team"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:464
+#: src/Admin/Pages/SettingsTab.php:478
 msgid "White Glove Setup - sit back and relax while we handle everything for you"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:465
+#: src/Admin/Pages/SettingsTab.php:479
 msgid "Install WP Mail SMTP Pro plugin"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:466
+#: src/Admin/Pages/SettingsTab.php:480
 msgid "Set up domain name verification (DNS)"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:467
+#: src/Admin/Pages/SettingsTab.php:481
 msgid "Configure Mailgun service"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:468
+#: src/Admin/Pages/SettingsTab.php:482
 msgid "Set up WP Mail SMTP Pro plugin"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:469
+#: src/Admin/Pages/SettingsTab.php:483
 msgid "Test and verify email delivery"
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com URL.
-#: src/Admin/Pages/SettingsTab.php:477
+#: src/Admin/Pages/SettingsTab.php:491
 msgid "<a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Get WP Mail SMTP Pro Today and Unlock all the Powerful Features &raquo;</a>"
 msgstr ""
 
-#: src/Admin/Pages/SettingsTab.php:495
+#: src/Admin/Pages/SettingsTab.php:509
 msgid "<strong>Bonus:</strong> WP Mail SMTP users get <span class=\"price-off\">$50 off regular price</span>, automatically applied at checkout."
 msgstr ""
 
@@ -744,14 +793,14 @@ msgid "HTML"
 msgstr ""
 
 #: src/Admin/Pages/TestTab.php:86
-#: src/Providers/OptionsAbstract.php:264
-#: src/Providers/OptionsAbstract.php:286
+#: src/Providers/OptionsAbstract.php:276
+#: src/Providers/OptionsAbstract.php:298
 msgid "On"
 msgstr ""
 
 #: src/Admin/Pages/TestTab.php:87
-#: src/Providers/OptionsAbstract.php:265
-#: src/Providers/OptionsAbstract.php:287
+#: src/Providers/OptionsAbstract.php:277
+#: src/Providers/OptionsAbstract.php:299
 msgid "Off"
 msgstr ""
 
@@ -1336,45 +1385,45 @@ msgid "Heads up! WP Mail SMTP has detected %1$s is activated. Please deactivate 
 msgstr ""
 
 #. translators: %1$s - WP Mail SMTP plugin name; %2$s - WPMailSMTP.com URL to a related doc.
-#: src/Core.php:381
+#: src/Core.php:392
 msgid "Your site is running an outdated version of PHP that is no longer supported and may cause issues with %1$s. <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Read more</a> for additional information."
 msgstr ""
 
-#: src/Core.php:395
+#: src/Core.php:406
 msgid "<strong>Please Note:</strong> Support for PHP 5.5 will be discontinued in 2020. After this, if no further action is taken, WP Mail SMTP functionality will be disabled."
 msgstr ""
 
 #. translators: %s - plugin name and its version.
-#: src/Core.php:429
+#: src/Core.php:440
 msgid "<strong>EMAILING DISABLED:</strong> The %s is currently blocking all emails from being sent."
 msgstr ""
 
 #. translators: %1$s - constant name; %2$s - constant value.
-#: src/Core.php:440
+#: src/Core.php:451
 msgid "To send emails, change the value of the %1$s constant to %2$s."
 msgstr ""
 
 #. translators: %s - plugin Misc settings page URL.
-#: src/Core.php:451
+#: src/Core.php:462
 msgid "To send emails, go to plugin <a href=\"%s\">Misc settings</a> and disable the \"Do Not Send\" option."
 msgstr ""
 
 #. translators: %s - plugin name and its version.
-#: src/Core.php:482
+#: src/Core.php:506
 msgid "<strong>EMAIL DELIVERY ERROR:</strong> the plugin %s logged this error during the last time it tried to send an email:"
 msgstr ""
 
-#: src/Core.php:512
+#: src/Core.php:536
 msgid "Consider running an email test after fixing it."
+msgstr ""
+
+#: src/Core.php:979
+msgid "Loading"
 msgstr ""
 
 #. translators: %1$s - WP Mail SMTP, %2$s - error message.
 #: src/Migration.php:137
 msgid "There was an error while upgrading the database. Please contact %1$s support with this information: %2$s."
-msgstr ""
-
-#: src/Pro/Providers/Providers.php:158
-msgid "OK"
 msgstr ""
 
 #: src/Pro/SiteHealth.php:58
@@ -1389,86 +1438,86 @@ msgstr ""
 msgid "We're sorry, the Amazon SES mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features."
 msgstr ""
 
-#: src/Providers/Gmail/Auth.php:182
+#: src/Providers/Gmail/Auth.php:184
 msgid "There was an error while processing the Google authentication request. Please make sure that you have Client ID and Client Secret both valid and saved."
 msgstr ""
 
-#: src/Providers/Gmail/Mailer.php:255
+#: src/Providers/Gmail/Mailer.php:257
 msgid "Please re-grant Google app permissions!"
 msgstr ""
 
-#: src/Providers/Gmail/Mailer.php:256
+#: src/Providers/Gmail/Mailer.php:258
 msgid "Go to WP Mail SMTP plugin settings page. Click the “Remove Connection” button."
 msgstr ""
 
-#: src/Providers/Gmail/Mailer.php:257
+#: src/Providers/Gmail/Mailer.php:259
 msgid "Then click the “Allow plugin to send emails using your Google account” button and re-enable access."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:32
+#: src/Providers/Gmail/Options.php:33
 msgid "Gmail"
 msgstr ""
 
 #. translators: %s - URL to our Gmail doc.
-#: src/Providers/Gmail/Options.php:35
+#: src/Providers/Gmail/Options.php:36
 msgid "Send emails using your Gmail or G Suite (formerly Google Apps) account, all while keeping your login credentials safe. Other Google SMTP methods require enabling less secure apps in your account and entering your password. However, this integration uses the Google API to improve email delivery issues while keeping your site secure.<br><br>Read our <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Gmail documentation</a> to learn how to configure Gmail or G Suite."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:48
+#: src/Providers/Gmail/Options.php:49
 msgid "The Gmail mailer works well for sites that send low numbers of emails. However, Gmail's API has rate limitations and a number of additional restrictions that can lead to challenges during setup. If you expect to send a high volume of emails, or if you find that your web host is not compatible with the Gmail API restrictions, then we recommend considering a different mailer option."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:72
+#: src/Providers/Gmail/Options.php:80
 msgid "Client ID"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:87
+#: src/Providers/Gmail/Options.php:95
 msgid "Client Secret"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:109
+#: src/Providers/Gmail/Options.php:117
 msgid "Authorized redirect URI"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:117
+#: src/Providers/Gmail/Options.php:125
 msgid "Copy URL to clipboard"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:122
+#: src/Providers/Gmail/Options.php:130
 msgid "Please copy this URL into the \"Authorized redirect URIs\" field of your Google web application."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:131
+#: src/Providers/Gmail/Options.php:139
 msgid "Authorization"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:159
+#: src/Providers/Gmail/Options.php:167
 msgid "Allow plugin to send emails using your Google account"
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:162
+#: src/Providers/Gmail/Options.php:170
 msgid "Click the button above to confirm authorization."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:168
+#: src/Providers/Gmail/Options.php:176
 msgid "Remove Connection"
 msgstr ""
 
 #. translators: %s - email address, as received from Google API.
-#: src/Providers/Gmail/Options.php:177
+#: src/Providers/Gmail/Options.php:185
 msgid "Connected as %s"
 msgstr ""
 
 #. translators: %s - URL to Google Gmail alias documentation page.
-#: src/Providers/Gmail/Options.php:187
+#: src/Providers/Gmail/Options.php:195
 msgid "If you want to use a different From Email address you can set-up a Google email alias. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Follow these instructions</a> and then select the From Email at the top of this page."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:201
+#: src/Providers/Gmail/Options.php:209
 msgid "Removing the connection will give you an ability to redo the connection or link to another Google account."
 msgstr ""
 
-#: src/Providers/Gmail/Options.php:209
+#: src/Providers/Gmail/Options.php:217
 msgid "You need to save settings with Client ID and Client Secret before you can proceed."
 msgstr ""
 
@@ -1480,15 +1529,15 @@ msgstr ""
 msgid "You currently have the native WordPress option selected. Please select any other Mailer option above to continue the setup."
 msgstr ""
 
-#: src/Providers/Mailgun/Mailer.php:392
+#: src/Providers/Mailgun/Mailer.php:391
 msgid "Mailgun API request was successful, but it could not queue the email for delivery."
 msgstr ""
 
-#: src/Providers/Mailgun/Mailer.php:393
+#: src/Providers/Mailgun/Mailer.php:392
 msgid "This could point to an incorrect Domain Name in the plugin settings."
 msgstr ""
 
-#: src/Providers/Mailgun/Mailer.php:394
+#: src/Providers/Mailgun/Mailer.php:393
 msgid "Please check the WP Mail SMTP plugin settings and make sure the Mailgun Domain Name setting is correct."
 msgstr ""
 
@@ -1552,91 +1601,91 @@ msgstr ""
 msgid "<a href=\"%s\" rel=\"\" target=\"_blank\">More information</a> on Mailgun.com."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:186
+#: src/Providers/OptionsAbstract.php:198
 msgid "SMTP Host"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:200
+#: src/Providers/OptionsAbstract.php:212
 msgid "Encryption"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:210
+#: src/Providers/OptionsAbstract.php:222
 msgid "None"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:219
+#: src/Providers/OptionsAbstract.php:231
 msgid "SSL"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:228
+#: src/Providers/OptionsAbstract.php:240
 msgid "TLS"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:232
+#: src/Providers/OptionsAbstract.php:244
 msgid "For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:240
+#: src/Providers/OptionsAbstract.php:252
 msgid "SMTP Port"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:254
+#: src/Providers/OptionsAbstract.php:266
 msgid "Auto TLS"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:268
+#: src/Providers/OptionsAbstract.php:280
 msgid "By default TLS encryption is automatically used if the server supports it, which is recommended. In some cases, due to server misconfigurations, this can cause issues and may need to be disabled."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:276
+#: src/Providers/OptionsAbstract.php:288
 msgid "Authentication"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:295
+#: src/Providers/OptionsAbstract.php:307
 msgid "SMTP Username"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:309
+#: src/Providers/OptionsAbstract.php:321
 msgid "SMTP Password"
 msgstr ""
 
 #. translators: %s - constant name: WPMS_SMTP_PASS.
-#: src/Providers/OptionsAbstract.php:321
+#: src/Providers/OptionsAbstract.php:333
 msgid "To change the password you need to change the value of the constant there: %s"
 msgstr ""
 
 #. translators: %1$s - wp-config.php file, %2$s - WPMS_ON constant name.
-#: src/Providers/OptionsAbstract.php:329
+#: src/Providers/OptionsAbstract.php:341
 msgid "If you want to disable the use of constants, find in %1$s file the constant %2$s and turn if off:"
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:339
+#: src/Providers/OptionsAbstract.php:351
 msgid "All the defined constants will stop working and you will be able to change all the values on this page."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:347
+#: src/Providers/OptionsAbstract.php:359
 msgid "The password will be stored in plain text. For improved security, we highly recommend using your site's WordPress configuration file to set your password."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:350
+#: src/Providers/OptionsAbstract.php:362
 msgid "Learn More"
 msgstr ""
 
 #. translators: %1$s - Provider name; %2$s - PHP version required by Provider; %3$s - current PHP version.
-#: src/Providers/OptionsAbstract.php:410
+#: src/Providers/OptionsAbstract.php:422
 msgid "%1$s requires PHP %2$s to work and does not support your current PHP version %3$s. Please contact your host and request a PHP upgrade to the latest one."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:417
+#: src/Providers/OptionsAbstract.php:429
 msgid "Meanwhile you can switch to some other mailers."
 msgstr ""
 
 #. translators: %s - Provider name
-#: src/Providers/OptionsAbstract.php:436
+#: src/Providers/OptionsAbstract.php:448
 msgid "%s requires an SSL certificate, and so is not currently compatible with your site. Please contact your host to request a SSL certificate, or check out <a href=\"https://www.wpbeginner.com/wp-tutorials/how-to-add-ssl-and-https-in-wordpress/\" target=\"_blank\">WPBeginner's tutorial on how to set up SSL</a>."
 msgstr ""
 
-#: src/Providers/OptionsAbstract.php:449
+#: src/Providers/OptionsAbstract.php:461
 msgid "If you'd prefer not to set up SSL, or need an SMTP solution in the meantime, please select a different mailer option."
 msgstr ""
 
@@ -1661,12 +1710,12 @@ msgid "Error"
 msgstr ""
 
 #. translators: %1$s - URL to pepipost.com site.
-#: src/Providers/PepipostAPI/Options.php:31
-msgid "<strong><a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Pepipost</a> is a recommended transactional email service.</strong> Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever.  Pepipost provides users 30,000 free emails the first 30 days."
+#: src/Providers/PepipostAPI/Options.php:32
+msgid "<a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Pepipost</a> is a transactional email service. Every month Pepipost delivers over 8 billion emails from 20,000+ customers. Their mission is to reliably send emails in the most efficient way and at the most disruptive pricing ever. Pepipost provides users 30,000 free emails the first 30 days."
 msgstr ""
 
 #. translators: %1$s - URL to wpmailsmtp.com doc.
-#: src/Providers/PepipostAPI/Options.php:34
+#: src/Providers/PepipostAPI/Options.php:35
 msgid "Read our <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Pepipost documentation</a> to learn how to configure Pepipost and improve your email deliverability."
 msgstr ""
 
@@ -1678,61 +1727,65 @@ msgstr ""
 msgid "Pepipost"
 msgstr ""
 
-#: src/Providers/PepipostAPI/Options.php:88
-#: src/Providers/Sendgrid/Options.php:57
-#: src/Providers/Sendinblue/Options.php:76
-#: src/Providers/SMTPcom/Options.php:83
+#: src/Providers/PepipostAPI/Options.php:94
+#: src/Providers/Sendgrid/Options.php:65
+#: src/Providers/Sendinblue/Options.php:96
+#: src/Providers/SMTPcom/Options.php:91
 msgid "API Key"
 msgstr ""
 
 #. translators: %s - link to get an API Key.
-#: src/Providers/PepipostAPI/Options.php:107
-#: src/Providers/Sendinblue/Options.php:95
+#: src/Providers/PepipostAPI/Options.php:113
+#: src/Providers/Sendinblue/Options.php:115
 msgid "Follow this link to get an API Key: %s."
 msgstr ""
 
-#: src/Providers/PepipostAPI/Options.php:109
+#: src/Providers/PepipostAPI/Options.php:115
 msgid "Get the API Key"
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:25
+#: src/Providers/Sendgrid/Options.php:26
 msgid "SendGrid"
 msgstr ""
 
 #. translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag.
-#: src/Providers/Sendgrid/Options.php:29
+#: src/Providers/Sendgrid/Options.php:30
 msgid "%1$sSendGrid%2$s is one of the leading transactional email services, sending over 35 billion emails every month. They provide users 100 free emails per day.<br><br>Read our %3$sSendGrid documentation%4$s to learn how to set up SendGrid and improve your email deliverability."
 msgstr ""
 
 #. translators: %s - API key link.
-#: src/Providers/Sendgrid/Options.php:76
+#: src/Providers/Sendgrid/Options.php:84
 msgid "Follow this link to get an API Key from SendGrid: %s."
 msgstr ""
 
-#: src/Providers/Sendgrid/Options.php:78
+#: src/Providers/Sendgrid/Options.php:86
 msgid "Create API Key"
 msgstr ""
 
 #. translators: %s - SendGrid access level.
-#: src/Providers/Sendgrid/Options.php:86
+#: src/Providers/Sendgrid/Options.php:94
 msgid "To send emails you will need only a %s access level for this API key."
 msgstr ""
 
-#: src/Providers/Sendinblue/Options.php:33
-msgid "Sendinblue"
-msgstr ""
-
 #. translators: %1$s - URL to sendinblue.com site.
-#: src/Providers/Sendinblue/Options.php:37
-msgid "<a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sendinblue</a> serves 80,000+ growing companies around the world and sends over 30 million emails each day. They provide users 300 free emails per day."
+#: src/Providers/Sendinblue/Options.php:32
+msgid "<strong><a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sendinblue</a> is our recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day."
 msgstr ""
 
 #. translators: %2$s - URL to wpmailsmtp.com doc.
-#: src/Providers/Sendinblue/Options.php:40
+#: src/Providers/Sendinblue/Options.php:35
 msgid "Read our <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sendinblue documentation</a> to learn how to configure Sendinblue and improve your email deliverability."
 msgstr ""
 
-#: src/Providers/Sendinblue/Options.php:97
+#: src/Providers/Sendinblue/Options.php:54
+msgid "Get Sendinblue Now (Free)"
+msgstr ""
+
+#: src/Providers/Sendinblue/Options.php:62
+msgid "Sendinblue"
+msgstr ""
+
+#: src/Providers/Sendinblue/Options.php:117
 msgid "Get v3 API Key"
 msgstr ""
 
@@ -1754,43 +1807,51 @@ msgid "Channel:"
 msgstr ""
 
 #. translators: %s - URL to smtp.com site.
-#: src/Providers/SMTPcom/Options.php:41
+#: src/Providers/SMTPcom/Options.php:42
 msgid "<strong><a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">SMTP.com</a> is a recommended transactional email service.</strong> With a 22 years of track record of reliable email delivery, SMTP.com is a premiere solution for WordPress developers and website owners. SMTP.com has been around for almost as long as email itself. Their super simple integration interface makes it easy to get started while a powerful API and robust documentation make it a preferred choice among developers. Start a 30-day free trial with 50,000 emails."
 msgstr ""
 
 #. translators: %s - URL to wpmailsmtp.com doc page for stmp.com.
-#: src/Providers/SMTPcom/Options.php:49
+#: src/Providers/SMTPcom/Options.php:50
 msgid "Read our <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">SMTP.com documentation</a> to learn how to configure SMTP.com and improve your email deliverability."
 msgstr ""
 
-#: src/Providers/SMTPcom/Options.php:59
+#: src/Providers/SMTPcom/Options.php:60
 msgid "Get Started with SMTP.com"
 msgstr ""
 
-#: src/Providers/SMTPcom/Options.php:67
+#: src/Providers/SMTPcom/Options.php:68
 msgid "SMTP.com"
 msgstr ""
 
 #. translators: %s - API key link.
-#: src/Providers/SMTPcom/Options.php:101
+#: src/Providers/SMTPcom/Options.php:109
 msgid "Follow this link to get an API Key from SMTP.com: %s."
 msgstr ""
 
-#: src/Providers/SMTPcom/Options.php:103
+#: src/Providers/SMTPcom/Options.php:111
 msgid "Get API Key"
 msgstr ""
 
-#: src/Providers/SMTPcom/Options.php:114
+#: src/Providers/SMTPcom/Options.php:122
 msgid "Sender Name"
 msgstr ""
 
 #. translators: %s - Channel/Sender Name link for smtp.com documentation.
-#: src/Providers/SMTPcom/Options.php:130
+#: src/Providers/SMTPcom/Options.php:138
 msgid "Follow this link to get a Sender Name from SMTP.com: %s."
 msgstr ""
 
-#: src/Providers/SMTPcom/Options.php:132
+#: src/Providers/SMTPcom/Options.php:140
 msgid "Get Sender Name"
+msgstr ""
+
+#: src/Providers/Zoho/Options.php:25
+msgid "Zoho Mail"
+msgstr ""
+
+#: src/Providers/Zoho/Options.php:41
+msgid "We're sorry, the Zoho Mail mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features."
 msgstr ""
 
 #: src/SiteHealth.php:67
@@ -1825,58 +1886,66 @@ msgstr ""
 msgid "No DB tables found."
 msgstr ""
 
-#: src/SiteHealth.php:142
+#: src/SiteHealth.php:123
+msgid "Lite install date"
+msgstr ""
+
+#: src/SiteHealth.php:140
+msgid "None selected"
+msgstr ""
+
+#: src/SiteHealth.php:160
 msgid "Current mailer"
 msgstr ""
 
-#: src/SiteHealth.php:147
+#: src/SiteHealth.php:165
 msgid "WP Mail SMTP mailer setup is complete"
 msgstr ""
 
-#: src/SiteHealth.php:156
+#: src/SiteHealth.php:174
 msgid "The WP Mail SMTP plugin mailer setup is complete. You can send a test email, to make sure it's working properly."
 msgstr ""
 
-#: src/SiteHealth.php:161
+#: src/SiteHealth.php:179
 msgid "Test email sending"
 msgstr ""
 
-#: src/SiteHealth.php:169
+#: src/SiteHealth.php:187
 msgid "You currently have the default mailer selected, which means that you haven’t set up SMTP yet."
 msgstr ""
 
-#: src/SiteHealth.php:174
+#: src/SiteHealth.php:192
 msgid "WP Mail SMTP mailer setup is incomplete"
 msgstr ""
 
-#: src/SiteHealth.php:180
+#: src/SiteHealth.php:198
 msgid "The WP Mail SMTP plugin mailer setup is incomplete. Please click on the link below to access plugin settings and configure the mailer."
 msgstr ""
 
-#: src/SiteHealth.php:185
+#: src/SiteHealth.php:203
 msgid "Configure mailer"
 msgstr ""
 
-#: src/SiteHealth.php:202
+#: src/SiteHealth.php:220
 msgid "WP Mail SMTP DB tables are created"
 msgstr ""
 
-#: src/SiteHealth.php:208
+#: src/SiteHealth.php:226
 msgid "WP Mail SMTP is using custom database tables for some of its features. In order to work properly, the custom tables should be created, and it looks like they exist in your database."
 msgstr ""
 
-#: src/SiteHealth.php:216
+#: src/SiteHealth.php:234
 msgid "WP Mail SMTP DB tables check has failed"
 msgstr ""
 
 #. translators: %s - the list of missing tables separated by comma.
-#: src/SiteHealth.php:222
+#: src/SiteHealth.php:240
 msgid "Missing table: %s"
 msgid_plural "Missing tables: %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/SiteHealth.php:225
+#: src/SiteHealth.php:243
 msgid "WP Mail SMTP is using custom database tables for some of its features. In order to work properly, the custom tables should be created, and it seems they are missing. Please try to re-install the WP Mail SMTP plugin. If this issue persists, please contact our support."
 msgstr ""
 
@@ -1885,16 +1954,16 @@ msgstr ""
 msgid "%1$s \\a\\t %2$s"
 msgstr ""
 
-#: wp_mail_smtp.php:135
+#: wp_mail_smtp.php:137
 msgid "Please deactivate the free version of the WP Mail SMTP plugin before activating WP Mail SMTP Pro."
 msgstr ""
 
 #. translators: %1$s - WPBeginner URL for recommended WordPress hosting.
-#: wp_mail_smtp.php:163
+#: wp_mail_smtp.php:165
 msgid "Your site is running an <strong>insecure version</strong> of PHP that is no longer supported. Please contact your web hosting provider to update your PHP version or switch to a <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">recommended WordPress hosting company</a>."
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com docs URL with more details.
-#: wp_mail_smtp.php:180
+#: wp_mail_smtp.php:182
 msgid "<strong>WP Mail SMTP plugin is disabled</strong> on your site until you fix the issue. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Read more for additional information.</a>"
 msgstr ""

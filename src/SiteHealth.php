@@ -114,6 +114,17 @@ class SiteHealth {
 			],
 		];
 
+		// Install date.
+		$activated = get_option( 'wp_mail_smtp_activated', [] );
+		if ( ! empty( $activated['lite'] ) ) {
+			$date = $activated['lite'] + ( get_option( 'gmt_offset' ) * 3600 );
+
+			$debug_info[ self::DEBUG_INFO_SLUG ]['fields']['lite_install_date'] = [
+				'label' => esc_html__( 'Lite install date', 'wp-mail-smtp' ),
+				'value' => date_i18n( esc_html__( 'M j, Y @ g:ia' ), $date ),
+			];
+		}
+
 		return $debug_info;
 	}
 
@@ -125,12 +136,19 @@ class SiteHealth {
 	public function mailer_setup_complete_test() {
 
 		$mailer          = Options::init()->get( 'mail', 'mailer' );
-		$mailer_complete = wp_mail_smtp()
-			->get_providers()
-			->get_mailer(
-				$mailer,
-				wp_mail_smtp()->get_processor()->get_phpmailer()
-			)->is_mailer_complete();
+		$mailer_complete = false;
+		$mailer_title    = esc_html__( 'None selected', 'wp-mail-smtp' );
+
+		if ( ! empty( $mailer ) ) {
+			$mailer_complete = wp_mail_smtp()
+				->get_providers()
+				->get_mailer(
+					$mailer,
+					wp_mail_smtp()->get_processor()->get_phpmailer()
+				)->is_mailer_complete();
+
+			$mailer_title = wp_mail_smtp()->get_providers()->get_options( $mailer )->get_title();
+		}
 
 		// The default mailer should be considered as a non-complete mailer.
 		if ( $mailer === 'mail' ) {
@@ -140,7 +158,7 @@ class SiteHealth {
 		$mailer_text = sprintf(
 			'%s: <strong>%s</strong>',
 			esc_html__( 'Current mailer', 'wp-mail-smtp' ),
-			esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer )->get_title() )
+			esc_html( $mailer_title )
 		);
 
 		$result = array(
@@ -250,7 +268,9 @@ class SiteHealth {
 		$existing_tables = [];
 
 		foreach ( $tables as $table ) {
-			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) { // phpcs:ignore
+			$db_result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ); // phpcs:ignore
+
+			if ( strtolower( $db_result ) !== strtolower( $table ) ) {
 				$missing_tables[] = $table;
 			} else {
 				$existing_tables[] = $table;

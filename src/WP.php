@@ -247,12 +247,17 @@ class WP {
 	 * @see https://github.com/WordPress/WordPress/blob/master/wp-includes/pluggable.php#L332
 	 *
 	 * @since 2.2.0
+	 * @since 2.3.0 In WP 5.5 the core code changed and is now using `network_home_url`.
 	 *
 	 * @return string
 	 */
 	public static function get_default_email() {
 
-		$sitename = strtolower( $_SERVER['SERVER_NAME'] ); // phpcs:ignore
+		if ( version_compare( get_bloginfo( 'version' ), '5.5-alpha', '<' ) ) {
+			$sitename = strtolower( $_SERVER['SERVER_NAME'] ); // phpcs:ignore
+		} else {
+			$sitename = wp_parse_url( network_home_url(), PHP_URL_HOST );
+		}
 
 		if ( 'www.' === substr( $sitename, 0, 4 ) ) {
 			$sitename = substr( $sitename, 4 );

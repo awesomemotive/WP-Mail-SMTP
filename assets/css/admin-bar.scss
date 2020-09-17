@@ -1,0 +1,24 @@
+// WP Mail SMTP admin bar menu styles.
+#wpadminbar {
+	.wp-mail-smtp-admin-bar-menu-notification-counter,
+	.wp-mail-smtp-admin-bar-menu-error {
+		display: inline-block !important;
+		vertical-align: top !important;
+		box-sizing: border-box !important;
+		margin: 7px 0 0 2px !important;
+		padding: 0 5px !important;
+		min-width: 18px !important;
+		height: 18px !important;
+		border-radius: 9px !important;
+		background-color: #ca4a1f !important;
+		color: #fff !important;
+		font-size: 11px !important;
+		line-height: 1.6 !important;
+		text-align: center !important;
+
+		span {
+			line-height: 1 !important;
+			font-size: 11px !important;
+		}
+	}
+}

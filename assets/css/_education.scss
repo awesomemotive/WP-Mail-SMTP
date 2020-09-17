@@ -1,0 +1,67 @@
+// Education styles.
+
+// Notice bar.
+@media screen and (max-width: 1023px) {
+	#wp-mail-smtp-notice-bar {
+		display: none !important;
+	}
+}
+
+#wp-mail-smtp-notice-bar {
+	max-height: 35px;
+	position: relative;
+	margin-bottom: -3px;
+	transition: all .3s ease-out;
+	overflow: hidden;
+
+	&.out {
+		max-height: 3px;
+	}
+
+	.wp-amil-smtp-notice-bar-container {
+		background-color: #DDDDDD;
+		border-top: 3px solid $orange;
+		color: #777777;
+		text-align: center;
+		padding: 7px;
+	}
+
+	a {
+		color: $orange;
+	}
+
+	a:hover {
+		color: $orange_dark;
+	}
+
+	.dismiss {
+		position: absolute;
+		top: 0;
+		right: 0;
+		border: none;
+		padding: 5px;
+		margin-top: 4px;
+		background: 0 0;
+		color: #72777c;
+		cursor: pointer;
+	}
+
+	.dismiss:before {
+		background: 0 0;
+		color: #72777c;
+		content: "\f335";
+		display: block;
+		font: normal 20px/20px dashicons;
+		speak: none;
+		height: 20px;
+		text-align: center;
+		width: 20px;
+		-webkit-font-smoothing: antialiased;
+	}
+}
+
+#screen-meta-links .screen-meta-toggle {
+	position: absolute;
+	right: 20px;
+	top: auto;
+}

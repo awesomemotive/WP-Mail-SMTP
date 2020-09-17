@@ -186,7 +186,7 @@ class Task {
 		$action_id = null;
 
 		// No processing if ActionScheduler is not usable.
-		if ( ! wp_mail_smtp()->get_tasks()->is_usable() ) {
+		if ( ! Tasks::is_usable() ) {
 			return $action_id;
 		}
 
@@ -203,18 +203,23 @@ class Task {
 			return $action_id;
 		}
 
-		switch ( $this->type ) {
-			case self::TYPE_ASYNC:
-				$action_id = $this->register_async();
-				break;
+		// Prevent 500 errors when Action Scheduler tables don't exist.
+		try {
+			switch ( $this->type ) {
+				case self::TYPE_ASYNC:
+					$action_id = $this->register_async();
+					break;
 
-			case self::TYPE_RECURRING:
-				$action_id = $this->register_recurring();
-				break;
+				case self::TYPE_RECURRING:
+					$action_id = $this->register_recurring();
+					break;
 
-			case self::TYPE_ONCE:
-				$action_id = $this->register_once();
-				break;
+				case self::TYPE_ONCE:
+					$action_id = $this->register_once();
+					break;
+			}
+		} catch ( \RuntimeException $exception ) {
+			$action_id = null;
 		}
 
 		return $action_id;

@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Options;
+use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\WP;
 
 /**
@@ -190,6 +191,25 @@ class MiscTab extends PageAbstract {
 				</div>
 			</div>
 
+			<?php if ( apply_filters( 'wp_mail_smtp_admin_pages_misc_tab_show_usage_tracking_setting', true ) ) : ?>
+				<!-- Usage Tracking -->
+				<div id="wp-mail-smtp-setting-row-usage-tracking" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
+					<div class="wp-mail-smtp-setting-label">
+						<label for="wp-mail-smtp-setting-usage-tracking">
+							<?php esc_html_e( 'Allow Usage Tracking', 'wp-mail-smtp' ); ?>
+						</label>
+					</div>
+					<div class="wp-mail-smtp-setting-field">
+						<input name="wp-mail-smtp[general][<?php echo esc_attr( UsageTracking::SETTINGS_SLUG ); ?>]" type="checkbox"
+							value="true" <?php checked( true, $options->get( 'general', UsageTracking::SETTINGS_SLUG ) ); ?>
+							id="wp-mail-smtp-setting-usage-tracking">
+						<label for="wp-mail-smtp-setting-usage-tracking">
+							<?php esc_html_e( 'By allowing us to track usage data we can better help you because we know with which WordPress configurations, themes and plugins we should test.', 'wp-mail-smtp' ); ?>
+						</label>
+					</div>
+				</div>
+			<?php endif; ?>
+
 			<?php $this->display_save_btn(); ?>
 
 		</form>
@@ -223,6 +243,9 @@ class MiscTab extends PageAbstract {
 		}
 		if ( empty( $data['general']['uninstall'] ) ) {
 			$data['general']['uninstall'] = false;
+		}
+		if ( empty( $data['general'][ UsageTracking::SETTINGS_SLUG ] ) ) {
+			$data['general'][ UsageTracking::SETTINGS_SLUG ] = false;
 		}
 
 		$to_save = Options::array_merge_recursive( $options->get_all(), $data );

@@ -63,7 +63,8 @@ class LogsTab extends PageAbstract {
 			</div>
 
 			<div class="wp-mail-smtp-page-upsell-button">
-				<a href="https://wpmailsmtp.com/lite-upgrade/?discount=LITEUPGRADE&amp;utm_source=WordPress&amp;utm_medium=logs&amp;utm_campaign=liteplugin" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange wp-mail-smtp-upgrade-modal" target="_blank" rel="noopener noreferrer">
+				<a href="<?php echo esc_url( add_query_arg( 'discount', 'LITEUPGRADE', wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'logs', 'content' => '' ] ) ) ); // phpcs:ignore ?>"
+					class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange wp-mail-smtp-upgrade-modal" target="_blank" rel="noopener noreferrer">
 					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 				</a>
 			</div>

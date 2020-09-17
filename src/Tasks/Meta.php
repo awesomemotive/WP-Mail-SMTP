@@ -385,7 +385,9 @@ class Meta {
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table;
+		$db_result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+
+		return strtolower( $db_result ) === strtolower( $table );
 	}
 
 	/**

@@ -12,7 +12,9 @@ var gulp = require( 'gulp' ),
 	zip = require( 'gulp-zip' ),
 	replace = require( 'gulp-replace' ),
 	packageJSON = require( './package.json' ),
-	exec = require( 'child_process' ).exec;
+	exec = require( 'child_process' ).exec,
+	clean = require( 'gulp-clean' ),
+	merge = require('merge-stream');
 
 var plugin = {
 	name: 'WP Mail SMTP',
@@ -24,6 +26,8 @@ var plugin = {
 		'!**/*.map',
 		'!LICENSE',
 		'!assets/**/*.scss',
+		'!assets/**/*.css',
+		'assets/**/*.min.css',
 		'!assets/wporg/**',
 		'!assets/wporg',
 		'!**/.github/**',
@@ -31,6 +35,9 @@ var plugin = {
 		'!**/bin/**',
 		'!**/bin',
 		'!**/tests/**',
+		'!.codeception',
+		'!php-scoper/**',
+		'!php-scoper',
 		'!**/tests',
 		'!**/Tests/**',
 		'!**/Tests',
@@ -51,6 +58,7 @@ var plugin = {
 		'!**/node_modules/**',
 		'!**/node_modules',
 		'!**/*.md',
+		'CHANGELOG.md',
 		'!**/*.sh',
 		'!**/*.rst',
 		'!**/*.xml',
@@ -68,20 +76,33 @@ var plugin = {
 		'!.packages/**',
 		'!.packages/',
 		'!vendor/composer/!(*.php)/**',
+		'!vendor/wikimedia/**',
+		'!vendor/wikimedia/',
 		'!vendor/firebase/**',
 		'!vendor/firebase/',
+		'!vendor/instituteweb/**',
+		'!vendor/instituteweb/',
+		// symfony is prefixed and located in vendor_prefixed folder.
+		'!vendor/symfony/**',
+		'!vendor/symfony/',
+		// league is prefixed and located in vendor_prefixed folder.
+		'!vendor/league/**',
+		'!vendor/league/',
+		// psr is prefixed and located in vendor_prefixed folder.
+		'!vendor/psr/**',
+		'!vendor/psr/',
 		// We need only a specific service: Gmail. Others should be omitted.
-		'!vendor/google/apiclient-services/src/Google/Service/!(Gmail)/**',
-		'!vendor/google/apiclient-services/src/Google/Service/*.php',
-		'vendor/google/apiclient-services/src/Google/Service/Gmail.php',
+		'!vendor_prefixed/google/apiclient-services/src/Google/Service/!(Gmail)/**',
+		'!vendor_prefixed/google/apiclient-services/src/Google/Service/*.php',
+		'vendor_prefixed/google/apiclient-services/src/Google/Service/Gmail.php',
 		// We need only specific crypto-libraries. Others should be omitted.
-		'!vendor/phpseclib/phpseclib/phpseclib/Crypt/!(AES.php|Rijndael.php|RSA.php|Random.php)',
-		'!vendor/phpseclib/phpseclib/phpseclib/Net/**',
-		'!vendor/phpseclib/phpseclib/phpseclib/Net',
-		'!vendor/phpseclib/phpseclib/phpseclib/File/**',
-		'!vendor/phpseclib/phpseclib/phpseclib/File',
-		'!vendor/phpseclib/phpseclib/phpseclib/System/**',
-		'!vendor/phpseclib/phpseclib/phpseclib/System',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/Crypt/!(AES.php|Rijndael.php|RSA.php|Random.php)',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/Net/**',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/Net',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/File/**',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/File',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/System/**',
+		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/System',
 		// We don't need certain dev packages.
 		'!vendor/dealerdirect/**',
 		'!vendor/dealerdirect/',
@@ -89,12 +110,10 @@ var plugin = {
 		'!vendor/seld/',
 		'!vendor/squizlabs/**',
 		'!vendor/squizlabs/',
-		'!vendor/wikimedia/**',
-		'!vendor/wikimedia/',
 		'!vendor/wp-coding-standards/**',
 		'!vendor/wp-coding-standards/',
 		'!vendor/wpforms/**',
-		'!vendor/wpforms/',
+		'!vendor/wpforms/'
 	],
 	lite_files: [
 		'!assets/pro/**',
@@ -102,13 +121,15 @@ var plugin = {
 	],
 	pro_files: [
 		'loco.xml',
-		'!readme.txt'
+		'!readme.txt',
+		'!vendor/paragonie/random_compat/dist/**',
+		'!vendor/paragonie/random_compat/dist/'
 	],
 	php: [
 		'**/*.php',
 		'!vendor/**',
 		'!vendors/**',
-		"!vendor_prefixed/**",
+		'!vendor_prefixed/**',
 		'!tests/**'
 	],
 	scss: [
@@ -133,11 +154,14 @@ var plugin = {
 		"!gulpfile.js",
 		"!assets/js/vendor/**",
 		"!assets/pro/js/vendor/**",
+		"!.codeception/**",
+		"!.github/**",
+		"!.packages/**",
 		"!build/**",
+		"!node_modules/**",
+		"!php-scoper/**",
 		"!vendor/**",
-		"!vendors/**",
-		"!vendor_prefixed/**",
-		"!node_modules/**"
+		"!vendor_prefixed/**"
 	]
 };
 
@@ -146,23 +170,34 @@ var plugin = {
  */
 gulp.task( 'css', function () {
 	return gulp.src( plugin.scss )
-			   // UnMinified file.
-			   .pipe( cached( 'processCSS' ) )
-			   .pipe( sourcemaps.init() )
-			   // Minified file.
-			   .pipe( sass( { outputStyle: 'compressed' } ).on( 'error', sass.logError ) )
-			   .pipe( rename( function ( path ) {
-				   if ( /-pro-/.test( path.basename ) ) {
-					   path.dirname = '/assets/pro/css';
-				   }
-				   else {
-					   path.dirname = '/assets/css';
-				   }
-				   path.extname = '.min.css';
-			   } ) )
-			   .pipe( sourcemaps.write( '.' ) )
-			   .pipe( gulp.dest( '.' ) )
-			   .pipe( debug( { title: '[css]' } ) );
+			// UnMinified file.
+			.pipe( cached( 'processCSS' ) )
+			.pipe( sourcemaps.init() )
+			.pipe( sass( { outputStyle: 'expanded' } ).on( 'error', sass.logError ) )
+			.pipe( rename( function ( path ) {
+				if ( /-pro-/.test( path.basename ) ) {
+					path.dirname = '/assets/pro/css';
+				}
+				else {
+					path.dirname = '/assets/css';
+				}
+				path.extname = '.css';
+			} ) )
+			.pipe( sourcemaps.write() )
+			.pipe( gulp.dest( './' ) )
+			// Minified file.
+			.pipe( sass( { outputStyle: 'compressed' } ).on( 'error', sass.logError ) )
+			.pipe( rename( function ( path ) {
+				if ( /-pro-/.test( path.basename ) ) {
+					path.dirname = '/assets/pro/css';
+				}
+				else {
+					path.dirname = '/assets/css';
+				}
+				path.extname = '.min.css';
+			} ) )
+			.pipe( gulp.dest( './' ) )
+			.pipe( debug( { title: '[css]' } ) );
 } );
 
 /**
@@ -201,20 +236,26 @@ gulp.task( 'img', function () {
  * Generate .pot files for Lite and Pro.
  */
 gulp.task( 'pot:lite', function ( cb ) {
-	exec( 'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment=""', function ( err, stdout, stderr ) {
-		console.log( stdout );
-		console.log( stderr );
-		cb( err );
-	} );
+	exec(
+		'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,.build,.php-scoper,.vendor,.vendor-prefixed"',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
 } );
 gulp.task( 'pot:pro', function ( cb ) {
-	exec( 'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment=""', function ( err, stdout, stderr ) {
-		console.log( stdout );
-		console.log( stderr );
-		cb( err );
-	} );
+	exec(
+		'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,.build,.php-scoper,.vendor,.vendor-prefixed"',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
 } );
-gulp.task( 'pot', gulp.parallel( 'pot:lite', 'pot:pro' ) );
+gulp.task( 'pot', gulp.series( 'pot:lite', 'pot:pro' ) );
 
 /**
  * Generate a .zip file.
@@ -243,19 +284,64 @@ gulp.task( 'zip:pro', function () {
 		.pipe( gulp.dest( './build' ) )
 		.pipe( debug( { title: '[zip]' } ) );
 } );
+gulp.task( 'zip', gulp.series( 'zip:lite', 'zip:pro' ) );
 
 /**
  * Update composer with Lite and/or Pro dependencies.
  */
 gulp.task( 'composer:lite', function ( cb ) {
-	exec( 'composer update --root-reqs --no-dev --no-suggest --no-plugins', function ( err, stdout, stderr ) {
+	exec( 'composer build-lite', function ( err, stdout, stderr ) {
 		console.log( stdout );
 		console.log( stderr );
 		cb( err );
 	} );
 } );
 gulp.task( 'composer:pro', function ( cb ) {
-	exec( 'composer update --root-reqs --no-suggest', function ( err, stdout, stderr ) {
+	exec( 'composer build-pro', function ( err, stdout, stderr ) {
+		console.log( stdout );
+		console.log( stderr );
+		cb( err );
+	} );
+} );
+gulp.task( 'composer:delete_lock_and_vendor', function () {
+	return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
+		.pipe( clean() );
+} );
+gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
+	return gulp.src(
+			[
+				'vendor/aws',
+				'vendor/google',
+				'vendor/guzzlehttp',
+				'vendor/league/oauth2-client',
+				'vendor/mtdowling',
+				'vendor/monolog',
+				'vendor/phpseclib',
+				'vendor/psr/cache',
+				'vendor/psr/http-message',
+				'vendor/psr/log',
+				'vendor/sendinblue',
+				'vendor/symfony/polyfill-mbstring',
+				'vendor/symfony/polyfill-php72',
+				'vendor/symfony/polyfill-intl-idn'
+			],
+			{ allowEmpty: true, read: false }
+		)
+		.pipe( clean() );
+} );
+gulp.task( 'composer:create_vendor_prefixed_folder', function () {
+	return gulp.src( '*.*', { read: false } )
+		.pipe( gulp.dest( './vendor_prefixed' ) );
+} );
+gulp.task( 'composer:prefix_lite', function ( cb ) {
+	exec( 'composer prefix-dependencies-lite', function ( err, stdout, stderr ) {
+		console.log( stdout );
+		console.log( stderr );
+		cb( err );
+	} );
+} );
+gulp.task( 'composer:prefix', function ( cb ) {
+	exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
 		console.log( stdout );
 		console.log( stderr );
 		cb( err );
@@ -274,7 +360,7 @@ gulp.task( 'rename:lite', function () {
 			   .pipe( gulp.dest( './' ) );
 } );
 gulp.task( 'rename:pro', function () {
-	var from = /Plugin Name: WP Mail SMTP/gm;
+	var from = /Plugin Name: WP Mail SMTP$/gm;
 	var to   = 'Plugin Name: WP Mail SMTP Pro';
 
 	return gulp.src( [ 'wp_mail_smtp.php' ] )
@@ -319,12 +405,56 @@ gulp.task( 'replace_since_ver', function () {
 gulp.task( 'replace_ver', gulp.series( 'replace_plugin_file_ver', 'replace_since_ver' ) );
 
 /**
+ * Update namespace of certain files that php-scoper can't patch.
+ */
+gulp.task( 'prefix_outside_files', function () {
+	return merge(
+		gulp.src( [ 'vendor/codeception/codeception/src/Codeception/Util/Uri.php' ], { allowEmpty: true } )
+			.pipe( replace( /use GuzzleHttp\\Psr7\\Uri as Psr7Uri;/gm, 'use WPMailSMTP\\Vendor\\GuzzleHttp\\Psr7\\Uri as Psr7Uri;' ) )
+			.pipe( gulp.dest( 'vendor/codeception/codeception/src/Codeception/Util/' ) ),
+
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php' ], { allowEmpty: true } )
+			.pipe( replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/' ) ),
+
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php' ], { allowEmpty: true } )
+			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Idn/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Idn' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-idn/' ) ),
+
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-php72/bootstrap.php' ], { allowEmpty: true } )
+			.pipe( replace( /use Symfony\\Polyfill\\Php72/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Php72' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-php72/' ) )
+	);
+} );
+
+/**
+ * PHP version check, if at least PHP 7.2 is in use.
+ */
+gulp.task( 'php:min72', function ( cb ) {
+	exec(
+		'composer php-more-than-7-2-check',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
+} );
+
+/**
  * Task: build.
  */
+gulp.task( 'build:assets', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot' ) );
 gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
 gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build:test', gulp.series( 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+
+// Build tasks without PHP composer install step
+// The composer install should be done on PHP 5.6 before running below commands:
+// `composer build-lite-php5` or `composer build-pro-php5`.
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:min72', gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:pro_no_composer', gulp.series( 'php:min72', 'build:assets', 'rename:pro', 'composer:prefix', 'zip:pro' ) );
 
 /**
  * Look out for relevant sass/js changes.

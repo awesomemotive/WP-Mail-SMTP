@@ -1,0 +1,9 @@
+vendor/
+node_modules/
+/.packages/
+/build/
+gulpfile.js
+assets/js/vendor/
+assets/pro/js/vendor/
+assets/js/*.min.js
+assets/pro/js/*.min.js

@@ -107,6 +107,94 @@ body.toplevel_page_wp-mail-smtp {
 						text-decoration: underline;
 					}
 				}
+
+				.wp-mail-smtp-btn {
+					font-weight: bold;
+					text-transform: uppercase;
+					-webkit-transition: background .1s;
+					transition: background .1s;
+					padding: 10px 20px;
+					outline: none;
+					display: inline-block;
+					font-size: 14px;
+					line-height: 1.42857143;
+					text-align: center;
+					white-space: nowrap;
+					vertical-align: middle;
+					-ms-touch-action: manipulation;
+					touch-action: manipulation;
+					cursor: pointer;
+					-webkit-user-select: none;
+					-moz-user-select: none;
+					-ms-user-select: none;
+					user-select: none;
+					border-radius: 4px;
+					min-height: 1em;
+					-webkit-tap-highlight-color: transparent;
+					border: 0;
+					background-image: none;
+
+					&.with-loader {
+						padding: 12px 12px 7px;
+					}
+				}
+
+				.wp-mail-smtp-providers-amazonses-txt-record {
+					display: flex;
+					justify-content: space-evenly;
+					align-items: center;
+
+					&-label {
+						color: #444;
+					}
+
+					input[type="text"] {
+						display: inline-block;
+						width: 340px;
+						color: #777;
+						background-color: #f8f8f8;
+						border: 1px solid #ddd;
+						border-radius: 3px;
+						margin: 0;
+						padding: 10px 0 10px 12px;
+						font-size: 16px;
+						line-height: 18px;
+
+						&[readonly] {
+							background-color: #f9f9f9;
+						}
+
+						&:focus {
+							border-color: #bbb;
+						}
+
+						&:disabled {
+							opacity: 0.6;
+						}
+					}
+
+					button {
+						padding: 9px 11px;
+						background-color: #fff;
+						border: 1px solid #ddd;
+						border-radius: 3px;
+						cursor: pointer;
+						outline: none;
+
+						&:hover {
+							background-color: #ddd;
+						}
+
+						&:active {
+							background-color: #aaa;
+							border-color: #aaa;
+						}
+					}
+
+					.dashicons-yes-alt {
+						color: #46b450;
+					}
+				}
 			}
 
 			div.jconfirm-buttons {
@@ -122,6 +210,10 @@ body.toplevel_page_wp-mail-smtp {
 						color: #999;
 						text-decoration: underline;
 					}
+				}
+
+				.btn-hide {
+					display: none;
 				}
 			}
 
@@ -186,6 +278,10 @@ body.toplevel_page_wp-mail-smtp {
 			button,
 			button.btn-default {
 				color: #666;
+			}
+
+			button.wp-mail-smtp-btn-orange {
+				color: #fff;
 			}
 
 			button.btn-block {

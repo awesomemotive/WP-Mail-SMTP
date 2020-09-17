@@ -61,4 +61,11 @@ interface OptionsInterface {
 	 * @since 1.0.0
 	 */
 	public function display_options();
+
+	/**
+	 * Get the mailer supported settings.
+	 *
+	 * @since 2.3.0
+	 */
+	public function get_supports();
 }

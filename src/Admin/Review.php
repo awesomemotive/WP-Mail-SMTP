@@ -88,8 +88,8 @@ class Review {
 		// Get the currently selected mailer.
 		$mailer = Options::init()->get( 'mail', 'mailer' );
 
-		// Skip if the default mailer is selected.
-		if ( $mailer === 'mail' ) {
+		// Skip if no or the default mailer is selected.
+		if ( empty( $mailer ) || $mailer === 'mail' ) {
 			return;
 		}
 

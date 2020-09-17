@@ -1,0 +1,169 @@
+// Admin notification styles.
+
+#wp-mail-smtp-notifications {
+
+	position: relative;
+	background: #FFFFFF 0 0 no-repeat padding-box;
+	box-shadow: 0 5px 15px #0000000D;
+	border-radius: 6px;
+	opacity: 1;
+	min-height: 48px;
+	padding: 15px 102px 15px 72px;
+	margin: 0 0 14px 0;
+
+	* {
+		box-sizing: border-box;
+	}
+
+	.bell {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		width: 42px;
+		height: 48px;
+	}
+
+	.messages {
+		.message {
+			display: none;
+
+			&.current {
+				display: block;
+			}
+
+			.title {
+				font-weight: bold;
+				font-size: 17px;
+				line-height: 20px;
+				margin: 0;
+				color: #444;
+			}
+
+			.content {
+				font-weight: normal;
+				font-size: 13px;
+				line-height: 20px;
+				margin: 6px 0 40px 0;
+			}
+
+			.buttons {
+				margin: -30px 80px 0 0;
+
+				a {
+					margin: 0 6px 0 0;
+					padding: 8px 10px;
+					line-height: 13px;
+					font-size: 13px;
+					min-height: unset;
+				}
+
+				.button-secondary {
+					border: 1px solid #0071A1;
+				}
+			}
+		}
+	}
+
+	.dismiss {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		width: 16px;
+		height: 16px;
+		color: #72777C;
+		font-size: 16px;
+		cursor: pointer;
+		text-align: center;
+		vertical-align: middle;
+		line-height: 16px;
+
+		&:hover {
+			color: #dc3232;
+		}
+	}
+
+	.navigation {
+		position: absolute;
+		bottom: 15px;
+		right: 15px;
+		width: 63px;
+		height: 30px;
+
+		a {
+			display: block;
+			width: 30px;
+			height: 30px;
+			border: 1px solid #7E8993;
+			border-radius: 3px;
+			font-size: 8px;
+			text-align: center;
+			vertical-align: middle;
+			line-height: 30px;
+			cursor: pointer;
+			background-color: #ffffff;
+			color: #41454A;
+
+			&:hover {
+				background-color: #f1f1f1;
+			}
+
+			.dashicons {
+				margin-top: 8px;
+				font-size: 12px;
+			}
+		}
+
+		.prev {
+			float: left;
+		}
+
+		.next {
+			float: right;
+		}
+
+		.disabled {
+			border-color: #dddddd;
+			color: #A0A5AA;
+			cursor: default;
+
+			&:hover {
+				background-color: #ffffff;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+
+	#wp-mail-smtp-notifications {
+		padding: 15px 15px 15px 72px;
+
+		.messages {
+
+			.message {
+
+				.title {
+					margin: 0 30px 0 0;
+				}
+
+				.content {
+					font-size: 16px;
+					line-height: 24px
+				}
+
+				.buttons {
+					margin: -30px 80px 0 0;
+
+					a {
+						margin: 0;
+						display: table;
+					}
+
+					.button-secondary {
+						margin-top: 6px;
+					}
+				}
+			}
+		}
+	}
+}

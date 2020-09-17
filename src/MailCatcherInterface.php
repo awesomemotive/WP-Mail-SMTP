@@ -30,4 +30,13 @@ interface MailCatcherInterface {
 	 * @return string
 	 */
 	public function get_line_ending();
+
+	/**
+	 * Create a unique ID to use for multipart email boundaries.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string
+	 */
+	public function generate_id();
 }

@@ -6,6 +6,8 @@ use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
+use WPMailSMTP\Vendor\Google_Client;
+use WPMailSMTP\Vendor\Google_Service_Gmail;
 
 /**
  * Class Auth to request access and refresh tokens.
@@ -74,7 +76,7 @@ class Auth extends AuthAbstract {
 	 * @since 1.0.0
 	 * @since 1.5.0 Add ability to apply custom options to the client via a filter.
 	 *
-	 * @return \Google_Client
+	 * @return Google_Client
 	 */
 	public function get_client() {
 
@@ -85,7 +87,7 @@ class Auth extends AuthAbstract {
 
 		$this->include_vendor_lib();
 
-		$client = new \Google_Client(
+		$client = new Google_Client(
 			array(
 				'client_id'     => $this->options['client_id'],
 				'client_secret' => $this->options['client_secret'],
@@ -99,7 +101,7 @@ class Auth extends AuthAbstract {
 		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
 		// We request only the sending capability, as it's what we only need to do.
-		$client->setScopes( array( \Google_Service_Gmail::MAIL_GOOGLE_COM ) );
+		$client->setScopes( array( Google_Service_Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_plugin_auth_url() );
 
 		// Apply custom options to the client.
@@ -224,13 +226,13 @@ class Auth extends AuthAbstract {
 		if (
 			! empty( $code ) &&
 			(
-				$scope === \Google_Service_Gmail::MAIL_GOOGLE_COM . ' ' . \Google_Service_Gmail::GMAIL_SEND ||
-				$scope === \Google_Service_Gmail::GMAIL_SEND . ' ' . \Google_Service_Gmail::MAIL_GOOGLE_COM ||
-				$scope === \Google_Service_Gmail::GMAIL_SEND ||
-				$scope === \Google_Service_Gmail::MAIL_GOOGLE_COM
+				$scope === Google_Service_Gmail::MAIL_GOOGLE_COM . ' ' . Google_Service_Gmail::GMAIL_SEND ||
+				$scope === Google_Service_Gmail::GMAIL_SEND . ' ' . Google_Service_Gmail::MAIL_GOOGLE_COM ||
+				$scope === Google_Service_Gmail::GMAIL_SEND ||
+				$scope === Google_Service_Gmail::MAIL_GOOGLE_COM
 			)
 		) {
-			// Save the auth code. So \Google_Client can reuse it to retrieve the access token.
+			// Save the auth code. So Google_Client can reuse it to retrieve the access token.
 			$this->update_auth_code( $code );
 		} else {
 			wp_safe_redirect(
@@ -264,8 +266,8 @@ class Auth extends AuthAbstract {
 
 		if (
 			! empty( $this->client ) &&
-			class_exists( 'Google_Client', false ) &&
-			$this->client instanceof \Google_Client
+			class_exists( 'WPMailSMTP\Vendor\Google_Client', false ) &&
+			$this->client instanceof Google_Client
 		) {
 			return filter_var( $this->client->createAuthUrl(), FILTER_SANITIZE_URL );
 		}
@@ -282,7 +284,7 @@ class Auth extends AuthAbstract {
 	 */
 	public function get_user_info() {
 
-		$gmail = new \Google_Service_Gmail( $this->get_client() );
+		$gmail = new Google_Service_Gmail( $this->get_client() );
 
 		try {
 			$email = $gmail->users->getProfile( 'me' )->getEmailAddress();
@@ -306,20 +308,18 @@ class Auth extends AuthAbstract {
 			return $this->aliases;
 		}
 
-		$gmail = new \Google_Service_Gmail( $this->get_client() );
+		$gmail = new Google_Service_Gmail( $this->get_client() );
 
 		try {
 			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' ); // phpcs:ignore
 
 			// phpcs:disable
-			if ( isset( $response->sendAs ) ) {
-				$this->aliases = array_map(
-					function( $sendAsObject ) {
-						return $sendAsObject->sendAsEmail;
-					},
-					$response->sendAs
-				);
-			}
+			$this->aliases = array_map(
+				function( $sendAsObject ) {
+					return $sendAsObject['sendAsEmail'];
+				},
+				(array) $response->getSendAs()
+			);
 			// phpcs:enable
 
 		} catch ( \Exception $exception ) {

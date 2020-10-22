@@ -71,6 +71,9 @@ class Area {
 		// Add the options page.
 		add_action( 'admin_menu', [ $this, 'add_admin_options_page' ] );
 
+		// Add WPMS network-wide setting page for product education.
+		add_action( 'network_admin_menu', [ $this, 'add_wpms_network_wide_setting_product_education_page' ] );
+
 		// Register on load Email Log admin menu hook.
 		add_action( 'load-wp-mail-smtp_page_wp-mail-smtp-logs', [ $this, 'maybe_redirect_email_log_menu_to_email_log_settings_tab' ] );
 
@@ -236,6 +239,97 @@ class Area {
 				array( $this, 'display' )
 			);
 		}
+	}
+
+	/**
+	 * Add network admin settings page for the WPMS product education.
+	 *
+	 * @since 2.5.0
+	 */
+	public function add_wpms_network_wide_setting_product_education_page() {
+
+		add_menu_page(
+			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
+			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
+			'manage_options',
+			self::SLUG,
+			[ $this, 'display_network_product_education_page' ],
+			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM5ZWEzYTgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQzIDM0Ij48cGF0aCBkPSJNMC4wMDcsMy41ODVWMjAuNDIxcTAsMy41ODYsMy43NTEsMy41ODVMMjAsMjRWMTlIMzBWMTQuMDE0bDAuOTkxLTFMMzQsMTNWMy41ODVRMzQsMCwzMC4yNDksMEgzLjc1OFEwLjAwNywwLC4wMDcsMy41ODVoMFpNMy41MjQsNi4xNTdhMS40OSwxLjQ5LDAsMCwxLS41MDgtMC45MzUsMS41ODEsMS41ODEsMCwwLDEsLjI3NC0xLjIwOCwxLjQ0OSwxLjQ0OSwwLDAsMSwxLjA5NC0uNjYzLDEuNzU2LDEuNzU2LDAsMCwxLDEuMjUuMzEybDExLjQwOSw3LjcxNkwyOC4zNzQsMy42NjNhMS45NiwxLjk2LDAsMCwxLDEuMjg5LS4zMTIsMS41NDYsMS41NDYsMCwwLDEsMS4wOTQuNjYzLDEuNCwxLjQsMCwwLDEsLjI3MywxLjIwOCwxLjY3LDEuNjcsMCwwLDEtLjU0Ny45MzVMMTcuMDQzLDE3LjIyNVoiLz48cGF0aCBkPSJNMjIsMjhIMzJsLTAuMDA5LDQuNjI0YTEuMTI2LDEuMTI2LDAsMCwwLDEuOTIyLjhsOC4yNS04LjIzNmExLjEyNiwxLjEyNiwwLDAsMCwwLTEuNTk0bC04LjI1LTguMjQxYTEuMTI2LDEuMTI2LDAsMCwwLTEuOTIyLjh2NC44NjZMMjIsMjF2N1oiLz48L3N2Zz4=',
+			98
+		);
+	}
+
+	/**
+	 * HTML output for the network admin settings page (for the WPMS product education).
+	 *
+	 * @since 2.5.0
+	 */
+	public function display_network_product_education_page() {
+
+		// Skip if not on multisite and not on network admin site.
+		if ( ! is_multisite() || ! is_network_admin() ) {
+			return;
+		}
+
+		?>
+
+		<div class="wrap" id="wp-mail-smtp">
+			<div class="wp-mail-smtp-page wp-mail-smtp-page-general wp-mail-smtp-page-nw-product-edu wp-mail-smtp-tab-settings">
+				<div class="wp-mail-smtp-page-title">
+					<a href="#" class="tab active">
+						<?php esc_html_e( 'General', 'wp-mail-smtp' ); ?>
+					</a>
+				</div>
+
+				<div class="wp-mail-smtp-page-content">
+					<h1 class="screen-reader-text">
+						<?php esc_html_e( 'General', 'wp-mail-smtp' ); ?>
+					</h1>
+
+					<?php do_action( 'wp_mail_smtp_admin_pages_before_content' ); ?>
+
+					<!-- Multisite Section Title -->
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-multisite-heading">
+						<div class="wp-mail-smtp-setting-field">
+							<h2><?php esc_html_e( 'Multisite', 'wp-mail-smtp' ); ?></h2>
+							<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/pro-badge.svg' ); ?>" class="badge" alt="<?php esc_attr_e( 'Pro+ badge icon', 'wp-mail-smtp' ); ?>">
+						</div>
+						<p>
+							<?php esc_html_e( 'Simply enable network-wide settings and every site on your network will inherit the same SMTP settings. Save time and only configure your SMTP provider once.', 'wp-amil-smtp' ); ?>
+						</p>
+					</div>
+
+					<!-- Network wide setting -->
+					<div id="wp-mail-smtp-setting-row-multisite" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-multisite wp-mail-smtp-clear">
+						<div class="wp-mail-smtp-setting-label">
+							<label for="wp-mail-smtp-setting-multisite-settings-control"><?php esc_html_e( 'Settings control', 'wp-mail-smtp' ); ?></label>
+						</div>
+						<div class="wp-mail-smtp-setting-field">
+							<input name="wp-mail-smtp[general][nw_product_edu]" type="checkbox" value="true" id="wp-mail-smtp-setting-nw-product-edu" disabled>
+
+							<label for="wp-mail-smtp-setting-nw-product-edu">
+								<?php esc_html_e( 'Make the plugin settings global network-wide', 'wp-mail-smtp' ); ?>
+							</label>
+
+							<p class="desc">
+								<?php esc_html_e( 'If disabled, each subsite of this multisite will have its own WP Mail SMTP settings page that has to be configured separately.', 'wp-mail-smtp' ); ?>
+								<br>
+								<?php esc_html_e( 'If enabled, these global settings will manage email sending for all subsites of this multisite.', 'wp-mail-smtp' ); ?>
+							</p>
+						</div>
+					</div>
+
+					<div class="wp-mail-smtp-setting-row-no-setting">
+						<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'network-settings', 'content' => '' ] ) ); // phpcs:ignore ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange">
+							<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+						</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<?php
 	}
 
 	/**

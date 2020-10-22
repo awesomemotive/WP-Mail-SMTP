@@ -549,13 +549,23 @@ class SettingsTab extends PageAbstract {
 			$data['smtp']['auth'] = false;
 		}
 
-		// Remove all debug messages when switching mailers.
+		// When switching mailers.
 		if (
 			! empty( $old_opt['mail']['mailer'] ) &&
 			! empty( $data['mail']['mailer'] ) &&
 			$old_opt['mail']['mailer'] !== $data['mail']['mailer']
 		) {
+
+			// Remove all debug messages when switching mailers.
 			Debug::clear();
+
+			// Save correct from email address if Zoho or Outlook mailers are already configured.
+			if (
+				in_array( $data['mail']['mailer'], [ 'zoho', 'outlook' ], true ) &&
+				! empty( $old_opt[ $data['mail']['mailer'] ]['user_details']['email'] )
+			) {
+				$data['mail']['from_email'] = $old_opt[ $data['mail']['mailer'] ]['user_details']['email'];
+			}
 		}
 
 		$to_redirect = false;
@@ -582,11 +592,8 @@ class SettingsTab extends PageAbstract {
 
 		$data = apply_filters( 'wp_mail_smtp_settings_tab_process_post', $data );
 
-		// New gmail clients data will be added from new $data.
-		$to_save = Options::array_merge_recursive( $old_opt, $data );
-
 		// All the sanitization is done in Options class.
-		$options->set( $to_save );
+		$options->set( $data, false, false );
 
 		if ( $to_redirect ) {
 			wp_redirect( $_POST['_wp_http_referer'] . '#wp-mail-smtp-setting-row-gmail-authorize' );

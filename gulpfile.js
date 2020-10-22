@@ -58,7 +58,6 @@ var plugin = {
 		'!**/node_modules/**',
 		'!**/node_modules',
 		'!**/*.md',
-		'CHANGELOG.md',
 		'!**/*.sh',
 		'!**/*.rst',
 		'!**/*.xml',
@@ -121,6 +120,7 @@ var plugin = {
 	],
 	pro_files: [
 		'loco.xml',
+		'CHANGELOG.md',
 		'!readme.txt',
 		'!vendor/paragonie/random_compat/dist/**',
 		'!vendor/paragonie/random_compat/dist/'

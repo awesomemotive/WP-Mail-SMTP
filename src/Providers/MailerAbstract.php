@@ -23,18 +23,21 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @var int
 	 */
 	protected $email_sent_code = 200;
+
 	/**
 	 * @since 1.0.0
 	 *
 	 * @var Options
 	 */
 	protected $options;
+
 	/**
 	 * @since 1.0.0
 	 *
 	 * @var MailCatcherInterface
 	 */
 	protected $phpmailer;
+
 	/**
 	 * @since 1.0.0
 	 *
@@ -50,24 +53,45 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @var string
 	 */
 	protected $url = '';
+
 	/**
 	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
 	protected $headers = array();
+
 	/**
 	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
 	protected $body = array();
+
 	/**
 	 * @since 1.0.0
 	 *
 	 * @var mixed
 	 */
 	protected $response = array();
+
+	/**
+	 * The error message recorded when email sending failed and the error can't be processed from the API response.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var string
+	 */
+	protected $error_message = '';
+
+	/**
+	 * Should the email sent by this mailer have its "sent status" verified via its API?
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var bool
+	 */
+	protected $verify_sent_status = false;
 
 	/**
 	 * Mailer constructor.
@@ -269,7 +293,7 @@ abstract class MailerAbstract implements MailerInterface {
 			// Save the error text.
 			$errors = $response->get_error_messages();
 			foreach ( $errors as $error ) {
-				Debug::set( $error );
+				$this->error_message .= $error . PHP_EOL;
 			}
 
 			return;
@@ -342,15 +366,17 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * The error message when email sending failed.
 	 * Should be overwritten when appropriate.
 	 *
 	 * @since 1.2.0
+	 * @since 2.5.0 Return a non-empty error_message attribute.
 	 *
 	 * @return string
 	 */
-	protected function get_response_error() {
+	public function get_response_error() {
 
-		return '';
+		return ! empty( $this->error_message ) ? $this->error_message : '';
 	}
 
 	/**
@@ -460,5 +486,46 @@ abstract class MailerAbstract implements MailerInterface {
 				$this->phpmailer->FromName,
 			],
 		];
+	}
+
+	/**
+	 * Should the email sent by this mailer have its "sent status" verified via its API?
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return bool
+	 */
+	public function should_verify_sent_status() {
+
+		return $this->verify_sent_status;
+	}
+
+	/**
+	 * Verify the "sent status" of the provided email log ID.
+	 * The actual verification background task is triggered in the below action hook.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param int $email_log_id The ID of the email log.
+	 */
+	public function verify_sent_status( $email_log_id ) {
+
+		if ( ! $this->should_verify_sent_status() ) {
+			return;
+		}
+
+		do_action( 'wp_mail_smtp_providers_mailer_verify_sent_status', $email_log_id, $this );
+	}
+
+	/**
+	 * Get the name/slug of the current mailer.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return string
+	 */
+	public function get_mailer_name() {
+
+		return $this->mailer;
 	}
 }

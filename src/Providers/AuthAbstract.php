@@ -77,15 +77,18 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_auth_code( $code ) {
 
 		$options = new PluginOptions();
-		$all     = $options->get_all();
 
 		// To save in DB.
-		$all[ $this->mailer_slug ]['auth_code'] = $code;
+		$updated_settings = [
+			$this->mailer_slug => [
+				'auth_code' => $code,
+			],
+		];
 
 		// To save in currently retrieved options array.
 		$this->options['auth_code'] = $code;
 
-		$options->set( $all );
+		$options->set( $updated_settings, false, false );
 	}
 
 	/**
@@ -98,15 +101,18 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_access_token( $token ) {
 
 		$options = new PluginOptions();
-		$all     = $options->get_all();
 
 		// To save in DB.
-		$all[ $this->mailer_slug ]['access_token'] = $token;
+		$updated_settings = [
+			$this->mailer_slug => [
+				'access_token' => $token,
+			],
+		];
 
 		// To save in currently retrieved options array.
 		$this->options['access_token'] = $token;
 
-		$options->set( $all );
+		$options->set( $updated_settings, false, false );
 	}
 
 	/**
@@ -119,15 +125,18 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_refresh_token( $token ) {
 
 		$options = new PluginOptions();
-		$all     = $options->get_all();
 
 		// To save in DB.
-		$all[ $this->mailer_slug ]['refresh_token'] = $token;
+		$updated_settings = [
+			$this->mailer_slug => [
+				'refresh_token' => $token,
+			],
+		];
 
 		// To save in currently retrieved options array.
 		$this->options['refresh_token'] = $token;
 
-		$options->set( $all );
+		$options->set( $updated_settings, false, false );
 	}
 
 	/**

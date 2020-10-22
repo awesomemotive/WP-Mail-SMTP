@@ -1030,6 +1030,36 @@
 			text-align: center;
 		}
 	}
+
+	.wp-mail-smtp-page-nw-product-edu {
+		h2 {
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.badge {
+			margin: 0 0 2px 7px;
+			vertical-align: middle;
+			width: 40px;
+			height: 17px;
+		}
+
+		.wp-mail-smtp-setting-row-multisite {
+			color: #9a9a9a;
+
+			p.desc {
+				color: #bababa;
+			}
+
+			input[type=checkbox]:disabled {
+				border-color: #aaa;
+			}
+		}
+
+		.wp-mail-smtp-setting-row-no-setting {
+			margin-top: 30px;
+		}
+	}
 }
 
 // Buttons.

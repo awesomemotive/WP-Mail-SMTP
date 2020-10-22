@@ -352,7 +352,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @return string
 	 */
-	protected function get_response_error() {
+	public function get_response_error() { // phpcs:ignore
 
 		$body = (array) wp_remote_retrieve_body( $this->response );
 
@@ -374,6 +374,8 @@ class Mailer extends MailerAbstract {
 					$error_text[] = $error->message . ( ! empty( $extra ) ? ' - ' . $extra : '' );
 				}
 			}
+		} elseif ( ! empty( $this->error_message ) ) {
+			$error_text[] = $this->error_message;
 		}
 
 		return implode( '<br>', array_map( 'esc_textarea', $error_text ) );

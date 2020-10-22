@@ -118,7 +118,7 @@ class Options extends OptionsAbstract {
 			</div>
 			<div class="wp-mail-smtp-setting-field">
 				<input type="text" readonly="readonly" onfocus="this.select();"
-					value="<?php echo esc_attr( Auth::get_plugin_auth_url() ); ?>"
+					value="<?php echo esc_attr( Auth::get_oauth_redirect_url() ); ?>"
 					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect"
 				/>
 				<button type="button" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-light-grey wp-mail-smtp-setting-copy"
@@ -245,7 +245,7 @@ class Options extends OptionsAbstract {
 			return;
 		}
 
-		$old_opt = $options->get_all();
+		$old_opt = $options->get_all_raw();
 
 		foreach ( $old_opt[ $this->get_slug() ] as $key => $value ) {
 			// Unset everything except Client ID and Secret.

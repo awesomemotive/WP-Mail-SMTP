@@ -110,6 +110,8 @@ class Mailer extends MailerAbstract {
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
+			$this->error_message = $e->getMessage();
+
 			Debug::set(
 				'Mailer: Gmail' . "\r\n" .
 				$this->process_exception_message( $e->getMessage() )
@@ -130,6 +132,16 @@ class Mailer extends MailerAbstract {
 	protected function process_response( $response ) {
 
 		$this->response = $response;
+
+		if ( ! method_exists( $this->response, 'getId' ) ) {
+			$this->error_message = esc_html__( 'The response object is invalid (missing getId method).', 'wp-mail-smtp' );
+		} else {
+			$message_id = $this->response->getId();
+
+			if ( empty( $message_id ) ) {
+				$this->error_message = esc_html__( 'The email message ID is missing.', 'wp-mail-smtp' );
+			}
+		}
 
 		do_action( 'wp_mail_smtp_providers_gmail_mailer_process_response', $this->response, $this->phpmailer );
 	}

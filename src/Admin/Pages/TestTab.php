@@ -824,11 +824,9 @@ Lead Developer, WP Mail SMTP';
 				'description' => [
 					'<strong>' . esc_html__( 'Google API Error.', 'wp-mail-smtp' ) . '</strong>',
 					esc_html__( 'Unfortunately, this error can be due to many different reasons.', 'wp-mail-smtp' ),
-				],
-				'steps'       => [
 					sprintf(
 						wp_kses( /* translators: %s - Blog article URL. */
-							__( 'Please <a href="%s" target="_blank" rel="noopener noreferrer">read this article</a> to learn more about what can cause this error and how it can be resolved.', 'wp-mail-smtp' ),
+							__( 'Please <a href="%s" target="_blank" rel="noopener noreferrer">read this article</a> to learn more about what can cause this error and follow the steps below.', 'wp-mail-smtp' ),
 							[
 								'a' => [
 									'href'   => [],
@@ -839,6 +837,10 @@ Lead Developer, WP Mail SMTP';
 						),
 						'https://blog.timekit.io/google-oauth-invalid-grant-nightmare-and-how-to-fix-it-9f4efaf1da35'
 					),
+				],
+				'steps'       => [
+					esc_html__( 'Go to WP Mail SMTP plugin settings page. Click the “Remove Connection” button.', 'wp-mail-smtp' ),
+					esc_html__( 'Then click the “Allow plugin to send emails using your Google account” button and re-enable access.', 'wp-mail-smtp' ),
 				],
 			],
 			// [gmail] - Code was already redeemed.

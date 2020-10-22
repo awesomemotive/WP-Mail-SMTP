@@ -248,10 +248,8 @@ class MiscTab extends PageAbstract {
 			$data['general'][ UsageTracking::SETTINGS_SLUG ] = false;
 		}
 
-		$to_save = Options::array_merge_recursive( $options->get_all(), $data );
-
 		// All the sanitization is done there.
-		$options->set( $to_save );
+		$options->set( $data, false, false );
 
 		WP::add_admin_notice(
 			esc_html__( 'Settings were successfully saved.', 'wp-mail-smtp' ),

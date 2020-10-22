@@ -356,7 +356,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" spellcheck="false" autocomplete="new-password"
 					/>
 					<p class="desc">
-						<?php esc_html_e( 'The password will be stored in plain text. For improved security, we highly recommend using your site\'s WordPress configuration file to set your password.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'The password is encrypted in the database, but for improved security we recommend using your site\'s WordPress configuration file to set your password.', 'wp-mail-smtp' ); ?>
 						<br>
 						<a href="https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/" target="_blank" rel="noopener noreferrer">
 							<strong><?php esc_html_e( 'Learn More', 'wp-mail-smtp' ); ?></strong>

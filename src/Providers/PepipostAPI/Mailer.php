@@ -320,7 +320,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @return string
 	 */
-	protected function get_response_error() {
+	public function get_response_error() {
 
 		$body = (array) wp_remote_retrieve_body( $this->response );
 
@@ -328,7 +328,9 @@ class Mailer extends MailerAbstract {
 		$info    = ! empty( $body['info'] ) ? $body['info'] : '';
 		$message = '';
 
-		if ( is_string( $error ) ) {
+		if ( ! empty( $this->error_message ) ) {
+			$message = $this->error_message;
+		} elseif ( is_string( $error ) ) {
 			$message = $error . ( ( ! empty( $info ) ) ? ' - ' . $info : '' );
 		} elseif ( is_array( $error ) ) {
 			$message = '';

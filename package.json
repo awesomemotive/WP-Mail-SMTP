@@ -1,7 +1,7 @@
 {
   "name": "wp-mail-smtp",
-  "version": "2.4.0",
-  "description": "Reconfigures the wp_mail() function to improve WordPress emails deliverability.",
+  "version": "2.5.0",
+  "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/awesomemotive/wp-mail-smtp/issues"
   },
-  "homepage": "https://github.com/awesomemotive/wp-mail-smtp#readme",
+  "homepage": "https://wpmailsmtp.com",
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.0",

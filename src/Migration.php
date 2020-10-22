@@ -315,7 +315,7 @@ class Migration {
 					$converted['mail']['return_path'] = ( $old_value === 'true' );
 					break;
 				case 'mailer':
-					$converted['mail']['mailer'] = $old_value;
+					$converted['mail']['mailer'] = ! empty( $old_value ) ? $old_value : 'mail';
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
 					$converted['general']['am_notifications_hidden'] = ( isset( $old_value ) && $old_value === 'true' );

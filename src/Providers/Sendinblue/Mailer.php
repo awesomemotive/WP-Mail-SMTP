@@ -318,8 +318,12 @@ class Mailer extends MailerAbstract {
 				$message = $e->getMessage();
 			}
 
+			$this->error_message = $message;
+
 			Debug::set( 'Mailer: Sendinblue' . PHP_EOL . $message );
 		} catch ( \Exception $e ) {
+			$this->error_message = $e->getMessage();
+
 			Debug::set( 'Mailer: Sendinblue' . PHP_EOL . $e->getMessage() );
 
 			return;
@@ -338,6 +342,14 @@ class Mailer extends MailerAbstract {
 	protected function process_response( $response ) {
 
 		$this->response = $response;
+
+		if (
+			is_a( $response, 'WPMailSMTP\Vendor\SendinBlue\Client\Model\CreateSmtpEmail' ) &&
+			method_exists( $response, 'getMessageId' )
+		) {
+			$this->phpmailer->MessageID = $response->getMessageId();
+			$this->verify_sent_status   = true;
+		}
 	}
 
 	/**

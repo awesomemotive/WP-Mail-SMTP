@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.5
-Stable tag: 2.4.0
+Stable tag: 2.5.0
 Requires PHP: 5.5.0
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -218,13 +218,22 @@ By all means please contact us to discuss features or options you'd like to see 
 == Screenshots ==
 
 1. WP Mail SMTP Settings page
-2. Gmail / G Suite settings
-3. Mailgun settings
-4. SendGrid settings
-5. SMTP settings
-6. Send a Test Email
+2. List of mailers
+3. Other SMTP settings
+4. Email Test page
+5. Email Log settings page (Pro)
+6. Email Controls settings page (Pro)
+7. Email Log archive page (Pro)
+8. Email Log single page (Pro)
 
 == Changelog ==
+
+= 2.5.0 - 2020-10-22 =
+* Added: Other SMTP mailer password encryption/decryption.
+* Changed: Gmail mailer suggested steps for `invalid_grant` error on the Settings > Email Test page.
+* Changed: Gmail mailer redirect URI was changed to fix issues with `mod_security` or redirect blocking plugins/solutions.
+* Fixed: Plugin options re-saving with unescaped magic quote characters.
+* Fixed: SMTP.com mailer email delivery for certain SMTP servers if attachment's encoded string is too long.
 
 = 2.4.0 - 2020-09-17 =
 * Added: Prefix all 3rd-party libraries to avoid compatibility issues with other plugins using different versions of the same libraries.

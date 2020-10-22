@@ -367,6 +367,27 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * We might need to do something after the email was sent to the API.
+	 * In this method we preprocess the response from the API.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed $response Response data.
+	 */
+	protected function process_response( $response ) {
+
+		parent::process_response( $response );
+
+		if (
+			! is_wp_error( $response ) &&
+			! empty( $this->response['body']->id )
+		) {
+			$this->phpmailer->MessageID = $this->response['body']->id;
+			$this->verify_sent_status   = true;
+		}
+	}
+
+	/**
 	 * Whether the email is sent or not.
 	 * We basically check the response code from a request to provider.
 	 * Might not be 100% correct, not guarantees that email is delivered.
@@ -392,6 +413,8 @@ class Mailer extends MailerAbstract {
 				esc_html__( 'This could point to an incorrect Domain Name in the plugin settings.', 'wp-mail-smtp' ) . PHP_EOL .
 				esc_html__( 'Please check the WP Mail SMTP plugin settings and make sure the Mailgun Domain Name setting is correct.', 'wp-mail-smtp' );
 
+			$this->error_message = $message;
+
 			Debug::set( $message );
 
 			return false;
@@ -407,7 +430,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @return string
 	 */
-	protected function get_response_error() {
+	public function get_response_error() {
 
 		$body = (array) wp_remote_retrieve_body( $this->response );
 
@@ -419,6 +442,8 @@ class Mailer extends MailerAbstract {
 			} else {
 				$error_text[] = \json_encode( $body['message'] );
 			}
+		} elseif ( ! empty( $this->error_message ) ) {
+			$error_text[] = $this->error_message;
 		} elseif ( ! empty( $body[0] ) ) {
 			if ( is_string( $body[0] ) ) {
 				$error_text[] = $body[0];

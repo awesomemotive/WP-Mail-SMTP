@@ -1,5 +1,7 @@
+.idea/
 /build/
 node_modules/
 /vendor/
 /vendor_prefixed/
 /php-scoper/vendor/
+.phpcs-cache

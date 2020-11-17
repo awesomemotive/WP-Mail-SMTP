@@ -77,18 +77,16 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_auth_code( $code ) {
 
 		$options = new PluginOptions();
+		$all     = $options->get_all();
 
 		// To save in DB.
-		$updated_settings = [
-			$this->mailer_slug => [
-				'auth_code' => $code,
-			],
-		];
+		$all[ $this->mailer_slug ]['auth_code'] = $code;
 
 		// To save in currently retrieved options array.
 		$this->options['auth_code'] = $code;
 
-		$options->set( $updated_settings, false, false );
+		// NOTE: These options need to be saved by overwriting all options, because WP automatic updates can cause an issue: GH #575!
+		$options->set( $all, false, true );
 	}
 
 	/**
@@ -101,18 +99,16 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_access_token( $token ) {
 
 		$options = new PluginOptions();
+		$all     = $options->get_all();
 
 		// To save in DB.
-		$updated_settings = [
-			$this->mailer_slug => [
-				'access_token' => $token,
-			],
-		];
+		$all[ $this->mailer_slug ]['access_token'] = $token;
 
 		// To save in currently retrieved options array.
 		$this->options['access_token'] = $token;
 
-		$options->set( $updated_settings, false, false );
+		// NOTE: These options need to be saved by overwriting all options, because WP automatic updates can cause an issue: GH #575!
+		$options->set( $all, false, true );
 	}
 
 	/**
@@ -125,18 +121,16 @@ abstract class AuthAbstract implements AuthInterface {
 	protected function update_refresh_token( $token ) {
 
 		$options = new PluginOptions();
+		$all     = $options->get_all();
 
 		// To save in DB.
-		$updated_settings = [
-			$this->mailer_slug => [
-				'refresh_token' => $token,
-			],
-		];
+		$all[ $this->mailer_slug ]['refresh_token'] = $token;
 
 		// To save in currently retrieved options array.
 		$this->options['refresh_token'] = $token;
 
-		$options->set( $updated_settings, false, false );
+		// NOTE: These options need to be saved by overwriting all options, because WP automatic updates can cause an issue: GH #575!
+		$options->set( $all, false, true );
 	}
 
 	/**

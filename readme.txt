@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.5
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 Requires PHP: 5.5.0
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -227,6 +227,10 @@ By all means please contact us to discuss features or options you'd like to see 
 8. Email Log single page (Pro)
 
 == Changelog ==
+
+= 2.5.1 - 2020-10-28 =
+* The automatic updates issue with Gmail mailer token refresh.
+* The 'wp-amil-smtp' typo in a plugin text-domain and a HTML class.
 
 = 2.5.0 - 2020-10-22 =
 * Added: Other SMTP mailer password encryption/decryption.

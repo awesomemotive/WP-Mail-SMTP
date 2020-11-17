@@ -870,7 +870,11 @@ class Options {
 		if ( $once ) {
 			add_option( self::META_KEY, $options, '', 'no' ); // Do not autoload these options.
 		} else {
-			update_option( self::META_KEY, $options, 'no' );
+			if ( is_multisite() && WP::use_global_plugin_settings() ) {
+				update_blog_option( get_main_site_id(), self::META_KEY, $options );
+			} else {
+				update_option( self::META_KEY, $options, 'no' );
+			}
 		}
 
 		// Now we need to re-cache values.

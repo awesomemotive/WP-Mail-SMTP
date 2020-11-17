@@ -59,7 +59,7 @@ class Education {
 
 		printf(
 			'<div id="wp-mail-smtp-notice-bar">
-				<div class="wp-amil-smtp-notice-bar-container">
+				<div class="wp-mail-smtp-notice-bar-container">
 				<span class="wp-mail-smtp-notice-bar-message">%s</span>
 				<button type="button" class="dismiss" title="%s" />
 				</div>

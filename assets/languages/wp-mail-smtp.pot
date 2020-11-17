@@ -1,19 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 2.5.0\n"
+"Project-Id-Version: WP Mail SMTP 2.5.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-10-22T11:59:56+03:00\n"
+"POT-Creation-Date: 2020-11-17T05:56:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wp-mail-smtp\n"
 
 #. Plugin Name of the plugin
-msgid "WP Mail SMTP Pro"
+#: src/Admin/Area.php:206
+#: src/Admin/Area.php:207
+#: src/Admin/Area.php:252
+#: src/Admin/Area.php:253
+#: src/SiteHealth.php:40
+msgid "WP Mail SMTP"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -54,14 +59,6 @@ msgstr ""
 msgid "Thanks for using WP Mail SMTP! To complete the plugin setup and start sending emails, <strong>please select and configure your <a href=\"%s\">Mailer</a></strong>."
 msgstr ""
 
-#: src/Admin/Area.php:206
-#: src/Admin/Area.php:207
-#: src/Admin/Area.php:252
-#: src/Admin/Area.php:253
-#: src/SiteHealth.php:40
-msgid "WP Mail SMTP"
-msgstr ""
-
 #: src/Admin/Area.php:217
 #: src/Admin/Area.php:218
 #: src/Admin/Area.php:956
@@ -94,6 +91,10 @@ msgstr ""
 
 #: src/Admin/Area.php:295
 msgid "Pro+ badge icon"
+msgstr ""
+
+#: src/Admin/Area.php:298
+msgid "Simply enable network-wide settings and every site on your network will inherit the same SMTP settings. Save time and only configure your SMTP provider once."
 msgstr ""
 
 #: src/Admin/Area.php:305

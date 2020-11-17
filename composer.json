@@ -33,6 +33,8 @@
     "paragonie/sodium_compat": "^1.13",
     "sendinblue/api-v3-sdk": "6.4.0",
     "symfony/polyfill-intl-idn": "1.17.1",
+    "symfony/polyfill-mbstring": "1.19.0",
+    "symfony/polyfill-php72": "1.19.0",
     "wikimedia/composer-merge-plugin": "1.4.1",
     "woocommerce/action-scheduler": "3.1.6"
   },

@@ -131,7 +131,7 @@ class SettingsTab extends PageAbstract {
 
 						<?php if ( empty( $disabled_email ) ) : ?>
 							<p class="desc">
-								<?php esc_html_e( 'The email address which emails are sent from.', 'wp-mail-smtp' ); ?><br/>
+								<?php esc_html_e( 'The email address that emails are sent from.', 'wp-mail-smtp' ); ?><br/>
 								<?php esc_html_e( 'If you\'re using an email provider (Yahoo, Outlook.com, etc) this should be your email address for that account.', 'wp-mail-smtp' ); ?>
 							</p>
 							<p class="desc">
@@ -192,7 +192,7 @@ class SettingsTab extends PageAbstract {
 
 						<?php if ( empty( $disabled_name ) ) : ?>
 							<p class="desc">
-								<?php esc_html_e( 'The name which emails are sent from.', 'wp-mail-smtp' ); ?>
+								<?php esc_html_e( 'The name that emails are sent from.', 'wp-mail-smtp' ); ?>
 							</p>
 						<?php endif; ?>
 					</div>
@@ -239,7 +239,7 @@ class SettingsTab extends PageAbstract {
 
 					<p class="desc">
 						<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
-						<?php esc_html_e( 'If unchecked, bounce messages may be lost. Some providers may ignore this option.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'If unchecked, bounce messages may be lost.', 'wp-mail-smtp' ); ?>
 					</p>
 				</div>
 			</div>
@@ -400,6 +400,19 @@ class SettingsTab extends PageAbstract {
 			?>
 		</p>
 
+		<hr>
+
+		<p>
+			<?php esc_html_e( 'Already purchased? Simply enter your license key below to connect with WP Mail SMTP Pro!', 'wp-mail-smtp' ); ?>
+		</p>
+
+		<p>
+			<input type="password" id="wp-mail-smtp-setting-upgrade-license-key" class="wp-mail-smtp-not-form-input" placeholder="<?php esc_attr_e( 'Paste license key here', 'wp-mail-smtp' ); ?>" value="" />
+			<button type="button" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange" id="wp-mail-smtp-setting-upgrade-license-button">
+				<?php esc_attr_e( 'Connect', 'wp-mail-smtp' ); ?>
+			</button>
+		</p>
+
 		<?php
 	}
 
@@ -460,7 +473,7 @@ class SettingsTab extends PageAbstract {
 			</p>
 
 			<p>
-				<?php esc_html_e( 'We know that you will truly love WP Mail SMTP. It\'s used by over 1,000,000 websites.', 'wp-mail-smtp' ); ?>
+				<?php esc_html_e( 'We know that you will truly love WP Mail SMTP. It\'s used by over 2,000,000 websites.', 'wp-mail-smtp' ); ?>
 			</p>
 
 			<p><strong><?php esc_html_e( 'Pro Features:', 'wp-mail-smtp' ); ?></strong></p>
@@ -469,16 +482,18 @@ class SettingsTab extends PageAbstract {
 				<ul>
 					<li><?php esc_html_e( 'Manage Notifications - control which emails your site sends', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Email Logging - keep track of every email sent from your site', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Multisite Support - Network settings for easy management', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Office 365 - send emails using your Office 365 account', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Amazon SES - harness the power of AWS', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Outlook.com - send emails using your Outlook.com account', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Zoho Mail - use your Zoho Mail account', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Access to our world class support team', 'wp-mail-smtp' ); ?></li>
 				</ul>
 				<ul>
 					<li><?php esc_html_e( 'White Glove Setup - sit back and relax while we handle everything for you', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Install WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Set up domain name verification (DNS)', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Configure Mailgun service', 'wp-mail-smtp' ); ?></li>
+					<li class="arrow-right"><?php esc_html_e( 'Configure SMTP.com or Mailgun service', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Set up WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Test and verify email delivery', 'wp-mail-smtp' ); ?></li>
 				</ul>

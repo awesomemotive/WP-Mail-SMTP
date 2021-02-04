@@ -32,7 +32,7 @@ class Crypto {
 			return WPMS_CRYPTO_KEY;
 		}
 
-		$secret_key = get_option( 'wp_mail_smtp_mail_key' );
+		$secret_key = apply_filters( 'wp_mail_smtp_helpers_crypto_get_secret_key', get_option( 'wp_mail_smtp_mail_key' ) );
 
 		// If we already have the secret, send it back.
 		if ( false !== $secret_key ) {

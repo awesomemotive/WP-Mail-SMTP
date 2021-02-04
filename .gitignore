@@ -5,3 +5,5 @@ node_modules/
 /vendor_prefixed/
 /php-scoper/vendor/
 .phpcs-cache
+*.hot-update.json
+*.hot-update.js

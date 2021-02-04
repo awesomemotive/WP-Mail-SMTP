@@ -103,6 +103,7 @@ class Area {
 
 		( new Review() )->hooks();
 		( new Education() )->hooks();
+		( new SetupWizard() )->hooks();
 	}
 
 	/**

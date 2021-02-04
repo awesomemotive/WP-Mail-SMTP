@@ -94,7 +94,7 @@ $config = [
 		Finder::create()
 			->files()
 			->in( 'vendor/symfony/polyfill-mbstring' )
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+			->name( [ '*.php', '*.php8', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
 			->in( 'vendor/symfony/polyfill-php72' )
@@ -422,6 +422,7 @@ $config = [
 	 */
 	'files-whitelist'            => [
 		'../vendor/symfony/polyfill-mbstring/bootstrap.php',
+		'../vendor/symfony/polyfill-mbstring/Resources/mb_convert_variables.php8',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap.php',
 		'../vendor/symfony/polyfill-php72/bootstrap.php',
 	],

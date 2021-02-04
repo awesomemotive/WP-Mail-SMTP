@@ -27,7 +27,10 @@ var plugin = {
 		'!LICENSE',
 		'!assets/**/*.scss',
 		'!assets/**/*.css',
+		'assets/vue/**/*.css',
 		'assets/**/*.min.css',
+		'!vue-app/**',
+		'!vue-app/',
 		'!assets/wporg/**',
 		'!assets/wporg',
 		'!**/.github/**',
@@ -160,6 +163,8 @@ var plugin = {
 		"!build/**",
 		"!node_modules/**",
 		"!php-scoper/**",
+		"!vue-app/**",
+		"!assets/vue/**",
 		"!vendor/**",
 		"!vendor_prefixed/**"
 	]
@@ -237,7 +242,7 @@ gulp.task( 'img', function () {
  */
 gulp.task( 'pot:lite', function ( cb ) {
 	exec(
-		'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,.build,.php-scoper,.vendor,.vendor-prefixed"',
+		'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -247,7 +252,7 @@ gulp.task( 'pot:lite', function ( cb ) {
 } );
 gulp.task( 'pot:pro', function ( cb ) {
 	exec(
-		'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,.build,.php-scoper,.vendor,.vendor-prefixed"',
+		'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -417,6 +422,10 @@ gulp.task( 'prefix_outside_files', function () {
 			.pipe( replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/' ) ),
 
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/Resources/mb_convert_variables.php8' ], { allowEmpty: true } )
+			.pipe( replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/Resources/' ) ),
+
 		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php' ], { allowEmpty: true } )
 			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Idn/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Idn' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-idn/' ) ),
@@ -442,18 +451,53 @@ gulp.task( 'php:min72', function ( cb ) {
 } );
 
 /**
+ * Vue app build tasks.
+ */
+gulp.task( 'vue:install', function ( cb ) {
+	exec(
+		'cd vue-app && npm install',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
+} );
+gulp.task( 'vue:build', function ( cb ) {
+	exec(
+		'cd vue-app && npm run build-app',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
+} );
+gulp.task( 'vue:translations', function ( cb ) {
+	exec(
+		'cd vue-app && npx pot-to-php languages/wp-mail-smtp-vue.pot ../assets/languages/wp-mail-smtp-vue.php wp-mail-smtp',
+		function ( err, stdout, stderr ) {
+			console.log( stdout );
+			console.log( stderr );
+			cb( err );
+		}
+	);
+} );
+gulp.task( 'vue', gulp.series( 'vue:install', 'vue:build', 'vue:translations' ) );
+
+/**
  * Task: build.
  */
-gulp.task( 'build:assets', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot' ) );
-gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
-gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build:assets', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot' ) );
+gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
+gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build:test', gulp.series( 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
-gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 
 // Build tasks without PHP composer install step
 // The composer install should be done on PHP 5.6 before running below commands:
 // `composer build-lite-php5` or `composer build-pro-php5`.
-gulp.task( 'build:lite_no_composer', gulp.series( 'php:min72', gulp.parallel( 'css', 'js', 'img' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:min72', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
 gulp.task( 'build:pro_no_composer', gulp.series( 'php:min72', 'build:assets', 'rename:pro', 'composer:prefix', 'zip:pro' ) );
 
 /**

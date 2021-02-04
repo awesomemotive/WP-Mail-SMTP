@@ -26,8 +26,8 @@ class Options extends OptionsAbstract {
 				'title'       => esc_html__( 'SendGrid', 'wp-mail-smtp' ),
 				'description' => sprintf(
 					wp_kses(
-						/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
-						__( '%1$sSendGrid%2$s is one of the leading transactional email services, sending over 35 billion emails every month. They provide users 100 free emails per day.<br><br>Read our %3$sSendGrid documentation%4$s to learn how to set up SendGrid and improve your email deliverability.', 'wp-mail-smtp' ),
+						/* translators: %1$s - URL to sendgrid.com; %2$s - URL to Sendgrid documentation on wpmailsmtp.com */
+						__( '<a href="%1$s" target="_blank" rel="noopener noreferrer">SendGrid</a> is one of the leading transactional email services, sending over 35 billion emails every month. They provide users with 100 free emails per day.<br><br>Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">SendGrid documentation</a> to learn how to set up SendGrid and improve your email deliverability.', 'wp-mail-smtp' ),
 						[
 							'br' => [],
 							'a'  => [
@@ -37,10 +37,8 @@ class Options extends OptionsAbstract {
 							],
 						]
 					),
-					'<a href="https://sendgrid.com" target="_blank" rel="noopener noreferrer">',
-					'</a>',
-					'<a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/" target="_blank" rel="noopener noreferrer">',
-					'</a>'
+					'https://sendgrid.com',
+					'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/'
 				),
 				'supports'    => [
 					'from_email'       => true,
@@ -93,6 +91,39 @@ class Options extends OptionsAbstract {
 						/* translators: %s - SendGrid access level. */
 						esc_html__( 'To send emails you will need only a %s access level for this API key.', 'wp-mail-smtp' ),
 						'<code>Mail Send</code>'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<!-- Sending Domain -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-domain" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain"><?php esc_html_e( 'Sending Domain', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][domain]" type="text"
+					   value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'domain' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'domain' ) ? 'disabled' : ''; ?>
+					   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain" spellcheck="false"
+				/>
+				<p class="desc">
+					<?php
+					printf(
+						wp_kses(
+							/* translators: %s - URL to SendGrid documentation on wpmailsmtp.com */
+							__( 'Please input the sending domain/subdomain you configured in your SendGrid dashboard. More information can be found in our <a href="%s" target="_blank" rel="noopener noreferrer">SendGrid documentation</a>.', 'wp-mail-smtp' ),
+							[
+								'br' => [],
+								'a'  => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
+						),
+						'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/#setup'
 					);
 					?>
 				</p>

@@ -409,9 +409,7 @@ class Mailer extends MailerAbstract {
 			! array_key_exists( 'id', (array) $this->response['body'] )
 		) {
 			$message = 'Mailer: Mailgun' . PHP_EOL .
-				esc_html__( 'Mailgun API request was successful, but it could not queue the email for delivery.', 'wp-mail-smtp' ) . PHP_EOL .
-				esc_html__( 'This could point to an incorrect Domain Name in the plugin settings.', 'wp-mail-smtp' ) . PHP_EOL .
-				esc_html__( 'Please check the WP Mail SMTP plugin settings and make sure the Mailgun Domain Name setting is correct.', 'wp-mail-smtp' );
+				esc_html__( 'It looks like there\'s most likely a setup issue. Please check your WP Mail SMTP settings to see if any details might be missing or incorrect.', 'wp-mail-smtp' );
 
 			$this->error_message = $message;
 

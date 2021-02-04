@@ -25,8 +25,8 @@ class Options extends OptionsAbstract {
 				'title'       => esc_html__( 'Mailgun', 'wp-mail-smtp' ),
 				'description' => sprintf(
 					wp_kses(
-						/* translators: %1$s - opening link tag; %2$s - closing link tag; %3$s - opening link tag; %4$s - closing link tag. */
-						__( '%1$sMailgun%2$s is one of the leading transactional email services trusted by over 150,000+ businesses. They provide 5,000 free emails per month for 3 months.<br><br>Read our %3$sMailgun documentation%4$s to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
+						/* translators: %1$s - URL to mailgun.com; %2$s - URL to Mailgun documentation on wpmailsmtp.com */
+						__( '<a href="%1$s" target="_blank" rel="noopener noreferrer">Mailgun</a> is one of the leading transactional email services trusted by over 150,000+ businesses. They provide 5,000 free emails per month for 3 months.<br><br>Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Mailgun documentation</a> to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(
@@ -36,10 +36,8 @@ class Options extends OptionsAbstract {
 							),
 						)
 					),
-					'<a href="https://www.mailgun.com" target="_blank" rel="noopener noreferrer">',
-					'</a>',
-					'<a href="https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/" target="_blank" rel="noopener noreferrer">',
-					'</a>'
+					'https://www.mailgun.com',
+					'https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/'
 				),
 			)
 		);

@@ -302,4 +302,36 @@ class WP {
 
 		return ! empty( $main_site_options['general']['network_wide'] );
 	}
+
+	/**
+	 * Returns Jed-formatted localization data.
+	 * This code was taken from a function removed from WP core: `wp_get_jed_locale_data`.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param string $domain Translation domain.
+	 *
+	 * @return array
+	 */
+	public static function get_jed_locale_data( $domain ) {
+
+		$translations = get_translations_for_domain( $domain );
+
+		$locale = array(
+			'' => array(
+				'domain' => $domain,
+				'lang'   => is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
+			),
+		);
+
+		if ( ! empty( $translations->headers['Plural-Forms'] ) ) {
+			$locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
+		}
+
+		foreach ( $translations->entries as $msgid => $entry ) {
+			$locale[ $msgid ] = $entry->translations;
+		}
+
+		return $locale;
+	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
@@ -34,12 +34,18 @@
     "husky": "^4.2.3",
     "lint-diff": "file:.packages/npm/lint-diff",
     "merge-stream": "^2.0.0",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "yargs": "^13.3.2",
+    "yargs-parser": "^13.1.2"
+  },
+  "engines": {
+    "node": ">=14.15.3",
+    "npm": ">=6.14.9"
   },
   "scripts": {
     "gulp": "node ./node_modules/gulp/bin/gulp.js",
     "lint-diff": "cross-env node node_modules/lint-diff/dist/lint-diff.js",
-    "phpcs-diff": "cross-env vendor/bin/phpcs-diff",
+    "phpcs-diff": "cross-env php vendor/bin/phpcs-diff",
     "cs": "run-s --silent --continue-on-error lint-diff phpcs-diff"
   },
   "husky": {

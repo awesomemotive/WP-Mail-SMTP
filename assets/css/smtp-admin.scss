@@ -3,6 +3,7 @@
 @import "general";
 @import "confirm";
 @import "education";
+@import "loader";
 
 // Screen options are hidden on load, then made visible with JS, to
 // prevent it from "jumping".
@@ -615,6 +616,10 @@
 			@include media("<tablet") {
 				margin: 0;
 			}
+
+			hr {
+				margin: 20px 0;
+			}
 		}
 
 		.wp-mail-smtp-submit {
@@ -1060,6 +1065,15 @@
 			margin-top: 30px;
 		}
 	}
+
+	.notice blockquote {
+		margin-left: 0;
+		padding: 2px;
+
+		pre {
+			margin: 0;
+		}
+	}
 }
 
 // Buttons.
@@ -1177,6 +1191,63 @@
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #395360;
+		}
+	}
+}
+
+// Domain Checker Results section on Email Test tab.
+#wp-mail-smtp-domain-check-details {
+	h2 {
+		color: #444;
+		font-size: 20px;
+		line-height: 24px;
+		font-weight: 700;
+		margin: 28px 0 23px;
+	}
+
+	.wp-mail-smtp-domain-check-details-check-list {
+		&-item {
+			padding: 25px 0 14px;
+			border-top: 1px solid #E4E4E4;
+			display: flex;
+
+			&-icon {
+				width: 18px;
+				height: 16px;
+				margin-right: 10px;
+			}
+
+			&-content {
+				h3 {
+					text-transform: uppercase;
+					font-weight: 500;
+					font-size: 14px;
+					line-height: 17px;
+					color: #444444;
+					margin: 0 0 4px 0;
+				}
+
+				p {
+					color: #777777;
+					font-size: 14px;
+					line-height: 20px;
+					margin: 0 0 10px 0;
+				}
+			}
+		}
+	}
+}
+
+// Email Test submit button loader.
+.wp-mail-smtp-tab-test {
+	#email-test-form {
+		.wp-mail-smtp-btn {
+			min-width: 95px;
+		}
+
+		.wp-mail-smtp-loading {
+			display: none;
+			margin-bottom: -2px;
 		}
 	}
 }

@@ -26,7 +26,7 @@ class Options extends OptionsAbstract {
 				'description' => sprintf(
 					wp_kses(
 						/* translators: %s - URL to SMTP documentation. */
-						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services as well as troubleshooting tips, check out our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP documentation</a>.', 'wp-mail-smtp' ),
+						__( 'Use the SMTP details provided by your hosting provider or email service.<br><br>To see recommended settings for the popular services, as well as troubleshooting tips, check out our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP documentation</a>.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(

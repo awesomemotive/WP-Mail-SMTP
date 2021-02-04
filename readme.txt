@@ -2,8 +2,8 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
-Tested up to: 5.5
-Stable tag: 2.5.1
+Tested up to: 5.6
+Stable tag: 2.6.0
 Requires PHP: 5.5.0
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -12,11 +12,13 @@ Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendG
 
 ###  WordPress Mail SMTP Plugin
 
-Having problems with your WordPress site not sending emails? You're not alone. Over 1 million websites use WP Mail SMTP to send their emails reliably.
+Having problems with your WordPress site not sending emails? You're not alone. Over 2 million websites use WP Mail SMTP to send their emails reliably.
 
 Our goal is to make email deliverability easy and reliable. We want to ensure your emails reach the inbox.
 
 WP Mail SMTP fixes your email deliverability by reconfiguring WordPress to use a proper SMTP provider when sending emails.
+
+Best of all, our easy-to-use Setup Wizard and detailed documentation guide you through the process.
 
 = What is SMTP? =
 
@@ -134,7 +136,7 @@ We hope that you find WP Mail SMTP plugin helpful!
 
 ### WP Mail SMTP PRO
 
-In addition to native Microsoft and Amazon SES integrations, WP Mail SMTP Pro provides access to many other powerful features and services.
+In addition to native Microsoft, Amazon SES, and Zoho Mail integrations, WP Mail SMTP Pro provides access to many other powerful features and services.
 
 <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">Click here to purchase WP Mail SMTP Pro now!</a>
 
@@ -146,6 +148,10 @@ Email Logging lets you log and view all emails sent from your site. Email logs a
 
 The Manage Notification feature gives you full control over which email notifications WordPress sends. This means you can disable different WordPress notification emails. Don't want to receive emails when new users are created? No problem, turn it off.
 
+= WordPress Multisite Network Settings =
+
+For users running a multisite network, our network settings provide a centralized location to easily configure your SMTP settings for all sites, saving you time.
+
 = Expert Support =
 
 We provide <a href="https://wordpress.org/support/topic/wp-mail-smtp-support-policy/">limited support</a> for the WP Mail SMTP plugin on the WordPress.org forums. Access to our world class one-on-one email support is available to <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">WP Mail SMTP Pro</a> users.
@@ -154,7 +160,7 @@ We provide <a href="https://wordpress.org/support/topic/wp-mail-smtp-support-pol
 
 Our White Glove Setup service is a great option that anyone can benefit from. Whether you don't have the time or maybe you feel a bit in over your head - we've got you covered.
 
-You can sit back and relax while we set up everything for you. White glove setup includes WP Mail SMTP plugin installation and setup, configuration adjustments to your DNS for proper email domain name verification, Mailgun setup, and final testing to confirm everything is passing with flying colors.
+You can sit back and relax while we set up everything for you. White glove setup includes WP Mail SMTP plugin installation and setup, configuration adjustments to your DNS for proper email domain name verification, SMTP.com or Mailgun setup, and final testing to confirm everything is passing with flying colors.
 
 ### Security
 
@@ -220,17 +226,24 @@ By all means please contact us to discuss features or options you'd like to see 
 1. WP Mail SMTP Settings page
 2. List of mailers
 3. Other SMTP settings
-4. Email Test page
-5. Email Log settings page (Pro)
-6. Email Controls settings page (Pro)
-7. Email Log archive page (Pro)
-8. Email Log single page (Pro)
+4. Setup Wizard - Select your mailer
+5. Setup Wizard - Example mailer settings
+6. Email Test page
+7. Email Log settings page (Pro)
+8. Email Controls settings page (Pro)
+9. Email Log archive page (Pro)
+10. Email Log single page (Pro)
 
 == Changelog ==
 
+= 2.6.0 - 2020-02-04 =
+* Added: New plugin Setup Wizard.
+* Added: SendGrid Invalid API key error message and mitigation steps on the Email Test page.
+* Fixed: PHP 8 support.
+
 = 2.5.1 - 2020-10-28 =
-* The automatic updates issue with Gmail mailer token refresh.
-* The 'wp-amil-smtp' typo in a plugin text-domain and a HTML class.
+* Fixed: The automatic updates issue with Gmail mailer token refresh.
+* Fixed: The 'wp-amil-smtp' typo in a plugin text-domain and a HTML class.
 
 = 2.5.0 - 2020-10-22 =
 * Added: Other SMTP mailer password encryption/decryption.

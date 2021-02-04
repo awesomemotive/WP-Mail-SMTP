@@ -29,7 +29,7 @@ class Options extends OptionsAbstract {
 
 		$description = sprintf(
 			wp_kses( /* translators: %1$s - URL to sendinblue.com site. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is our recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day.', 'wp-mail-smtp' ) .
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is a recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure.<br><br>Sendinblue provides users 300 free emails per day.', 'wp-mail-smtp' ) .
 				'<br><br>' .
 				/* translators: %2$s - URL to wpmailsmtp.com doc. */
 				__( 'Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a> to learn how to configure Sendinblue and improve your email deliverability.', 'wp-mail-smtp' ),
@@ -116,6 +116,39 @@ class Options extends OptionsAbstract {
 						'<a href="https://account.sendinblue.com/advanced/api" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get v3 API Key', 'wp-mail-smtp' ) .
 						'</a>'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<!-- Sending Domain -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-domain" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain"><?php esc_html_e( 'Sending Domain', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][domain]" type="text"
+					   value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'domain' ) ); ?>"
+					<?php echo $this->options->is_const_defined( $this->get_slug(), 'domain' ) ? 'disabled' : ''; ?>
+					   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain" spellcheck="false"
+				/>
+				<p class="desc">
+					<?php
+					printf(
+						wp_kses(
+							/* translators: %s - URL to Sendinblue documentation on wpmailsmtp.com */
+							__( 'Please input the sending domain/subdomain you configured in your Sendinblue dashboard. More information can be found in our <a href="%s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a>.', 'wp-mail-smtp' ),
+							[
+								'br' => [],
+								'a'  => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
+						),
+						'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp#setup-smtp'
 					);
 					?>
 				</p>

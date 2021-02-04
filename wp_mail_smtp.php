@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 2.5.1
+ * Version: 2.6.0
  * Requires at least: 4.9
  * Requires PHP: 5.5
  * Plugin URI: https://wpmailsmtp.com/
@@ -15,7 +15,7 @@
 
 /**
  * @author    WPForms
- * @copyright WPForms, 2007-20, All Rights Reserved
+ * @copyright WPForms, 2007-21, All Rights Reserved
  * This code is released under the GPL licence version 3 or later, available here
  * https://www.gnu.org/licenses/gpl.txt
  */
@@ -46,6 +46,12 @@ define( 'WPMS_SET_RETURN_PATH', true ); // Sets $phpmailer->Sender if true, rele
 // Recommended mailers.
 define( 'WPMS_SMTPCOM_API_KEY', '' );
 define( 'WPMS_SMTPCOM_CHANNEL', '' );
+define( 'WPMS_SENDINBLUE_API_KEY', '' );
+define( 'WPMS_SENDINBLUE_DOMAIN', '' );
+
+define( 'WPMS_ZOHO_DOMAIN', '' );
+define( 'WPMS_ZOHO_CLIENT_ID', '' );
+define( 'WPMS_ZOHO_CLIENT_SECRET', '' );
 
 define( 'WPMS_PEPIPOST_API_KEY', '' );
 
@@ -205,7 +211,7 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '2.5.1' );
+	define( 'WPMS_PLUGIN_VER', '2.6.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.5.0' );

@@ -76,12 +76,14 @@ class Auth extends AuthAbstract {
 	 * @since 1.0.0
 	 * @since 1.5.0 Add ability to apply custom options to the client via a filter.
 	 *
+	 * @param bool $force If the client should be forcefully reinitialized.
+	 *
 	 * @return Google_Client
 	 */
-	public function get_client() {
+	public function get_client( $force = false ) { // phpcs:ignore
 
 		// Doesn't load client twice + gives ability to overwrite.
-		if ( ! empty( $this->client ) ) {
+		if ( ! empty( $this->client ) && ! $force ) {
 			return $this->client;
 		}
 
@@ -181,8 +183,17 @@ class Auth extends AuthAbstract {
 	 */
 	public function process() {
 
+		$redirect_url         = wp_mail_smtp()->get_admin()->get_admin_page_url();
+		$is_setup_wizard_auth = ! empty( $this->options['is_setup_wizard_auth'] );
+
+		if ( $is_setup_wizard_auth ) {
+			$this->update_is_setup_wizard_auth( false );
+
+			$redirect_url = \WPMailSMTP\Admin\SetupWizard::get_site_url() . '#/step/configure_mailer/gmail';
+		}
+
 		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) { // phpcs:ignore
-			wp_safe_redirect( wp_mail_smtp()->get_admin()->get_admin_page_url() );
+			wp_safe_redirect( $redirect_url );
 			exit;
 		}
 
@@ -195,7 +206,7 @@ class Auth extends AuthAbstract {
 				add_query_arg(
 					'error',
 					'google_no_clients',
-					wp_mail_smtp()->get_admin()->get_admin_page_url()
+					$redirect_url
 				)
 			);
 			exit;
@@ -217,7 +228,7 @@ class Auth extends AuthAbstract {
 				add_query_arg(
 					'error',
 					'google_' . $error,
-					wp_mail_smtp()->get_admin()->get_admin_page_url()
+					$redirect_url
 				)
 			);
 			exit;
@@ -247,17 +258,36 @@ class Auth extends AuthAbstract {
 				add_query_arg(
 					'error',
 					'google_no_code_scope',
-					wp_mail_smtp()->get_admin()->get_admin_page_url()
+					$redirect_url
 				)
 			);
 			exit;
+		}
+
+		if ( $is_setup_wizard_auth ) {
+			Debug::clear();
+
+			$this->get_client( true );
+
+			$error = Debug::get_last();
+
+			if ( ! empty( $error ) ) {
+				wp_safe_redirect(
+					add_query_arg(
+						'error',
+						'google_unsuccessful_oauth',
+						$redirect_url
+					)
+				);
+				exit;
+			}
 		}
 
 		wp_safe_redirect(
 			add_query_arg(
 				'success',
 				'google_site_linked',
-				wp_mail_smtp()->get_admin()->get_admin_page_url()
+				$redirect_url
 			)
 		);
 		exit;

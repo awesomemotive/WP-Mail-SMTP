@@ -17,7 +17,7 @@ class Migration {
 	 *
 	 * @since 2.1.0
 	 */
-	const VERSION = 2;
+	const VERSION = 3;
 
 	/**
 	 * Option key where we save the current migration version.
@@ -214,6 +214,33 @@ class Migration {
 		}
 
 		$this->update_db_ver( 2 );
+	}
+
+	/**
+	 * Migration to 2.6.0.
+	 * Cancel all recurring ActionScheduler tasks, so they will be newly created and no longer
+	 * cause PHP fatal error on PHP 8 (because of the named parameter 'tasks_meta_id').
+	 *
+	 * @since 2.6.0
+	 */
+	private function migrate_to_3() {
+
+		$this->maybe_required_older_migrations( 2 );
+
+		$tasks = [];
+		$ut    = new UsageTracking\UsageTracking();
+
+		if ( $ut->is_enabled() ) {
+			$tasks[] = '\WPMailSMTP\UsageTracking\SendUsageTask';
+		}
+
+		$recurring_tasks = apply_filters( 'wp_mail_smtp_migration_cancel_recurring_tasks', $tasks );
+
+		foreach ( $recurring_tasks as $task ) {
+			( new $task() )->cancel();
+		}
+
+		$this->update_db_ver( 3 );
 	}
 
 	/**

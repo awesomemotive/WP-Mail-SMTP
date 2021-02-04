@@ -140,12 +140,14 @@ class SiteHealth {
 		$mailer_title    = esc_html__( 'None selected', 'wp-mail-smtp' );
 
 		if ( ! empty( $mailer ) ) {
-			$mailer_complete = wp_mail_smtp()
+			$mailer_object = wp_mail_smtp()
 				->get_providers()
 				->get_mailer(
 					$mailer,
 					wp_mail_smtp()->get_processor()->get_phpmailer()
-				)->is_mailer_complete();
+				);
+
+			$mailer_complete = ! empty( $mailer_object ) ? $mailer_object->is_mailer_complete() : false;
 
 			$mailer_title = wp_mail_smtp()->get_providers()->get_options( $mailer )->get_title();
 		}

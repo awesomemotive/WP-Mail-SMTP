@@ -183,8 +183,8 @@ class About extends PageAbstract {
 					<?php
 					printf(
 						wp_kses(
-							/* translators: %1$s - WPForms URL, %2$s - WPBeginner URL, %3$s - OptinMonster URL, %4$s - MonsterInsights URL, %5$s - RafflePress URL */
-							__( 'WP Mail SMTP is brought to you by the same team that\'s behind the most user friendly WordPress forms, <a href="%1$s" target="_blank" rel="noopener noreferrer">WPForms</a>, the largest WordPress resource site, <a href="%2$s" target="_blank" rel="noopener noreferrer">WPBeginner</a>, the most popular lead-generation software, <a href="%3$s" target="_blank" rel="noopener noreferrer">OptinMonster</a>, the best WordPress analytics plugin, <a href="%4$s" target="_blank" rel="noopener noreferrer">MonsterInsights</a>, and the most powerful WordPress contest plugin, <a href="%5$s" target="_blank" rel="noopener noreferrer">RafflePress</a>.', 'wp-mail-smtp' ),
+							/* translators: %1$s - WPForms URL, %2$s - WPBeginner URL, %3$s - OptinMonster URL, %4$s - MonsterInsights URL, %5$s - Awesome Motive URL */
+							__( 'WP Mail SMTP is brought to you by the same team that\'s behind the most user friendly WordPress forms, <a href="%1$s" target="_blank" rel="noopener noreferrer">WPForms</a>, the largest WordPress resource site, <a href="%2$s" target="_blank" rel="noopener noreferrer">WPBeginner</a>, the most popular lead-generation software, <a href="%3$s" target="_blank" rel="noopener noreferrer">OptinMonster</a>, the best WordPress analytics plugin, <a href="%4$s" target="_blank" rel="noopener noreferrer">MonsterInsights</a>, and <a href="%5$s" target="_blank" rel="noopener noreferrer">more</a>.', 'wp-mail-smtp' ),
 							array(
 								'a' => array(
 									'href'   => array(),
@@ -197,7 +197,7 @@ class About extends PageAbstract {
 						'https://www.wpbeginner.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://optinmonster.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://www.monsterinsights.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
-						'https://rafflepress.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp'
+						'https://awesomemotive.com/'
 					);
 					?>
 				</p>
@@ -360,54 +360,152 @@ class About extends PageAbstract {
 	private function get_am_plugins() {
 
 		$data = array(
-			'mi'          => array(
-				'path' => 'google-analytics-for-wordpress/googleanalytics.php',
-				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
-				'name' => \esc_html__( 'MonsterInsights', 'wp-mail-smtp' ),
-				'desc' => \esc_html__( 'MonsterInsights makes it “effortless” to properly connect your WordPress site with Google Analytics, so you can start making data-driven decisions to grow your business.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
-				'pro'  => array(
-					'path' => 'google-analytics-premium/googleanalytics-premium.php',
-					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
-					'name' => \esc_html__( 'MonsterInsights Pro', 'wp-mail-smtp' ),
-					'desc' => \esc_html__( 'MonsterInsights makes it “effortless” to properly connect your WordPress site with Google Analytics, so you can start making data-driven decisions to grow your business.', 'wp-mail-smtp' ),
-					'url'  => 'https://www.monsterinsights.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				),
-			),
-			'om'          => array(
+			'om'                            => array(
 				'path' => 'optinmonster/optin-monster-wp-api.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-om.png',
 				'name' => \esc_html__( 'OptinMonster', 'wp-mail-smtp' ),
-				'desc' => \esc_html__( 'Our high-converting optin forms like Exit-Intent® popups, Fullscreen Welcome Mats, and Scroll boxes help you dramatically boost conversions and get more email subscribers.', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
 			),
-			'wpforms'     => array(
+			'wpforms'                       => array(
 				'path' => 'wpforms-lite/wpforms.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-wpf.png',
-				'name' => \esc_html__( 'Contact Forms by WPForms', 'wp-mail-smtp' ),
-				'desc' => \esc_html__( 'The best WordPress contact form plugin. Drag & Drop online form builder that helps you create beautiful contact forms with just a few clicks.', 'wp-mail-smtp' ),
+				'name' => \esc_html__( 'WPForms', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 100+ form templates. Trusted by over 4 million websites as the best forms plugin.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
 				'pro'  => array(
 					'path' => 'wpforms/wpforms.php',
 					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-wpf.png',
 					'name' => \esc_html__( 'WPForms Pro', 'wp-mail-smtp' ),
-					'desc' => \esc_html__( 'The best WordPress contact form plugin. Drag & Drop online form builder that helps you create beautiful contact forms with just a few clicks.', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 100+ form templates. Trusted by over 4 million websites as the best forms plugin.', 'wp-mail-smtp' ),
 					'url'  => 'https://wpforms.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
 				),
 			),
-			'rafflepress' => array(
+			'mi'                            => array(
+				'path' => 'google-analytics-for-wordpress/googleanalytics.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
+				'name' => \esc_html__( 'MonsterInsights', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
+				'pro'  => array(
+					'path' => 'google-analytics-premium/googleanalytics-premium.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
+					'name' => \esc_html__( 'MonsterInsights Pro', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', 'wp-mail-smtp' ),
+					'url'  => 'https://www.monsterinsights.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'aioseo'                        => array(
+				'path' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-aioseo.png',
+				'name' => \esc_html__( 'AIOSEO', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/all-in-one-seo-pack.zip',
+				'pro'  => array(
+					'path' => 'all-in-one-seo-pack-pro/all_in_one_seo_pack.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-aioseo.png',
+					'name' => \esc_html__( 'AIOSEO', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'wp-mail-smtp' ),
+					'url'  => 'https://aioseo.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'seedprod'                      => array(
+				'path' => 'coming-soon/coming-soon.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-seedprod.png',
+				'name' => \esc_html__( 'SeedProd', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/coming-soon.zip',
+				'pro'  => array(
+					'path' => 'seedprod-coming-soon-pro-5/seedprod-coming-soon-pro-5.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-seedprod.png',
+					'name' => \esc_html__( 'SeedProd', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'wp-mail-smtp' ),
+					'url'  => 'https://www.seedprod.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'rafflepress'                   => array(
 				'path' => 'rafflepress/rafflepress.php',
 				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
 				'name' => \esc_html__( 'RafflePress', 'wp-mail-smtp' ),
-				'desc' => \esc_html__( 'Turn your visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with powerful viral giveaways & contests.', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/rafflepress.zip',
 				'pro'  => array(
 					'path' => 'rafflepress-pro/rafflepress-pro.php',
 					'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
 					'name' => \esc_html__( 'RafflePress Pro', 'wp-mail-smtp' ),
-					'desc' => \esc_html__( 'Turn your visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with powerful viral giveaways & contests.', 'wp-mail-smtp' ),
-					'url'  => 'https://rafflepress.com/pricing/',
+					'desc' => \esc_html__( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'wp-mail-smtp' ),
+					'url'  => 'https://rafflepress.com/pricing/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
 				),
+			),
+			'pushengage'                    => array(
+				'path' => 'pushengage/main.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-pushengage.png',
+				'name' => \esc_html__( 'PushEngage', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 9 billion notifications each month.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/pushengage.zip',
+			),
+			'smash-balloon-instagram-feeds' => array(
+				'path' => 'instagram-feed/instagram-feed.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-instagram-feeds.png',
+				'name' => \esc_html__( 'Smash Balloon Instagram Feeds', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/instagram-feed.zip',
+				'pro'  => array(
+					'path' => 'instagram-feed-pro/instagram-feed.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/',
+					'name' => \esc_html__( 'Smash Balloon Instagram Feeds', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
+					'url'  => 'https://smashballoon.com/instagram-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'smash-balloon-facebook-feeds'  => array(
+				'path' => 'custom-facebook-feed/custom-facebook-feed.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-facebook-feeds.png',
+				'name' => \esc_html__( 'Smash Balloon Facebook Feeds', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/custom-facebook-feed.zip',
+				'pro'  => array(
+					'path' => 'custom-facebook-feed-pro/custom-facebook-feed.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/',
+					'name' => \esc_html__( 'Smash Balloon Facebook Feeds', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
+					'url'  => 'https://smashballoon.com/custom-facebook-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'smash-balloon-youtube-feeds'   => array(
+				'path' => 'feeds-for-youtube/youtube-feed.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-youtube-feeds.png',
+				'name' => \esc_html__( 'Smash Balloon YouTube Feeds', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/feeds-for-youtube.zip',
+				'pro'  => array(
+					'path' => 'youtube-feed-pro/youtube-feed.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/',
+					'name' => \esc_html__( 'Smash Balloon YouTube Feeds', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
+					'url'  => 'https://smashballoon.com/youtube-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'smash-balloon-twitter-feeds'   => array(
+				'path' => 'custom-twitter-feeds/custom-twitter-feed.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-twitter-feeds.png',
+				'name' => \esc_html__( 'Smash Balloon Twitter Feeds', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/custom-twitter-feeds.zip',
+				'pro'  => array(
+					'path' => 'custom-twitter-feeds-pro/custom-twitter-feed.php',
+					'icon' => \wp_mail_smtp()->assets_url . '/images/about/',
+					'name' => \esc_html__( 'Smash Balloon Twitter Feeds', 'wp-mail-smtp' ),
+					'desc' => \esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
+					'url'  => 'https://smashballoon.com/custom-twitter-feeds/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				),
+			),
+			'trustpulse'                    => array(
+				'path' => 'trustpulse-api/trustpulse.php',
+				'icon' => \wp_mail_smtp()->assets_url . '/images/about/plugin-trustpulse.png',
+				'name' => \esc_html__( 'TrustPulse', 'wp-mail-smtp' ),
+				'desc' => \esc_html__( 'Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/trustpulse-api.zip',
 			),
 		);
 
@@ -623,13 +721,16 @@ class About extends PageAbstract {
 
 					<p class="centered">
 						<?php
-						echo \wp_kses(
-							\__( 'Bonus: WP Mail SMTP Lite users get <span class="price-off">$50 off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
-							array(
-								'span' => array(
-									'class' => array(),
-								),
-							)
+						printf(
+							wp_kses( /* Translators: %s - discount value $50. */
+								__( 'Bonus: WP Mail SMTP Lite users get <span class="price-off">%s off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
+								array(
+									'span' => array(
+										'class' => array(),
+									),
+								)
+							),
+							'$50'
 						);
 						?>
 					</p>

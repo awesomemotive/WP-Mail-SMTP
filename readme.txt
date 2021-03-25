@@ -2,9 +2,9 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
-Tested up to: 5.6
-Stable tag: 2.6.0
-Requires PHP: 5.5.0
+Tested up to: 5.7
+Stable tag: 2.7.0
+Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
 
@@ -178,11 +178,17 @@ You can try the <a href="https://wordpress.org/plugins/wpforms-lite/" rel="frien
 
 ### What's Next
 
-If you like this plugin, then consider checking out our other projects:
+If you like our WP Mail SMTP plugin, then consider checking out our other projects:
 
 * <a href="https://optinmonster.com/" rel="friend" title="OptinMonster">OptinMonster</a> - Get More Email Subscribers with the most popular conversion optimization plugin for WordPress.
+* <a href="https://wpforms.com/" rel="friend" title="WPForms">WPForms</a> - #1 drag & drop online form builder for WordPress (trusted by 4 million sites).
 * <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - See the Stats that Matter and Grow Your Business with Confidence. Best Google Analytics Plugin for WordPress.
-* <a href="https://www.seedprod.com/" rel="friend" title="SeedProd">SeedProd</a> - Jumpstart your website with the #1 Coming Soon & Maintenance Mode Plugin for WordPress.
+* <a href="https://www.seedprod.com/" rel="friend" title="SeedProd">SeedProd</a> - Create beautiful landing pages with our powerful drag & drop landing page builder.
+* <a href="https://rafflepress.com/" rel="friend" title="RafflePress">RafflePress</a> - Best WordPress giveaway and contest plugin to grow traffic and social followers.
+* <a href="https://smashballoon.com/" rel="friend" title="Smash Balloon">Smash Balloon</a> - #1 social feeds plugin for WordPress - display social media content in WordPress without code.
+* <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 2 million sites).
+* <a href="https://www.pushengage.com/" rel="friend" title="PushEngage">PushEngage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
+* <a href="https://trustpulse.com/" rel="friend" title="TrustPulse"></a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
 
@@ -236,7 +242,15 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
-= 2.6.0 - 2020-02-04 =
+= 2.7.0 - 2021-03-25 =
+* IMPORTANT: Support for PHP 5.5 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.7. Failure to do that will disable WP Mail SMTP functionality.
+* Changed: Updated About us plugin page.
+* Changed: Improved Domain Check Results section in Email Test tab.
+* Changed: Allow the use of different Gmail aliases as From Email address by disabling the Force From Email setting.
+* Changed: The Setup Wizard can now be launched via a button in the plugin settings. The Setup Wizard admin dashboard menu item was removed.
+* Fixed: WP Multisite subsite admins couldn't remove oAuth connections (in the Gmail mailer).
+
+= 2.6.0 - 2021-02-04 =
 * Added: New plugin Setup Wizard.
 * Added: SendGrid Invalid API key error message and mitigation steps on the Email Test page.
 * Fixed: PHP 8 support.

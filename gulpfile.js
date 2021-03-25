@@ -119,7 +119,11 @@ var plugin = {
 	],
 	lite_files: [
 		'!assets/pro/**',
-		'!src/Pro/**'
+		'!src/Pro/**',
+		// Remove dashboard widget assets in lite version (for now).
+		'!assets/css/dashboard-widget.*',
+		'!assets/js/vendor/chart.min.js',
+		'!assets/js/vendor/moment.min.js'
 	],
 	pro_files: [
 		'loco.xml',
@@ -321,6 +325,7 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/league/oauth2-client',
 				'vendor/mtdowling',
 				'vendor/monolog',
+				'vendor/paragonie/constant_time_encoding',
 				'vendor/phpseclib',
 				'vendor/psr/cache',
 				'vendor/psr/http-message',
@@ -437,11 +442,11 @@ gulp.task( 'prefix_outside_files', function () {
 } );
 
 /**
- * PHP version check, if at least PHP 7.2 is in use.
+ * PHP version check, if at least PHP 7.3 is in use.
  */
-gulp.task( 'php:min72', function ( cb ) {
+gulp.task( 'php:min73', function ( cb ) {
 	exec(
-		'composer php-more-than-7-2-check',
+		'composer php-more-than-7-3-check',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -497,8 +502,8 @@ gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 're
 // Build tasks without PHP composer install step
 // The composer install should be done on PHP 5.6 before running below commands:
 // `composer build-lite-php5` or `composer build-pro-php5`.
-gulp.task( 'build:lite_no_composer', gulp.series( 'php:min72', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
-gulp.task( 'build:pro_no_composer', gulp.series( 'php:min72', 'build:assets', 'rename:pro', 'composer:prefix', 'zip:pro' ) );
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:min73', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:pro_no_composer', gulp.series( 'php:min73', 'build:assets', 'rename:pro', 'composer:prefix', 'zip:pro' ) );
 
 /**
  * Look out for relevant sass/js changes.

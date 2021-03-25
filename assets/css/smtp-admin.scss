@@ -620,6 +620,15 @@
 			hr {
 				margin: 20px 0;
 			}
+
+			.wp-mail-smtp-setting-field-row {
+				display: flex;
+				flex-wrap: wrap;
+
+				& > .wp-mail-smtp-btn {
+					margin-right: 10px;
+				}
+			}
 		}
 
 		.wp-mail-smtp-submit {
@@ -700,31 +709,36 @@
 		}
 
 		#wp-mail-smtp-debug {
-			background-color: #fff;
-			padding: 25px 20px 1px 25px;
+			margin-top: 25px;
 
 			h2 {
+				margin: 20px 0 10px;
 				color: #444;
-				margin: 1.4em 0 0.8em;
 				font-size: 16px;
+				line-height: 20px;
 				font-weight: 700;
 			}
 
 			p {
+				margin: 10px 0;
+				color: #777;
 				font-size: 14px;
-				color: #555;
-				margin-bottom: 1.1em;
+				line-height: 20px;
+			}
+
+			ul {
+				list-style-type: disc;
 			}
 
 			ul,
 			ol {
+				margin: 10px 0 10px 15px;
+				color: #777;
 				font-size: 14px;
-				color: #555;
-				margin: 0 0 1.1em 1.8em;
+				line-height: 20px;
 
 				li {
 					margin: 0 0 8px 0;
-					line-height: 1.5;
 
 					&:last-of-type {
 						margin: 0;
@@ -733,14 +747,6 @@
 					ul {
 						list-style-type: disc;
 					}
-				}
-			}
-
-			a {
-				color: $orange;
-
-				&:hover {
-					color: $orange_dark;
 				}
 			}
 
@@ -757,38 +763,50 @@
 				font-weight: bold;
 			}
 
-			.error-log-toggle {
-				text-decoration: none;
-				color: #444;
+			.error-log-button-container {
+				margin-bottom: 30px;
+			}
 
-				&:hover {
-					color: $orange;
+			.error-log-toggle {
+				float: left;
+				margin-right: 10px;
+			}
+
+			.error-log-copy {
+				min-width: 122px;
+
+				.error-log-copy-back {
+					display: none;
 				}
 
-				.dashicons {
-					font-size: 15px;
-					height: 15px;
-					width: 15px;
-					padding-top: 3px;
-					border: 0;
-					outline: 0;
+			}
+
+			.error-log-copy-copied {
+
+				.error-log-copy-front {
+					display: none;
+				}
+
+				.error-log-copy-back {
+					display: inline;
 				}
 			}
 
 			.error-log {
-				border-left: 3px solid #ffb900;
-				padding: 0 0 0 20px;
-				margin: 0 0 10px 0;
-				font-size: 12px;
+				padding-top: 10px;
 				display: none;
+
+				&.error-log-selection {
+					display: block !important;
+					opacity: 0;
+					height: 0;
+					padding: 0;
+					margin: 0;
+				}
 
 				pre {
 					margin: 0;
 				}
-			}
-
-			.error-log-note {
-				display: none;
 			}
 		}
 
@@ -1178,7 +1196,7 @@
 
 	&.wp-mail-smtp-btn-blueish {
 		background-color: #738e9e;
-		border: 1px solid #738e9e;
+		border-color: #738e9e;
 		color: #fff;
 
 		&:hover,
@@ -1193,6 +1211,10 @@
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #395360;
 		}
 	}
+}
+
+a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
+	line-height: 19px;
 }
 
 // Domain Checker Results section on Email Test tab.

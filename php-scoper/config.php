@@ -70,6 +70,15 @@ $config = [
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
+			->in( 'vendor/paragonie/constant_time_encoding' )
+			->exclude(
+				[
+					'tests',
+				]
+			)
+			->name( [ '*.php', 'LICENSE.txt', 'composer.json' ] ),
+		Finder::create()
+			->files()
 			->in( 'vendor/phpseclib' )
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
@@ -123,10 +132,30 @@ $config = [
 		 * @return string The modified content.
 		 */
 		function ( $file_path, $prefix, $content ) {
-			if ( strpos( $file_path, 'google/apiclient/src/Google/Http/REST.php' ) !== false ) {
+			if ( strpos( $file_path, 'google/apiclient/src/Http/REST.php' ) !== false ) {
 				return preg_replace(
 					'/(return new \$expectedClass\(\$json\);)/',
 					'$expectedClass = \'WPMailSMTP\\\\\\Vendor\\\\\\\' . $expectedClass;' . PHP_EOL . '            $1',
+					$content
+				);
+			}
+			return $content;
+		},
+
+		/**
+		 * Prefix the dynamic alias class generation in Google's apiclient lib.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function ( $file_path, $prefix, $content ) {
+			if ( strpos( $file_path, 'google/apiclient/src/aliases.php' ) !== false ) {
+				return str_replace(
+					'class_alias($class, $alias);',
+					sprintf( 'class_alias($class, \'%s\\\\\' . $alias);', addslashes( $prefix ) ),
 					$content
 				);
 			}
@@ -147,8 +176,8 @@ $config = [
 			if (
 				strpos( $file_path, 'google/auth/src/HttpHandler/HttpHandlerFactory.php' ) !== false ||
 				strpos( $file_path, 'google/auth/src/CredentialsLoader.php' ) !== false ||
-				strpos( $file_path, 'google/apiclient/src/Google/Client.php' ) !== false ||
-				strpos( $file_path, 'google/apiclient/src/Google/AuthHandler/AuthHandlerFactory.php' ) !== false ||
+				strpos( $file_path, 'google/apiclient/src/Client.php' ) !== false ||
+				strpos( $file_path, 'google/apiclient/src/AuthHandler/AuthHandlerFactory.php' ) !== false ||
 				strpos( $file_path, 'aws/aws-sdk-php/src/functions.php' ) !== false
 			) {
 				return str_replace(
@@ -220,7 +249,7 @@ $config = [
 		 * @return string The modified content.
 		 */
 		function( $file_path, $prefix, $content ) {
-			if ( strpos( $file_path, 'google/apiclient/src/Google/AccessToken/Verify.php' ) !== false ) {
+			if ( strpos( $file_path, 'google/apiclient/src/AccessToken/Verify.php' ) !== false ) {
 				return str_replace(
 					'phpseclib\\\\Crypt\\\\RSA::MODE_OPENSSL',
 					sprintf( '%s\\\\phpseclib\\\\Crypt\\\\RSA::MODE_OPENSSL', addslashes( $prefix ) ),
@@ -373,7 +402,6 @@ $config = [
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetTransacEmailsList.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetTransacEmailContent.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetTransacBlockedContacts.php' ) !== false ||
-				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetSmsEventReport.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetSmtpTemplates.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/ObjectSerializer.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/UpdateSender.php' ) !== false ||
@@ -381,11 +409,33 @@ $config = [
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/SendEmail.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/UpdateAttribute.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetExtendedContactDetailsStatisticsUnsubscriptions.php' ) !== false ||
+				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/SendSmtpEmailMessageVersions.php' ) !== false ||
 				strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/CreateAttribute.php' ) !== false
 			) {
 				return str_replace(
 					'\'\\\\SendinBlue\\\\Client',
 					sprintf( '\'%s\\\\SendinBlue\\\\Client', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
+		 * Prefix the sendinblue namespace with array in strings.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if ( strpos( $file_path, 'sendinblue/api-v3-sdk/lib/Model/GetStatsByDevice.php' ) !== false ) {
+				return str_replace(
+					'\\\\SendinBlue\\\\Client',
+					sprintf( '\\\\%s\\\\SendinBlue\\\\Client', addslashes( $prefix ) ),
 					$content
 				);
 			}
@@ -405,8 +455,100 @@ $config = [
 		function( $file_path, $prefix, $content ) {
 			if ( strpos( $file_path, 'phpseclib/phpseclib/phpseclib/File/X509.php' ) !== false ) {
 				return str_replace(
-					'\'\\\\phpseclib\\\\File\\\\X509',
-					sprintf( '\'\\\\%s\\\\phpseclib\\\\File\\\\X509', addslashes( $prefix ) ),
+					'\'\\\\phpseclib3\\\\File\\\\X509',
+					sprintf( '\'\\\\%s\\\\phpseclib3\\\\File\\\\X509', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
+		 * Prefix the phpseclib namespace in strings.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if ( strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/Common/AsymmetricKey.php' ) !== false ) {
+				return str_replace(
+					'phpseclib3\\\\Crypt\\\\',
+					sprintf( '%s\\\\phpseclib3\\\\Crypt\\\\', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
+		 * Prefix the phpseclib namespace in strings.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if ( strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/Common/SymmetricKey.php' ) !== false ) {
+				return str_replace(
+					'\\\\phpseclib3\\\\Common\\\\Functions',
+					sprintf( '\\\\%s\\\\phpseclib3\\\\Common\\\\Functions', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
+		 * Prefix the phpseclib namespace in strings.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if (
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/EC.php' ) !== false ||
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/EC/Formats/Keys/Common.php' ) !== false ||
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/EC/Formats/Keys/OpenSSH.php' ) !== false ||
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Crypt/EC/Formats/Keys/XML.php' ) !== false
+			) {
+				return str_replace(
+					'phpseclib3\\\\Crypt\\\\EC\\\\Curves',
+					sprintf( '%s\\\\phpseclib3\\\\Crypt\\\\EC\\\\Curves', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
+		 * Prefix the phpseclib namespace in strings.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if (
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Math/BigInteger.php' ) !== false ||
+				strpos( $file_path, 'phpseclib/phpseclib/phpseclib/Math/BigInteger/Engines/Engine.php' ) !== false
+			) {
+				return str_replace(
+					'phpseclib3\\\\Math\\\\BigInteger',
+					sprintf( '%s\\\\phpseclib3\\\\Math\\\\BigInteger', addslashes( $prefix ) ),
 					$content
 				);
 			}

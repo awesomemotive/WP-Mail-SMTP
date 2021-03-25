@@ -146,9 +146,38 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '#wp-mail-smtp-debug .error-log-toggle' ).on( 'click', function( e ) {
 				e.preventDefault();
 
-				$( '#wp-mail-smtp-debug .error-log-toggle' ).find( '.dashicons' ).toggleClass( 'dashicons-arrow-right-alt2 dashicons-arrow-down-alt2' );
 				$( '#wp-mail-smtp-debug .error-log' ).slideToggle();
-				$( '#wp-mail-smtp-debug .error-log-note' ).toggle();
+			} );
+
+			// Copy debug output to clipboard.
+			$( '#wp-mail-smtp-debug .error-log-copy' ).on( 'click', function( e ) {
+				e.preventDefault();
+
+				var $self = $( this );
+
+				// Get error log.
+				var $content = $( '#wp-mail-smtp-debug .error-log' );
+
+				// Copy to clipboard.
+				if ( ! $content.is( ':visible' ) ) {
+					$content.addClass( 'error-log-selection' );
+				}
+				var range = document.createRange();
+				range.selectNode( $content[0] );
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange( range );
+				document.execCommand( 'Copy' );
+				window.getSelection().removeAllRanges();
+				$content.removeClass( 'error-log-selection' );
+
+				$self.addClass( 'error-log-copy-copied' );
+
+				setTimeout(
+					function() {
+						$self.removeClass( 'error-log-copy-copied' );
+					},
+					1500
+				);
 			} );
 
 			// Remove mailer connection.

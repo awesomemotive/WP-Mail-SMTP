@@ -24,14 +24,15 @@
     }
   ],
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=5.6.20",
+    "composer-plugin-api": "^1.0",
     "composer/installers": "~1.0",
-    "google/apiclient": "2.7.0",
+    "google/apiclient": "2.9.1",
     "guzzlehttp/guzzle": "^6.5",
     "instituteweb/composer-scripts": "^1.1",
     "monolog/monolog": "^1.0",
     "paragonie/sodium_compat": "^1.13",
-    "sendinblue/api-v3-sdk": "6.4.0",
+    "sendinblue/api-v3-sdk": "7.4.0",
     "symfony/polyfill-intl-idn": "1.17.1",
     "symfony/polyfill-mbstring": "1.19.0",
     "symfony/polyfill-php72": "1.19.0",
@@ -66,7 +67,7 @@
   "scripts": {
     "php-compatibility-lite" : [
       "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-      "vendor/bin/phpcs -p ./*.php ./src/* --ignore='./src/Pro/' --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 5.5-"
+      "vendor/bin/phpcs -p ./*.php ./src/* --ignore='./src/Pro/' --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 5.6-"
     ],
     "php-compatibility-pro" : [
       "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
@@ -123,7 +124,7 @@
       "@prefix-dependencies"
     ],
     "php-less-than-7-0-check": "@php php-scoper/php-less-than-7-0-check.php",
-    "php-more-than-7-2-check": "@php php-scoper/php-more-than-7-2-check.php",
+    "php-more-than-7-3-check": "@php php-scoper/php-more-than-7-3-check.php",
     "build-lite-php5": [
       "@php-less-than-7-0-check",
       "npm run gulp composer:delete_lock_and_vendor",

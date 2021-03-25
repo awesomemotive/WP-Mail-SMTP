@@ -26,6 +26,15 @@ class DomainChecker {
 	private $results;
 
 	/**
+	 * The plugin mailer slug.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @var string
+	 */
+	protected $mailer;
+
+	/**
 	 * Verify the domain for the provided mailer and email address and save the API results.
 	 *
 	 * @since 2.6.0
@@ -35,6 +44,8 @@ class DomainChecker {
 	 * @param string $sending_domain The optional sending domain to check the domain records for.
 	 */
 	public function __construct( $mailer, $email, $sending_domain = '' ) {
+
+		$this->mailer = $mailer;
 
 		$params = [
 			'mailer' => $mailer,
@@ -120,5 +131,17 @@ class DomainChecker {
 		}
 
 		return $no_issues;
+	}
+
+	/**
+	 * Check if the domain checker support mailer.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @return bool
+	 */
+	public function is_supported_mailer() {
+
+		return ! in_array( $this->mailer, [ 'mail', 'pepipostapi' ], true );
 	}
 }

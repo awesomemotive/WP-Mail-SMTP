@@ -4,7 +4,7 @@ namespace WPMailSMTP\Providers\Sendinblue;
 
 use WPMailSMTP\Vendor\SendinBlue\Client\Api\AccountApi;
 use WPMailSMTP\Vendor\SendinBlue\Client\Api\SendersApi;
-use WPMailSMTP\Vendor\SendinBlue\Client\Api\SMTPApi;
+use WPMailSMTP\Vendor\SendinBlue\Client\Api\TransactionalEmailsApi;
 use WPMailSMTP\Vendor\SendinBlue\Client\Configuration;
 
 /**
@@ -81,7 +81,7 @@ class Api {
 		// Include the library.
 		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
-		return new SMTPApi( null, $this->get_api_config() );
+		return new TransactionalEmailsApi( null, $this->get_api_config() );
 	}
 
 	/**

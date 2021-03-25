@@ -54,7 +54,7 @@ class Options extends OptionsAbstract {
 						]
 					),
 				],
-				'php'         => '5.5',
+				'php'         => '5.6',
 				'supports'    => [
 					'from_email'       => true,
 					'from_name'        => true,
@@ -207,9 +207,12 @@ class Options extends OptionsAbstract {
 								],
 							]
 						),
-						'https://support.google.com/a/answer/33327'
+						'https://wpmailsmtp.com/gmail-send-from-alias-wp-mail-smtp/'
 					);
 					?>
+				</p>
+				<p class="desc">
+					<?php esc_html_e( 'You can also send emails with different From Email addresses, by disabling the Force From Email setting and using registered aliases throughout your WordPress site as the From Email addresses.', 'wp-mail-smtp' ); ?>
 				</p>
 				<p class="desc">
 					<?php esc_html_e( 'Removing the connection will give you an ability to redo the connection or link to another Google account.', 'wp-mail-smtp' ); ?>
@@ -234,7 +237,7 @@ class Options extends OptionsAbstract {
 	 */
 	public function process_provider_remove() {
 
-		if ( ! is_super_admin() ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

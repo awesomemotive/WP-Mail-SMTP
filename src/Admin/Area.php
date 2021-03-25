@@ -407,13 +407,16 @@ class Area {
 					'upgrade_button'    => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
 					'upgrade_url'       => add_query_arg( 'discount', 'SMTPLITEUPGRADE', wp_mail_smtp()->get_upgrade_link( '' ) ),
 					'upgrade_bonus'     => '<p>' .
-											wp_kses(
-												__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>$50 off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
-												[
-													'strong' => [],
-													'span'   => [],
-													'br'     => [],
-												]
+											sprintf(
+												wp_kses( /* Translators: %s - discount value $50. */
+													__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>%s off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
+													[
+														'strong' => [],
+														'span'   => [],
+														'br'     => [],
+													]
+												),
+												'$50'
 											)
 											. '</p>',
 					'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">

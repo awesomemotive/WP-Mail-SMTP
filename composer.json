@@ -28,6 +28,8 @@
     "composer-plugin-api": "^1.0",
     "composer/installers": "~1.0",
     "google/apiclient": "2.9.1",
+    "phpseclib/phpseclib": "^3.0.7",
+    "paragonie/constant_time_encoding": "^1",
     "guzzlehttp/guzzle": "^6.5",
     "instituteweb/composer-scripts": "^1.1",
     "monolog/monolog": "^1.0",
@@ -102,6 +104,7 @@
       "@composer --no-scripts --dev --prefer-dist require codeception/module-asserts:^1.3",
       "@composer --no-scripts --dev --prefer-dist require codeception/module-db:^1.0",
       "@composer --no-scripts --dev --prefer-dist require codeception/module-webdriver:^1.1",
+      "@composer --no-scripts --dev --prefer-dist require codeception/module-cli:^1.0",
       "@composer --no-scripts --dev --prefer-dist require codeception/util-universalframework:^1.0",
       "@composer --no-scripts --dev --prefer-dist require brain/monkey:^2.4",
       "@composer --no-scripts --dev --prefer-dist require mockery/mockery:^1.4"

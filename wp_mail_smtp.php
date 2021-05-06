@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 2.7.0
+ * Version: 2.8.0
  * Requires at least: 4.9
  * Requires PHP: 5.6.20
  * Plugin URI: https://wpmailsmtp.com/
@@ -211,7 +211,7 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '2.7.0' );
+	define( 'WPMS_PLUGIN_VER', '2.8.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.6.20' );

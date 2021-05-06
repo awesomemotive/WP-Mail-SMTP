@@ -334,4 +334,143 @@ class WP {
 
 		return $locale;
 	}
+
+	/**
+	 * Check if plugins is activated.
+	 * Replacement for is_plugin_active function as it works only in admin area
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $plugin_slug Plugin slug.
+	 *
+	 * @return bool
+	 */
+	public static function is_plugin_activated( $plugin_slug ) {
+
+		static $active_plugins;
+
+		if ( ! isset( $active_plugins ) ) {
+			$active_plugins = (array) get_option( 'active_plugins', [] );
+
+			if ( is_multisite() ) {
+				$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', [] ) );
+			}
+		}
+
+		return ( in_array( $plugin_slug, $active_plugins, true ) || array_key_exists( $plugin_slug, $active_plugins ) );
+	}
+
+	/**
+	 * Get the ISO 639-2 Language Code from user/site locale.
+	 *
+	 * @see   http://www.loc.gov/standards/iso639-2/php/code_list.php
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public static function get_language_code() {
+
+		$default_lang = 'en';
+		$locale       = get_user_locale();
+
+		if ( ! empty( $locale ) ) {
+			$lang = explode( '_', $locale );
+			if ( ! empty( $lang ) && is_array( $lang ) ) {
+				$default_lang = strtolower( $lang[0] );
+			}
+		}
+
+		return $default_lang;
+	}
+
+	/**
+	 * Get the certain date of a specified day in a specified format.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $period         Supported values: start, end.
+	 * @param string $timestamp      Default is the current timestamp, if left empty.
+	 * @param string $format         Default is a MySQL format.
+	 * @param bool   $use_gmt_offset Use GTM offset.
+	 *
+	 * @return string
+	 */
+	public static function get_day_period_date( $period, $timestamp = '', $format = 'Y-m-d H:i:s', $use_gmt_offset = false ) {
+
+		$date = '';
+
+		if ( empty( $timestamp ) ) {
+			$timestamp = time();
+		}
+
+		$offset_sec = $use_gmt_offset ? get_option( 'gmt_offset' ) * 3600 : 0;
+
+		switch ( $period ) {
+			case 'start_of_day':
+				$date = gmdate( $format, strtotime( 'today', $timestamp ) - $offset_sec );
+				break;
+
+			case 'end_of_day':
+				$date = gmdate( $format, strtotime( 'tomorrow', $timestamp ) - 1 - $offset_sec );
+				break;
+		}
+
+		return $date;
+	}
+
+	/**
+	 * Returns extracted domain from email address.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $email Email address.
+	 *
+	 * @return string
+	 */
+	public static function get_email_domain( $email ) {
+
+		return substr( strrchr( $email, '@' ), 1 );
+	}
+
+	/**
+	 * Wrapper for set_time_limit to see if it is enabled.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int $limit Time limit.
+	 */
+	public static function set_time_limit( $limit = 0 ) {
+
+		if ( function_exists( 'set_time_limit' ) && false === strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) { // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
+			@set_time_limit( $limit ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+	}
+
+	/**
+	 * Recursive arguments parsing.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $args     Arguments.
+	 * @param array $defaults Defaults.
+	 *
+	 * @return array
+	 */
+	public static function parse_args_r( &$args, $defaults ) {
+
+		$args     = (array) $args;
+		$defaults = (array) $defaults;
+		$r        = $defaults;
+
+		foreach ( $args as $k => &$v ) {
+			if ( is_array( $v ) && isset( $r[ $k ] ) ) {
+				$r[ $k ] = self::parse_args_r( $v, $r[ $k ] );
+			} else {
+				$r[ $k ] = $v;
+			}
+		}
+
+		return $r;
+	}
 }

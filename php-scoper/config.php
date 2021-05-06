@@ -627,4 +627,22 @@ if ( file_exists( 'vendor/mtdowling/jmespath.php' ) ) {
 		->name( [ '*.php', 'LICENSE', 'composer.json' ] );
 }
 
+if ( file_exists( 'vendor/goodby/csv/src/Goodby/CSV/Export/Standard/CsvFileObject.php' ) ) {
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/goodby/csv/' )
+		->name( [ 'LICENSE', 'composer.json' ] );
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/goodby/csv/src/Goodby/CSV/Export/Standard/' )
+		->name( [ 'CsvFileObject.php' ] );
+}
+
+if ( file_exists( 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php' ) ) {
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/mk-j/php_xlsxwriter/' )
+		->name( [ 'xlsxwriter.class.php', 'LICENSE', 'composer.json' ] );
+}
+
 return $config;

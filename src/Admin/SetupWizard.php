@@ -143,7 +143,7 @@ class SetupWizard {
 			return;
 		}
 
-		add_dashboard_page( '', '', 'manage_options', Area::SLUG . '-setup-wizard', '' );
+		add_submenu_page( '', '', '', 'manage_options', Area::SLUG . '-setup-wizard', '' );
 	}
 
 	/**
@@ -153,11 +153,29 @@ class SetupWizard {
 	 */
 	private function load_setup_wizard() {
 
+		/**
+		 * Before setup wizard load.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param \WPMailSMTP\Admin\SetupWizard  $setup_wizard SetupWizard instance.
+		 */
+		do_action( 'wp_mail_smtp_admin_setup_wizard_load_setup_wizard_before', $this );
+
 		$this->enqueue_scripts();
 
 		$this->setup_wizard_header();
 		$this->setup_wizard_content();
 		$this->setup_wizard_footer();
+
+		/**
+		 * After setup wizard load.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param \WPMailSMTP\Admin\SetupWizard  $setup_wizard SetupWizard instance.
+		 */
+		do_action( 'wp_mail_smtp_admin_setup_wizard_load_setup_wizard_after', $this );
 
 		exit;
 	}
@@ -186,7 +204,7 @@ class SetupWizard {
 				'is_multisite'       => is_multisite(),
 				'translations'       => WP::get_jed_locale_data( 'wp-mail-smtp' ),
 				'exit_url'           => wp_mail_smtp()->get_admin()->get_admin_page_url(),
-				'email_test_tab_url' => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url() ),
+				'email_test_tab_url' => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ),
 				'is_pro'             => wp_mail_smtp()->is_pro(),
 				'license_exists'     => apply_filters( 'wp_mail_smtp_admin_setup_wizard_license_exists', false ),
 				'plugin_version'     => WPMS_PLUGIN_VER,

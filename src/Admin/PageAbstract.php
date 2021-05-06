@@ -17,18 +17,97 @@ abstract class PageAbstract implements PageInterface {
 	protected $slug;
 
 	/**
+	 * Tab priority.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var int
+	 */
+	protected $priority = 999;
+
+	/**
+	 * Tab parent page.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var ParentPageAbstract
+	 */
+	protected $parent_page = null;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param ParentPageAbstract $parent_page Tab parent page.
+	 */
+	public function __construct( $parent_page = null ) {
+
+		$this->parent_page = $parent_page;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_link() {
+
+		$page = Area::SLUG;
+
+		if ( $this->parent_page !== null ) {
+			$page .= '-' . $this->parent_page->get_slug();
+		}
 
 		return esc_url(
 			add_query_arg(
 				'tab',
 				$this->slug,
-				WP::admin_url( 'admin.php?page=' . Area::SLUG )
+				WP::admin_url( 'admin.php?page=' . $page )
 			)
 		);
 	}
+
+	/**
+	 * Get tab slug.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function get_slug() {
+
+		return $this->slug;
+	}
+
+	/**
+	 * Get tab priority.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return int
+	 */
+	public function get_priority() {
+
+		return $this->priority;
+	}
+
+	/**
+	 * Get parent page.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return ParentPageAbstract
+	 */
+	public function get_parent_page() {
+
+		return $this->parent_page;
+	}
+
+	/**
+	 * Register tab related hooks.
+	 *
+	 * @since 2.8.0
+	 */
+	public function hooks() {}
 
 	/**
 	 * Process tab form submission ($_POST ).
@@ -37,16 +116,14 @@ abstract class PageAbstract implements PageInterface {
 	 *
 	 * @param array $data $_POST data specific for the plugin.
 	 */
-	public function process_post( $data ) {
-	}
+	public function process_post( $data ) {}
 
 	/**
 	 * Process tab & mailer specific Auth actions.
 	 *
 	 * @since 1.0.0
 	 */
-	public function process_auth() {
-	}
+	public function process_auth() {}
 
 	/**
 	 * Print the nonce field for a specific tab.

@@ -1141,4 +1141,43 @@ class Options {
 
 		return $options;
 	}
+
+	/**
+	 * Parse boolean value from string.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|boolean $value String or boolean value.
+	 *
+	 * @return boolean
+	 */
+	public function parse_boolean( $value ) {
+
+		// Return early if it's boolean.
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+
+		$value = trim( $value );
+
+		return $value === 'true';
+	}
+
+	/**
+	 * Get a message of a constant that was set inside wp-config.php file.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $constant Constant name.
+	 *
+	 * @return string
+	 */
+	public function get_const_set_message( $constant ) {
+
+		return sprintf( /* translators: %1$s - constant that was used; %2$s - file where it was used. */
+			esc_html__( 'The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation.', 'wp-mail-smtp' ),
+			'<code>' . esc_html( $constant ) . '</code>',
+			'<code>wp-config.php</code>'
+		);
+	}
 }

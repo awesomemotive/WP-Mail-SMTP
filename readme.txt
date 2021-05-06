@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.7.0
+Stable tag: 2.8.0
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -188,7 +188,7 @@ If you like our WP Mail SMTP plugin, then consider checking out our other projec
 * <a href="https://smashballoon.com/" rel="friend" title="Smash Balloon">Smash Balloon</a> - #1 social feeds plugin for WordPress - display social media content in WordPress without code.
 * <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 2 million sites).
 * <a href="https://www.pushengage.com/" rel="friend" title="PushEngage">PushEngage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
-* <a href="https://trustpulse.com/" rel="friend" title="TrustPulse"></a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
+* <a href="https://trustpulse.com/" rel="friend" title="TrustPulse">TrustPulse</a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
 
@@ -241,6 +241,15 @@ By all means please contact us to discuss features or options you'd like to see 
 10. Email Log single page (Pro)
 
 == Changelog ==
+
+= 2.8.0 - 2021-05-06 =
+* Added: WP Site Health status check for the sending domain.
+* Added: WP Mail SMTP WordPress admin menu position filter hook.
+* Changed: Moved the Email Test tab to the new WP Mail SMTP > Tools page.
+* Changed: Updated the list of conflicting plugins.
+* Fixed: Removed the empty admin dashboard menu item for the Setup Wizard.
+* Fixed: The Setup Wizard conflicting issue with Admin 2020 plugin.
+* Fixed: The plugin settings pages not opening when WishList Member plugin was active.
 
 = 2.7.0 - 2021-03-25 =
 * IMPORTANT: Support for PHP 5.5 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.7. Failure to do that will disable WP Mail SMTP functionality.

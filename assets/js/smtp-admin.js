@@ -239,8 +239,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '.js-wp-mail-smtp-setting-mailer-radio-input', app.pageHolder ).on( 'change', this.processMailerSettingsOnChange );
 
 			// Disable multiple click on the Email Test tab submit button and display a loader icon.
-			$( '.wp-mail-smtp-tab-test #email-test-form' ).on( 'submit', function() {
-				var $button = $( '.wp-mail-smtp-tab-test #email-test-form .wp-mail-smtp-btn' );
+			$( '.wp-mail-smtp-tab-tools-test #email-test-form' ).on( 'submit', function() {
+				var $button = $( this ).find( '.wp-mail-smtp-btn' );
 
 				$button.attr( 'disabled', true );
 				$button.find( 'span' ).hide();
@@ -324,7 +324,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		 */
 		triggerExitNotice: function() {
 
-			var $settingPages = $( '.wp-mail-smtp-page-general:not( .wp-mail-smtp-tab-test )' );
+			var $settingPages = $( '.wp-mail-smtp-page-general' );
 
 			// Display an exit notice, if settings are not saved.
 			$( window ).on( 'beforeunload', function() {

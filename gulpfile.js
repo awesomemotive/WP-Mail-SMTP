@@ -333,7 +333,9 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/sendinblue',
 				'vendor/symfony/polyfill-mbstring',
 				'vendor/symfony/polyfill-php72',
-				'vendor/symfony/polyfill-intl-idn'
+				'vendor/symfony/polyfill-intl-idn',
+				'vendor/goodby',
+				'vendor/mk-j',
 			],
 			{ allowEmpty: true, read: false }
 		)

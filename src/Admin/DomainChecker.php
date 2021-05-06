@@ -144,4 +144,53 @@ class DomainChecker {
 
 		return ! in_array( $this->mailer, [ 'mail', 'pepipostapi' ], true );
 	}
+
+	/**
+	 * Get the domain checker results html.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function get_results_html() {
+
+		$results      = $this->get_results();
+		$allowed_html = [
+			'b' => [],
+			'i' => [],
+			'a' => [
+				'href'   => [],
+				'target' => [],
+				'rel'    => [],
+			],
+		];
+
+		ob_start();
+		?>
+		<div id="wp-mail-smtp-domain-check-details">
+			<h2><?php esc_html_e( 'Domain Check Results', 'wp-mail-smtp' ); ?></h2>
+
+			<?php if ( empty( $results['success'] ) ) : ?>
+				<div class="notice-inline <?php echo $this->is_supported_mailer() ? 'notice-error' : 'notice-warning'; ?>">
+					<p><?php echo wp_kses( $results['message'], $allowed_html ); ?></p>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $results['checks'] ) ) : ?>
+				<div class="wp-mail-smtp-domain-check-details-check-list">
+					<?php foreach ( $results['checks'] as $check ) : ?>
+						<div class="wp-mail-smtp-domain-check-details-check-list-item">
+							<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/icons/' . esc_attr( $check['state'] ) . '.svg' ); ?>" class="wp-mail-smtp-domain-check-details-check-list-item-icon" alt="<?php printf( /* translators: %s - item state name. */ esc_attr__( '%s icon', 'wp-mail-smtp' ), esc_attr( $check['state'] ) ); ?>">
+							<div class="wp-mail-smtp-domain-check-details-check-list-item-content">
+								<h3><?php echo esc_html( $check['type'] ); ?></h3>
+								<p><?php echo wp_kses( $check['message'], $allowed_html ); ?></p>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
 }

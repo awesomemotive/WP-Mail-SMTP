@@ -46,7 +46,7 @@ class Area {
 	 *
 	 * @var array
 	 */
-	public static $pages_registered = [ 'general', 'logs', 'about' ];
+	public static $pages_registered = [ 'general', 'logs', 'about', 'tools' ];
 
 	/**
 	 * Area constructor.
@@ -100,6 +100,9 @@ class Area {
 
 		// Process all AJAX requests.
 		add_action( 'wp_ajax_wp_mail_smtp_ajax', [ $this, 'process_ajax' ] );
+
+		// Maybe redirect to "Tools -> Email Test" page if old direct URL to "Settings -> Email Test" is accessed.
+		add_action( 'admin_init', [ $this, 'maybe_redirect_test_tab' ] );
 
 		( new Review() )->hooks();
 		( new Education() )->hooks();
@@ -196,6 +199,25 @@ class Area {
 	}
 
 	/**
+	 * Get menu item position.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return int
+	 */
+	public function get_menu_item_position() {
+
+		/**
+		 * Filters menu item position.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param int $position Position number.
+		 */
+		return apply_filters( 'wp_mail_smtp_admin_area_get_menu_item_position', 98 );
+	}
+
+	/**
 	 * Add admin area menu item.
 	 *
 	 * @since 1.0.0
@@ -203,41 +225,56 @@ class Area {
 	 */
 	public function add_admin_options_page() {
 
-		$this->hook = \add_menu_page(
-			\esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
-			\esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
-			'manage_options',
+		// Options pages access capability.
+		$access_capability = 'manage_options';
+
+		$this->hook = add_menu_page(
+			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
+			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
+			$access_capability,
 			self::SLUG,
-			array( $this, 'display' ),
+			[ $this, 'display' ],
 			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM5ZWEzYTgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQzIDM0Ij48cGF0aCBkPSJNMC4wMDcsMy41ODVWMjAuNDIxcTAsMy41ODYsMy43NTEsMy41ODVMMjAsMjRWMTlIMzBWMTQuMDE0bDAuOTkxLTFMMzQsMTNWMy41ODVRMzQsMCwzMC4yNDksMEgzLjc1OFEwLjAwNywwLC4wMDcsMy41ODVoMFpNMy41MjQsNi4xNTdhMS40OSwxLjQ5LDAsMCwxLS41MDgtMC45MzUsMS41ODEsMS41ODEsMCwwLDEsLjI3NC0xLjIwOCwxLjQ0OSwxLjQ0OSwwLDAsMSwxLjA5NC0uNjYzLDEuNzU2LDEuNzU2LDAsMCwxLDEuMjUuMzEybDExLjQwOSw3LjcxNkwyOC4zNzQsMy42NjNhMS45NiwxLjk2LDAsMCwxLDEuMjg5LS4zMTIsMS41NDYsMS41NDYsMCwwLDEsMS4wOTQuNjYzLDEuNCwxLjQsMCwwLDEsLjI3MywxLjIwOCwxLjY3LDEuNjcsMCwwLDEtLjU0Ny45MzVMMTcuMDQzLDE3LjIyNVoiLz48cGF0aCBkPSJNMjIsMjhIMzJsLTAuMDA5LDQuNjI0YTEuMTI2LDEuMTI2LDAsMCwwLDEuOTIyLjhsOC4yNS04LjIzNmExLjEyNiwxLjEyNiwwLDAsMCwwLTEuNTk0bC04LjI1LTguMjQxYTEuMTI2LDEuMTI2LDAsMCwwLTEuOTIyLjh2NC44NjZMMjIsMjF2N1oiLz48L3N2Zz4=',
-			98
+			$this->get_menu_item_position()
 		);
 
-		\add_submenu_page(
+		add_submenu_page(
 			self::SLUG,
 			$this->get_current_tab_title() . ' &lsaquo; ' . \esc_html__( 'Settings', 'wp-mail-smtp' ),
-			\esc_html__( 'Settings', 'wp-mail-smtp' ),
-			'manage_options',
+			esc_html__( 'Settings', 'wp-mail-smtp' ),
+			$access_capability,
 			self::SLUG,
-			array( $this, 'display' )
-		);
-		\add_submenu_page(
-			self::SLUG,
-			\esc_html__( 'Email Log', 'wp-mail-smtp' ),
-			\esc_html__( 'Email Log', 'wp-mail-smtp' ),
-			'manage_options',
-			self::SLUG . '-logs',
-			array( $this, 'display' )
+			[ $this, 'display' ]
 		);
 
-		if ( ! wp_mail_smtp()->is_white_labeled() ) {
-			\add_submenu_page(
+		add_submenu_page(
+			self::SLUG,
+			esc_html__( 'Email Log', 'wp-mail-smtp' ),
+			esc_html__( 'Email Log', 'wp-mail-smtp' ),
+			$this->get_logs_access_capability(),
+			self::SLUG . '-logs',
+			[ $this, 'display' ]
+		);
+
+		foreach ( $this->get_parent_pages() as $page ) {
+			add_submenu_page(
 				self::SLUG,
-				\esc_html__( 'About Us', 'wp-mail-smtp' ),
-				\esc_html__( 'About Us', 'wp-mail-smtp' ),
-				'manage_options',
+				esc_html( $page->get_title() ),
+				esc_html( $page->get_label() ),
+				$access_capability,
+				self::SLUG . '-' . $page->get_slug(),
+				[ $this, 'display' ]
+			);
+		}
+
+		if ( ! wp_mail_smtp()->is_white_labeled() ) {
+			add_submenu_page(
+				self::SLUG,
+				esc_html__( 'About Us', 'wp-mail-smtp' ),
+				esc_html__( 'About Us', 'wp-mail-smtp' ),
+				$access_capability,
 				self::SLUG . '-about',
-				array( $this, 'display' )
+				[ $this, 'display' ]
 			);
 		}
 	}
@@ -256,7 +293,7 @@ class Area {
 			self::SLUG,
 			[ $this, 'display_network_product_education_page' ],
 			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM5ZWEzYTgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQzIDM0Ij48cGF0aCBkPSJNMC4wMDcsMy41ODVWMjAuNDIxcTAsMy41ODYsMy43NTEsMy41ODVMMjAsMjRWMTlIMzBWMTQuMDE0bDAuOTkxLTFMMzQsMTNWMy41ODVRMzQsMCwzMC4yNDksMEgzLjc1OFEwLjAwNywwLC4wMDcsMy41ODVoMFpNMy41MjQsNi4xNTdhMS40OSwxLjQ5LDAsMCwxLS41MDgtMC45MzUsMS41ODEsMS41ODEsMCwwLDEsLjI3NC0xLjIwOCwxLjQ0OSwxLjQ0OSwwLDAsMSwxLjA5NC0uNjYzLDEuNzU2LDEuNzU2LDAsMCwxLDEuMjUuMzEybDExLjQwOSw3LjcxNkwyOC4zNzQsMy42NjNhMS45NiwxLjk2LDAsMCwxLDEuMjg5LS4zMTIsMS41NDYsMS41NDYsMCwwLDEsMS4wOTQuNjYzLDEuNCwxLjQsMCwwLDEsLjI3MywxLjIwOCwxLjY3LDEuNjcsMCwwLDEtLjU0Ny45MzVMMTcuMDQzLDE3LjIyNVoiLz48cGF0aCBkPSJNMjIsMjhIMzJsLTAuMDA5LDQuNjI0YTEuMTI2LDEuMTI2LDAsMCwwLDEuOTIyLjhsOC4yNS04LjIzNmExLjEyNiwxLjEyNiwwLDAsMCwwLTEuNTk0bC04LjI1LTguMjQxYTEuMTI2LDEuMTI2LDAsMCwwLTEuOTIyLjh2NC44NjZMMjIsMjF2N1oiLz48L3N2Zz4=',
-			98
+			$this->get_menu_item_position()
 		);
 	}
 
@@ -635,6 +672,18 @@ class Area {
 
 						<?php
 						break;
+
+					default:
+						foreach ( $this->get_parent_pages() as $parent_page ) {
+							if ( $page === self::SLUG . '-' . $parent_page->get_slug() ) {
+								?>
+								<div class="wp-mail-smtp-page wp-mail-smtp-page-<?php echo esc_attr( $parent_page->get_slug() ); ?> wp-mail-smtp-tab-<?php echo esc_attr( $parent_page->get_slug() ); ?>-<?php echo esc_attr( $parent_page->get_current_tab() ); ?>">
+									<?php $parent_page->display(); ?>
+								</div>
+								<?php
+								break;
+							}
+						}
 				}
 				?>
 		</div>
@@ -651,9 +700,35 @@ class Area {
 	 */
 	public function generate_display_logs_object() {
 
+		// Store generated object to make sure that it's created only once.
+		static $logs_object = null;
+
 		$logs_class = apply_filters( 'wp_mail_smtp_admin_display_get_logs_fqcn', \WPMailSMTP\Admin\Pages\Logs::class );
 
-		return new $logs_class();
+		if ( $logs_object === null ) {
+			$logs_object = new $logs_class();
+		}
+
+		return $logs_object;
+	}
+
+	/**
+	 * Get email logs access capability.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function get_logs_access_capability() {
+
+		/**
+		 * Filter email logs access capability.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $capability Email logs access capability.
+		 */
+		return apply_filters( 'wp_mail_smtp_admin_area_get_logs_access_capability', 'manage_options' );
 	}
 
 	/**
@@ -662,8 +737,8 @@ class Area {
 	 * @since 1.5.0
 	 */
 	protected function display_tabs() {
-		?>
 
+		?>
 		<div class="wp-mail-smtp-page-title">
 			<?php
 			foreach ( $this->get_pages() as $page_slug => $page ) :
@@ -729,6 +804,37 @@ class Area {
 	}
 
 	/**
+	 * Get admin parent pages.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return ParentPageAbstract[]
+	 */
+	public function get_parent_pages() {
+
+		static $pages = null;
+
+		if ( $pages === null ) {
+			$pages = [
+				'tools' => new Pages\Tools(
+					[
+						'test' => new Pages\TestTab(),
+					]
+				),
+			];
+		}
+
+		/**
+		 * Filters admin parent pages.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param ParentPageAbstract[] $pages Parent pages.
+		 */
+		return apply_filters( 'wp_mail_smtp_admin_area_get_parent_pages', $pages );
+	}
+
+	/**
 	 * Get the array of default registered tabs for General page admin area.
 	 *
 	 * @since 1.0.0
@@ -740,7 +846,7 @@ class Area {
 		if ( empty( $this->pages ) ) {
 			$this->pages = array(
 				'settings' => new Pages\SettingsTab(),
-				'test'     => new Pages\TestTab(),
+				'test'     => new Pages\TestTab( new Pages\Tools() ),
 				'logs'     => new Pages\LogsTab(),
 				'control'  => new Pages\ControlTab(),
 				'misc'     => new Pages\MiscTab(),
@@ -1056,6 +1162,18 @@ class Area {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Maybe redirect to "Tools -> Email Test" page if old direct URL to "Settings -> Email Test" is accessed.
+	 *
+	 * @since 2.8.0
+	 */
+	public function maybe_redirect_test_tab() {
+
+		if ( $this->is_admin_page( 'general' ) && $this->get_current_tab() === 'test' ) {
+			wp_safe_redirect( add_query_arg( 'tab', 'test', $this->get_admin_page_url( self::SLUG . '-tools' ) ) );
 		}
 	}
 }

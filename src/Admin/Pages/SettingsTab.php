@@ -22,6 +22,7 @@ class SettingsTab extends PageAbstract {
 	 * @since 1.5.0
 	 */
 	public function __construct() {
+		parent::__construct();
 
 		add_action( 'wp_mail_smtp_admin_pages_settings_license_key', array( __CLASS__, 'display_license_key_field_content' ) );
 	}

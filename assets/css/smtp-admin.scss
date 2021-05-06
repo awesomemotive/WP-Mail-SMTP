@@ -23,7 +23,7 @@
 
 #wp-mail-smtp-header {
 	border-top: 3px solid $orange;
-	padding: $content-padding;
+	padding: 24px $content-padding;
 
 	img {
 		display: block;
@@ -425,6 +425,13 @@
 			h3 {
 				color: #444;
 				font-size: 24px;
+				font-weight: 600;
+				margin: 0 0 20px 0;
+			}
+
+			h5 {
+				color: #444;
+				font-size: 16px;
 				font-weight: 600;
 				margin: 0 0 20px 0;
 			}
@@ -1261,7 +1268,7 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 }
 
 // Email Test submit button loader.
-.wp-mail-smtp-tab-test {
+.wp-mail-smtp-tab-tools-test {
 	#email-test-form {
 		.wp-mail-smtp-btn {
 			min-width: 95px;

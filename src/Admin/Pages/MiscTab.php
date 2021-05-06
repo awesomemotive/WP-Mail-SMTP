@@ -83,11 +83,7 @@ class MiscTab extends PageAbstract {
 						<br>
 						<?php
 						if ( $options->is_const_defined( 'general', 'do_not_send' ) ) {
-							printf( /* translators: %1$s - constant that was used; %2$s - file where it was used. */
-								esc_html__( 'The value of this field was set using a constant %1$s most likely inside %2$s of your WordPress installation.', 'wp-mail-smtp' ),
-								'<code>WPMS_DO_NOT_SEND</code>',
-								'<code>wp-config.php</code>'
-							);
+							echo $options->get_const_set_message( 'WPMS_DO_NOT_SEND' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						} else {
 							printf(
 								wp_kses( /* translators: %s - The URL to the constants support article. */

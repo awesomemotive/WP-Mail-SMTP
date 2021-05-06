@@ -5,6 +5,7 @@ namespace WPMailSMTP;
 use WPMailSMTP\Admin\AdminBarMenu;
 use WPMailSMTP\Admin\Notifications;
 use WPMailSMTP\UsageTracking\UsageTracking;
+use WPMailSMTP\Compatibility\Compatibility;
 
 /**
  * Class Core to handle all plugin initialization.
@@ -126,6 +127,7 @@ class Core {
 		add_action( 'plugins_loaded', [ $this, 'get_admin_bar_menu' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_notifications' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_connect' ], 15 );
+		add_action( 'plugins_loaded', [ $this, 'get_compatibility' ], 0 );
 	}
 
 	/**
@@ -1020,5 +1022,35 @@ class Core {
 		}
 
 		return $connect;
+	}
+
+	/**
+	 * Load the plugin compatibility functionality and initializes it.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Compatibility
+	 */
+	public function get_compatibility() {
+
+		static $compatibility;
+
+		if ( ! isset( $compatibility ) ) {
+
+			/**
+			 * Filters compatibility instance.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param \WPMailSMTP\Compatibility\Compatibility  $compatibility Compatibility instance.
+			 */
+			$compatibility = apply_filters( 'wp_mail_smtp_core_get_compatibility', new Compatibility() );
+
+			if ( method_exists( $compatibility, 'init' ) ) {
+				$compatibility->init();
+			}
+		}
+
+		return $compatibility;
 	}
 }

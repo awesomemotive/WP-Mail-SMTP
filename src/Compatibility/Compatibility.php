@@ -42,8 +42,7 @@ class Compatibility {
 	public function setup_compatibility() {
 
 		$plugins = [
-			'admin-2020'      => '\WPMailSMTP\Compatibility\Plugin\Admin2020',
-			'wishlist-member' => '\WPMailSMTP\Compatibility\Plugin\WishListMember',
+			'admin-2020' => '\WPMailSMTP\Compatibility\Plugin\Admin2020',
 		];
 
 		foreach ( $plugins as $key => $classname ) {

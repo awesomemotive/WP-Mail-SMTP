@@ -119,6 +119,15 @@ if ( is_multisite() ) {
 		) {
 			$table = \WPMailSMTP\Pro\Emails\Logs\Logs::get_table_name();
 			$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB
+
+			$attachment_files_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_attachment_files_table_name();
+			$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB
+
+			$email_attachments_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_email_attachments_table_name();
+			$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB
+
+			// Delete all attachments if any.
+			( new \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments() )->delete_all_attachments();
 		}
 
 		/*
@@ -178,6 +187,15 @@ if ( is_multisite() ) {
 	) {
 		$table = \WPMailSMTP\Pro\Emails\Logs\Logs::get_table_name();
 		$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB
+
+		$attachment_files_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_attachment_files_table_name();
+		$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB
+
+		$email_attachments_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_email_attachments_table_name();
+		$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB
+
+		// Delete all attachments if any.
+		( new \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments() )->delete_all_attachments();
 	}
 
 	/*

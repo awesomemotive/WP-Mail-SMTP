@@ -5,7 +5,7 @@ namespace WPMailSMTP\Helpers;
 // WP 5.2+ already load Sodium Compat polyfill for libsodium-fallback.
 // We need to do the same for under 5.2 versions (4.9-5.1).
 if ( ! version_compare( get_bloginfo( 'version' ), '5.2', '>=' ) && ! function_exists( 'sodium_crypto_box' ) ) {
-	require_once dirname( WPMS_PLUGIN_FILE ) . '/vendor/paragonie/sodium_compat/autoload.php';
+	require_once dirname( WPMS_PLUGIN_FILE ) . '/libs/sodium_compat/autoload.php';
 }
 
 /**

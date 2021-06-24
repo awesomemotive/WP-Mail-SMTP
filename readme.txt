@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.7
-Stable tag: 2.8.0
+Stable tag: 2.9.0
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -241,6 +241,18 @@ By all means please contact us to discuss features or options you'd like to see 
 10. Email Log single page (Pro)
 
 == Changelog ==
+
+= 2.9.0 - 2021-06-24 =
+* Added: Action Scheduler table to the Tools page.
+* Added: Dashboard Widget with total emails sent counter.
+* Changed: Notifications design.
+* Changed: Sodium Compat library loading improved.
+* Fixed: Plugin conflict with plugins that populate $_POST data (Ultimate Addons for Elementor, WishList Member, ...).
+* Fixed: Sendinblue WooCommerce Email Marketing plugin conflict admin notice display.
+* Fixed: jQuery deprecated notices.
+* Fixed: Action Scheduler library loading issue.
+* Fixed: Canceled Setup Wizard's OAuth authorization redirecting to the Setup Wizard when connecting via regular plugin settings.
+* Fixed: Meta DB table not existing error notices on a WP Multisite subsite.
 
 = 2.8.0 - 2021-05-06 =
 * Added: WP Site Health status check for the sending domain.

@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Providers\MailerAbstract;
+
 // Load PHPMailer class, so we can subclass it.
 if ( ! class_exists( 'PHPMailer', false ) ) {
 	require_once ABSPATH . WPINC . '/class-phpmailer.php';
@@ -77,7 +79,16 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 			$mail_mailer === 'pepipost'
 		) {
 			try {
-				// Allow to hook early to catch any early failed emails.
+
+				/**
+				 * Fires before email pre send via SMTP.
+				 *
+				 * Allow to hook early to catch any early failed emails.
+				 *
+				 * @since 2.9.0
+				 *
+				 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+				 */
 				do_action( 'wp_mail_smtp_mailcatcher_smtp_pre_send_before', $this );
 
 				// Prepare all the headers.
@@ -85,7 +96,15 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 					return false;
 				}
 
-				// Allow to hook after all the preparation before the actual sending.
+				/**
+				 * Fires before email send via SMTP.
+				 *
+				 * Allow to hook after all the preparation before the actual sending.
+				 *
+				 * @since 2.9.0
+				 *
+				 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+				 */
 				do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
 
 				return $this->postSend();
@@ -112,6 +131,17 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 		// We need this so that the \PHPMailer class will correctly prepare all the headers.
 		$this->Mailer = 'mail';
 
+		/**
+		 * Fires before email pre send.
+		 *
+		 * Allow to hook early to catch any early failed emails.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+		 */
+		do_action( 'wp_mail_smtp_mailcatcher_pre_send_before', $this );
+
 		// Prepare everything (including the message) for sending.
 		if ( ! $this->preSend() ) {
 			return false;
@@ -135,7 +165,16 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 
 		$is_sent = $mailer->is_email_sent();
 
-		// Allow to perform any actions with the data.
+		/**
+		 * Fires after email send.
+		 *
+		 * Allow to perform any actions with the data.
+		 *
+		 * @since  {VERSION}
+		 *
+		 * @param MailerAbstract       $mailer      The Mailer object.
+		 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+		 */
 		do_action( 'wp_mail_smtp_mailcatcher_send_after', $mailer, $this );
 
 		return $is_sent;

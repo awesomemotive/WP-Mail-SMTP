@@ -266,17 +266,6 @@ class Area {
 				[ $this, 'display' ]
 			);
 		}
-
-		if ( ! wp_mail_smtp()->is_white_labeled() ) {
-			add_submenu_page(
-				self::SLUG,
-				esc_html__( 'About Us', 'wp-mail-smtp' ),
-				esc_html__( 'About Us', 'wp-mail-smtp' ),
-				$access_capability,
-				self::SLUG . '-about',
-				[ $this, 'display' ]
-			);
-		}
 	}
 
 	/**
@@ -405,45 +394,51 @@ class Area {
 			return;
 		}
 
+		// Set general body class.
+		add_filter(
+			'admin_body_class',
+			function ( $classes ) {
+				$classes .= ' wp-mail-smtp-admin-page-body';
+				return $classes;
+			}
+		);
+
 		// General styles and js.
-		\wp_enqueue_style(
+		wp_enqueue_style(
 			'wp-mail-smtp-admin',
-			\wp_mail_smtp()->assets_url . '/css/smtp-admin.min.css',
+			wp_mail_smtp()->assets_url . '/css/smtp-admin.min.css',
 			false,
 			WPMS_PLUGIN_VER
 		);
 
-		\wp_enqueue_script(
+		wp_enqueue_script(
 			'wp-mail-smtp-admin',
-			\wp_mail_smtp()->assets_url . '/js/smtp-admin' . WP::asset_min() . '.js',
-			array( 'jquery' ),
+			wp_mail_smtp()->assets_url . '/js/smtp-admin' . WP::asset_min() . '.js',
+			[ 'jquery' ],
 			WPMS_PLUGIN_VER,
 			false
 		);
 
-		\wp_localize_script(
-			'wp-mail-smtp-admin',
-			'wp_mail_smtp',
-			array(
-				'text_provider_remove'    => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
-				'text_settings_not_saved' => esc_html__( 'Changes that you made to the settings are not saved!', 'wp-mail-smtp' ),
-				'default_mailer_notice'   => array(
-					'title'         => esc_html__( 'Heads up!', 'wp-mail-smtp' ),
-					'content'       => wp_kses(
-						__( '<p>The Default (PHP) mailer is currently selected, but is not recommended because in most cases it does not resolve email delivery issues.</p><p>Please consider selecting and configuring one of the other mailers.</p>', 'wp-mail-smtp' ),
-						[ 'p' => [] ]
-					),
-					'save_button'   => esc_html__( 'Save Settings', 'wp-mail-smtp' ),
-					'cancel_button' => esc_html__( 'Cancel', 'wp-mail-smtp' ),
-					'icon_alt'      => esc_html__( 'Warning icon', 'wp-mail-smtp' ),
+		$script_data = [
+			'text_provider_remove'    => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
+			'text_settings_not_saved' => esc_html__( 'Changes that you made to the settings are not saved!', 'wp-mail-smtp' ),
+			'default_mailer_notice'   => [
+				'title'         => esc_html__( 'Heads up!', 'wp-mail-smtp' ),
+				'content'       => wp_kses(
+					__( '<p>The Default (PHP) mailer is currently selected, but is not recommended because in most cases it does not resolve email delivery issues.</p><p>Please consider selecting and configuring one of the other mailers.</p>', 'wp-mail-smtp' ),
+					[ 'p' => [] ]
 				),
-				'plugin_url'              => wp_mail_smtp()->plugin_url,
-				'education'               => array(
-					'upgrade_icon_lock' => '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z"></path></svg>',
-					'upgrade_title'     => esc_html__( '%name% is a PRO Feature', 'wp-mail-smtp' ),
-					'upgrade_button'    => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
-					'upgrade_url'       => add_query_arg( 'discount', 'SMTPLITEUPGRADE', wp_mail_smtp()->get_upgrade_link( '' ) ),
-					'upgrade_bonus'     => '<p>' .
+				'save_button'   => esc_html__( 'Save Settings', 'wp-mail-smtp' ),
+				'cancel_button' => esc_html__( 'Cancel', 'wp-mail-smtp' ),
+				'icon_alt'      => esc_html__( 'Warning icon', 'wp-mail-smtp' ),
+			],
+			'plugin_url'              => wp_mail_smtp()->plugin_url,
+			'education'               => [
+				'upgrade_icon_lock' => '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z"></path></svg>',
+				'upgrade_title'     => esc_html__( '%name% is a PRO Feature', 'wp-mail-smtp' ),
+				'upgrade_button'    => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
+				'upgrade_url'       => add_query_arg( 'discount', 'SMTPLITEUPGRADE', wp_mail_smtp()->get_upgrade_link( '' ) ),
+				'upgrade_bonus'     => '<p>' .
 											sprintf(
 												wp_kses( /* Translators: %s - discount value $50. */
 													__( '<strong>Bonus:</strong> WP Mail SMTP users get <span>%s off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
@@ -456,28 +451,41 @@ class Area {
 												'$50'
 											)
 											. '</p>',
-					'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">
+				'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">
 												' . esc_html__( 'Already purchased?', 'wp-mail-smtp' ) . '
 											</a>',
-				),
-				'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),
-				'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
-			)
-		);
+			],
+			'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),
+			'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
+			'is_network_admin'        => is_network_admin(),
+			'ajax_url'                => admin_url( 'admin-ajax.php' ),
+		];
+
+		/**
+		 * Filters plugin script data.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array  $script_data Data.
+		 * @param string $hook        Current hook.
+		 */
+		$script_data = apply_filters( 'wp_mail_smtp_admin_area_enqueue_assets_scripts_data', $script_data, $hook );
+
+		wp_localize_script( 'wp-mail-smtp-admin', 'wp_mail_smtp', $script_data );
 
 		/*
 		 * jQuery Confirm library v3.3.4.
 		 */
-		\wp_enqueue_style(
+		wp_enqueue_style(
 			'wp-mail-smtp-admin-jconfirm',
-			\wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.css',
-			array( 'wp-mail-smtp-admin' ),
+			wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.css',
+			[ 'wp-mail-smtp-admin' ],
 			'3.3.4'
 		);
-		\wp_enqueue_script(
+		wp_enqueue_script(
 			'wp-mail-smtp-admin-jconfirm',
-			\wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.js',
-			array( 'wp-mail-smtp-admin' ),
+			wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.js',
+			[ 'wp-mail-smtp-admin' ],
 			'3.3.4',
 			false
 		);
@@ -486,17 +494,17 @@ class Area {
 		 * Logs page.
 		 */
 		if ( $this->is_admin_page( 'logs' ) ) {
-			\wp_enqueue_style(
+			wp_enqueue_style(
 				'wp-mail-smtp-admin-logs',
 				apply_filters( 'wp_mail_smtp_admin_enqueue_assets_logs_css', '' ),
-				array( 'wp-mail-smtp-admin' ),
+				[ 'wp-mail-smtp-admin' ],
 				WPMS_PLUGIN_VER
 			);
 
-			\wp_enqueue_script(
+			wp_enqueue_script(
 				'wp-mail-smtp-admin-logs',
 				apply_filters( 'wp_mail_smtp_admin_enqueue_assets_logs_js', '' ),
-				array( 'wp-mail-smtp-admin' ),
+				[ 'wp-mail-smtp-admin' ],
 				WPMS_PLUGIN_VER,
 				false
 			);
@@ -507,51 +515,58 @@ class Area {
 		 */
 		if ( $this->is_admin_page( 'about' ) ) {
 
-			\wp_enqueue_style(
+			wp_enqueue_style(
 				'wp-mail-smtp-admin-about',
-				\wp_mail_smtp()->assets_url . '/css/smtp-about.min.css',
-				array( 'wp-mail-smtp-admin' ),
+				wp_mail_smtp()->assets_url . '/css/smtp-about.min.css',
+				[ 'wp-mail-smtp-admin' ],
 				WPMS_PLUGIN_VER
 			);
 
-			\wp_enqueue_script(
+			wp_enqueue_script(
 				'wp-mail-smtp-admin-about',
-				\wp_mail_smtp()->assets_url . '/js/smtp-about' . WP::asset_min() . '.js',
-				array( 'wp-mail-smtp-admin' ),
+				wp_mail_smtp()->assets_url . '/js/smtp-about' . WP::asset_min() . '.js',
+				[ 'wp-mail-smtp-admin' ],
 				'0.7.2',
 				false
 			);
 
-			$settings = array(
-				'ajax_url'                    => \admin_url( 'admin-ajax.php' ),
-				'nonce'                       => \wp_create_nonce( 'wp-mail-smtp-about' ),
+			$settings = [
+				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
+				'nonce'                       => wp_create_nonce( 'wp-mail-smtp-about' ),
 				// Strings.
-				'plugin_activate'             => \esc_html__( 'Activate', 'wp-mail-smtp' ),
-				'plugin_activated'            => \esc_html__( 'Activated', 'wp-mail-smtp' ),
-				'plugin_active'               => \esc_html__( 'Active', 'wp-mail-smtp' ),
-				'plugin_inactive'             => \esc_html__( 'Inactive', 'wp-mail-smtp' ),
-				'plugin_processing'           => \esc_html__( 'Processing...', 'wp-mail-smtp' ),
-				'plugin_install_error'        => \esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
-				'plugin_install_activate_btn' => \esc_html__( 'Install and Activate', 'wp-mail-smtp' ),
-				'plugin_activate_btn'         => \esc_html__( 'Activate', 'wp-mail-smtp' ),
-				'plugin_download_btn'         => \esc_html__( 'Download', 'wp-mail-smtp' ),
-			);
+				'plugin_activate'             => esc_html__( 'Activate', 'wp-mail-smtp' ),
+				'plugin_activated'            => esc_html__( 'Activated', 'wp-mail-smtp' ),
+				'plugin_active'               => esc_html__( 'Active', 'wp-mail-smtp' ),
+				'plugin_inactive'             => esc_html__( 'Inactive', 'wp-mail-smtp' ),
+				'plugin_processing'           => esc_html__( 'Processing...', 'wp-mail-smtp' ),
+				'plugin_install_error'        => esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
+				'plugin_install_activate_btn' => esc_html__( 'Install and Activate', 'wp-mail-smtp' ),
+				'plugin_activate_btn'         => esc_html__( 'Activate', 'wp-mail-smtp' ),
+				'plugin_download_btn'         => esc_html__( 'Download', 'wp-mail-smtp' ),
+			];
 
-			\wp_localize_script(
+			wp_localize_script(
 				'wp-mail-smtp-admin-about',
 				'wp_mail_smtp_about',
 				$settings
 			);
 
-			\wp_enqueue_script(
+			wp_enqueue_script(
 				'wp-mail-smtp-admin-about-matchheight',
-				\wp_mail_smtp()->assets_url . '/js/vendor/jquery.matchHeight.min.js',
-				array( 'wp-mail-smtp-admin' ),
+				wp_mail_smtp()->assets_url . '/js/vendor/jquery.matchHeight.min.js',
+				[ 'wp-mail-smtp-admin' ],
 				'0.7.2',
 				false
 			);
 		}
 
+		/**
+		 * Fires after enqueue plugin assets.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param string $hook Current hook.
+		 */
 		do_action( 'wp_mail_smtp_admin_area_enqueue_assets', $hook );
 	}
 
@@ -657,17 +672,6 @@ class Area {
 
 						<div class="wp-mail-smtp-page wp-mail-smtp-page-logs <?php echo $is_archive ? 'wp-mail-smtp-page-logs-archive' : 'wp-mail-smtp-page-logs-single'; ?>">
 							<?php $logs->display(); ?>
-						</div>
-
-						<?php
-						break;
-
-					case self::SLUG . '-about':
-						$about = new Pages\About();
-						?>
-
-						<div class="wp-mail-smtp-page wp-mail-smtp-page-about wp-mail-smtp-tab-about-<?php echo \esc_attr( $about->get_current_tab() ); ?>">
-							<?php $about->display(); ?>
 						</div>
 
 						<?php
@@ -818,10 +822,24 @@ class Area {
 			$pages = [
 				'tools' => new Pages\Tools(
 					[
-						'test' => new Pages\TestTab(),
+						'test'             => Pages\TestTab::class,
+						'export'           => Pages\ExportTab::class,
+						'action-scheduler' => Pages\ActionSchedulerTab::class,
 					]
 				),
 			];
+
+			if ( ! wp_mail_smtp()->is_white_labeled() ) {
+				$about_tabs = [
+					'about' => Pages\AboutTab::class,
+				];
+
+				if ( wp_mail_smtp()->get_license_type() === 'lite' ) {
+					$about_tabs['versus'] = Pages\VersusTab::class;
+				}
+
+				$pages['about'] = new Pages\About( $about_tabs );
+			}
 		}
 
 		/**
@@ -965,15 +983,17 @@ class Area {
 		}
 
 		// Process POST only if it exists.
-		if ( ! empty( $_POST ) ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		if ( ! empty( $_POST ) && isset( $_POST['wp-mail-smtp-post'] ) ) {
 			if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
 				$post = $_POST['wp-mail-smtp'];
 			} else {
-				$post = array();
+				$post = [];
 			}
 
 			$pages[ $this->get_current_tab() ]->process_post( $post );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		// This won't do anything for most pages.
 		// Works for plugin page only, when GET params are allowed.
@@ -1008,11 +1028,11 @@ class Area {
 				break;
 
 			case 'about_plugin_install':
-				Pages\About::ajax_plugin_install();
+				Pages\AboutTab::ajax_plugin_install();
 				break;
 
 			case 'about_plugin_activate':
-				Pages\About::ajax_plugin_activate();
+				Pages\AboutTab::ajax_plugin_activate();
 				break;
 
 			case 'notice_dismiss':

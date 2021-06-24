@@ -170,6 +170,24 @@ class MiscTab extends PageAbstract {
 				</div>
 			</div>
 
+			<!-- Hide Dashboard Widget -->
+			<div id="wp-mail-smtp-setting-row-dashboard_widget_hidden" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-dashboard_widget_hidden">
+						<?php esc_html_e( 'Hide Dashboard Widget', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<input name="wp-mail-smtp[general][dashboard_widget_hidden]" type="checkbox"
+						   value="true" <?php checked( true, $options->get( 'general', 'dashboard_widget_hidden' ) ); ?>
+						   id="wp-mail-smtp-setting-dashboard_widget_hidden"
+					>
+					<label for="wp-mail-smtp-setting-dashboard_widget_hidden">
+						<?php esc_html_e( 'Check this if you would like to hide the WP Mail SMTP Dashboard Widget.', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+			</div>
+
 			<!-- Uninstall -->
 			<div id="wp-mail-smtp-setting-row-uninstall" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
@@ -236,6 +254,9 @@ class MiscTab extends PageAbstract {
 		}
 		if ( empty( $data['general']['email_delivery_errors_hidden'] ) ) {
 			$data['general']['email_delivery_errors_hidden'] = false;
+		}
+		if ( empty( $data['general']['dashboard_widget_hidden'] ) ) {
+			$data['general']['dashboard_widget_hidden'] = false;
 		}
 		if ( empty( $data['general']['uninstall'] ) ) {
 			$data['general']['uninstall'] = false;

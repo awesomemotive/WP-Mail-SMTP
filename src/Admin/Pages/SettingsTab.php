@@ -554,7 +554,7 @@ class SettingsTab extends PageAbstract {
 	/**
 	 * @inheritdoc
 	 */
-	public function process_post( $data ) {
+	public function process_post( $data ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$this->check_admin_referer();
 
@@ -619,6 +619,21 @@ class SettingsTab extends PageAbstract {
 			}
 		}
 
+		// Prevent redirect to setup wizard from settings page after successful auth.
+		if (
+			! empty( $data['mail']['mailer'] ) &&
+			in_array( $data['mail']['mailer'], [ 'gmail', 'outlook', 'zoho' ], true )
+		) {
+			$data[ $data['mail']['mailer'] ]['is_setup_wizard_auth'] = false;
+		}
+
+		/**
+		 * Filters mail settings before save.
+		 *
+		 * @since 2.2.1
+		 *
+		 * @param array $data Settings data.
+		 */
 		$data = apply_filters( 'wp_mail_smtp_settings_tab_process_post', $data );
 
 		// All the sanitization is done in Options class.

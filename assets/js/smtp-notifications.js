@@ -40,7 +40,7 @@ var WPMailSMTPAdminNotifications = window.WPMailSMTPAdminNotifications || ( func
 		 */
 		init: function() {
 
-			$( document ).ready( app.ready );
+			$( app.ready );
 		},
 
 		/**
@@ -159,9 +159,9 @@ var WPMailSMTPAdminNotifications = window.WPMailSMTPAdminNotifications || ( func
 		 */
 		updateNavigation: function() {
 
-			el.$currentMessage = el.$notifications.find( '.message.current' );
-			el.$nextMessage = el.$currentMessage.next( '.message' );
-			el.$prevMessage = el.$currentMessage.prev( '.message' );
+			el.$currentMessage = el.$notifications.find( '.wp-mail-smtp-notifications-message.current' );
+			el.$nextMessage = el.$currentMessage.next( '.wp-mail-smtp-notifications-message' );
+			el.$prevMessage = el.$currentMessage.prev( '.wp-mail-smtp-notifications-message' );
 
 			if ( el.$nextMessage.length === 0 ) {
 				el.$nextButton.addClass( 'disabled' );

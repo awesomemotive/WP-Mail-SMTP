@@ -941,6 +941,7 @@ class Options {
 							case 'do_not_send':
 							case 'am_notifications_hidden':
 							case 'email_delivery_errors_hidden':
+							case 'dashboard_widget_hidden':
 							case 'uninstall':
 							case UsageTracking::SETTINGS_SLUG:
 								$options[ $group ][ $option_name ] = (bool) $option_value;

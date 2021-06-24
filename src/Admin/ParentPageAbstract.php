@@ -137,6 +137,38 @@ abstract class ParentPageAbstract implements PageInterface {
 	}
 
 	/**
+	 * Get the tab label.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $tab Tab key.
+	 *
+	 * @return string
+	 */
+	public function get_tab_label( $tab ) {
+
+		$tabs = $this->get_tabs();
+
+		return isset( $tabs[ $tab ] ) ? $tabs[ $tab ]->get_label() : '';
+	}
+
+	/**
+	 * Get the tab title.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $tab Tab key.
+	 *
+	 * @return string
+	 */
+	public function get_tab_title( $tab ) {
+
+		$tabs = $this->get_tabs();
+
+		return isset( $tabs[ $tab ] ) ? $tabs[ $tab ]->get_title() : '';
+	}
+
+	/**
 	 * Get the defined or default tab.
 	 *
 	 * @since 2.8.0
@@ -200,15 +232,17 @@ abstract class ParentPageAbstract implements PageInterface {
 		$this->tabs[ $this->get_current_tab() ]->hooks();
 
 		// Process POST only if it exists.
-		if ( ! empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( ! empty( $_POST['wp-mail-smtp'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				$post = $_POST['wp-mail-smtp']; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		if ( ! empty( $_POST ) && isset( $_POST['wp-mail-smtp-post'] ) ) {
+			if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
+				$post = $_POST['wp-mail-smtp'];
 			} else {
 				$post = [];
 			}
 
 			$this->tabs[ $this->get_current_tab() ]->process_post( $post );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		// This won't do anything for most pages.
 		// Works for plugin page only, when GET params are allowed.
@@ -223,14 +257,26 @@ abstract class ParentPageAbstract implements PageInterface {
 	public function display() {
 
 		$current_tab = $this->get_current_tab();
+		$page_slug   = $this->slug;
 		?>
 		<div class="wp-mail-smtp-page-title">
 			<?php foreach ( $this->tabs as $tab ) : ?>
-				<a href="<?php echo esc_url( $this->get_link( $tab->get_slug() ) ); ?>"
+				<a href="<?php echo esc_url( $tab->get_link() ); ?>"
 					 class="tab <?php echo $current_tab === $tab->get_slug() ? 'active' : ''; ?>">
 					<?php echo esc_html( $tab->get_label() ); ?>
 				</a>
 			<?php endforeach; ?>
+
+			<?php
+			/**
+			 * Fires after page title.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param ParentPageAbstract $page Current page.
+			 */
+			do_action( "wp_mail_smtp_admin_page_{$page_slug}_{$current_tab}_display_header", $this );
+			?>
 		</div>
 
 		<div class="wp-mail-smtp-page-content">
@@ -247,7 +293,16 @@ abstract class ParentPageAbstract implements PageInterface {
 					 *
 					 * @param PageAbstract $tab Current tab.
 					 */
-					do_action( 'wp_mail_smtp_admin_page_' . $this->slug . '_' . $current_tab . '_display_before', $tab );
+					do_action( 'wp_mail_smtp_admin_pages_before_content', $tab );
+
+					/**
+					 * Fires before tab content.
+					 *
+					 * @since 2.9.0
+					 *
+					 * @param PageAbstract $tab Current tab.
+					 */
+					do_action( "wp_mail_smtp_admin_page_{$page_slug}_{$current_tab}_display_before", $tab );
 
 					$tab->display();
 
@@ -258,7 +313,7 @@ abstract class ParentPageAbstract implements PageInterface {
 					 *
 					 * @param PageAbstract $tab Current tab.
 					 */
-					do_action( 'wp_mail_smtp_admin_page_' . $this->slug . '_' . $current_tab . '_display_after', $tab );
+					do_action( "wp_mail_smtp_admin_page_{$page_slug}_{$current_tab}_display_after", $tab );
 
 					break;
 				}

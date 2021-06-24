@@ -1,4 +1,4 @@
-/* globals wp_mail_smtp, ajaxurl */
+/* globals wp_mail_smtp, jconfirm, ajaxurl */
 'use strict';
 
 var WPMailSMTP = window.WPMailSMTP || {};
@@ -38,7 +38,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		init: function() {
 
 			// Do that when DOM is ready.
-			$( document ).ready( app.ready );
+			$( app.ready );
 		},
 
 		/**
@@ -54,6 +54,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '#screen-meta-links, #screen-meta' ).prependTo( '#wp-mail-smtp-header-temp' ).show();
 
 			app.bindActions();
+
+			app.setJQueryConfirmDefaults();
 		},
 
 		/**
@@ -64,11 +66,11 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		bindActions: function() {
 
 			// Mailer selection.
-			$( '.wp-mail-smtp-mailer-image', app.pageHolder ).click( function() {
+			$( '.wp-mail-smtp-mailer-image', app.pageHolder ).on( 'click', function() {
 				$( this ).parents( '.wp-mail-smtp-mailer' ).find( 'input' ).trigger( 'click' );
 			} );
 
-			$( '.wp-mail-smtp-mailer input', app.pageHolder ).click( function() {
+			$( '.wp-mail-smtp-mailer input', app.pageHolder ).on( 'click', function() {
 				var $input = $( this );
 
 				if ( $input.prop( 'disabled' ) ) {
@@ -186,13 +188,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			} );
 
 			// Copy input text to clipboard.
-			$( '.wp-mail-smtp-setting-copy', app.pageHolder ).click( function( e ) {
+			$( '.wp-mail-smtp-setting-copy', app.pageHolder ).on( 'click', function( e ) {
 				e.preventDefault();
 
 				var target = $( '#' + $( this ).data( 'source_id' ) ).get( 0 );
 
 				target.select();
-
 				document.execCommand( 'Copy' );
 
 				var $buttonIcon = $( this ).find( '.dashicons' );
@@ -255,18 +256,15 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					backgroundDismiss: true,
 					escapeKey: true,
 					animationBounce: 1,
-					theme: 'modern',
 					type: 'blue',
-					animateFromElement: false,
-					draggable: false,
 					closeIcon: true,
-					useBootstrap: false,
 					title: wp_mail_smtp.education.upgrade_title.replace( /%name%/g, $input.siblings( 'label' ).text().trim() ),
 					icon: '"></i>' + wp_mail_smtp.education.upgrade_icon_lock + '<i class="',
 					content: $( '.wp-mail-smtp-mailer-options .wp-mail-smtp-mailer-option-' + $input.val() + ' .wp-mail-smtp-setting-field' ).html(),
 					boxWidth: '550px',
 					onOpenBefore: function() {
 						this.$btnc.after( '<div class="discount-note">' + wp_mail_smtp.education.upgrade_bonus + wp_mail_smtp.education.upgrade_doc + '</div>' );
+						this.$body.addClass( 'wp-mail-smtp-upgrade-mailer-education-modal' );
 					},
 					buttons: {
 						confirm: {
@@ -292,12 +290,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				bindActions: function() {
 
 					// Hide SMTP-specific user/pass when Auth disabled.
-					$( '#wp-mail-smtp-setting-smtp-auth' ).change( function() {
+					$( '#wp-mail-smtp-setting-smtp-auth' ).on( 'change', function() {
 						$( '#wp-mail-smtp-setting-row-smtp-user, #wp-mail-smtp-setting-row-smtp-pass' ).toggleClass( 'inactive' );
 					} );
 
 					// Port default values based on encryption type.
-					$( '#wp-mail-smtp-setting-row-smtp-encryption input' ).change( function() {
+					$( '#wp-mail-smtp-setting-row-smtp-encryption input' ).on( 'change', function() {
 
 						var $input = $( this ),
 							$smtpPort = $( '#wp-mail-smtp-setting-smtp-port', app.pageHolder );
@@ -362,12 +360,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						backgroundDismiss: false,
 						escapeKey: false,
 						animationBounce: 1,
-						theme: 'modern',
 						type: 'orange',
-						animateFromElement: false,
-						draggable: false,
-						closeIcon: false,
-						useBootstrap: false,
 						icon: '"></i><img src="' + wp_mail_smtp.plugin_url + '/assets/images/font-awesome/exclamation-circle-solid-orange.svg" style="width: 40px; height: 40px;" alt="' + wp_mail_smtp.default_mailer_notice.icon_alt + '"><i class="',
 						title: wp_mail_smtp.default_mailer_notice.title,
 						content: wp_mail_smtp.default_mailer_notice.content,
@@ -378,11 +371,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 								btnClass: 'btn-confirm',
 								keys: [ 'enter' ],
 								action: function() {
-									$thisForm.off( 'submit' ).submit();
+									$thisForm.off( 'submit' ).trigger( 'submit' );
 								}
 							},
 							cancel: {
 								text: wp_mail_smtp.default_mailer_notice.cancel_button,
+								btnClass: 'btn-cancel',
 							},
 						}
 					} );
@@ -427,6 +421,23 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$mainSettingInGroup.siblings( '.wp-mail-smtp-setting-mid-row-sep' ).toggle(
 				mailerSupportedSettings['from_name'] && mailerSupportedSettings['from_name_force']
 			);
+		},
+
+		/**
+		 * Set jQuery-Confirm default options.
+		 *
+		 * @since 2.9.0
+		 */
+		setJQueryConfirmDefaults: function() {
+
+			jconfirm.defaults = {
+				typeAnimated: false,
+				draggable: false,
+				animateFromElement: false,
+				theme: 'modern',
+				boxWidth: '400px',
+				useBootstrap: false
+			};
 		}
 	};
 

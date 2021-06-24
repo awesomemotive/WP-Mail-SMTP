@@ -411,14 +411,14 @@ class Notifications {
 						sanitize_text_field( $btn['text'] )
 					);
 				}
-				$buttons_html = ! empty( $buttons_html ) ? '<div class="buttons">' . $buttons_html . '</div>' : '';
+				$buttons_html = ! empty( $buttons_html ) ? '<div class="wp-mail-smtp-notifications-buttons">' . $buttons_html . '</div>' : '';
 			}
 
 			// Notification HTML.
 			$notifications_html .= sprintf(
-				'<div class="message%5$s" data-message-id="%4$s">
-					<h3 class="title">%1$s</h3>
-					<p class="content">%2$s</p>
+				'<div class="wp-mail-smtp-notifications-message%5$s" data-message-id="%4$s">
+					<h3 class="wp-mail-smtp-notifications-title">%1$s</h3>
+					<p class="wp-mail-smtp-notifications-content">%2$s</p>
 					%3$s
 				</div>',
 				! empty( $notification['title'] ) ? sanitize_text_field( $notification['title'] ) : '',
@@ -435,19 +435,35 @@ class Notifications {
 
 		<div id="wp-mail-smtp-notifications">
 
-			<div class="bell">
-				<svg xmlns="http://www.w3.org/2000/svg" width="42" height="48" viewBox="0 0 42 48"><defs><style>.a{fill:#777;}.b{fill:#ca4a1f;}</style></defs><path class="a" d="M23-79a6.005,6.005,0,0,1-6-6h10.06a12.066,12.066,0,0,0,1.791,1.308,6.021,6.021,0,0,1-2.077,3.352A6.008,6.008,0,0,1,23-79Zm1.605-9H5.009a2.955,2.955,0,0,1-2.173-.923A3.088,3.088,0,0,1,2-91a2.919,2.919,0,0,1,.807-2.036c.111-.12.229-.243.351-.371a14.936,14.936,0,0,0,3.126-4.409A23.283,23.283,0,0,0,8.007-107.5a14.846,14.846,0,0,1,.906-5.145,14.5,14.5,0,0,1,2.509-4.324A15.279,15.279,0,0,1,20-122.046V-124a3,3,0,0,1,3-3,3,3,0,0,1,3,3v1.954a15.28,15.28,0,0,1,8.58,5.078,14.5,14.5,0,0,1,2.509,4.324,14.846,14.846,0,0,1,.906,5.145c0,.645.016,1.281.047,1.888A12.036,12.036,0,0,0,35-106a11.921,11.921,0,0,0-8.485,3.515A11.923,11.923,0,0,0,23-94a12,12,0,0,0,1.6,6Z" transform="translate(-2 127)"/><circle class="b" cx="9" cy="9" r="9" transform="translate(24 24)"/></svg>
+			<div class="wp-mail-smtp-notifications-header">
+				<div class="wp-mail-smtp-notifications-bell">
+					<svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M12.8173 8.92686C12.4476 9.01261 12.0624 9.05794 11.6666 9.05794C8.86542 9.05794 6.59455 6.78729 6.59419 3.98616C4.22974 4.54931 2.51043 6.64293 2.51043 9.23824C2.51043 12.4695 1.48985 13.6147 0.849845 14.3328C0.796894 14.3922 0.746548 14.4487 0.699601 14.5032C0.505584 14.707 0.408575 14.9787 0.440912 15.2165C0.440912 15.7939 0.828946 16.3034 1.47567 16.3034H13.8604C14.5071 16.3034 14.8952 15.7939 14.9275 15.2165C14.9275 14.9787 14.8305 14.707 14.6365 14.5032C14.5895 14.4487 14.5392 14.3922 14.4862 14.3328C13.8462 13.6147 12.8257 12.4695 12.8257 9.23824C12.8257 9.13361 12.8229 9.02979 12.8173 8.92686ZM9.72139 17.3904C9.72139 18.6132 8.81598 19.5643 7.68421 19.5643C6.52011 19.5643 5.6147 18.6132 5.6147 17.3904H9.72139Z" fill="#777777"/>
+						<path d="M11.6666 7.60868C13.6677 7.60868 15.2898 5.98653 15.2898 3.9855C15.2898 1.98447 13.6677 0.36232 11.6666 0.36232C9.66561 0.36232 8.04346 1.98447 8.04346 3.9855C8.04346 5.98653 9.66561 7.60868 11.6666 7.60868Z" fill="#CA4A1F"/>
+					</svg>
+				</div>
+				<div class="wp-mail-smtp-notifications-title"><?php esc_html_e( 'Notifications', 'wp-mail-smtp' ); ?></div>
 			</div>
 
-			<a class="dismiss" title="<?php echo esc_attr__( 'Dismiss this message', 'wp-mail-smtp' ); ?>"><span class="dashicons dashicons-dismiss"></span></a>
+			<div class="wp-mail-smtp-notifications-body">
+				<a class="dismiss" title="<?php echo esc_attr__( 'Dismiss this message', 'wp-mail-smtp' ); ?>"><i class="dashicons dashicons-dismiss" aria-hidden="true"></i></a>
 
-			<div class="navigation">
-				<a class="prev disabled" title="<?php echo esc_attr__( 'Previous message', 'wp-mail-smtp' ); ?>"><span class="dashicons dashicons-arrow-left-alt2"></span></a>
-				<a class="next disabled" title="<?php echo esc_attr__( 'Next message', 'wp-mail-smtp' ); ?>"><span class="dashicons dashicons-arrow-right-alt2"></span></a>
-			</div>
+				<?php if ( count( $notifications ) > 1 ) : ?>
+					<div class="navigation">
+						<a class="prev">
+							<span class="screen-reader-text"><?php esc_attr_e( 'Previous message', 'wp-mail-smtp' ); ?></span>
+							<span aria-hidden="true">‹</span>
+						</a>
+						<a class="next">
+							<span class="screen-reader-text"><?php esc_attr_e( 'Next message', 'wp-mail-smtp' ); ?>"></span>
+							<span aria-hidden="true">›</span>
+						</a>
+					</div>
+				<?php endif; ?>
 
-			<div class="messages">
-				<?php echo $notifications_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<div class="wp-mail-smtp-notifications-messages">
+					<?php echo $notifications_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</div>
 			</div>
 		</div>
 		<?php

@@ -3,6 +3,7 @@
 namespace WPMailSMTP;
 
 use WPMailSMTP\Admin\AdminBarMenu;
+use WPMailSMTP\Admin\DashboardWidget;
 use WPMailSMTP\Admin\Notifications;
 use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\Compatibility\Compatibility;
@@ -104,9 +105,6 @@ class Core {
 	 */
 	public function hooks() {
 
-		// Action Scheduler requires a special early loading procedure.
-		add_action( 'plugins_loaded', [ $this, 'load_action_scheduler' ], - 10 );
-
 		// Activation hook.
 		register_activation_hook( WPMS_PLUGIN_FILE, [ $this, 'activate' ] );
 
@@ -128,6 +126,7 @@ class Core {
 		add_action( 'plugins_loaded', [ $this, 'get_notifications' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_connect' ], 15 );
 		add_action( 'plugins_loaded', [ $this, 'get_compatibility' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'get_dashboard_widget' ], 20 );
 	}
 
 	/**
@@ -242,6 +241,10 @@ class Core {
 	 */
 	protected function init_early() {
 
+		// Action Scheduler requires a special early loading procedure.
+		$this->load_action_scheduler();
+
+		// Load Pro specific files early.
 		$pro_files = $this->is_pro_allowed() ? \WPMailSMTP\Pro\Pro::PLUGGABLE_FILES : array();
 
 		$files = (array) apply_filters( 'wp_mail_smtp_core_init_early_include_files', $pro_files );
@@ -1052,5 +1055,32 @@ class Core {
 		}
 
 		return $compatibility;
+	}
+
+	/**
+	 * Get the Dashboard Widget object (lite or pro version).
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return DashboardWidget
+	 */
+	public function get_dashboard_widget() {
+
+		static $dashboard_widget;
+
+		if ( ! isset( $dashboard_widget ) ) {
+
+			/**
+			 * Filter the dashboard widget class name.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param DashboardWidget $class_name The dashboard widget class name to be instantiated.
+			 */
+			$class_name       = apply_filters( 'wp_mail_smtp_core_get_dashboard_widget', DashboardWidget::class );
+			$dashboard_widget = new $class_name();
+		}
+
+		return $dashboard_widget;
 	}
 }

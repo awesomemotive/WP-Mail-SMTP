@@ -115,15 +115,14 @@ var plugin = {
 		'!vendor/wp-coding-standards/**',
 		'!vendor/wp-coding-standards/',
 		'!vendor/wpforms/**',
-		'!vendor/wpforms/'
+		'!vendor/wpforms/',
+		'!build.sh',
+		'!.env.example',
+		'!.env'
 	],
 	lite_files: [
 		'!assets/pro/**',
-		'!src/Pro/**',
-		// Remove dashboard widget assets in lite version (for now).
-		'!assets/css/dashboard-widget.*',
-		'!assets/js/vendor/chart.min.js',
-		'!assets/js/vendor/moment.min.js'
+		'!src/Pro/**'
 	],
 	pro_files: [
 		'loco.xml',

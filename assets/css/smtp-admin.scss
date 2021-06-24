@@ -69,11 +69,9 @@
 		}
 
 		a.action {
-			padding: 5px;
-			border: 0;
-			min-height: auto;
 			color: #fff;
-			margin: -10px 0 0 20px;
+			font-weight: 600;
+			margin: 14px 0 0 10px;
 		}
 
 		.page-title {
@@ -801,6 +799,7 @@
 
 			.error-log {
 				padding-top: 10px;
+				padding-bottom: 10px;
 				display: none;
 
 				&.error-log-selection {
@@ -1099,6 +1098,105 @@
 			margin: 0;
 		}
 	}
+
+	#wp-mail-smtp-reset-filter {
+		clear: both;
+		margin: 20px 0;
+		padding: 10px;
+		font-size: 15px;
+		text-align: center;
+		background: #fff;
+		border: 1px solid #ccd0d4;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+
+		a {
+			text-decoration: none;
+		}
+
+		.reset {
+			cursor: pointer;
+			color: #a6a6a6;
+			font-size: 15px;
+			line-height: 18px;
+			width: 18px;
+			height: 18px;
+
+			&:focus,
+			&:hover {
+				color: #d83638;
+			}
+		}
+	}
+
+	#wp-mail-smtp-tools-export-email-logs-product-education {
+
+		h4 {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+			font-size: 20px;
+			line-height: 24px;
+			color: #444;
+
+			&:after {
+				content: '';
+				margin-left: 10px;
+				background-image: url('../images/pro-badge-small.svg');
+				background-size: contain;
+				background-repeat: no-repeat;
+				width: 35px;
+				height: 16px;
+			}
+		}
+
+		& > p {
+			font-size: 14px;
+			line-height: 20px;
+			color: #444;
+		}
+
+		.wp-mail-smtp-setting-row {
+			opacity: 0.5;
+			pointer-events: none;
+			padding: 30px 0;
+			margin: 30px 0;
+			border-top: 1px solid #E4E4E4;
+			border-bottom: 1px solid #E4E4E4;
+		}
+
+		h5 {
+			clear: both;
+			margin: 20px 0 10px 0;
+		}
+
+		label {
+			clear: both;
+			float: left;
+			margin: 3px 0 3px 0;
+		}
+
+		.wp-mail-smtp-date-selector {
+			width: 200px;
+			cursor: pointer;
+		}
+
+		.wp-mail-smtp-search-box-field {
+			width: 200px;
+		}
+
+		.wp-mail-smtp-search-box-term {
+			width: 300px;
+		}
+
+		section {
+			margin-top: 30px;
+			cursor: not-allowed;
+
+			&:first-child {
+				margin-top: 20px;
+			}
+		}
+	}
 }
 
 // Buttons.
@@ -1138,6 +1236,13 @@
 		font-size: 16px;
 		font-weight: 600;
 		padding: 16px 28px;
+	}
+
+	&.wp-mail-smtp-btn-upgrade {
+		font-size: 16px;
+		line-height: 20px;
+		font-weight: 500;
+		padding: 14px 30px;
 	}
 
 	&.wp-mail-smtp-btn-orange {
@@ -1277,6 +1382,37 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		.wp-mail-smtp-loading {
 			display: none;
 			margin-bottom: -2px;
+		}
+	}
+}
+
+.wp-mail-smtp-tab-tools-action-scheduler {
+
+	.wp-mail-smtp-page-content {
+		.wrap, .subsubsub {
+			margin: 0;
+		}
+
+		& > h1 {
+			color: #444;
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0 0 15px 0;
+			padding: 0;
+		}
+
+		& > p {
+			font-size: 14px;
+		}
+
+		h1.wp-heading-inline,
+		span.subtitle {
+			display: none;
+		}
+
+		hr.wp-header-end {
+			visibility: hidden;
+			margin: -2px 0 0;
 		}
 	}
 }

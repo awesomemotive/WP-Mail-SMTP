@@ -1,5 +1,5 @@
 // Styling tweaks for jQuery-confirm JS alert library.
-body.toplevel_page_wp-mail-smtp {
+body.wp-mail-smtp-admin-page-body {
 
 	div.jconfirm {
 
@@ -11,74 +11,62 @@ body.toplevel_page_wp-mail-smtp {
 			box-sizing: border-box;
 		}
 
-		div.jconfirm-box-container {
+		.jconfirm-box {
+			padding: 30px;
+			border-radius: 6px;
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+			border-top-width: 4px;
 
-			div.jconfirm-box {
-				border-radius: 0;
-				box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+			div.jconfirm-closeIcon {
+				color: rgba(0, 0, 0, 0.4);
+				top: 8px;
+				right: 8px;
 
-				div.jconfirm-closeIcon {
-					color: rgba(0,0,0,0.4);
-					top: 8px;
-					right: 8px;
-
-					&:hover {
-						color: rgba(0,0,0,0.80);
-					}
+				&:hover {
+					color: rgba(0, 0, 0, 0.80);
 				}
 			}
-		}
-
-		div.jconfirm-box {
 
 			div.jconfirm-title-c {
-				margin: 0 0 26px 0 !important;
-				padding: 0 !important;
+				margin: 0 0 15px 0;
+				padding: 0;
 
 				.jconfirm-icon-c {
-					margin: 0 !important;
-					color: #c4c4c4 !important;
-					-webkit-transition: none !important;
-					transition: none !important;
+					margin: 0 0 30px;
+					-webkit-transition: none;
+					transition: none;
 					-webkit-transform: none !important;
 					-ms-transform: none !important;
 					transform: none !important;
-					font-size: 45px !important;
 
-					i:empty { display: none }
-					svg { height: 35px }
+					&:empty,
+					i:empty {
+						display: none;
+					}
 				}
 
 				.jconfirm-title {
 					display: block;
 					color: #444;
-				}
-
-				.jconfirm-icon-c + span.jconfirm-title {
-					margin-top: 20px !important;
+					font-weight: 500;
+					font-size: 24px;
 				}
 			}
 
 			div.jconfirm-content-pane {
-				margin-bottom: 0;
 				display: block;
+				margin-bottom: 30px;
 
 				.jconfirm-content {
+					margin-bottom: 0;
 					overflow: inherit;
 				}
 			}
 
 			div.jconfirm-content {
 				font-size: 16px;
-				color: #777;
+				color: #444444;
 				line-height: 1.4;
-
-				&.lite-upgrade {
-					p {
-						font-size: 18px;
-						padding: 0 20px;
-					}
-				}
 
 				p {
 					margin: 0 0 20px;
@@ -98,16 +86,6 @@ body.toplevel_page_wp-mail-smtp {
 					}
 				}
 
-				.already-purchased {
-					font-size: 12px;
-					color: #ccc;
-					text-decoration: none;
-
-					&:hover {
-						text-decoration: underline;
-					}
-				}
-
 				.wp-mail-smtp-btn {
 					font-weight: bold;
 					text-transform: uppercase;
@@ -117,10 +95,7 @@ body.toplevel_page_wp-mail-smtp {
 					outline: none;
 					display: inline-block;
 					font-size: 14px;
-					line-height: 1.42857143;
-					text-align: center;
-					white-space: nowrap;
-					vertical-align: middle;
+					line-height: 1.4;
 					-ms-touch-action: manipulation;
 					touch-action: manipulation;
 					cursor: pointer;
@@ -138,91 +113,159 @@ body.toplevel_page_wp-mail-smtp {
 						padding: 12px 12px 7px;
 					}
 				}
+			}
 
-				.wp-mail-smtp-providers-amazonses-txt-record {
-					display: flex;
-					justify-content: space-evenly;
-					align-items: center;
+			div.jconfirm-buttons {
+				padding: 0;
 
-					&-label {
-						color: #444;
+				button {
+					transition: 0.2s;
+					box-shadow: none;
+					margin: 0 10px 0;
+
+					&:hover {
+						box-shadow: inset 0 0 0 100px rgba(0, 0, 0, 0.1);
 					}
 
-					input[type="text"] {
-						display: inline-block;
-						width: 340px;
-						color: #777;
-						background-color: #f8f8f8;
-						border: 1px solid #ddd;
-						border-radius: 3px;
-						margin: 0;
-						padding: 10px 0 10px 12px;
-						font-size: 16px;
-						line-height: 18px;
-
-						&[readonly] {
-							background-color: #f9f9f9;
-						}
-
-						&:focus {
-							border-color: #bbb;
-						}
-
-						&:disabled {
-							opacity: 0.6;
-						}
-					}
-
-					button {
-						padding: 9px 11px;
-						background-color: #fff;
-						border: 1px solid #ddd;
-						border-radius: 3px;
-						cursor: pointer;
+					&.btn-confirm {
+						color: #fff;
 						outline: none;
-
-						&:hover {
-							background-color: #ddd;
-						}
-
-						&:active {
-							background-color: #aaa;
-							border-color: #aaa;
-						}
+						border: 1px solid $orange;
+						background-color: $orange;
 					}
 
-					.dashicons-yes-alt {
-						color: #46b450;
+					&.btn-cancel {
+						color: #777777;
+						outline: none;
+						background: #F8F8F8;
+						border: 1px solid #CCCCCC;
+					}
+
+					&,
+					&.btn-default {
+						color: #666;
+					}
+
+					&.btn-hide {
+						display: none;
+					}
+
+					&.btn-block {
+						display: block;
+						text-align: center;
+						width: 100%;
+						margin: 0 0 10px 0 !important;
+					}
+
+					&.btn-normal-case {
+						text-transform: none !important;
 					}
 				}
 			}
 
-			div.jconfirm-buttons {
+			&.jconfirm-type-green {
+				border-color: $modal-green;
 
-				.already-purchased {
-					display: block;
-					font-size: 12px;
-					color: #aaa;
-					text-decoration: none;
-					padding-top: 20px;
+				div.jconfirm-buttons button.btn-confirm {
+					background-color: $modal-green;
+					border-color: $modal-green;
+				}
+			}
 
-					&:hover {
-						color: #999;
-						text-decoration: underline;
+			&.jconfirm-type-orange {
+				border-color: $modal-orange;
+
+				div.jconfirm-buttons button.btn-confirm {
+					background-color: $modal-orange;
+					border-color: $modal-orange;
+				}
+			}
+
+			&.jconfirm-type-red {
+				border-color: $modal-red;
+
+				div.jconfirm-buttons button.btn-confirm {
+					background-color: $modal-red;
+					border-color: $modal-red;
+				}
+			}
+
+			&.jconfirm-type-blue {
+				border-color: $modal-blue;
+
+				div.jconfirm-buttons button.btn-confirm {
+					background-color: $modal-blue;
+					border-color: $modal-blue;
+				}
+			}
+
+			&.loading {
+				border-top-color: #fff !important;
+				height: 160px;
+
+				.jconfirm-title-c {
+					display: block !important;
+					position: relative;
+					z-index: 4;
+
+					.jconfirm-icon-c {
+						display: none;
 					}
 				}
 
-				.btn-hide {
-					display: none;
+				&:before {
+					z-index: 2;
 				}
+
+				&:after {
+					content: '';
+					position: absolute;
+					left: 50%;
+					top: 68%;
+					margin-left: -20px;
+					height: 40px;
+					width: 40px;
+					border: solid 6px transparent;
+					border-bottom-color: $orange;
+					opacity: 1;
+					z-index: 3;
+				}
+			}
+		}
+
+		.jconfirm-box.wp-mail-smtp-upgrade-mailer-education-modal {
+			padding: 30px 30px 15px;
+			border-top: none;
+
+			div.jconfirm-title-c {
+				margin: 0 0 26px 0;
+				padding: 0;
+
+				.jconfirm-icon-c {
+					margin-bottom: 20px;
+					color: #c4c4c4 !important;
+
+					svg {
+						height: 35px;
+					}
+				}
+			}
+
+			div.jconfirm-content-pane {
+				margin-bottom: 25px;
+			}
+
+			div.jconfirm-buttons button.btn-confirm {
+				background-color: $orange;
+				border-color: $orange;
 			}
 
 			.discount-note {
 				text-align: center;
-				margin: 30px 0 0;
+				margin: 45px 0 0;
 
 				p {
-					background-color: #faffac;
+					background-color: #fcf9e8;
 					margin: 0 -30px;
 					padding: 24px 60px 20px;
 					font-size: 15px;
@@ -245,7 +288,7 @@ body.toplevel_page_wp-mail-smtp {
 
 				span {
 					font-weight: 700;
-					color: #3abc01;
+					color: #00a32a;
 				}
 
 				a {
@@ -253,55 +296,6 @@ body.toplevel_page_wp-mail-smtp {
 					display: block;
 					margin-top: 12px;
 				}
-			}
-
-			input[type=text] {
-				display: block;
-				width: 99%;
-				border: 1px solid #d6d6d6;
-				padding: 10px;
-				box-shadow: none;
-				margin: 20px auto 0 auto;
-			}
-
-			button.btn-confirm {
-				background-color: $orange;
-				color: #fff;
-				outline: none;
-
-				&:hover {
-					background-color: $orange_dark;
-					border-color: $orange_dark;
-				}
-			}
-
-			button,
-			button.btn-default {
-				color: #666;
-			}
-
-			button.wp-mail-smtp-btn-orange {
-				color: #fff;
-			}
-
-			button.btn-block {
-				display: block;
-				text-align: center;
-				width: 100%;
-				margin: 0 0 10px 0 !important;
-			}
-
-			button.btn-normal-case {
-				text-transform: none !important;
-			}
-
-			.error {
-				display: none;
-				color: red;
-			}
-
-			.wpforms-error {
-				border: 1px solid #ebccd1 !important;
 			}
 		}
 	}

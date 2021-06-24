@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
@@ -33,6 +33,7 @@
     "gulp-zip": "^4.2.0",
     "husky": "^4.2.3",
     "lint-diff": "file:.packages/npm/lint-diff",
+    "lodash": "^4.17.21",
     "merge-stream": "^2.0.0",
     "npm-run-all": "^4.1.5",
     "yargs": "^13.3.2",

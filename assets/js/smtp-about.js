@@ -29,7 +29,7 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 		init: function() {
 
 			// Do that when DOM is ready.
-			$( document ).ready( app.ready );
+			$( app.ready );
 		},
 
 		/**

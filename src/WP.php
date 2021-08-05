@@ -473,4 +473,136 @@ class WP {
 
 		return $r;
 	}
+
+	/**
+	 * True if WP is processing plugin related AJAX call.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return bool
+	 */
+	public static function is_doing_self_ajax() {
+
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		return self::is_doing_ajax() && $action && substr( $action, 0, 12 ) === 'wp_mail_smtp';
+	}
+
+	/**
+	 * Get the name of the plugin/theme/wp-core that initiated the desired function call.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $file_path The absolute path of a file that that called the desired function.
+	 *
+	 * @return string
+	 */
+	public static function get_initiator_name( $file_path ) {
+
+		$cache_key = 'wp_mail_smtp_initiators';
+
+		// Mainly we have several initiators and we can cache them for better performance.
+		$initiators_cache = get_transient( $cache_key );
+		$initiators_cache = is_array( $initiators_cache ) ? $initiators_cache : [];
+
+		if ( isset( $initiators_cache[ $file_path ] ) ) {
+			return $initiators_cache[ $file_path ];
+		}
+
+		$name = self::get_initiator_plugin( $file_path );
+
+		if ( empty( $name ) ) {
+			$name = self::get_initiator_plugin( $file_path, true );
+		}
+
+		if ( empty( $name ) ) {
+			$name = self::get_initiator_theme( $file_path );
+		}
+
+		if ( empty( $name ) ) {
+			$name = esc_html__( 'WP Core', 'wp-mail-smtp' );
+		}
+
+		$initiators_cache[ $file_path ] = $name;
+		set_transient( $cache_key, $initiators_cache, HOUR_IN_SECONDS );
+
+		return $name;
+	}
+
+	/**
+	 * Get the initiator's name, if it's a plugin (or mu plugin).
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $file_path       The absolute path of a file.
+	 * @param bool   $check_mu_plugin Whether to check for mu plugins or not.
+	 *
+	 * @return false|string
+	 */
+	private static function get_initiator_plugin( $file_path, $check_mu_plugin = false ) {
+
+		$constant = empty( $check_mu_plugin ) ? 'WP_PLUGIN_DIR' : 'WPMU_PLUGIN_DIR';
+
+		if ( ! defined( $constant ) ) {
+			return false;
+		}
+
+		$root = basename( constant( $constant ) );
+
+		preg_match( "/\/$root\/(.[^\/]+)(\/|\.php)/", $file_path, $result );
+
+		if ( ! empty( $result[1] ) ) {
+			if ( ! function_exists( 'get_plugins' ) ) {
+				include ABSPATH . '/wp-admin/includes/plugin.php';
+			}
+
+			$all_plugins = empty( $check_mu_plugin ) ? get_plugins() : get_mu_plugins();
+			$plugin_slug = $result[1];
+
+			foreach ( $all_plugins as $plugin => $plugin_data ) {
+				if (
+					1 === preg_match( "/^$plugin_slug(\/|\.php)/", $plugin ) &&
+					isset( $plugin_data['Name'] )
+				) {
+					return $plugin_data['Name'];
+				}
+			}
+
+			return $result[1];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the initiator's name, if it's a theme.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $file_path The absolute path of a file.
+	 *
+	 * @return false|string
+	 */
+	private static function get_initiator_theme( $file_path ) {
+
+		if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+			return false;
+		}
+
+		$root = basename( WP_CONTENT_DIR );
+
+		preg_match( "/\/$root\/themes\/(.[^\/]+)/", $file_path, $result );
+
+		if ( ! empty( $result[1] ) ) {
+			$theme = wp_get_theme( $result[1] );
+
+			if ( method_exists( $theme, 'get' ) ) {
+				return $theme->get( 'Name' );
+			}
+
+			return $result[1];
+		}
+
+		return false;
+	}
 }

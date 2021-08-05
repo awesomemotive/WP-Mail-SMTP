@@ -7,6 +7,8 @@ use WPMailSMTP\Connect;
 use WPMailSMTP\Helpers\PluginImportDataRetriever;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
+use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
+use WPMailSMTP\Tasks\Reports\SummaryEmailTask as SummaryReportEmailTask;
 
 /**
  * Class for the plugin's Setup Wizard.
@@ -545,6 +547,15 @@ class SetupWizard {
 		$options   = new Options();
 		$overwrite = ! empty( $_POST['overwrite'] );
 		$value     = isset( $_POST['value'] ) ? wp_slash( json_decode( wp_unslash( $_POST['value'] ), true ) ) : []; // phpcs:ignore
+
+		// Cancel summary report email task if summary report email was disabled.
+		if (
+			! SummaryReportEmail::is_disabled() &&
+			isset( $value['general'][ SummaryReportEmail::SETTINGS_SLUG ] ) &&
+			$value['general'][ SummaryReportEmail::SETTINGS_SLUG ] === true
+		) {
+			( new SummaryReportEmailTask() )->cancel();
+		}
 
 		$options->set( $value, false, $overwrite );
 

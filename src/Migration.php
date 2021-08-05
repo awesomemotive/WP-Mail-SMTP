@@ -3,21 +3,24 @@
 namespace WPMailSMTP;
 
 use WPMailSMTP\Tasks\Meta;
+use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
+use WPMailSMTP\Tasks\Reports\SummaryEmailTask as SummaryReportEmailTask;
 
 /**
  * Class Migration helps migrate plugin options, DB tables and more.
  *
  * @since 1.0.0 Migrate all plugin options saved from separate WP options into one.
  * @since 2.1.0 Major overhaul of this class to use DB migrations (or any other migrations per version).
+ * @since 3.0.0 Extends MigrationAbstract.
  */
-class Migration {
+class Migration extends MigrationAbstract {
 
 	/**
 	 * Version of the latest migration.
 	 *
 	 * @since 2.1.0
 	 */
-	const VERSION = 3;
+	const VERSION = 4;
 
 	/**
 	 * Option key where we save the current migration version.
@@ -27,7 +30,7 @@ class Migration {
 	const OPTION_NAME = 'wp_mail_smtp_migration_version';
 
 	/**
-	 * Current migration version, received from self::OPTION_NAME WP option
+	 * Current migration version, received from static::OPTION_NAME WP option.
 	 *
 	 * @since 2.1.0
 	 *
@@ -79,14 +82,11 @@ class Migration {
 	protected $new_values = array();
 
 	/**
-	 * Migration constructor.
+	 * Initialize migration.
 	 *
-	 * @since 1.0.0
-	 * @since 2.1.0 Redefined constructor - major overhaul.
+	 * @since 3.0.0
 	 */
-	public function __construct() {
-
-		$this->cur_ver = self::get_cur_version();
+	public function init() {
 
 		$this->maybe_migrate();
 	}
@@ -100,7 +100,7 @@ class Migration {
 	 */
 	public static function get_cur_version() {
 
-		return (int) get_option( self::OPTION_NAME, 0 );
+		return (int) get_option( static::OPTION_NAME, 0 );
 	}
 
 	/**
@@ -110,12 +110,8 @@ class Migration {
 	 */
 	protected function maybe_migrate() {
 
-		if ( ! is_admin() ) {
-			return;
-		}
-
-		if ( version_compare( $this->cur_ver, self::VERSION, '<' ) ) {
-			$this->run( self::VERSION );
+		if ( version_compare( $this->cur_ver, static::VERSION, '<' ) ) {
+			$this->run( static::VERSION );
 		}
 	}
 
@@ -133,13 +129,15 @@ class Migration {
 		if ( method_exists( $this, 'migrate_to_' . $function_version ) ) {
 			$this->{'migrate_to_' . $function_version}();
 		} else {
-			$message = sprintf( /* translators: %1$s - WP Mail SMTP, %2$s - error message. */
-				esc_html__( 'There was an error while upgrading the database. Please contact %1$s support with this information: %2$s.', 'wp-mail-smtp' ),
-				'<strong>WP Mail SMTP</strong>',
-				'<code>migration from v' . self::get_cur_version() . ' to v' . self::VERSION . ' failed. Plugin version: v' . WPMS_PLUGIN_VER . '</code>'
-			);
+			if ( WP::in_wp_admin() ) {
+				$message = sprintf( /* translators: %1$s - WP Mail SMTP, %2$s - error message. */
+					esc_html__( 'There was an error while upgrading the database. Please contact %1$s support with this information: %2$s.', 'wp-mail-smtp' ),
+					'<strong>WP Mail SMTP</strong>',
+					'<code>migration from v' . static::get_cur_version() . ' to v' . static::VERSION . ' failed. Plugin version: v' . WPMS_PLUGIN_VER . '</code>'
+				);
 
-			WP::add_admin_notice( $message, WP::ADMIN_NOTICE_ERROR );
+				WP::add_admin_notice( $message, WP::ADMIN_NOTICE_ERROR );
+			}
 		}
 	}
 
@@ -150,15 +148,15 @@ class Migration {
 	 *
 	 * @param int $version Migration version.
 	 */
-	protected function update_db_ver( $version ) {
+	protected function update_db_ver( $version = 0 ) {
 
 		if ( empty( $version ) ) {
-			$version = self::VERSION;
+			$version = static::VERSION;
 		}
 
 		// Autoload it, because this value is checked all the time
 		// and no need to request it separately from all autoloaded options.
-		update_option( self::OPTION_NAME, $version, true );
+		update_option( static::OPTION_NAME, $version, true );
 	}
 
 	/**
@@ -241,6 +239,41 @@ class Migration {
 		}
 
 		$this->update_db_ver( 3 );
+	}
+
+	/**
+	 * Migration to 3.0.0.
+	 * Disable summary report email for Lite users and Multisite installations after update.
+	 * For new installations we have default values in Options::get_defaults.
+	 *
+	 * @since 3.0.0
+	 */
+	protected function migrate_to_4() {
+
+		$this->maybe_required_older_migrations( 3 );
+
+		$options = Options::init();
+
+		$value = $options->get( 'general', SummaryReportEmail::SETTINGS_SLUG );
+
+		// If option was not already set, then plugin was updated from lower version.
+		if (
+			( $value === '' || $value === null ) &&
+			( is_multisite() || ! wp_mail_smtp()->is_pro() )
+		) {
+			$data = [
+				'general' => [
+					SummaryReportEmail::SETTINGS_SLUG => true,
+				],
+			];
+
+			$options->set( $data, false, false );
+
+			// Just to be safe cancel summary report email task.
+			( new SummaryReportEmailTask() )->cancel();
+		}
+
+		$this->update_db_ver( 4 );
 	}
 
 	/**

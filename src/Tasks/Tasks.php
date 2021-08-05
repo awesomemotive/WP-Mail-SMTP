@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Tasks;
 
+use WPMailSMTP\Tasks\Reports\SummaryEmailTask;
+
 /**
  * Class Tasks manages the tasks queue and provides API to work with it.
  *
@@ -57,7 +59,18 @@ class Tasks {
 	 */
 	public function get_tasks() {
 
-		return apply_filters( 'wp_mail_smtp_tasks_get_tasks', array() );
+		$tasks = [
+			SummaryEmailTask::class,
+		];
+
+		/**
+		 * Filters list of tasks classes.
+		 *
+		 * @since 2.1.2
+		 *
+		 * @param Task[] $tasks List of tasks classes.
+		 */
+		return apply_filters( 'wp_mail_smtp_tasks_get_tasks', $tasks );
 	}
 
 	/**

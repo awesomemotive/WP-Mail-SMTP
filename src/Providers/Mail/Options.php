@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Mail;
 
+use WPMailSMTP\Admin\SetupWizard;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -34,7 +35,23 @@ class Options extends OptionsAbstract {
 		?>
 
 		<blockquote>
-			<?php esc_html_e( 'You currently have the native WordPress option selected. Please select any other Mailer option above to continue the setup.', 'wp-mail-smtp' ); ?>
+			<?php
+			printf(
+				wp_kses( /* translators: %1$s - URL to all mailer doc page. %2$s - URL to the setup wizard. */
+					__( 'You currently have the <strong>Default (none)</strong> mailer selected, which won\'t improve email deliverability. Please select <a href="%1$s" target="_blank" rel="noopener noreferrer">any other email provider</a> and use the easy <a href="%2$s">Setup Wizard</a> to configure it.', 'wp-mail-smtp' ),
+					[
+						'strong' => [],
+						'a'      => [
+							'href'   => [],
+							'rel'    => [],
+							'target' => [],
+						],
+					]
+				),
+				'https://wpmailsmtp.com/docs/a-complete-guide-to-wp-mail-smtp-mailers/',
+				esc_url( SetupWizard::get_site_url() )
+			);
+			?>
 		</blockquote>
 
 		<?php

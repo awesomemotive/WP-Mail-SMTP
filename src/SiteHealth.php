@@ -139,7 +139,7 @@ class SiteHealth {
 				],
 				'debug'            => [
 					'label' => esc_html__( 'Debug', 'wp-mail-smtp' ),
-					'value' => ! empty( $debug_notices ) ? implode( '. ', $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
+					'value' => ! empty( $debug_notices ) ? implode( '; ', $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
 				],
 				'db_tables'        => [
 					'label' => esc_html__( 'DB tables', 'wp-mail-smtp' ),

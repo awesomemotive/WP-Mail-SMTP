@@ -38,7 +38,7 @@ class TestTab extends PageAbstract {
 	 *
 	 * @var array
 	 */
-	private $debug = array();
+	private $debug = [];
 
 	/**
 	 * Domain Checker API object.
@@ -50,9 +50,55 @@ class TestTab extends PageAbstract {
 	private $domain_checker;
 
 	/**
+	 * Test email sending failed.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @const int
+	 */
+	const FAILED = 0;
+
+	/**
+	 * Test email sent successfully.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @const int
+	 */
+	const SUCCESS = 1;
+
+	/**
+	 * Test email domain check failed.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @const int
+	 */
+	const FAILED_DOMAIN_CHECK = 2;
+
+	/**
+	 * Test email result.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @var int
+	 */
+	private $result = null;
+
+	/**
+	 * Test email POST data.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @var array
+	 */
+	private $post_data = [];
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_label() {
+
 		return esc_html__( 'Email Test', 'wp-mail-smtp' );
 	}
 
@@ -60,24 +106,40 @@ class TestTab extends PageAbstract {
 	 * @inheritdoc
 	 */
 	public function get_title() {
+
 		return $this->get_label();
 	}
 
 	/**
-	 * @inheritdoc
+	 * Display the content of the tab.
+	 *
+	 * @since {1.0.0}
 	 */
 	public function display() {
-		?>
 
+		if ( $this->result === self::SUCCESS ) {
+			$this->display_success();
+		} elseif ( $this->result === self::FAILED ) {
+			$this->display_debug_details();
+		} elseif ( $this->result === self::FAILED_DOMAIN_CHECK ) {
+			$this->display_domain_check_details();
+		} else {
+			$this->display_form();
+		}
+	}
+
+	/**
+	 * Display test email form.
+	 *
+	 * @since 3.0.0
+	 */
+	private function display_form() {
+
+		?>
 		<form id="email-test-form" method="POST" action="<?php echo esc_url( $this->get_link() ); ?>">
 			<?php $this->wp_nonce_field(); ?>
 
-			<!-- Test Email Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
-				<div class="wp-mail-smtp-setting-field">
-					<h2><?php esc_html_e( 'Send a Test Email', 'wp-mail-smtp' ); ?></h2>
-				</div>
-			</div>
+			<?php $this->display_title_section(); ?>
 
 			<!-- Test Email -->
 			<div id="wp-mail-smtp-setting-row-test_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
@@ -86,7 +148,7 @@ class TestTab extends PageAbstract {
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[test][email]" value="<?php echo esc_attr( wp_get_current_user()->user_email ); ?>"
-						type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required>
+							type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required>
 					<p class="desc">
 						<?php esc_html_e( 'Enter email address where test email will be sent.', 'wp-mail-smtp' ); ?>
 					</p>
@@ -100,7 +162,7 @@ class TestTab extends PageAbstract {
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<label for="wp-mail-smtp-setting-test_email_html">
-						<input type="checkbox" id="wp-mail-smtp-setting-test_email_html" name="wp-mail-smtp[test][html]" value="yes" checked />
+						<input type="checkbox" id="wp-mail-smtp-setting-test_email_html" name="wp-mail-smtp[test][html]" value="yes" checked/>
 						<span class="wp-mail-smtp-setting-toggle-switch"></span>
 						<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
 						<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
@@ -140,7 +202,7 @@ class TestTab extends PageAbstract {
 
 		<?php if ( ! empty( $mailer ) && $mailer->is_mailer_complete() && isset( $_GET['auto-start'] ) ) : // phpcs:ignore ?>
 			<script>
-				( function ( $ ) {
+				(function( $ ) {
 					var $button = $( '.wp-mail-smtp-tab-tools-test #email-test-form .wp-mail-smtp-btn' );
 
 					$button.attr( 'disabled', true );
@@ -148,13 +210,55 @@ class TestTab extends PageAbstract {
 					$button.find( '.wp-mail-smtp-loading' ).show();
 
 					$( '#email-test-form' ).submit();
-				} ( jQuery ) );
+				}( jQuery ));
 			</script>
-		<?php endif; ?>
-
 		<?php
-		$this->display_debug_details();
-		$this->display_domain_check_details();
+		endif;
+	}
+
+	/**
+	 * Display test email title section.
+	 *
+	 * @since 3.0.0
+	 */
+	private function display_title_section() {
+
+		?>
+		<!-- Test Email Section Title -->
+		<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
+			<div class="wp-mail-smtp-setting-field">
+				<h2><?php esc_html_e( 'Send a Test Email', 'wp-mail-smtp' ); ?></h2>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Display test email success message.
+	 *
+	 * @since 3.0.0
+	 */
+	private function display_success() {
+
+		$img_path = wp_mail_smtp()->plugin_path . '/assets/images/email/illustration-success.svg';
+
+		$is_html = true;
+		if ( empty( $this->post_data['test']['html'] ) ) {
+			$is_html = false;
+		}
+		?>
+		<div id="email-test-success">
+			<?php echo file_exists( $img_path ) ? file_get_contents( $img_path ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<h2><?php esc_html_e( 'Success!', 'wp-mail-smtp' ); ?></h2>
+			<p>
+				<?php if ( $is_html ) : ?>
+					<?php esc_html_e( 'Test HTML email was sent successfully! Please check your inbox to make sure it was delivered.', 'wp-mail-smtp' ); ?>
+				<?php else : ?>
+					<?php esc_html_e( 'Test plain text email was sent successfully! Please check your inbox to make sure it was delivered.', 'wp-mail-smtp' ); ?>
+				<?php endif; ?>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -163,6 +267,8 @@ class TestTab extends PageAbstract {
 	public function process_post( $data ) {
 
 		$this->check_admin_referer();
+
+		$this->post_data = $data;
 
 		if ( ! empty( $data['test']['email'] ) ) {
 			$data['test']['email'] = filter_var( $data['test']['email'], FILTER_VALIDATE_EMAIL );
@@ -231,25 +337,13 @@ class TestTab extends PageAbstract {
 
 			$this->domain_checker = new DomainChecker( $mailer, $email, $domain );
 
-			if ( $this->domain_checker->no_issues() ) {
-				$result_message = esc_html__( 'Test plain text email was sent successfully!', 'wp-mail-smtp' );
-				if ( $is_html ) {
-					$result_message = sprintf(
-						/* translators: %s - "HTML" in bold. */
-						esc_html__( 'Test %s email was sent successfully! Please check your inbox to make sure it is delivered.', 'wp-mail-smtp' ),
-						'<strong>HTML</strong>'
-					);
-				}
-				WP::add_admin_notice(
-					$result_message,
-					WP::ADMIN_NOTICE_SUCCESS
-				);
-			}
+			$this->result = $this->domain_checker->no_issues() ? self::SUCCESS : self::FAILED_DOMAIN_CHECK;
 		} else {
 			// Grab the smtp debugging output.
 			$this->debug['smtp_debug'] = $smtp_debug;
 			$this->debug['smtp_error'] = wp_strip_all_tags( $phpmailer->ErrorInfo );
 			$this->debug['error_log']  = $this->get_debug_messages( $phpmailer, $smtp_debug );
+			$this->result              = self::FAILED;
 		}
 	}
 
@@ -401,7 +495,7 @@ class TestTab extends PageAbstract {
 Thank you for trying out WP Mail SMTP. We are on a mission to make sure your emails actually get delivered.
 
 - Jared Atchison
-Lead Developer, WP Mail SMTP';
+Co-Founder, WP Mail SMTP';
 		} else {
 			// Free WP Mail SMTP is installed.
 			$message =
@@ -420,7 +514,7 @@ Unlock More Features with WP Mail SMTP Pro:
 + Access to our world class support team
 
 - Jared Atchison
-Lead Developer, WP Mail SMTP';
+Co-Founder, WP Mail SMTP';
 		}
 		// phpcs:enable
 
@@ -1179,6 +1273,7 @@ Lead Developer, WP Mail SMTP';
 			'pre'    => [],
 		];
 
+		$this->display_title_section();
 		?>
 		<div id="message" class="notice-error notice-inline">
 			<p><?php esc_html_e( 'There was a problem while sending the test email.', 'wp-mail-smtp' ); ?></p>
@@ -1315,6 +1410,12 @@ Lead Developer, WP Mail SMTP';
 			<div class="error-log notice-error notice-inline">
 				<?php echo wp_kses( $this->debug['error_log'], $allowed_tags ); ?>
 			</div>
+
+			<div class="wp-mail-smtp-test-email-resend">
+				<a href="<?php echo esc_url( $this->get_link() ); ?>">
+					<?php esc_html_e( 'Send Another Test Email', 'wp-mail-smtp' ); ?>
+				</a>
+			</div>
 		</div>
 		<?php
 	}
@@ -1329,6 +1430,8 @@ Lead Developer, WP Mail SMTP';
 		if ( empty( $this->domain_checker ) || $this->domain_checker->no_issues() ) {
 			return;
 		}
+
+		$this->display_title_section();
 		?>
 
 		<?php if ( $this->domain_checker->is_supported_mailer() ) : ?>
@@ -1336,7 +1439,14 @@ Lead Developer, WP Mail SMTP';
 				<p><?php esc_html_e( 'The test email might have sent, but its deliverability should be improved.', 'wp-mail-smtp' ); ?></p>
 			</div>
 		<?php endif; ?>
+
+		<?php echo $this->domain_checker->get_results_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+		<div class="wp-mail-smtp-test-email-resend">
+			<a href="<?php echo esc_url( $this->get_link() ); ?>">
+				<?php esc_html_e( 'Send Another Test Email', 'wp-mail-smtp' ); ?>
+			</a>
+		</div>
 		<?php
-		 echo $this->domain_checker->get_results_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

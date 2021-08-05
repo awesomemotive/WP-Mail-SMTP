@@ -3,11 +3,12 @@
 namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Admin\Area;
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Options as PluginOptions;
 use WPMailSMTP\Providers\AuthAbstract;
 use WPMailSMTP\Vendor\Google_Client;
-use WPMailSMTP\Vendor\Google_Service_Gmail;
+use WPMailSMTP\Vendor\Google\Service\Gmail;
 
 /**
  * Class Auth to request access and refresh tokens.
@@ -103,7 +104,7 @@ class Auth extends AuthAbstract {
 		$client->setApprovalPrompt( 'force' );
 		$client->setIncludeGrantedScopes( true );
 		// We request only the sending capability, as it's what we only need to do.
-		$client->setScopes( array( Google_Service_Gmail::MAIL_GOOGLE_COM ) );
+		$client->setScopes( array( Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_oauth_redirect_url() );
 		$client->setState( self::get_plugin_auth_url() );
 
@@ -224,6 +225,13 @@ class Auth extends AuthAbstract {
 
 		// In case of any error: display a message to a user.
 		if ( ! empty( $error ) ) {
+			DebugEvents::add_debug(
+				sprintf( /* Translators: %s the error code passed from Google. */
+					esc_html__( 'There was an error while processing Google authorization: %s' ),
+					esc_html( $error )
+				)
+			);
+
 			wp_safe_redirect(
 				add_query_arg(
 					'error',
@@ -245,15 +253,19 @@ class Auth extends AuthAbstract {
 		if (
 			! empty( $code ) &&
 			(
-				$scope === Google_Service_Gmail::MAIL_GOOGLE_COM . ' ' . Google_Service_Gmail::GMAIL_SEND ||
-				$scope === Google_Service_Gmail::GMAIL_SEND . ' ' . Google_Service_Gmail::MAIL_GOOGLE_COM ||
-				$scope === Google_Service_Gmail::GMAIL_SEND ||
-				$scope === Google_Service_Gmail::MAIL_GOOGLE_COM
+				$scope === Gmail::MAIL_GOOGLE_COM . ' ' . Gmail::GMAIL_SEND ||
+				$scope === Gmail::GMAIL_SEND . ' ' . Gmail::MAIL_GOOGLE_COM ||
+				$scope === Gmail::GMAIL_SEND ||
+				$scope === Gmail::MAIL_GOOGLE_COM
 			)
 		) {
 			// Save the auth code. So Google_Client can reuse it to retrieve the access token.
 			$this->update_auth_code( $code );
 		} else {
+			DebugEvents::add_debug(
+				esc_html__( 'There was an error while processing Google authorization: missing code or scope parameter.' )
+			);
+
 			wp_safe_redirect(
 				add_query_arg(
 					'error',
@@ -322,7 +334,7 @@ class Auth extends AuthAbstract {
 	 */
 	public function get_user_info() {
 
-		$gmail = new Google_Service_Gmail( $this->get_client() );
+		$gmail = new Gmail( $this->get_client() );
 
 		try {
 			$email = $gmail->users->getProfile( 'me' )->getEmailAddress();
@@ -346,7 +358,7 @@ class Auth extends AuthAbstract {
 			return $this->aliases;
 		}
 
-		$gmail = new Google_Service_Gmail( $this->get_client() );
+		$gmail = new Gmail( $this->get_client() );
 
 		try {
 			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' ); // phpcs:ignore
@@ -361,6 +373,13 @@ class Auth extends AuthAbstract {
 			// phpcs:enable
 
 		} catch ( \Exception $exception ) {
+			DebugEvents::add_debug(
+				sprintf( /* Translators: %s the error message. */
+					esc_html__( 'An error occurred when trying to get Gmail aliases: %s' ),
+					esc_html( $exception->getMessage() )
+				)
+			);
+
 			$this->aliases = [];
 		}
 

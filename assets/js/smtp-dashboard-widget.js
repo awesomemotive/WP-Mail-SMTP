@@ -17,9 +17,12 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 	 * @type {object}
 	 */
 	var el = {
-		$canvas      : $( '#wp-mail-smtp-dash-widget-chart' ),
-		$settingsBtn : $( '#wp-mail-smtp-dash-widget-settings-button' ),
-		$dismissBtn  : $( '.wp-mail-smtp-dash-widget-dismiss-chart-upgrade' ),
+		$canvas                         : $( '#wp-mail-smtp-dash-widget-chart' ),
+		$settingsBtn                    : $( '#wp-mail-smtp-dash-widget-settings-button' ),
+		$dismissBtn                     : $( '.wp-mail-smtp-dash-widget-dismiss-chart-upgrade' ),
+		$summaryReportEmailBlock        : $( '.wp-mail-smtp-dash-widget-summary-report-email-block' ),
+		$summaryReportEmailDismissBtn   : $( '.wp-mail-smtp-dash-widget-summary-report-email-dismiss' ),
+		$summaryReportEmailEnableInput  : $( '#wp-mail-smtp-dash-widget-summary-report-email-enable' ),
 	};
 
 	/**
@@ -51,7 +54,7 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 					{
 						label: '',
 						data: [],
-						backgroundColor: 'rgba(106, 160, 139, 1)',
+						backgroundColor: 'rgba(34, 113, 177, 0.15)',
 						borderColor: 'rgba(34, 113, 177, 1)',
 						borderWidth: 2,
 						pointRadius: 4,
@@ -216,6 +219,42 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 				app.saveWidgetMeta( 'hide_graph', 1 );
 				$( this ).closest( '.wp-mail-smtp-dash-widget-chart-block-container' ).remove();
 				$( '#wp-mail-smtp-dash-widget-upgrade-footer' ).show();
+			} );
+
+			// Hide summary report email block on dismiss icon click.
+			el.$summaryReportEmailDismissBtn.on( 'click', function( event ) {
+				event.preventDefault();
+
+				app.saveWidgetMeta( 'hide_summary_report_email_block', 1 );
+				el.$summaryReportEmailBlock.slideUp();
+			} );
+
+			// Enable summary report email on checkbox enable.
+			el.$summaryReportEmailEnableInput.on( 'change', function( event ) {
+				event.preventDefault();
+
+				var $self = $( this ),
+					$loader = $self.next( 'i' );
+
+				$self.hide();
+				$loader.show();
+
+				var data = {
+					_wpnonce: wp_mail_smtp_dashboard_widget.nonce,
+					action  : 'wp_mail_smtp_' + wp_mail_smtp_dashboard_widget.slug + '_enable_summary_report_email'
+				};
+
+				$.post( ajaxurl, data )
+					.done( function() {
+						el.$summaryReportEmailBlock.find( '.wp-mail-smtp-dash-widget-summary-report-email-block-setting' )
+							.addClass( 'hidden' );
+						el.$summaryReportEmailBlock.find( '.wp-mail-smtp-dash-widget-summary-report-email-block-applied' )
+							.removeClass( 'hidden' );
+					} )
+					.fail( function() {
+						$self.show();
+						$loader.hide();
+					} );
 			} );
 
 			chart.init();

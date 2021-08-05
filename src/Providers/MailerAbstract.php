@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcherInterface;
@@ -275,6 +276,10 @@ abstract class MailerAbstract implements MailerInterface {
 		);
 
 		$response = wp_safe_remote_post( $this->url, $params );
+
+		DebugEvents::add_debug(
+			esc_html__( 'An email request was sent.' )
+		);
 
 		$this->process_response( $response );
 	}

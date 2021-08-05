@@ -47,9 +47,22 @@ abstract class ParentPageAbstract implements PageInterface {
 	 */
 	public function __construct( $tabs = [] ) {
 
+		/**
+		 * Filters parent page tabs.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string[] $tabs Parent page tabs.
+		 */
+		$tabs = apply_filters( 'wp_mail_smtp_admin_page_' . $this->slug . '_tabs', $tabs );
+
 		if ( wp_mail_smtp()->get_admin()->is_admin_page( $this->slug ) ) {
 			$this->init_tabs( $tabs );
 			$this->hooks();
+		}
+
+		if ( WP::is_doing_self_ajax() ) {
+			$this->init_ajax( $tabs );
 		}
 	}
 
@@ -61,6 +74,27 @@ abstract class ParentPageAbstract implements PageInterface {
 	protected function hooks() {
 
 		add_action( 'admin_init', [ $this, 'process_actions' ] );
+
+		// Register tab related hooks.
+		if ( isset( $this->tabs[ $this->get_current_tab() ] ) ) {
+			$this->tabs[ $this->get_current_tab() ]->hooks();
+		}
+	}
+
+	/**
+	 * Initialize ajax actions.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $tabs Page tabs.
+	 */
+	private function init_ajax( $tabs ) {
+
+		foreach ( $tabs as $tab ) {
+			if ( $this->is_valid_tab( $tab ) ) {
+				( new $tab( $this ) )->ajax();
+			}
+		}
 	}
 
 	/**
@@ -193,17 +227,8 @@ abstract class ParentPageAbstract implements PageInterface {
 	 */
 	public function init_tabs( $tabs ) {
 
-		/**
-		 * Filters parent page tabs.
-		 *
-		 * @since 2.8.0
-		 *
-		 * @param string[] $tabs Parent page tabs.
-		 */
-		$tabs = apply_filters( 'wp_mail_smtp_admin_page_' . $this->slug . '_tabs', $tabs );
-
 		foreach ( $tabs as $key => $tab ) {
-			if ( ! is_subclass_of( $tab, '\WPMailSMTP\Admin\PageAbstract' ) ) {
+			if ( ! $this->is_valid_tab( $tab ) ) {
 				continue;
 			}
 
@@ -227,9 +252,6 @@ abstract class ParentPageAbstract implements PageInterface {
 		if ( ! array_key_exists( $this->get_current_tab(), $tabs ) ) {
 			return;
 		}
-
-		// Register tab related hooks.
-		$this->tabs[ $this->get_current_tab() ]->hooks();
 
 		// Process POST only if it exists.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -260,12 +282,16 @@ abstract class ParentPageAbstract implements PageInterface {
 		$page_slug   = $this->slug;
 		?>
 		<div class="wp-mail-smtp-page-title">
-			<?php foreach ( $this->tabs as $tab ) : ?>
-				<a href="<?php echo esc_url( $tab->get_link() ); ?>"
-					 class="tab <?php echo $current_tab === $tab->get_slug() ? 'active' : ''; ?>">
-					<?php echo esc_html( $tab->get_label() ); ?>
-				</a>
-			<?php endforeach; ?>
+			<?php if ( count( $this->tabs ) > 1 ) : ?>
+				<?php foreach ( $this->tabs as $tab ) : ?>
+					<a href="<?php echo esc_url( $tab->get_link() ); ?>"
+						 class="tab <?php echo $current_tab === $tab->get_slug() ? 'active' : ''; ?>">
+						<?php echo esc_html( $tab->get_label() ); ?>
+					</a>
+				<?php endforeach; ?>
+			<?php else : ?>
+				<span class="page-title"><?php echo esc_html( array_values( $this->tabs )[0]->get_title() ); ?></span>
+			<?php endif; ?>
 
 			<?php
 			/**
@@ -337,5 +363,19 @@ abstract class ParentPageAbstract implements PageInterface {
 				return ( $a->get_priority() < $b->get_priority() ) ? - 1 : 1;
 			}
 		);
+	}
+
+	/**
+	 * Whether tab is valid.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $tab Page tab.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_tab( $tab ) {
+
+		return is_subclass_of( $tab, '\WPMailSMTP\Admin\PageAbstract' );
 	}
 }

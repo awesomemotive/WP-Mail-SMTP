@@ -13,6 +13,31 @@
 	height: 16px;
 }
 
+// CSS loading spinner.
+.wp-mail-smtp-loading-spin {
+	position: relative;
+	color: transparent !important;
+	pointer-events: none;
+
+	&:after {
+		position: absolute;
+		box-sizing: border-box;
+		animation: 0.65s linear infinite wp-mail-smtp-loading-spin;
+		border: 2px solid #fff;
+		border-radius: 50%;
+		border-right-color: transparent !important;
+		border-top-color: transparent !important;
+		content: "";
+		display: block;
+		top: 50%;
+		left: 50%;
+		width: 16px;
+		height: 16px;
+		margin-top: -8px;
+		margin-left: -8px;
+	}
+}
+
 @keyframes wp-mail-smtp-loading-spin {
 	0% {
 		transform: rotateZ(270deg);

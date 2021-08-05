@@ -101,11 +101,34 @@ abstract class PageAbstract implements PageInterface {
 	}
 
 	/**
+	 * Get parent page slug.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return string
+	 */
+	public function get_parent_slug() {
+
+		if ( is_null( $this->parent_page ) ) {
+			return '';
+		}
+
+		return $this->parent_page->get_slug();
+	}
+
+	/**
 	 * Register tab related hooks.
 	 *
 	 * @since 2.8.0
 	 */
 	public function hooks() {}
+
+	/**
+	 * Register tab related ajax hooks.
+	 *
+	 * @since 3.0.0
+	 */
+	public function ajax() {}
 
 	/**
 	 * Process tab form submission ($_POST ).

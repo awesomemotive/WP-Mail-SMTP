@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Providers\MailerAbstract;
 
 /**
@@ -101,7 +102,13 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 				 */
 				do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
 
-				return $this->postSend();
+				$post_send = $this->postSend();
+
+				DebugEvents::add_debug(
+					esc_html__( 'An email request was sent.' )
+				);
+
+				return $post_send;
 			} catch ( \PHPMailer\PHPMailer\Exception $e ) {
 				$this->mailHeader = ''; // phpcs:ignore
 				$this->setError( $e->getMessage() );

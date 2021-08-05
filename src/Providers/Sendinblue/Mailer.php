@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Sendinblue;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
@@ -307,6 +308,10 @@ class Mailer extends MailerAbstract {
 			$api = new Api();
 
 			$response = $api->get_smtp_client()->sendTransacEmail( $this->get_body() );
+
+			DebugEvents::add_debug(
+				esc_html__( 'An email request was sent to the Sendinblue API.' )
+			);
 
 			$this->process_response( $response );
 		} catch ( ApiException $e ) {

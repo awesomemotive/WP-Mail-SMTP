@@ -4,9 +4,12 @@ namespace WPMailSMTP;
 
 use WPMailSMTP\Admin\AdminBarMenu;
 use WPMailSMTP\Admin\DashboardWidget;
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\Notifications;
+use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\Compatibility\Compatibility;
+use WPMailSMTP\Reports\Reports;
 
 /**
  * Class Core to handle all plugin initialization.
@@ -120,6 +123,9 @@ class Core {
 		// Initialize Action Scheduler tasks.
 		add_action( 'init', [ $this, 'get_tasks' ], 5 );
 
+		// Initialize DB migrations.
+		add_action( 'admin_init', [ $this, 'init_migrations' ] );
+
 		add_action( 'plugins_loaded', [ $this, 'get_pro' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_usage_tracking' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_admin_bar_menu' ] );
@@ -127,6 +133,7 @@ class Core {
 		add_action( 'plugins_loaded', [ $this, 'get_connect' ], 15 );
 		add_action( 'plugins_loaded', [ $this, 'get_compatibility' ], 0 );
 		add_action( 'plugins_loaded', [ $this, 'get_dashboard_widget' ], 20 );
+		add_action( 'plugins_loaded', [ $this, 'get_reports' ] );
 	}
 
 	/**
@@ -146,7 +153,6 @@ class Core {
 		 * We should not fire this in AJAX requests.
 		 */
 		if ( WP::in_wp_admin() ) {
-			$this->get_migration();
 			$this->get_upgrade();
 			$this->detect_conflicts();
 		}
@@ -155,6 +161,9 @@ class Core {
 		if ( is_admin() ) {
 			$this->get_admin();
 			$this->get_site_health()->init();
+
+			// Register Debug Event hooks.
+			( new DebugEvents() )->hooks();
 		}
 
 		// Plugin admin area notices. Display to "admins" only.
@@ -320,11 +329,15 @@ class Core {
 	/**
 	 * Load the plugin option migrator.
 	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @since 1.0.0
 	 *
 	 * @return Migration
 	 */
 	public function get_migration() {
+
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 		static $migration;
 
@@ -333,6 +346,39 @@ class Core {
 		}
 
 		return $migration;
+	}
+
+	/**
+	 * Initialize DB migrations.
+	 *
+	 * @since 3.0.0
+	 */
+	public function init_migrations() {
+
+		if ( WP::is_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
+		$migrations = [
+			Migration::class,
+			\WPMailSMTP\Admin\DebugEvents\Migration::class,
+		];
+
+		/**
+		 * Filters DB migrations.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param array $migrations Migrations classes.
+		 */
+		$migrations = apply_filters( 'wp_mail_smtp_core_init_migrations', $migrations );
+
+		foreach ( $migrations as $migration ) {
+			if ( is_subclass_of( $migration, '\WPMailSMTP\MigrationAbstract' ) && $migration::is_enabled() ) {
+				$new_migration = new $migration();
+				$new_migration->init();
+			}
+		}
 	}
 
 	/**
@@ -502,14 +548,11 @@ class Core {
 				<div class="notice <?php echo esc_attr( WP::ADMIN_NOTICE_ERROR ); ?>">
 					<p>
 						<?php
-						printf(
-							wp_kses( /* translators: %s - plugin name and its version. */
-								__( '<strong>EMAIL DELIVERY ERROR:</strong> the plugin %s logged this error during the last time it tried to send an email:', 'wp-mail-smtp' ),
-								array(
-									'strong' => array(),
-								)
-							),
-							esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER )
+						echo wp_kses(
+							__( '<strong>Heads up!</strong> The last email your site attempted to send was unsuccessful.', 'wp-mail-smtp' ),
+							[
+								'strong' => [],
+							]
 						);
 						?>
 					</p>
@@ -534,7 +577,17 @@ class Core {
 							);
 						}
 
-						esc_html_e( 'Consider running an email test after fixing it.', 'wp-mail-smtp' );
+						printf(
+							wp_kses( /* translators: %s - URL to the debug events page. */
+								__( 'For more details please try running an Email Test or reading the latest <a href="%s">error event</a>.' ),
+								[
+									'a' => [
+										'href' => [],
+									],
+								]
+							),
+							esc_url( DebugEvents::get_page_url() )
+						);
 						?>
 					</p>
 
@@ -819,7 +872,8 @@ class Core {
 	public function get_custom_db_tables() {
 
 		$tables = [
-			\WPMailSMTP\Tasks\Meta::get_table_name(),
+			Meta::get_table_name(),
+			DebugEvents::get_table_name(),
 		];
 
 		return apply_filters( 'wp_mail_smtp_core_get_custom_db_tables', $tables );
@@ -1082,5 +1136,36 @@ class Core {
 		}
 
 		return $dashboard_widget;
+	}
+
+	/**
+	 * Get the reports object (lite or pro version).
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return Reports
+	 */
+	public function get_reports() {
+
+		static $reports;
+
+		if ( ! isset( $reports ) ) {
+
+			/**
+			 * Filter the reports class name.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param Reports $class_name The reports class name to be instantiated.
+			 */
+			$class_name = apply_filters( 'wp_mail_smtp_core_get_reports', Reports::class );
+			$reports    = new $class_name();
+
+			if ( method_exists( $reports, 'init' ) ) {
+				$reports->init();
+			}
+		}
+
+		return $reports;
 	}
 }

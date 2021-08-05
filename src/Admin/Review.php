@@ -136,7 +136,7 @@ class Review {
 			</div>
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-3" style="display: none">
 				<p><?php esc_html_e( 'That’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'wp-mail-smtp' ); ?></p>
-				<p><strong><?php echo wp_kses( __( '~ Jared Atchison<br>Lead Developer, WP Mail SMTP', 'wp-mail-smtp' ), [ 'br' => [] ] ); ?></strong></p>
+				<p><strong><?php echo wp_kses( __( '~ Jared Atchison<br>Co-Founder, WP Mail SMTP', 'wp-mail-smtp' ), [ 'br' => [] ] ); ?></strong></p>
 				<p>
 					<a href="https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
 						<?php esc_html_e( 'Ok, you deserve it', 'wp-mail-smtp' ); ?>

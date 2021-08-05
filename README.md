@@ -4,7 +4,7 @@
 
 ### Welcome to our GitHub Repository!!!
 
-`master` branch is always stable and contains latest releases. Development occurs in the `develop` branch while large features/changes are contained in dedicated branches.
+`master` branch is always stable and contains latest releases.
 
 ## Bugs ##
 If you find an bug or problem, please let us know by [creating an issue](https://github.com/awesomemotive/wp-mail-smtp/issues?state=open)!

@@ -410,9 +410,20 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		background: url(/wp-includes/images/spinner.gif) no-repeat center calc(50% - 12px);
+		background: url(../images/wp-spinner.gif) no-repeat center calc(50% - 12px);
 		background-color: white;
 		z-index: 10;
+	}
+
+	i.wp-mail-smtp-dash-widget-loader {
+		background-image: url(../images/wp-spinner.gif);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+	}
+
+	.hidden {
+		display: none !important;
 	}
 }
 
@@ -421,7 +432,7 @@
 	.wp-mail-smtp-dash-widget {
 		&-chart-block-container {
 			#wp-mail-smtp-dash-widget-chart {
-				opacity: 0.15;
+				opacity: 0.35;
 			}
 		}
 
@@ -497,6 +508,76 @@
 
 		&-settings-menu * {
 			cursor: not-allowed;
+		}
+
+		&-summary-report-email-block {
+			margin-top: 0;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border-top: 1px solid #eeeeee;
+			font-size: 13px;
+			line-height: 16px;
+
+			& > div {
+				padding: 10px;
+				border-radius: 4px;
+				background: #F0F6FC;
+			}
+
+			&-setting {
+				display: flex;
+				align-items: center;
+
+				label {
+					display: flex;
+					margin: 0 10px 0 0;
+					color: #3C434A;
+
+					input, i {
+						margin: 0 10px 0 0;
+					}
+
+					i {
+						display: none;
+						width: 16px;
+						height: 16px;
+					}
+
+					b {
+						font-weight: 500;
+					}
+				}
+
+				a {
+					white-space: nowrap;
+					margin-right: 10px;
+				}
+
+				.dashicons-dismiss {
+					margin-left: auto;
+					width: 16px;
+					height: 16px;
+					font-size: 16px;
+					color: #A0A5AA;
+					cursor: pointer;
+
+					&:hover {
+						color: #2271b1;
+					}
+				}
+			}
+
+			&-applied {
+				display: flex;
+
+				.dashicons-yes-alt {
+					margin-right: 10px;
+					width: 16px;
+					height: 16px;
+					font-size: 16px;
+					color: rgb(106, 160, 139);
+				}
+			}
 		}
 
 		&-upgrade-footer {

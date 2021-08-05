@@ -61,6 +61,12 @@ class Options extends OptionsAbstract {
 											'</a></p>';
 		}
 
+		$description .= '<p class="wp-mail-smtp-tooltip">' .
+			esc_html__( 'Transparency and Disclosure', 'wp-mail-smtp' ) .
+			'<span class="wp-mail-smtp-tooltip-text">' .
+			esc_html__( 'We believe in full transparency. The SMTP.com links above are tracking links as part of our partnership with SMTP (j2 Global). We can recommend just about any SMTP service, but we only recommend products that we believe will add value to our users.', 'wp-mail-smtp' ) .
+			'</span></p>';
+
 		parent::__construct(
 			[
 				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/smtp-com.svg',

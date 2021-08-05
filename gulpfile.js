@@ -29,6 +29,7 @@ var plugin = {
 		'!assets/**/*.css',
 		'assets/vue/**/*.css',
 		'assets/**/*.min.css',
+		'assets/css/emails/*.css',
 		'!vue-app/**',
 		'!vue-app/',
 		'!assets/wporg/**',
@@ -94,9 +95,9 @@ var plugin = {
 		'!vendor/psr/**',
 		'!vendor/psr/',
 		// We need only a specific service: Gmail. Others should be omitted.
-		'!vendor_prefixed/google/apiclient-services/src/Google/Service/!(Gmail)/**',
-		'!vendor_prefixed/google/apiclient-services/src/Google/Service/*.php',
-		'vendor_prefixed/google/apiclient-services/src/Google/Service/Gmail.php',
+		'!vendor_prefixed/google/apiclient-services/src/!(Gmail)/**',
+		'!vendor_prefixed/google/apiclient-services/src/*.php',
+		'vendor_prefixed/google/apiclient-services/src/Gmail.php',
 		// We need only specific crypto-libraries. Others should be omitted.
 		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/Crypt/!(AES.php|Rijndael.php|RSA.php|Random.php)',
 		'!vendor_prefixed/phpseclib/phpseclib/phpseclib/Net/**',

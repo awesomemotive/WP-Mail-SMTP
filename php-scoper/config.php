@@ -55,10 +55,10 @@ $config = [
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
-			->in( 'vendor/google/apiclient-services/src/Google/Service/Gmail/' ),
+			->in( 'vendor/google/apiclient-services/src/Gmail/' ),
 		Finder::create()
 			->files()
-			->in( 'vendor/google/apiclient-services/src/Google/Service/' )
+			->in( 'vendor/google/apiclient-services/src/' )
 			->name( 'Gmail.php' ),
 		Finder::create()
 			->files()
@@ -122,26 +122,6 @@ $config = [
 	For more see: https://github.com/humbug/php-scoper#patchers.
 	*/
 	'patchers'                   => [
-		/**
-		 * Prefix the dynamic class generation in Google's apiclient lib.
-		 *
-		 * @param string $filePath The path of the current file.
-		 * @param string $prefix   The prefix to be used.
-		 * @param string $content  The content of the specific file.
-		 *
-		 * @return string The modified content.
-		 */
-		function ( $file_path, $prefix, $content ) {
-			if ( strpos( $file_path, 'google/apiclient/src/Http/REST.php' ) !== false ) {
-				return preg_replace(
-					'/(return new \$expectedClass\(\$json\);)/',
-					'$expectedClass = \'WPMailSMTP\\\\\\Vendor\\\\\\\' . $expectedClass;' . PHP_EOL . '            $1',
-					$content
-				);
-			}
-			return $content;
-		},
-
 		/**
 		 * Prefix the dynamic alias class generation in Google's apiclient lib.
 		 *

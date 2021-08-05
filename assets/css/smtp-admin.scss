@@ -4,6 +4,8 @@
 @import "confirm";
 @import "education";
 @import "loader";
+@import "flyout-menu";
+@import "tooltip";
 
 // Screen options are hidden on load, then made visible with JS, to
 // prevent it from "jumping".
@@ -366,7 +368,7 @@
 							}
 
 							img {
-								max-width: 90%;
+								max-width: 80%;
 								max-height: 40px;
 								display: block;
 								position: relative;
@@ -713,109 +715,6 @@
 			margin-left: $padding-default;
 		}
 
-		#wp-mail-smtp-debug {
-			margin-top: 25px;
-
-			h2 {
-				margin: 20px 0 10px;
-				color: #444;
-				font-size: 16px;
-				line-height: 20px;
-				font-weight: 700;
-			}
-
-			p {
-				margin: 10px 0;
-				color: #777;
-				font-size: 14px;
-				line-height: 20px;
-			}
-
-			ul {
-				list-style-type: disc;
-			}
-
-			ul,
-			ol {
-				margin: 10px 0 10px 15px;
-				color: #777;
-				font-size: 14px;
-				line-height: 20px;
-
-				li {
-					margin: 0 0 8px 0;
-
-					&:last-of-type {
-						margin: 0;
-					}
-
-					ul {
-						list-style-type: disc;
-					}
-				}
-			}
-
-			.dashicons-star-filled {
-				color: $orange;
-				width: 16px;
-				height: 16px;
-				font-size: 16px;
-				vertical-align: text-top;
-			}
-
-			.price-off {
-				color: green;
-				font-weight: bold;
-			}
-
-			.error-log-button-container {
-				margin-bottom: 30px;
-			}
-
-			.error-log-toggle {
-				float: left;
-				margin-right: 10px;
-			}
-
-			.error-log-copy {
-				min-width: 122px;
-
-				.error-log-copy-back {
-					display: none;
-				}
-
-			}
-
-			.error-log-copy-copied {
-
-				.error-log-copy-front {
-					display: none;
-				}
-
-				.error-log-copy-back {
-					display: inline;
-				}
-			}
-
-			.error-log {
-				padding-top: 10px;
-				padding-bottom: 10px;
-				display: none;
-
-				&.error-log-selection {
-					display: block !important;
-					opacity: 0;
-					height: 0;
-					padding: 0;
-					margin: 0;
-				}
-
-				pre {
-					margin: 0;
-				}
-			}
-		}
-
 		#wp-mail-smtp-pro-banner {
 			background-color: #fff;
 			padding: 25px 20px;
@@ -940,156 +839,6 @@
 		}
 	}
 
-	.wp-mail-smtp-page-upsell {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: auto;
-		flex-direction: column;
-
-		& > * {
-			width: 800px;
-		}
-
-		*, *::before, *::after {
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-
-		h2 {
-			font-size: 24px;
-			color: #444444;
-			text-align: center;
-		}
-
-		h3 {
-			font-size: 16px;
-			font-weight: normal;
-			color: #72777C;
-			line-height: 1.5em;
-			margin-top: 0;
-			margin-bottom: 6px;
-			text-align: center;
-		}
-
-		.wp-mail-smtp-page-upsell-content {
-			.wp-mail-smtp-page-upsell-features {
-				margin-bottom: $content-padding * 2;
-
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				justify-content: flex-start;
-				align-items: stretch;
-				align-content: flex-start;
-
-				.wp-mail-smtp-page-upsell-feature {
-					display: flex;
-					flex-direction: row;
-					width: 360px;
-					align-items: flex-start;
-					align-content: flex-start;
-					margin-right: $content-padding * 3;
-					margin-top: $content-padding * 2;
-
-					&:nth-of-type(1) {margin-top: $content-padding}
-					&:nth-of-type(2) {margin-top: $content-padding}
-
-					&:nth-of-type(even) {
-						margin-right: 0;
-					}
-
-					.wp-mail-smtp-page-upsell-feature-image {
-						display: flex;
-						align-items: center;
-
-						svg {
-							height: 64px;
-							width: 64px;
-						}
-
-						.st0 {
-							fill: #C3D0D7;
-						}
-
-						.st1 {
-							fill: #809DB0;
-						}
-					}
-
-					.wp-mail-smtp-page-upsell-feature-content {
-						margin-left: $content-padding;
-
-						h4 {
-							font-size: 15px;
-							margin: 0 0 0.5em;
-						}
-
-						p {
-							color: #72777C;
-							margin: 0;
-						}
-					}
-				}
-			}
-		}
-
-		.wp-mail-smtp-page-upsell-images {
-			margin-top: $content-padding;
-			margin-bottom: $padding-default;
-			text-align: center;
-
-			img	{
-				width: 380px;
-				height: auto;
-				margin-right: $padding-default;
-				border: 5px solid #fff;
-				border-radius: 5px;
-				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-				float: left;
-
-				&:last-child {
-					margin-right: 0;
-				}
-			}
-		}
-
-		.wp-mail-smtp-page-upsell-button {
-			text-align: center;
-		}
-	}
-
-	.wp-mail-smtp-page-nw-product-edu {
-		h2 {
-			display: inline-block;
-			vertical-align: middle;
-		}
-
-		.badge {
-			margin: 0 0 2px 7px;
-			vertical-align: middle;
-			width: 40px;
-			height: 17px;
-		}
-
-		.wp-mail-smtp-setting-row-multisite {
-			color: #9a9a9a;
-
-			p.desc {
-				color: #bababa;
-			}
-
-			input[type=checkbox]:disabled {
-				border-color: #aaa;
-			}
-		}
-
-		.wp-mail-smtp-setting-row-no-setting {
-			margin-top: 30px;
-		}
-	}
-
 	.notice blockquote {
 		margin-left: 0;
 		padding: 2px;
@@ -1128,73 +877,39 @@
 		}
 	}
 
-	#wp-mail-smtp-tools-export-email-logs-product-education {
-
-		h4 {
-			display: flex;
-			align-items: center;
-			margin-bottom: 10px;
-			font-size: 20px;
-			line-height: 24px;
-			color: #444;
-
-			&:after {
-				content: '';
-				margin-left: 10px;
-				background-image: url('../images/pro-badge-small.svg');
-				background-size: contain;
-				background-repeat: no-repeat;
-				width: 35px;
-				height: 16px;
+	// Tools -> Debug Events tab styles.
+	.wp-mail-smtp-tab-tools-debug-events {
+		@include media(">tablet") {
+			th#event {
+				width: 130px;
+			}
+			th#type {
+				width: 80px;
+			}
+			th#initiator {
+				width: 20%;
+			}
+			th#created_at {
+				width: 200px;
 			}
 		}
+	}
 
-		& > p {
-			font-size: 14px;
-			line-height: 20px;
-			color: #444;
-		}
-
-		.wp-mail-smtp-setting-row {
-			opacity: 0.5;
-			pointer-events: none;
-			padding: 30px 0;
-			margin: 30px 0;
-			border-top: 1px solid #E4E4E4;
-			border-bottom: 1px solid #E4E4E4;
-		}
-
-		h5 {
-			clear: both;
-			margin: 20px 0 10px 0;
-		}
-
-		label {
-			clear: both;
+	// Flatpicker (date picker) style in the WP List Table filter.
+	.wp-mail-smtp-filter-date {
+		.wp-mail-smtp-filter-date-selector {
 			float: left;
-			margin: 3px 0 3px 0;
+			margin: 0 5px 0 0;
+			min-height: 30px;
+			background-color: #fff;
+			vertical-align: middle;
+			max-width: 210px;
+			line-height: normal;
 		}
 
-		.wp-mail-smtp-date-selector {
-			width: 200px;
-			cursor: pointer;
-		}
-
-		.wp-mail-smtp-search-box-field {
-			width: 200px;
-		}
-
-		.wp-mail-smtp-search-box-term {
-			width: 300px;
-		}
-
-		section {
-			margin-top: 30px;
-			cursor: not-allowed;
-
-			&:first-child {
-				margin-top: 20px;
-			}
+		button {
+			margin: 0;
+			vertical-align: top;
 		}
 	}
 }
@@ -1340,10 +1055,15 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 	}
 
 	.wp-mail-smtp-domain-check-details-check-list {
+
 		&-item {
-			padding: 25px 0 14px;
+			padding: 25px 0;
 			border-top: 1px solid #E4E4E4;
 			display: flex;
+
+			&:last-child {
+				padding-bottom: 0;
+			}
 
 			&-icon {
 				width: 18px;
@@ -1366,15 +1086,70 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 					font-size: 14px;
 					line-height: 20px;
 					margin: 0 0 10px 0;
+
+					&:last-of-type {
+						margin-bottom: 0;
+					}
 				}
 			}
 		}
 	}
 }
 
-// Email Test submit button loader.
+// Email Test Tab.
 .wp-mail-smtp-tab-tools-test {
+
+	.wp-mail-smtp-setting-row.section-heading {
+		margin-bottom: 22px;
+	}
+
+	.wp-mail-smtp-test-email-resend {
+		padding-top: 22px;
+		margin-top: 22px;
+		border-top: 1px solid #E4E4E4;
+	}
+
+	.wp-mail-smtp-test-email-resend a {
+		font-size: 14px;
+		outline: none;
+		box-shadow: none;
+	}
+
+	#email-test-success {
+		margin-top: 30px;
+		text-align: center;
+
+		svg {
+			display: block;
+			max-width: 500px;
+			width: 100%;
+			height: auto;
+			margin: 0 auto 22px;
+		}
+
+		h2 {
+			margin-top: 0;
+			margin-bottom: 10px;
+			font-weight: 500;
+			font-size: 24px;
+			line-height: 29px;
+			color: #444444;
+		}
+
+		p {
+			margin-top: 0;
+			font-size: 16px;
+			line-height: 24px;
+			color: #777777;
+		}
+	}
+
 	#email-test-form {
+
+		.wp-mail-smtp-setting-row.section-heading {
+			margin-bottom: 0;
+		}
+
 		.wp-mail-smtp-btn {
 			min-width: 95px;
 		}
@@ -1382,6 +1157,108 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		.wp-mail-smtp-loading {
 			display: none;
 			margin-bottom: -2px;
+		}
+	}
+
+	#wp-mail-smtp-debug {
+		margin-top: 25px;
+
+		h2 {
+			margin: 20px 0 10px;
+			color: #444;
+			font-size: 16px;
+			line-height: 20px;
+			font-weight: 700;
+		}
+
+		p {
+			margin: 10px 0;
+			color: #777;
+			font-size: 14px;
+			line-height: 20px;
+		}
+
+		ul {
+			list-style-type: disc;
+		}
+
+		ul,
+		ol {
+			margin: 10px 0 10px 15px;
+			color: #777;
+			font-size: 14px;
+			line-height: 20px;
+
+			li {
+				margin: 0 0 8px 0;
+
+				&:last-of-type {
+					margin: 0;
+				}
+
+				ul {
+					list-style-type: disc;
+				}
+			}
+		}
+
+		.dashicons-star-filled {
+			color: $orange;
+			width: 16px;
+			height: 16px;
+			font-size: 16px;
+			vertical-align: text-top;
+		}
+
+		.price-off {
+			color: green;
+			font-weight: bold;
+		}
+
+		.error-log-button-container {
+			margin-bottom: 22px;
+		}
+
+		.error-log-toggle {
+			float: left;
+			margin-right: 10px;
+		}
+
+		.error-log-copy {
+			min-width: 122px;
+
+			.error-log-copy-back {
+				display: none;
+			}
+		}
+
+		.error-log-copy-copied {
+
+			.error-log-copy-front {
+				display: none;
+			}
+
+			.error-log-copy-back {
+				display: inline;
+			}
+		}
+
+		.error-log {
+			padding-top: 10px;
+			padding-bottom: 10px;
+			display: none;
+
+			&.error-log-selection {
+				display: block !important;
+				opacity: 0;
+				height: 0;
+				padding: 0;
+				margin: 0;
+			}
+
+			pre {
+				margin: 0;
+			}
 		}
 	}
 }
@@ -1413,6 +1290,89 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		hr.wp-header-end {
 			visibility: hidden;
 			margin: -2px 0 0;
+		}
+	}
+}
+
+.wp-mail-smtp-admin-page-body {
+
+	/* Lightbox library global styles. */
+	.lity {
+		z-index: 999999999;
+		padding: 20px;
+	}
+
+	.lity-close {
+		margin: 10px;
+	}
+
+	.lity-content {
+		max-width: 80vw;
+		max-height: 80vh;
+
+		img {
+			max-height: 80vh !important;
+			max-width: 80vw !important;
+		}
+	}
+}
+
+// The single Debug Event popup preview.
+.wp-mail-smtp-debug-event-preview {
+	text-align: left;
+
+	h4 {
+		margin: 15px 0;
+		font-size: 18px;
+	}
+
+	.wp-mail-smtp-debug-event-preview-subtitle {
+		margin-bottom: 30px;
+		text-align: center;
+
+		span {
+			color: #777777;
+			font-size: 16px;
+			line-height: 22px;
+		}
+	}
+
+	.wp-mail-smtp-debug-event-row {
+		padding: 20px 0;
+		border-top: 1px solid #dddddd;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		font-size: 16px;
+		line-height: 22px;
+
+		.debug-event-label {
+			width: 60px;
+			margin-right: 30px;
+			font-weight: 500;
+		}
+
+		.debug-event-value {
+			width: calc( 100% - 90px );
+		}
+
+		.debug-event-initiator {
+			display: inline-block;
+			margin-bottom: 5px;
+		}
+
+		.debug-event-code {
+			color: #777777;
+		}
+
+		&:last-child {
+			border-bottom: 1px solid #dddddd;
+		}
+	}
+
+	.wp-mail-smtp-debug-event-preview-content {
+		> div {
+			word-break: break-word;
 		}
 	}
 }

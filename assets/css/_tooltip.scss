@@ -1,0 +1,40 @@
+.wp-mail-smtp-tooltip {
+	position: relative;
+	display: inline-block;
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	cursor: help;
+	color: #777;
+	margin-top: 15px !important;
+
+	&-text {
+		visibility: hidden;
+		position: absolute;
+		z-index: 9999;
+		width: 360px;
+		background-color: #2D4F60;
+		color: #fff;
+		text-align: center;
+		padding: 16px 20px;
+		font-size: 14px;
+		border-radius: 5px;
+		bottom: 100%;
+		left: 50%;
+		margin-left: -180px;
+
+		&::after {
+			content: " ";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-left: -5px;
+			border-width: 5px;
+			border-style: solid;
+			border-color: #2D4F60 transparent transparent transparent;
+		}
+	}
+
+	&:hover .wp-mail-smtp-tooltip-text {
+		visibility: visible;
+	}
+}

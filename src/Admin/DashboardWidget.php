@@ -2,8 +2,11 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
+use WPMailSMTP\Reports\Reports;
+use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
 
 /**
  * Dashboard Widget shows the number of sent emails in WP Dashboard.
@@ -25,10 +28,11 @@ class DashboardWidget {
 	 * The WP option key for storing the total number of sent emails.
 	 *
 	 * @since 2.9.0
+	 * @since 3.0.0 Constant moved to Reports class.
 	 *
 	 * @const string
 	 */
-	const SENT_EMAILS_COUNTER_OPTION_KEY = 'wp_mail_smtp_lite_sent_email_counter';
+	const SENT_EMAILS_COUNTER_OPTION_KEY = Reports::SENT_EMAILS_COUNTER_OPTION_KEY;
 
 	/**
 	 * Constructor.
@@ -43,12 +47,6 @@ class DashboardWidget {
 		}
 
 		add_action( 'admin_init', [ $this, 'init' ] );
-
-		// Update sent email counter when SMTP mailer is used.
-		add_action( 'wp_mail_smtp_mailcatcher_smtp_send_after', [ $this, 'increment_sent_email_counter' ] );
-
-		// Update sent email counter when all other mailers are used.
-		add_action( 'wp_mail_smtp_mailcatcher_send_after', [ $this, 'increment_sent_email_counter' ] );
 	}
 
 	/**
@@ -88,6 +86,13 @@ class DashboardWidget {
 		add_action( 'wp_dashboard_setup', [ $this, 'widget_register' ] );
 
 		add_action( 'wp_ajax_wp_mail_smtp_' . static::SLUG . '_save_widget_meta', [ $this, 'save_widget_meta_ajax' ] );
+		add_action(
+			'wp_ajax_wp_mail_smtp_' . static::SLUG . '_enable_summary_report_email',
+			[
+				$this,
+				'enable_summary_report_email_ajax',
+			]
+		);
 	}
 
 	/**
@@ -195,6 +200,32 @@ class DashboardWidget {
 	}
 
 	/**
+	 * Enable summary report email using AJAX.
+	 *
+	 * @since 3.0.0
+	 */
+	public function enable_summary_report_email_ajax() {
+
+		check_admin_referer( 'wp_mail_smtp_' . static::SLUG . '_nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		$options = new Options();
+
+		$data = [
+			'general' => [
+				SummaryReportEmail::SETTINGS_SLUG => false,
+			],
+		];
+
+		$options->set( $data, false, false );
+
+		wp_send_json_success();
+	}
+
+	/**
 	 * Load widget content.
 	 *
 	 * @since 2.9.0
@@ -211,23 +242,13 @@ class DashboardWidget {
 	/**
 	 * Increment the number of total emails sent by 1.
 	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @since 2.9.0
 	 */
 	public function increment_sent_email_counter() {
 
-		$value = $this->get_total_email_sent() + 1;
-
-		update_option( self::SENT_EMAILS_COUNTER_OPTION_KEY, $value, true );
-	}
-
-	/**
-	 * Get the number of total emails sent.
-	 *
-	 * @since 2.9.0
-	 */
-	private function get_total_email_sent() {
-
-		return get_option( self::SENT_EMAILS_COUNTER_OPTION_KEY, 0 );
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**
@@ -237,7 +258,8 @@ class DashboardWidget {
 	 */
 	private function widget_content_html() {
 
-		$hide_graph = (bool) $this->widget_meta( 'get', 'hide_graph' );
+		$hide_graph                      = (bool) $this->widget_meta( 'get', 'hide_graph' );
+		$hide_summary_report_email_block = (bool) $this->widget_meta( 'get', 'hide_summary_report_email_block' );
 		?>
 
 		<?php if ( ! $hide_graph ) : ?>
@@ -278,6 +300,37 @@ class DashboardWidget {
 		<div id="wp-mail-smtp-dash-widget-email-stats-block" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-email-stats-block">
 			<?php $this->email_stats_block(); ?>
 		</div>
+
+		<?php if ( SummaryReportEmail::is_disabled() && ! $hide_summary_report_email_block ) : ?>
+			<div id="wp-mail-smtp-dash-widget-summary-report-email-block" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-summary-report-email-block">
+				<div>
+					<div class="wp-mail-smtp-dash-widget-summary-report-email-block-setting">
+						<label for="wp-mail-smtp-dash-widget-summary-report-email-enable">
+							<input type="checkbox" id="wp-mail-smtp-dash-widget-summary-report-email-enable">
+							<i class="wp-mail-smtp-dash-widget-loader"></i>
+							<span>
+								<?php
+								echo wp_kses(
+									__( '<b>NEW!</b> Enable Weekly Email Summaries', 'wp-mail-smtp' ),
+									[
+										'b' => [],
+									]
+								);
+								?>
+							</span>
+						</label>
+						<a href="<?php echo esc_url( SummaryReportEmail::get_preview_link() ); ?>" target="_blank">
+							<?php esc_html_e( 'View Example', 'wp-mail-smtp' ); ?>
+						</a>
+						<i class="dashicons dashicons-dismiss wp-mail-smtp-dash-widget-summary-report-email-dismiss"></i>
+					</div>
+					<div class="wp-mail-smtp-dash-widget-summary-report-email-block-applied hidden">
+						<i class="dashicons dashicons-yes-alt"></i>
+						<span><?php esc_attr_e( 'Weekly Email Summaries have been enabled', 'wp-mail-smtp' ); ?></span>
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
 
 		<div id="wp-mail-smtp-dash-widget-upgrade-footer" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-upgrade-footer wp-mail-smtp-dash-widget-upgrade-footer--<?php echo ! $hide_graph ? 'hide' : 'show'; ?>">
 			<p>
@@ -337,7 +390,7 @@ class DashboardWidget {
 			'unsent'    => esc_html__( 'Failed Emails', 'wp-mail-smtp' ),
 		];
 
-		if ( $this->mailer_without_send_confirmation() ) {
+		if ( Helpers::mailer_without_send_confirmation() ) {
 			unset( $options['sent'] );
 			$options['delivered'] = esc_html__( 'Sent Emails', 'wp-mail-smtp' );
 		}
@@ -428,7 +481,7 @@ class DashboardWidget {
 					}
 
 					// Make some exceptions for mailers without send confirmation functionality.
-					if ( $this->mailer_without_send_confirmation() ) {
+					if ( Helpers::mailer_without_send_confirmation() ) {
 						$per_row = 3;
 					}
 
@@ -464,7 +517,8 @@ class DashboardWidget {
 	 */
 	private function get_email_stats_data() {
 
-		$total_sent = $this->get_total_email_sent();
+		$reports    = new Reports();
+		$total_sent = $reports->get_total_emails_sent();
 
 		$output_data = [
 			'all'       => [
@@ -493,7 +547,7 @@ class DashboardWidget {
 			],
 		];
 
-		if ( $this->mailer_without_send_confirmation() ) {
+		if ( Helpers::mailer_without_send_confirmation() ) {
 
 			// Skip the 'unconfirmed sent' section.
 			unset( $output_data['sent'] );
@@ -527,7 +581,8 @@ class DashboardWidget {
 		}
 
 		$defaults = [
-			'hide_graph' => 0,
+			'hide_graph'                      => 0,
+			'hide_summary_report_email_block' => 0,
 		];
 
 		if ( ! array_key_exists( $meta, $defaults ) ) {
@@ -553,25 +608,5 @@ class DashboardWidget {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Check if the current active mailer has email send confirmation functionality.
-	 *
-	 * @since 2.9.0
-	 *
-	 * @return bool
-	 */
-	private function mailer_without_send_confirmation() {
-
-		return ! in_array(
-			Options::init()->get( 'mail', 'mailer' ),
-			[
-				'smtpcom',
-				'sendinblue',
-				'mailgun',
-			],
-			true
-		);
 	}
 }

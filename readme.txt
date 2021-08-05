@@ -2,8 +2,8 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
-Tested up to: 5.7
-Stable tag: 2.9.0
+Tested up to: 5.8
+Stable tag: 3.0.1
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -40,7 +40,7 @@ WP Mail SMTP plugin easily resolves email delivery problems by improving and cha
 
 When using one of our built-in SMTP mail provider integrations (recommended), emails are sent using the provider's direct API. This means even if your web host is blocking SMTP ports, your emails still send successfully.
 
-This helps you fix all WordPress not sending email issues.
+This helps you fix all <a href="https://wpmailsmtp.com/wordpress-not-sending-email/" rel="friend">WordPress not sending email</a> issues.
 
 WP Mail SMTP plugin includes many different SMTP setup options:
 
@@ -104,7 +104,9 @@ Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-
 
 = Microsoft SMTP (Outlook.com and Office 365) =
 
-Many business use Outlook.com or Office 365 to their to power their email. For those users, the Microsoft mailer can be a great option. This integration allows you to use your existing Outlook.com or Office 365 account to send your emails reliably.
+Many businesses use Outlook.com or Microsoft 365 to power their email. Our Microsoft mailer integration allows you to use your existing Outlook.com or Microsoft 365 account to send emails from WordPress for better deliverability.
+
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-outlook-mailer-in-wp-mail-smtp/" rel="friend">Outlook and Microsoft 365 documentation</a> for more details.
 
 = Amazon SES SMTP =
 
@@ -143,6 +145,40 @@ In addition to native Microsoft, Amazon SES, and Zoho Mail integrations, WP Mail
 = Email Log =
 
 Email Logging lets you log and view all emails sent from your site. Email logs are helpful for storing emails for your records, auditing outgoing emails, and debugging during site development.
+
+But that's just the beginning. Our powerful <a href="https://wpmailsmtp.com/log-emails-wordpress/" rel="friend">WordPress email logs</a> unlock extra tools to help you measure email engagement and improve email deliverability:
+
+##### Resend Emails
+
+You resend any email or forward it to one or more email addresses, right from your email log. From the overview page, you can also resend multiple emails in bulk. This is an awesome way to resend emails that failed or forward important emails to an alternative email address.
+
+##### Track Email Opens and Clicks
+
+Wondering if an important email was actually opened, or if any links in the email were clicked? Our email log lets you <a href="https://wpmailsmtp.com/enable-wordpress-email-tracking/" rel="friend">view open and click tracking stats for your WordPress emails</a>.
+
+##### Store Email Attachments
+
+WP Mail SMTP lets you store all of the email attachments that are sent from your WordPress site. That makes it easy to review an attachment or archive it locally.
+
+##### Export Email Logs
+
+Easily export your WordPress email logs to CSV, EML, or Excel. You can filter the email logs before you export and only download the data you need. This feature lets you easily create your own deliverability reports. You can also use the data in 3rd party dashboards to track deliverability along with your other website statistics.
+
+##### Print Emails
+
+Once you've activated email logging, any individual log file can be printed in an easy-to-read format. If you want to archive an email log digitally, it's easy to export it to a PDF document too.
+
+##### Manage Multisite Email Logs Easily
+
+WP Mail SMTP makes it easy for Network Admins to view and manage email logs for subsites. You can access all of your deliverability information from the Network Admin dashboard and quickly switch between subsites. That makes it easy to review email logging data for all subsites on one centralized page.
+
+= Email Reports =
+
+Email reports make it easy to track deliverability and engagement at-a-glance. Your open and click-through rates are grouped by subject line, making it easy to review the performance of campaigns or notifications. The report also displays Sent and Failed emails each week so you spot any issues quickly. You'll also see an email report chart right in your WordPress dashboard.
+
+##### Weekly Email Summary
+
+Get statistics about WordPress emails sent directly into your inbox. Our weekly emails reveal how many emails are being sent from your WordPress site, and which ones are getting opens and clicks. The Summary also shows you deliverability statistics at-a-glance so you can spot any issues without logging into WordPress.
 
 = Manage WordPress Emails and Notifications =
 
@@ -239,8 +275,19 @@ By all means please contact us to discuss features or options you'd like to see 
 8. Email Controls settings page (Pro)
 9. Email Log archive page (Pro)
 10. Email Log single page (Pro)
+11. Email Reports - Email Log statistics grouped by email subject (Pro)
+12. Email Log bulk Export (Pro)
 
 == Changelog ==
+
+= 3.0.1 - 2021-08-05 =
+- Added: Weekly Email Summary - email sending statistics sent to your inbox.
+- Added: Debug Events - logging all email sending errors and debug events.
+- Added: Quick admin area links.
+- Changed: Updated the successful Email Test screen.
+- Changed: Updated Action Scheduler library to 3.2.1.
+- Fixed: WP core admin spinner for the dashboard widget.
+- Fixed: PHP error when objects implementing `__invoke()` method were used as hook callbacks for admin notices.
 
 = 2.9.0 - 2021-06-24 =
 * Added: Action Scheduler table to the Tools page.

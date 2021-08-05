@@ -46,7 +46,7 @@ class Area {
 	 *
 	 * @var array
 	 */
-	public static $pages_registered = [ 'general', 'logs', 'about', 'tools' ];
+	public static $pages_registered = [ 'general', 'logs', 'about', 'tools', 'reports' ];
 
 	/**
 	 * Area constructor.
@@ -104,9 +104,15 @@ class Area {
 		// Maybe redirect to "Tools -> Email Test" page if old direct URL to "Settings -> Email Test" is accessed.
 		add_action( 'admin_init', [ $this, 'maybe_redirect_test_tab' ] );
 
+		// Init parent admin pages.
+		if ( WP::in_wp_admin() || WP::is_doing_self_ajax() ) {
+			add_action( 'init', [ $this, 'get_parent_pages' ] );
+		}
+
 		( new Review() )->hooks();
 		( new Education() )->hooks();
 		( new SetupWizard() )->hooks();
+		( new FlyoutMenu() )->hooks();
 	}
 
 	/**
@@ -399,6 +405,13 @@ class Area {
 			'admin_body_class',
 			function ( $classes ) {
 				$classes .= ' wp-mail-smtp-admin-page-body';
+
+				if ( wp_mail_smtp()->is_pro() ) {
+					$classes .= ' wp-mail-smtp-pro';
+				} else {
+					$classes .= ' wp-mail-smtp-lite';
+				}
+
 				return $classes;
 			}
 		);
@@ -411,10 +424,12 @@ class Area {
 			WPMS_PLUGIN_VER
 		);
 
+		wp_enqueue_script( 'underscore' );
+
 		wp_enqueue_script(
 			'wp-mail-smtp-admin',
 			wp_mail_smtp()->assets_url . '/js/smtp-admin' . WP::asset_min() . '.js',
-			[ 'jquery' ],
+			[ 'jquery', 'underscore' ],
 			WPMS_PLUGIN_VER,
 			false
 		);
@@ -459,6 +474,7 @@ class Area {
 			'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
 			'is_network_admin'        => is_network_admin(),
 			'ajax_url'                => admin_url( 'admin-ajax.php' ),
+			'lang_code'               => sanitize_key( WP::get_language_code() ),
 		];
 
 		/**
@@ -820,11 +836,17 @@ class Area {
 
 		if ( $pages === null ) {
 			$pages = [
-				'tools' => new Pages\Tools(
+				'reports' => new Pages\EmailReports(
+					[
+						'reports' => Pages\EmailReportsTab::class,
+					]
+				),
+				'tools'   => new Pages\Tools(
 					[
 						'test'             => Pages\TestTab::class,
 						'export'           => Pages\ExportTab::class,
 						'action-scheduler' => Pages\ActionSchedulerTab::class,
+						'debug-events'     => Pages\DebugEventsTab::class,
 					]
 				),
 			];
@@ -1120,67 +1142,55 @@ class Area {
 	}
 
 	/**
-	 * Remove all non-WP Mail SMTP plugin notices from plugin pages.
+	 * Remove all non-WP Mail SMTP plugin notices from our plugin pages.
 	 *
 	 * @since 1.0.0
 	 */
 	public function hide_unrelated_notices() {
 
 		// Bail if we're not on our screen or page.
-		if ( empty( $_REQUEST['page'] ) || strpos( $_REQUEST['page'], self::SLUG ) === false ) {
+		if ( ! $this->is_admin_page() ) {
 			return;
 		}
 
+		$this->remove_unrelated_actions( 'user_admin_notices' );
+		$this->remove_unrelated_actions( 'admin_notices' );
+		$this->remove_unrelated_actions( 'all_admin_notices' );
+	}
+
+	/**
+	 * Remove all non-WP Mail SMTP notices from the our plugin pages based on the provided action hook.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $action The name of the action.
+	 */
+	private function remove_unrelated_actions( $action ) {
+
 		global $wp_filter;
 
-		if ( ! empty( $wp_filter['user_admin_notices']->callbacks ) && is_array( $wp_filter['user_admin_notices']->callbacks ) ) {
-			foreach ( $wp_filter['user_admin_notices']->callbacks as $priority => $hooks ) {
-				foreach ( $hooks as $name => $arr ) {
-					if ( is_object( $arr['function'] ) && $arr['function'] instanceof \Closure ) {
-						unset( $wp_filter['user_admin_notices']->callbacks[ $priority ][ $name ] );
-						continue;
-					}
-					if ( ! empty( $arr['function'][0] ) && is_object( $arr['function'][0] ) && strpos( strtolower( get_class( $arr['function'][0] ) ), 'wpmailsmtp' ) !== false ) {
-						continue;
-					}
-					if ( ! empty( $name ) && strpos( strtolower( $name ), 'wpmailsmtp' ) === false ) {
-						unset( $wp_filter['user_admin_notices']->callbacks[ $priority ][ $name ] );
-					}
-				}
-			}
+		if ( empty( $wp_filter[ $action ]->callbacks ) || ! is_array( $wp_filter[ $action ]->callbacks ) ) {
+			return;
 		}
 
-		if ( ! empty( $wp_filter['admin_notices']->callbacks ) && is_array( $wp_filter['admin_notices']->callbacks ) ) {
-			foreach ( $wp_filter['admin_notices']->callbacks as $priority => $hooks ) {
-				foreach ( $hooks as $name => $arr ) {
-					if ( is_object( $arr['function'] ) && $arr['function'] instanceof \Closure ) {
-						unset( $wp_filter['admin_notices']->callbacks[ $priority ][ $name ] );
-						continue;
-					}
-					if ( ! empty( $arr['function'][0] ) && is_object( $arr['function'][0] ) && strpos( strtolower( get_class( $arr['function'][0] ) ), 'wpmailsmtp' ) !== false ) {
-						continue;
-					}
-					if ( ! empty( $name ) && strpos( strtolower( $name ), 'wpmailsmtp' ) === false ) {
-						unset( $wp_filter['admin_notices']->callbacks[ $priority ][ $name ] );
-					}
+		foreach ( $wp_filter[ $action ]->callbacks as $priority => $hooks ) {
+			foreach ( $hooks as $name => $arr ) {
+				if (
+					( // Cover object method callback case.
+						is_array( $arr['function'] ) &&
+						isset( $arr['function'][0] ) &&
+						is_object( $arr['function'][0] ) &&
+						strpos( strtolower( get_class( $arr['function'][0] ) ), 'wpmailsmtp' ) !== false
+					) ||
+					( // Cover class static method callback case.
+						! empty( $name ) &&
+						strpos( strtolower( $name ), 'wpmailsmtp' ) !== false
+					)
+				) {
+					continue;
 				}
-			}
-		}
 
-		if ( ! empty( $wp_filter['all_admin_notices']->callbacks ) && is_array( $wp_filter['all_admin_notices']->callbacks ) ) {
-			foreach ( $wp_filter['all_admin_notices']->callbacks as $priority => $hooks ) {
-				foreach ( $hooks as $name => $arr ) {
-					if ( is_object( $arr['function'] ) && $arr['function'] instanceof \Closure ) {
-						unset( $wp_filter['all_admin_notices']->callbacks[ $priority ][ $name ] );
-						continue;
-					}
-					if ( ! empty( $arr['function'][0] ) && is_object( $arr['function'][0] ) && strpos( strtolower( get_class( $arr['function'][0] ) ), 'wpmailsmtp' ) !== false ) {
-						continue;
-					}
-					if ( ! empty( $name ) && strpos( strtolower( $name ), 'wpmailsmtp' ) === false ) {
-						unset( $wp_filter['all_admin_notices']->callbacks[ $priority ][ $name ] );
-					}
-				}
+				unset( $wp_filter[ $action ]->callbacks[ $priority ][ $name ] );
 			}
 		}
 	}

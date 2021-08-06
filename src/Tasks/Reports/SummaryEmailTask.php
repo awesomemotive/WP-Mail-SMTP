@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Tasks\Reports;
 
+use WPMailSMTP\WP;
 use WPMailSMTP\Tasks\Task;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
 
@@ -51,7 +52,7 @@ class SummaryEmailTask extends Task {
 			return;
 		}
 
-		$date = new \DateTime( 'next monday 2pm', wp_timezone() );
+		$date = new \DateTime( 'next monday 2pm', WP::wp_timezone() );
 
 		// Schedule the task.
 		$this->recurring( $date->getTimestamp(), WEEK_IN_SECONDS )->register();

@@ -605,4 +605,62 @@ class WP {
 
 		return false;
 	}
+
+	/**
+	 * Retrieves the timezone from site settings as a `DateTimeZone` object.
+	 *
+	 * Timezone can be based on a PHP timezone string or a ±HH:MM offset.
+	 *
+	 * We use `wp_timezone()` when it's available (WP 5.3+),
+	 * otherwise fallback to the same code, copy-pasted.
+	 *
+	 * @since 3.0.2
+	 *
+	 * @return \DateTimeZone Timezone object.
+	 */
+	public static function wp_timezone() {
+
+		if ( function_exists( 'wp_timezone' ) ) {
+			return wp_timezone();
+		}
+
+		return new \DateTimeZone( self::wp_timezone_string() );
+	}
+
+	/**
+	 * Retrieves the timezone from site settings as a string.
+	 *
+	 * Uses the `timezone_string` option to get a proper timezone if available,
+	 * otherwise falls back to an offset.
+	 *
+	 * We use `wp_timezone_string()` when it's available (WP 5.3+),
+	 * otherwise fallback to the same code, copy-pasted.
+	 *
+	 * @since 3.0.2
+	 *
+	 * @return string PHP timezone string or a ±HH:MM offset.
+	 */
+	public static function wp_timezone_string() {
+
+		if ( function_exists( 'wp_timezone_string' ) ) {
+			return wp_timezone_string();
+		}
+
+		$timezone_string = get_option( 'timezone_string' );
+
+		if ( $timezone_string ) {
+			return $timezone_string;
+		}
+
+		$offset  = (float) get_option( 'gmt_offset' );
+		$hours   = (int) $offset;
+		$minutes = ( $offset - $hours );
+
+		$sign      = ( $offset < 0 ) ? '-' : '+';
+		$abs_hour  = abs( $hours );
+		$abs_mins  = abs( $minutes * 60 );
+		$tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
+
+		return $tz_offset;
+	}
 }

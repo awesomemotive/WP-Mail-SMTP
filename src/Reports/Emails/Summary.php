@@ -29,6 +29,16 @@ class Summary {
 	 */
 	public static function is_disabled() {
 
+		$value = ( new Options() )->get( 'general', self::SETTINGS_SLUG );
+
+		// If option was not already set, then plugin was updated from lower version.
+		if (
+			( $value === '' || $value === null ) &&
+			( is_multisite() || ! wp_mail_smtp()->is_pro() )
+		) {
+			$value = true;
+		}
+
 		/**
 		 * Filters whether summary report email is disabled.
 		 *
@@ -36,10 +46,7 @@ class Summary {
 		 *
 		 * @param bool $is_disabled
 		 */
-		$value = apply_filters(
-			'wp_mail_smtp_reports_emails_summary_is_disabled',
-			( new Options() )->get( 'general', self::SETTINGS_SLUG )
-		);
+		$value = apply_filters( 'wp_mail_smtp_reports_emails_summary_is_disabled', $value );
 
 		return (bool) $value;
 	}

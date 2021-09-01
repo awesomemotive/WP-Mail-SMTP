@@ -246,7 +246,10 @@ class Mailer extends MailerAbstract {
 			 * It is not always available, same as credentials for FTP.
 			 */
 			try {
-				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
+				if ( $attachment[5] ) {
+					$file = $attachment[0];
+				}
+				else if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
 					$file = file_get_contents( $attachment[0] );
 				}
 			} catch ( \Exception $e ) {

@@ -325,7 +325,7 @@ class DashboardWidget {
 						<i class="dashicons dashicons-dismiss wp-mail-smtp-dash-widget-summary-report-email-dismiss"></i>
 					</div>
 					<div class="wp-mail-smtp-dash-widget-summary-report-email-block-applied hidden">
-						<i class="dashicons dashicons-yes-alt"></i>
+						<i class="wp-mail-smtp-dashicons-yes-alt-green"></i>
 						<span><?php esc_attr_e( 'Weekly Email Summaries have been enabled', 'wp-mail-smtp' ); ?></span>
 					</div>
 				</div>

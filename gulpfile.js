@@ -353,7 +353,7 @@ gulp.task( 'composer:prefix_lite', function ( cb ) {
 	} );
 } );
 gulp.task( 'composer:prefix', function ( cb ) {
-	exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
+	exec( 'composer prefix-dependencies-optimize', function ( err, stdout, stderr ) {
 		console.log( stdout );
 		console.log( stderr );
 		cb( err );

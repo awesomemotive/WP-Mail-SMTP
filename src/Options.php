@@ -72,6 +72,10 @@ class Options {
 			'api_key',
 			'domain',
 		],
+		'postmark'    => [
+			'server_api_token',
+			'message_stream',
+		],
 		'smtpcom'     => [
 			'api_key',
 			'channel',
@@ -565,6 +569,20 @@ class Options {
 
 				break;
 
+			case 'postmark':
+				switch ( $key ) {
+					case 'server_api_token':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_POSTMARK_SERVER_API_TOKEN : $value;
+						break;
+					case 'message_stream':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_POSTMARK_MESSAGE_STREAM : $value;
+						break;
+				}
+
+				break;
+
 			case 'smtpcom':
 				switch ( $key ) {
 					case 'api_key':
@@ -812,6 +830,18 @@ class Options {
 
 				break;
 
+			case 'postmark':
+				switch ( $key ) {
+					case 'server_api_token':
+						$return = defined( 'WPMS_POSTMARK_SERVER_API_TOKEN' ) && WPMS_POSTMARK_SERVER_API_TOKEN;
+						break;
+					case 'message_stream':
+						$return = defined( 'WPMS_POSTMARK_MESSAGE_STREAM' ) && WPMS_POSTMARK_MESSAGE_STREAM;
+						break;
+				}
+
+				break;
+
 			case 'smtpcom':
 				switch ( $key ) {
 					case 'api_key':
@@ -989,7 +1019,7 @@ class Options {
 		if (
 			! empty( $options['mail']['mailer'] ) &&
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], [ 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook', 'zoho' ], true )
+			in_array( $options['mail']['mailer'], [ 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'postmark', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook', 'zoho' ], true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
@@ -1030,6 +1060,8 @@ class Options {
 					case 'client_secret': // gmail/outlook/amazonses/zoho.
 					case 'auth_code': // gmail/outlook.
 					case 'channel': // smtpcom.
+					case 'server_api_token': // postmark.
+					case 'message_stream': // postmark.
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : sanitize_text_field( $option_value );
 						break;
 

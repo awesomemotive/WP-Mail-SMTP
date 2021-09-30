@@ -583,7 +583,7 @@
 			}
 
 			// Animate dashicon yes icon when clicking on copy button.
-			.dashicons-yes-alt {
+			.wp-mail-smtp-dashicons-yes-alt-green {
 				&.wp-mail-smtp-animate {
 					-webkit-animation: wp-mail-smtp-fade-in-stop-out 1s linear;
 					animation: wp-mail-smtp-fade-in-stop-out 1s linear;
@@ -1375,4 +1375,18 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 			word-break: break-word;
 		}
 	}
+}
+
+[class^="wp-mail-smtp-dashicons"] {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+}
+
+.wp-mail-smtp-dashicons-yes-alt-green {
+	background-image: url('../images/icons/dashicons/dashicons-yes-alt-green.svg');
+}
+
+.wp-mail-smtp-dashicons-pdf-gray {
+	background-image: url('../images/icons/dashicons/dashicons-pdf-grey.svg');
 }

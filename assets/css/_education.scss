@@ -271,128 +271,15 @@
 	}
 
 	/* Controls education page. */
-	.wp-mail-smtp-page-upsell {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: auto;
-		flex-direction: column;
+	#wp-mail-smtp-email-controls-product-education {
 
-		& > * {
-			width: 800px;
+		.wp-mail-smtp-product-education__row--inactive {
+			padding-top: 20px;
+			padding-bottom: 0;
 		}
 
-		*, *::before, *::after {
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-
-		h2 {
-			font-size: 24px;
-			color: #444444;
-			text-align: center;
-		}
-
-		h3 {
-			font-size: 16px;
-			font-weight: normal;
-			color: #72777C;
-			line-height: 1.5em;
-			margin-top: 0;
-			margin-bottom: 6px;
-			text-align: center;
-		}
-
-		.wp-mail-smtp-page-upsell-content {
-
-			.wp-mail-smtp-page-upsell-features {
-				margin-bottom: $content-padding * 2;
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				justify-content: flex-start;
-				align-items: stretch;
-				align-content: flex-start;
-
-				.wp-mail-smtp-page-upsell-feature {
-					display: flex;
-					flex-direction: row;
-					width: 360px;
-					align-items: flex-start;
-					align-content: flex-start;
-					margin-right: $content-padding * 3;
-					margin-top: $content-padding * 2;
-
-					&:nth-of-type(1) {
-						margin-top: $content-padding;
-					}
-
-					&:nth-of-type(2) {
-						margin-top: $content-padding;
-					}
-
-					&:nth-of-type(even) {
-						margin-right: 0;
-					}
-
-					.wp-mail-smtp-page-upsell-feature-image {
-						display: flex;
-						align-items: center;
-
-						svg {
-							height: 64px;
-							width: 64px;
-						}
-
-						.st0 {
-							fill: #C3D0D7;
-						}
-
-						.st1 {
-							fill: #809DB0;
-						}
-					}
-
-					.wp-mail-smtp-page-upsell-feature-content {
-						margin-left: $content-padding;
-
-						h4 {
-							font-size: 15px;
-							margin: 0 0 0.5em;
-						}
-
-						p {
-							color: #72777C;
-							margin: 0;
-						}
-					}
-				}
-			}
-		}
-
-		.wp-mail-smtp-page-upsell-images {
-			margin-top: $content-padding;
-			margin-bottom: $padding-default;
-			text-align: center;
-
-			img {
-				width: 380px;
-				height: auto;
-				margin-right: $padding-default;
-				border: 5px solid #fff;
-				border-radius: 5px;
-				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-				float: left;
-
-				&:last-child {
-					margin-right: 0;
-				}
-			}
-		}
-
-		.wp-mail-smtp-page-upsell-button {
-			text-align: center;
+		.wp-mail-smtp-setting-row:last-child {
+			border-bottom: none;
 		}
 	}
 

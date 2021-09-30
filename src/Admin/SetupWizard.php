@@ -6,6 +6,7 @@ use WPMailSMTP\Admin\Pages\TestTab;
 use WPMailSMTP\Connect;
 use WPMailSMTP\Helpers\PluginImportDataRetriever;
 use WPMailSMTP\Options;
+use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\WP;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
 use WPMailSMTP\Tasks\Reports\SummaryEmailTask as SummaryReportEmailTask;
@@ -16,6 +17,13 @@ use WPMailSMTP\Tasks\Reports\SummaryEmailTask as SummaryReportEmailTask;
  * @since 2.6.0
  */
 class SetupWizard {
+
+	/**
+	 * The WP Option key for storing setup wizard stats.
+	 *
+	 * @since 3.1.0
+	 */
+	const STATS_OPTION_KEY = 'wp_mail_smtp_setup_wizard_stats';
 
 	/**
 	 * Run all the hooks needed for the Setup Wizard.
@@ -30,6 +38,7 @@ class SetupWizard {
 		add_filter( 'removable_query_args', [ $this, 'maybe_disable_automatic_query_args_removal' ] );
 
 		// API AJAX callbacks.
+		add_action( 'wp_ajax_wp_mail_smtp_vue_wizard_steps_started', [ $this, 'wizard_steps_started' ] );
 		add_action( 'wp_ajax_wp_mail_smtp_vue_get_settings', [ $this, 'get_settings' ] );
 		add_action( 'wp_ajax_wp_mail_smtp_vue_update_settings', [ $this, 'update_settings' ] );
 		add_action( 'wp_ajax_wp_mail_smtp_vue_import_settings', [ $this, 'import_settings' ] );
@@ -208,6 +217,7 @@ class SetupWizard {
 				'exit_url'           => wp_mail_smtp()->get_admin()->get_admin_page_url(),
 				'email_test_tab_url' => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ),
 				'is_pro'             => wp_mail_smtp()->is_pro(),
+				'is_ssl'             => is_ssl(),
 				'license_exists'     => apply_filters( 'wp_mail_smtp_admin_setup_wizard_license_exists', false ),
 				'plugin_version'     => WPMS_PLUGIN_VER,
 				'other_smtp_plugins' => $this->detect_other_smtp_plugins(),
@@ -529,6 +539,28 @@ class SetupWizard {
 		$options = new Options();
 
 		wp_send_json_success( $options->get_all() );
+	}
+
+	/**
+	 * Ajax handler for starting the Setup Wizard steps.
+	 *
+	 * @since 3.1.0
+	 */
+	public function wizard_steps_started() {
+
+		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( esc_html__( 'You don\'t have permission to change options for this WP site!', 'wp-mail-smtp' ) );
+		}
+
+		self::update_stats(
+			[
+				'launched_time' => time(),
+			]
+		);
+
+		wp_send_json_success();
 	}
 
 	/**
@@ -1077,6 +1109,10 @@ class SetupWizard {
 		);
 
 		if ( ! $result ) {
+			$this->update_completed_stat( false );
+
+			( new UsageTracking() )->send_failed_setup_wizard_usage_tracking_data();
+
 			wp_send_json_error();
 		}
 
@@ -1086,11 +1122,17 @@ class SetupWizard {
 		}
 
 		// Perform the domain checker API test.
-		$has_errors = ( new DomainChecker( $mailer, $email, $domain ) )->has_errors();
+		$domain_checker = new DomainChecker( $mailer, $email, $domain );
 
-		if ( $has_errors ) {
+		if ( $domain_checker->has_errors() ) {
+			$this->update_completed_stat( false );
+
+			( new UsageTracking() )->send_failed_setup_wizard_usage_tracking_data( $domain_checker );
+
 			wp_send_json_error();
 		}
+
+		$this->update_completed_stat( true );
 
 		wp_send_json_success();
 	}
@@ -1178,5 +1220,55 @@ class SetupWizard {
 	public function should_setup_wizard_load() {
 
 		return (bool) apply_filters( 'wp_mail_smtp_admin_setup_wizard_load_wizard', true );
+	}
+
+	/**
+	 * Get the Setup Wizard stats.
+	 * - launched_time  -> when the Setup Wizard was last launched.
+	 * - completed_time -> when the Setup Wizard was last completed.
+	 * - was_successful -> if the Setup Wizard was completed successfully.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array
+	 */
+	public static function get_stats() {
+
+		$defaults = [
+			'launched_time'  => 0,
+			'completed_time' => 0,
+			'was_successful' => false,
+		];
+
+		return get_option( self::STATS_OPTION_KEY, $defaults );
+	}
+
+	/**
+	 * Update the Setup Wizard stats.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param array $options Take a look at SetupWizard::get_stats method for the possible array keys.
+	 */
+	public static function update_stats( $options ) {
+
+		update_option( self::STATS_OPTION_KEY, array_merge( self::get_stats(), $options ) , false );
+	}
+
+	/**
+	 * Update the completed Setup Wizard stats.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param bool $was_successful If the Setup Wizard was completed successfully.
+	 */
+	private function update_completed_stat( $was_successful ) {
+
+		self::update_stats(
+			[
+				'completed_time' => time(),
+				'was_successful' => $was_successful,
+			]
+		);
 	}
 }

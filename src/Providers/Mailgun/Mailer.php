@@ -2,7 +2,6 @@
 
 namespace WPMailSMTP\Providers\Mailgun;
 
-use WPMailSMTP\Debug;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
 
@@ -229,38 +228,26 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @param array $attachments The array of attachments data.
 	 */
-	public function set_attachments( $attachments ) {
+	public function set_attachments( $attachments ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.MaxExceeded
 
 		if ( empty( $attachments ) ) {
 			return;
 		}
 
 		$payload = '';
-		$data    = array();
+		$data    = [];
 
 		foreach ( $attachments as $attachment ) {
-			$file = false;
-
-			/*
-			 * We are not using WP_Filesystem API as we can't reliably work with it.
-			 * It is not always available, same as credentials for FTP.
-			 */
-			try {
-				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
-					$file = file_get_contents( $attachment[0] );
-				}
-			} catch ( \Exception $e ) {
-				$file = false;
-			}
+			$file = $this->get_attachment_file_content( $attachment );
 
 			if ( $file === false ) {
 				continue;
 			}
 
-			$data[] = array(
+			$data[] = [
 				'content' => $file,
 				'name'    => $attachment[2],
-			);
+			];
 		}
 
 		if ( ! empty( $data ) ) {
@@ -271,7 +258,7 @@ class Mailer extends MailerAbstract {
 			// Iterate through pre-built params and build a payload.
 			foreach ( $this->body as $key => $value ) {
 				if ( is_array( $value ) ) {
-					foreach ( $value as $child_key => $child_value ) {
+					foreach ( $value as $child_value ) {
 						$payload .= '--' . $boundary;
 						$payload .= "\r\n";
 						$payload .= 'Content-Disposition: form-data; name="' . $key . "\"\r\n\r\n";
@@ -378,12 +365,15 @@ class Mailer extends MailerAbstract {
 
 		parent::process_response( $response );
 
-		if (
-			! is_wp_error( $response ) &&
-			! empty( $this->response['body']->id )
-		) {
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
+
+		if ( ! empty( $this->response['body']->id ) ) {
 			$this->phpmailer->MessageID = $this->response['body']->id;
 			$this->verify_sent_status   = true;
+		} else {
+			$this->error_message = esc_html__( 'It looks like there\'s most likely a setup issue. Please check your WP Mail SMTP settings to see if any details might be missing or incorrect.', 'wp-mail-smtp' );
 		}
 	}
 
@@ -401,24 +391,17 @@ class Mailer extends MailerAbstract {
 	 */
 	public function is_email_sent() {
 
-		$is_sent = parent::is_email_sent();
+		$is_sent = false;
 
 		if (
-			$is_sent &&
-			isset( $this->response['body'] ) &&
-			! array_key_exists( 'id', (array) $this->response['body'] )
+			wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code &&
+			! empty( $this->response['body']->id )
 		) {
-			$message = 'Mailer: Mailgun' . PHP_EOL .
-				esc_html__( 'It looks like there\'s most likely a setup issue. Please check your WP Mail SMTP settings to see if any details might be missing or incorrect.', 'wp-mail-smtp' );
-
-			$this->error_message = $message;
-
-			Debug::set( $message );
-
-			return false;
+			$is_sent = true;
 		}
 
-		return $is_sent;
+		/** This filter is documented in src/Providers/MailerAbstract.php. */
+		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent, $this->mailer );
 	}
 
 	/**

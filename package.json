@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
@@ -41,8 +41,8 @@
     "y18n": "^3.2.2"
   },
   "engines": {
-    "node": ">=14.15.3",
-    "npm": ">=6.14.9"
+    "node": ">=14.17.6",
+    "npm": ">=6.14.15"
   },
   "scripts": {
     "gulp": "node ./node_modules/gulp/bin/gulp.js",

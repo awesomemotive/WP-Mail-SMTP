@@ -33,7 +33,7 @@ class Options extends OptionsAbstract {
 				'title'       => esc_html__( 'Gmail', 'wp-mail-smtp' ),
 				'description' => sprintf(
 					wp_kses( /* translators: %s - URL to our Gmail doc. */
-						__( 'Send emails using your <b>Gmail</b> or <b>G Suite</b> (formerly Google Apps) account, all while keeping your login credentials safe. Other Google SMTP methods require enabling less secure apps in your account and entering your password. However, this integration uses the Google API to improve email delivery issues while keeping your site secure.<br><br>Read our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail documentation</a> to learn how to configure Gmail or G Suite.', 'wp-mail-smtp' ),
+						__( 'Our Gmail mailer works with any Gmail or Google Workspace account via the Google API. You can send WordPress emails from your main email address or a Gmail alias, and it\'s more secure than connecting to Gmail using SMTP credentials. The set-up steps are more technical than other options, so we created a detailed guide to walk you through the process.<br><br>To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail documentation</a>.', 'wp-mail-smtp' ),
 						[
 							'br' => [],
 							'b'  => [],

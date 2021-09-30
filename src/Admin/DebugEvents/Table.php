@@ -2,7 +2,7 @@
 
 namespace WPMailSMTP\Admin\DebugEvents;
 
-use WPMailSMTP\WP;
+use WPMailSMTP\Helpers\Helpers;
 
 if ( ! class_exists( 'WP_List_Table', false ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -40,6 +40,11 @@ class Table extends \WP_List_Table {
 				'ajax'     => false,
 			]
 		);
+
+		// Include polyfill if mbstring PHP extension is not enabled.
+		if ( ! function_exists( 'mb_substr' ) || ! function_exists( 'mb_strlen' ) ) {
+			Helpers::include_mbstring_polyfill();
+		}
 	}
 
 	/**

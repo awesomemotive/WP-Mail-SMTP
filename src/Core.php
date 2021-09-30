@@ -815,10 +815,10 @@ class Core {
 			$content = $utm;
 		}
 
-		$url = 'https://wpmailsmtp.com/lite-upgrade/?utm_source=' . esc_attr( $source ) . '&utm_medium=' . esc_attr( $medium ) . '&utm_campaign=' . esc_attr( $campaign );
+		$url = 'https://wpmailsmtp.com/lite-upgrade/?utm_source=' . esc_attr( rawurlencode( $source ) ) . '&utm_medium=' . esc_attr( rawurlencode( $medium ) ) . '&utm_campaign=' . esc_attr( rawurlencode( $campaign ) );
 
 		if ( ! empty( $content ) ) {
-			$url .= '&utm_content=' . esc_attr( $content );
+			$url .= '&utm_content=' . esc_attr( rawurlencode( $content ) );
 		}
 
 		return apply_filters( 'wp_mail_smtp_core_get_upgrade_link', $url );
@@ -1002,7 +1002,7 @@ class Core {
 			$usage_tracking = apply_filters( 'wp_mail_smtp_core_get_usage_tracking', new UsageTracking() );
 
 			if ( method_exists( $usage_tracking, 'load' ) ) {
-				$usage_tracking->load();
+				add_action( 'after_setup_theme', [ $usage_tracking, 'load' ] );
 			}
 		}
 

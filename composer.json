@@ -93,13 +93,21 @@
       "npm run gulp prefix_outside_files",
       "@composer dump-autoload"
     ],
+    "prefix-dependencies-optimize": [
+      "\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+      "@composer --working-dir=php-scoper install",
+      "php-scoper/vendor/bin/php-scoper add-prefix --config=php-scoper/config.php --output-dir=./vendor_prefixed --force",
+      "npm run gulp composer:delete_prefixed_vendor_libraries",
+      "npm run gulp prefix_outside_files",
+      "@composer dump-autoload --classmap-authoritative"
+    ],
     "prefix-dependencies-lite": [
       "@prefix-dependencies",
-      "@composer dump-autoload --no-plugins"
+      "@composer dump-autoload --no-plugins --classmap-authoritative"
     ],
     "install-tests": [
-      "@composer --no-scripts --dev --prefer-dist require codeception/codeception:4.0.3",
-      "@composer --no-scripts --dev --prefer-dist require lucatume/wp-browser:^2.6",
+      "@composer --no-scripts --dev --prefer-dist require codeception/codeception:4.1.22",
+      "@composer --no-scripts --dev --prefer-dist require lucatume/wp-browser:^3.0",
       "@composer --no-scripts --dev --prefer-dist require codeception/module-asserts:^1.3",
       "@composer --no-scripts --dev --prefer-dist require codeception/module-db:^1.0",
       "@composer --no-scripts --dev --prefer-dist require codeception/module-webdriver:^1.1",
@@ -123,20 +131,20 @@
     "build-pro": [
       "npm run gulp composer:delete_lock_and_vendor",
       "composer update --root-reqs --no-dev --no-suggest",
-      "@prefix-dependencies"
+      "@prefix-dependencies-optimize"
     ],
     "php-less-than-7-0-check": "@php php-scoper/php-less-than-7-0-check.php",
     "php-more-than-7-3-check": "@php php-scoper/php-more-than-7-3-check.php",
     "build-lite-php5": [
       "@php-less-than-7-0-check",
       "npm run gulp composer:delete_lock_and_vendor",
-      "composer update --root-reqs --no-dev --no-suggest --no-plugins",
-      "@composer dump-autoload --no-plugins"
+      "composer update --root-reqs --no-dev --no-suggest --no-plugins --classmap-authoritative",
+      "@composer dump-autoload --no-plugins --classmap-authoritative"
     ],
     "build-pro-php5": [
       "@php-less-than-7-0-check",
       "npm run gulp composer:delete_lock_and_vendor",
-      "composer update --root-reqs --no-dev --no-suggest"
+      "composer update --root-reqs --no-dev --no-suggest --classmap-authoritative"
     ]
   },
   "extra": {

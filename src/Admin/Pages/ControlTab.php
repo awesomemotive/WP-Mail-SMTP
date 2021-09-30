@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\WP;
 
 /**
  * Class ControlTab is a placeholder for Pro Email Control tab settings.
@@ -13,14 +14,20 @@ use WPMailSMTP\Admin\PageAbstract;
 class ControlTab extends PageAbstract {
 
 	/**
+	 * Slug of a tab.
+	 *
 	 * @since 1.6.0
 	 *
-	 * @var string Slug of a tab.
+	 * @var string
 	 */
 	protected $slug = 'control';
 
 	/**
-	 * @inheritdoc
+	 * Link label of a tab.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return string
 	 */
 	public function get_label() {
 
@@ -28,7 +35,11 @@ class ControlTab extends PageAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Title of a tab.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return string
 	 */
 	public function get_title() {
 
@@ -36,93 +47,287 @@ class ControlTab extends PageAbstract {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Get the list of all available emails that we can manage.
 	 *
-	 * @since 2.1.0 Replaced images with SVGs.
+	 * @see   https://github.com/johnbillion/wp_mail Apr 12th 2019.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array
 	 */
-	public function display() {
+	public static function get_controls() {
 
-		$features = [
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M39.1,35.5H18l-9.2,6.9c-0.5,0.4-1.2,0.3-1.5-0.2c-0.1-0.2-0.2-0.4-0.2-0.6v-6c-3.9,0-7.1-3.2-7.1-7.1V10.7c0-3.9,3.2-7.1,7.1-7.1h32c3.9,0,7.1,3.2,7.1,7.1v17.8C46.2,32.4,43,35.5,39.1,35.5C39.1,35.5,39.1,35.5,39.1,35.5z"/><path class="st1" d="M64,28.4v17.8c0,3.9-3.2,7.1-7.1,7.1h-3.6v6c0,0.6-0.5,1.1-1.1,1.1c-0.2,0-0.5-0.1-0.6-0.2l-9.2-6.9h-14c-3.9,0-7.1-3.2-7.1-7.1v-7.1h17.8c5.9,0,10.7-4.8,10.7-10.7v-7.1h7.1C60.8,21.3,64,24.5,64,28.4z"/></svg>',
-				'title' => esc_html__( 'Comment Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Manage emails sent when comments are published or awaiting moderation.', 'wp-mail-smtp' ),
+		return [
+			'comments'         => [
+				'title'  => esc_html__( 'Comments', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_comments_awaiting_moderation' => [
+						'label' => esc_html__( 'Awaiting Moderation', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Comment is awaiting moderation. Sent to the site admin and post author if they can edit comments.', 'wp-mail-smtp' ),
+					],
+					'dis_comments_published'           => [
+						'label' => esc_html__( 'Published', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Comment has been published. Sent to the post author.', 'wp-mail-smtp' ),
+					],
+				],
 			],
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M63.6 45.2l-2.6-1.5c0.3-1.4 0.3-2.9 0-4.3l2.6-1.5c0.3-0.2 0.4-0.5 0.3-0.9 -0.7-2.1-1.8-4.1-3.3-5.7 -0.2-0.3-0.6-0.3-0.9-0.1l-2.6 1.5c-1.1-0.9-2.3-1.7-3.7-2.1v-3c0-0.3-0.2-0.6-0.6-0.7 -2.2-0.5-4.4-0.5-6.6 0 -0.3 0.1-0.6 0.4-0.6 0.7v3c-1.4 0.5-2.6 1.2-3.7 2.1l-2.6-1.5c-0.3-0.2-0.7-0.1-0.9 0.1C37 33 35.9 35 35.2 37.1c-0.1 0.3 0 0.7 0.3 0.9l2.6 1.5c-0.3 1.4-0.3 2.9 0 4.3l-2.6 1.5c-0.3 0.2-0.4 0.5-0.3 0.9 0.7 2.1 1.8 4.1 3.3 5.7 0.2 0.3 0.6 0.3 0.9 0.1l2.6-1.5c1.1 0.9 2.3 1.7 3.7 2.1v3c0 0.3 0.2 0.6 0.6 0.7 2.2 0.5 4.4 0.5 6.6 0 0.3-0.1 0.6-0.4 0.6-0.7v-3c1.4-0.5 2.6-1.2 3.7-2.1l2.6 1.5c0.3 0.2 0.7 0.1 0.9-0.1 1.5-1.6 2.7-3.6 3.3-5.7C64.1 45.7 63.9 45.4 63.6 45.2zM49.6 46.5c-2.7 0-4.9-2.2-4.9-4.9s2.2-4.9 4.9-4.9c2.7 0 4.9 2.2 4.9 4.9S52.3 46.5 49.6 46.5z"/><path class="st1" d="M42.5 55.6v-0.9c-0.2-0.1-0.5-0.3-0.7-0.4l-0.8 0.5c-1.6 0.9-3.6 0.6-4.9-0.7 -1.8-2-3.2-4.4-4-7 -0.6-1.8 0.2-3.7 1.8-4.6l0.8-0.5c0-0.3 0-0.5 0-0.8L34 40.8c-1.6-0.9-2.3-2.8-1.8-4.6 0.1-0.3 0.2-0.6 0.3-0.9 -0.4 0-0.8-0.1-1.1-0.1h-1.7c-4.6 2.1-10 2.1-14.6 0h-1.7C6 35.2 0 41.2 0 48.6v4.2c0 2.7 2.2 4.8 4.8 4.8l0 0H40c1 0 1.9-0.3 2.7-0.9C42.6 56.4 42.5 56 42.5 55.6zM22.4 32c7.1 0 12.8-5.7 12.8-12.8S29.5 6.4 22.4 6.4 9.6 12.1 9.6 19.2 15.3 32 22.4 32z"/></svg>',
-				'title' => esc_html__( 'Site Admin Email Change Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Manage emails sent when site admin\'s account has been changed.', 'wp-mail-smtp' ),
+			'admin_email'      => [
+				'title'  => esc_html__( 'Change of Admin Email', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_admin_email_attempt'         => [
+						'label' => esc_html__( 'Site Admin Email Change Attempt', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Change of site admin email address was attempted. Sent to the proposed new email address.', 'wp-mail-smtp' ),
+					],
+					'dis_admin_email_changed'         => [
+						'label' => esc_html__( 'Site Admin Email Changed', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Site admin email address was changed. Sent to the old site admin email address.', 'wp-mail-smtp' ),
+					],
+					'dis_admin_email_network_attempt' => [
+						'label' => esc_html__( 'Network Admin Email Change Attempt', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Change of network admin email address was attempted. Sent to the proposed new email address.', 'wp-mail-smtp' ),
+					],
+					'dis_admin_email_network_changed' => [
+						'label' => esc_html__( 'Network Admin Email Changed', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Network admin email address was changed. Sent to the old network admin email address.', 'wp-mail-smtp' ),
+					],
+				],
 			],
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M9.6 28.8c3.5 0 6.4-2.9 6.4-6.4S13.1 16 9.6 16s-6.4 2.9-6.4 6.4S6.1 28.8 9.6 28.8zM57.6 32h-6.4c-1.7 0-3.3 0.7-4.5 1.9 4.1 2.2 6.9 6.3 7.5 10.9h6.6c1.8 0 3.2-1.4 3.2-3.2v-3.2C64 34.9 61.1 32 57.6 32zM6.4 32C2.9 32 0 34.9 0 38.4v3.2c0 1.8 1.4 3.2 3.2 3.2h6.6c0.6-4.6 3.4-8.7 7.5-10.9 -1.2-1.2-2.8-1.9-4.5-1.9H6.4zM54.4 28.8c3.5 0 6.4-2.9 6.4-6.4S57.9 16 54.4 16 48 18.9 48 22.4 50.9 28.8 54.4 28.8z"/><path class="st1" d="M39.7 35.2h-0.8c-2.1 1-4.5 1.6-6.8 1.6 -2.5 0-4.8-0.6-6.9-1.6h-0.8c-6.4 0-11.5 5.2-11.5 11.5v2.9c0 2.7 2.1 4.8 4.8 4.8h28.8c2.6 0 4.8-2.2 4.8-4.8v-2.9C51.2 40.4 46 35.2 39.7 35.2zM32 32c6.2 0 11.2-5 11.2-11.2S38.2 9.6 32 9.6s-11.2 5-11.2 11.2C20.8 27 25.8 32 32 32L32 32z"/></svg>',
-				'title' => esc_html__( 'User Change Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Limit emails triggered by password changed/reset, email changed, and more.', 'wp-mail-smtp' ),
+			'user_details'     => [
+				'title'  => esc_html__( 'Change of User Email or Password', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_user_details_password_reset_request' => [
+						'label' => esc_html__( 'Reset Password Request', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User requested a password reset via "Lost your password?". Sent to the user.', 'wp-mail-smtp' ),
+					],
+					'dis_user_details_password_reset'         => [
+						'label' => esc_html__( 'Password Reset Successfully', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User reset their password from the password reset link. Sent to the site admin.', 'wp-mail-smtp' ),
+					],
+					'dis_user_details_password_changed'       => [
+						'label' => esc_html__( 'Password Changed', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User changed their password. Sent to the user.', 'wp-mail-smtp' ),
+					],
+					'dis_user_details_email_change_attempt'   => [
+						'label' => esc_html__( 'Email Change Attempt', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User attempted to change their email address. Sent to the proposed new email address.', 'wp-mail-smtp' ),
+					],
+					'dis_user_details_email_changed'          => [
+						'label' => esc_html__( 'Email Changed', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User changed their email address. Sent to the user.', 'wp-mail-smtp' ),
+					],
+				],
 			],
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M35.9 52.6L32 60l-3.9-7.4L30 44l-2.2-4.5c2.8 0.6 5.7 0.6 8.5 0L34 44 35.9 52.6zM32 35.9c8.8 0 16-7.1 16-15.9 -0.9 0.2-1.9 0.4-3 0.5v0.8c0 0-0.8 0.4-0.9 0.8 -0.5 1.6-1 3.3-2.2 4.5 -1.4 1.3-6.5 3-8.7-3.4 -0.4-1.1-2.1-1.1-2.5 0 -2.3 6.8-7.6 4.4-8.7 3.4 -1.3-1.2-1.7-2.9-2.2-4.5 -0.1-0.3-0.9-0.8-0.9-0.8v-0.8c-1.1-0.2-2.1-0.3-3-0.5C16 28.8 23.2 35.9 32 35.9z"/><path class="st1" d="M19 20.5v0.8c0 0 0.8 0.5 0.9 0.8 0.5 1.6 1 3.3 2.2 4.5 1.1 1 6.4 3.4 8.7-3.4 0.4-1.1 2.1-1.1 2.5 0 2.2 6.4 7.3 4.7 8.7 3.4 1.3-1.2 1.7-2.9 2.2-4.5 0.1-0.4 0.9-0.8 0.9-0.8v-0.8c6.6-1 11-2.7 11-4.6 0-1.7-3.4-3.3-8.8-4.3 -1.2-4-3.3-8-5-10.1C41 0 39-0.4 37.2 0.4l-3.5 1.7c-1.1 0.6-2.5 0.6-3.6 0l-3.5-1.7C25-0.4 23 0 21.8 1.5c-1.7 2.1-3.8 6.1-5 10.1 -5.4 1-8.8 2.5-8.8 4.3C8 17.8 12.3 19.6 19 20.5zM52 38.5l3-7.8c0.4-1-0.1-2.2-1.2-2.6 -0.2-0.1-0.5-0.1-0.7-0.1h-4L32 60 14.9 27.9H11c-1.1 0-2 0.9-2 2 0 0.3 0.1 0.5 0.2 0.8l3.2 7.5c-5.2 3-8.4 8.5-8.4 14.5V58c0 3.3 2.7 6 6 6l0 0H54c3.3 0 6-2.7 6-6l0 0v-5.2C60.1 46.9 57 41.5 52 38.5L52 38.5z"/></svg>',
-				'title' => esc_html__( 'Personal Data Requests Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Control emails for data requests and data removal actions.', 'wp-mail-smtp' ),
+			'personal_data'    => [
+				'title'  => esc_html__( 'Personal Data Requests', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_personal_data_user_confirmed'   => [
+						'label' => esc_html__( 'User Confirmed Export / Erasure Request', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User clicked a confirmation link in personal data export or erasure request email. Sent to the site or network admin.', 'wp-mail-smtp' ),
+					],
+					'dis_personal_data_erased_data'      => [
+						'label' => esc_html__( 'Admin Erased Data', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Site admin clicked "Erase Personal Data" button next to a confirmed data erasure request. Sent to the requester email address.', 'wp-mail-smtp' ),
+					],
+					'dis_personal_data_sent_export_link' => [
+						'label' => esc_html__( 'Admin Sent Link to Export Data', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Site admin clicked "Email Data" button next to a confirmed data export request. Sent to the requester email address.', 'wp-mail-smtp' ) . '<br>' .
+											 '<strong>' . esc_html__( 'Disabling this option will block users from being able to export their personal data, as they will not receive an email with a link.', 'wp-mail-smtp' ) . '</strong>',
+					],
+				],
 			],
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M0 57.6V40.3c0-1.7 1.4-3.1 3.1-3.1h17.3c2.8 0 4.1 3.3 2.2 5.3l-5.4 5.4c4 3.8 9.3 5.9 14.8 5.8 10 0 18.6-6.9 21-16.4 0.2-0.7 0.8-1.2 1.5-1.2h7.4c0.9 0 1.5 0.7 1.5 1.5 0 0.1 0 0.2 0 0.3C60.7 52.8 47.6 64 32 64c-8.2 0-16.2-3.2-22.1-8.9l-4.6 4.6C3.3 61.7 0 60.3 0 57.6z"/><path class="st1" d="M0.6 26C3.3 11.2 16.4 0 32 0c8.2 0 16.2 3.2 22.1 8.9l4.6-4.6C60.7 2.3 64 3.7 64 6.5v17.3c0 1.7-1.4 3.1-3.1 3.1H43.6c-2.8 0-4.1-3.3-2.2-5.3l5.4-5.4c-4-3.8-9.3-5.9-14.8-5.8 -10 0-18.6 6.9-21 16.4 -0.2 0.7-0.8 1.2-1.5 1.2H2.1c-0.9 0-1.5-0.7-1.5-1.5C0.5 26.2 0.5 26.1 0.6 26z"/></svg>',
-				'title' => esc_html__( 'Automatic Update Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Manage emails sent by the core automatic update process.', 'wp-mail-smtp' ),
+			'auto_updates'     => [
+				'title'  => esc_html__( 'Automatic Updates', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_auto_updates_plugin_status' => [
+						'label' => esc_html__( 'Plugin Status', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Completion or failure of a background automatic plugin update. Sent to the site or network admin.', 'wp-mail-smtp' ),
+					],
+					'dis_auto_updates_theme_status'  => [
+						'label' => esc_html__( 'Theme Status', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Completion or failure of a background automatic theme update. Sent to the site or network admin.', 'wp-mail-smtp' ),
+					],
+					'dis_auto_updates_status'        => [
+						'label' => esc_html__( 'WP Core Status', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Completion or failure of a background automatic core update. Sent to the site or network admin.', 'wp-mail-smtp' ),
+					],
+					'dis_auto_updates_full_log'      => [
+						'label' => esc_html__( 'Full Log', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'Full log of background update results which includes information about WordPress core, plugins, themes, and translations updates. Only sent when you are using a development version of WordPress. Sent to the site or network admin.', 'wp-mail-smtp' ),
+					],
+				],
 			],
-			[
-				'svg'   => '<svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 64 64"><path class="st0" d="M64 28.8V32c0 0.9-0.7 1.6-1.6 1.6H56V40c0 0.9-0.7 1.6-1.6 1.6h-3.2c-0.9 0-1.6-0.7-1.6-1.6v-6.4h-6.4c-0.9 0-1.6-0.7-1.6-1.6v-3.2c0-0.9 0.7-1.6 1.6-1.6h6.4v-6.4c0-0.9 0.7-1.6 1.6-1.6h3.2c0.9 0 1.6 0.7 1.6 1.6v6.4h6.4C63.3 27.2 64 27.9 64 28.8z"/><path class="st1" d="M22.4 32c7.1 0 12.8-5.7 12.8-12.8S29.5 6.4 22.4 6.4 9.6 12.1 9.6 19.2 15.3 32 22.4 32zM31.4 35.2h-1.7c-4.6 2.1-9.9 2.1-14.6 0h-1.7C6 35.2 0 41.2 0 48.6v4.2c0 2.7 2.2 4.8 4.8 4.8l0 0H40c2.7 0 4.8-2.1 4.8-4.8l0 0v-4.2C44.8 41.2 38.8 35.2 31.4 35.2z"/></svg>',
-				'title' => esc_html__( 'New User Notifications', 'wp-mail-smtp' ),
-				'desc'  => esc_html__( 'Toggle emails sent to both user and site administrator about new user accounts.', 'wp-mail-smtp' ),
+			'new_user'         => [
+				'title'  => esc_html__( 'New User', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_new_user_created_to_admin'        => [
+						'label' => esc_html__( 'Created (Admin)', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'A new user was created. Sent to the site admin.', 'wp-mail-smtp' ),
+					],
+					'dis_new_user_created_to_user'         => [
+						'label' => esc_html__( 'Created (User)', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'A new user was created. Sent to the new user.', 'wp-mail-smtp' ),
+					],
+					'dis_new_user_invited_to_site_network' => [
+						'label' => esc_html__( 'Invited To Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'A new user was invited to a site from Users -> Add New -> Add New User. Sent to the invited user.', 'wp-mail-smtp' ),
+					],
+					'dis_new_user_created_network'         => [
+						'label' => esc_html__( 'Created On Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'A new user account was created. Sent to Network Admin.', 'wp-mail-smtp' ),
+					],
+					'dis_new_user_added_activated_network' => [
+						'label' => esc_html__( 'Added / Activated on Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'A user has been added, or their account activation has been successful. Sent to the user, that has been added/activated.', 'wp-mail-smtp' ),
+					],
+				],
+			],
+			'network_new_site' => [
+				'title'  => esc_html__( 'New Site', 'wp-mail-smtp' ),
+				'emails' => [
+					'dis_new_site_user_registered_site_network'                  => [
+						'label' => esc_html__( 'User Created Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User registered for a new site. Sent to the site admin.', 'wp-mail-smtp' ),
+					],
+					'dis_new_site_user_added_activated_site_in_network_to_admin' => [
+						'label' => esc_html__( 'Network Admin: User Activated / Added Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User activated their new site, or site was added from Network Admin -> Sites -> Add New. Sent to Network Admin.', 'wp-mail-smtp' ),
+					],
+					'dis_new_site_user_added_activated_site_in_network_to_site'  => [
+						'label' => esc_html__( 'Site Admin: Activated / Added Site', 'wp-mail-smtp' ),
+						'desc'  => esc_html__( 'User activated their new site, or site was added from Network Admin -> Sites -> Add New. Sent to Site Admin.', 'wp-mail-smtp' ),
+					],
+				],
 			],
 		];
+	}
 
-		$allowed_svg_html = [
-			'svg'  => [
-				'xmlns'     => [],
-				'focusable' => [],
-				'viewbox'   => [],
-			],
-			'path' => [
-				'class' => [],
-				'd'     => [],
-			],
-		];
+	/**
+	 * Output HTML of the email controls settings preview.
+	 *
+	 * @since 1.6.0
+	 * @since 2.1.0 Replaced images with SVGs.
+	 * @since 3.1.0 Updated layout to inactive settings preview.
+	 */
+	public function display() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+
+		$link_upgrade_link   = add_query_arg(
+			[ 'discount' => 'LITEUPGRADE' ],
+			wp_mail_smtp()->get_upgrade_link(
+				[
+					'medium'  => 'Email Controls',
+					'content' => 'Upgrade to WP Mail SMTP Pro',
+				]
+			)
+		);
+		$button_upgrade_link = add_query_arg(
+			[ 'discount' => 'LITEUPGRADE' ],
+			wp_mail_smtp()->get_upgrade_link(
+				[
+					'medium'  => 'Email Controls',
+					'content' => 'Upgrade to WP Mail SMTP Pro Button',
+				]
+			)
+		);
 		?>
 
-		<div class="wp-mail-smtp-page-upsell">
-			<h2><?php esc_html_e( 'Unlock Email Controls', 'wp-mail-smtp' ); ?></h2>
+		<div id="wp-mail-smtp-email-controls-product-education" class="wp-mail-smtp-product-education">
+			<div class="wp-mail-smtp-product-education__row">
+				<h4 class="wp-mail-smtp-product-education__heading">
+					<?php esc_html_e( 'Email Controls', 'wp-mail-smtp' ); ?>
+				</h4>
+				<p class="wp-mail-smtp-product-education__description">
+					<?php
+					echo wp_kses(
+						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
+							__( 'Email controls allow you to manage the automatic notifications you receive from your WordPress website. With the flick of a switch, you can reduce inbox clutter and focus on the alerts that matter the most. It\'s easy to disable emails about comments, email or password changes, WordPress updates, user registrations, and personal data requests. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
+							esc_url( $link_upgrade_link )
+						),
+						[
+							'a' => [
+								'href'   => [],
+								'rel'    => [],
+								'target' => [],
+							],
+						]
+					);
+					?>
+				</p>
+			</div>
 
-			<h3>
-				<?php esc_html_e( 'Email Controls allows you to granularly manage emails sent by WordPress. ', 'wp-mail-smtp' ); ?>
-			</h3>
+			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive">
+				<?php
+				foreach ( static::get_controls() as $section_id => $section ) :
+					if ( empty( $section['emails'] ) ) {
+						continue;
+					}
 
-			<div class="wp-mail-smtp-page-upsell-content">
+					if ( $this->is_it_for_multisite( sanitize_key( $section_id ) ) && ! WP::use_global_plugin_settings() ) {
+						continue;
+					}
+					?>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc">
+						<div class="wp-mail-smtp-setting-field">
+							<h5><?php echo esc_html( $section['title'] ); ?></h5>
+						</div>
+					</div>
 
-				<div class="wp-mail-smtp-page-upsell-features">
-					<?php foreach ( $features as $feature ) : ?>
-						<div class="wp-mail-smtp-page-upsell-feature">
-							<div class="wp-mail-smtp-page-upsell-feature-image">
-								<?php echo wp_kses( $feature['svg'], $allowed_svg_html ); ?>
+					<?php
+					foreach ( $section['emails'] as $email_id => $email ) :
+						$email_id = sanitize_key( $email_id );
+
+						if ( empty( $email_id ) || empty( $email['label'] ) ) {
+							continue;
+						}
+
+						if ( $this->is_it_for_multisite( sanitize_key( $email_id ) ) && ! WP::use_global_plugin_settings() ) {
+							continue;
+						}
+						?>
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle wp-mail-smtp-clear">
+							<div class="wp-mail-smtp-setting-label">
+								<label><?php echo esc_html( $email['label'] ); ?></label>
 							</div>
-							<div class="wp-mail-smtp-page-upsell-feature-content">
-								<h4><?php echo esc_html( $feature['title'] ); ?></h4>
-								<p><?php echo esc_html( $feature['desc'] ); ?></p>
+							<div class="wp-mail-smtp-setting-field">
+								<label>
+									<input type="checkbox" checked/>
+									<span class="wp-mail-smtp-setting-toggle-switch"></span>
+									<span class="wp-mail-smtp-setting-toggle-checked-label">
+										<?php esc_html_e( 'On', 'wp-mail-smtp' ); ?>
+									</span>
+									<span class="wp-mail-smtp-setting-toggle-unchecked-label">
+										<?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?>
+									</span>
+								</label>
+								<?php if ( ! empty( $email['desc'] ) ) : ?>
+									<p class="desc">
+										<?php echo $email['desc']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									</p>
+								<?php endif; ?>
 							</div>
 						</div>
 					<?php endforeach; ?>
-				</div>
-
+				<?php endforeach; ?>
 			</div>
 
-			<div class="wp-mail-smtp-page-upsell-button">
-				<a href="<?php echo esc_url( add_query_arg( 'discount', 'LITEUPGRADE', wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'logs', 'content' => '' ] ) ) ); // phpcs:ignore ?>"
-					class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange" target="_blank" rel="noopener noreferrer">
-					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
-				</a>
-			</div>
-
+			<a href="<?php echo esc_url( $button_upgrade_link ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+			</a>
 		</div>
-
 		<?php
+	}
+
+	/**
+	 * Whether this key dedicated to MultiSite environment.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $key Email unique key.
+	 *
+	 * @return bool
+	 */
+	protected function is_it_for_multisite( $key ) {
+
+		return strpos( $key, 'network' ) !== false;
 	}
 
 	/**
@@ -130,8 +335,7 @@ class ControlTab extends PageAbstract {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @param array $data
+	 * @param array $data Post data specific for the plugin.
 	 */
-	public function process_post( $data ) {
-	}
+	public function process_post( $data ) { }
 }

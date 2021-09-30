@@ -2,7 +2,10 @@
 
 namespace WPMailSMTP\UsageTracking;
 
+use WPMailSMTP\Admin\DomainChecker;
+use WPMailSMTP\Admin\SetupWizard;
 use WPMailSMTP\Conflicts;
+use WPMailSMTP\Debug;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -19,6 +22,13 @@ class UsageTracking {
 	 * @since 2.3.0
 	 */
 	const SETTINGS_SLUG = 'usage-tracking-enabled';
+
+	/**
+	 * Server URL to send failed Setup Wizard data to.
+	 *
+	 * @since 3.1.0
+	 */
+	const FAILED_SETUP_WIZARD_DATA_URL = 'https://wpmailsmtpusage.com/v1/smtp-failed-wizard';
 
 	/**
 	 * Whether Usage Tracking is enabled.
@@ -95,47 +105,45 @@ class UsageTracking {
 
 		global $wpdb;
 
-		$theme_data      = wp_get_theme();
-		$activated_dates = get_option( 'wp_mail_smtp_activated', [] );
-		$options         = Options::init();
-		$mailer          = wp_mail_smtp()->get_providers()->get_mailer(
+		$theme_data         = wp_get_theme();
+		$options            = Options::init();
+		$mailer             = wp_mail_smtp()->get_providers()->get_mailer(
 			$options->get( 'mail', 'mailer' ),
 			wp_mail_smtp()->get_processor()->get_phpmailer()
 		);
+		$setup_wizard_stats = SetupWizard::get_stats();
 
-		$data = [
-			// Generic data (environment).
-			'url'                                => home_url(),
-			'php_version'                        => PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION,
-			'wp_version'                         => get_bloginfo( 'version' ),
-			'mysql_version'                      => $wpdb->db_version(),
-			'server_version'                     => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '',
-			'is_ssl'                             => is_ssl(),
-			'is_multisite'                       => is_multisite(),
-			'sites_count'                        => $this->get_sites_total(),
-			'active_plugins'                     => $this->get_active_plugins(),
-			'theme_name'                         => $theme_data->name,
-			'theme_version'                      => $theme_data->version,
-			'locale'                             => get_locale(),
-			'timezone_offset'                    => $this->get_timezone_offset(),
-			// WP Mail SMTP - specific data.
-			'wp_mail_smtp_version'               => WPMS_PLUGIN_VER,
-			'wp_mail_smtp_license_key'           => wp_mail_smtp()->get_license_key(),
-			'wp_mail_smtp_license_type'          => wp_mail_smtp()->get_license_type(),
-			'wp_mail_smtp_is_pro'                => wp_mail_smtp()->is_pro(),
-			'wp_mail_smtp_activated'             => get_option( 'wp_mail_smtp_activated_time', 0 ),
-			'wp_mail_smtp_lite_installed_date'   => $this->get_installed( $activated_dates, 'lite' ),
-			'wp_mail_smtp_pro_installed_date'    => $this->get_installed( $activated_dates, 'pro' ),
-			'wp_mail_smtp_mailer'                => $options->get( 'mail', 'mailer' ),
-			'wp_mail_smtp_from_email_force'      => (bool) $options->get( 'mail', 'from_email_force' ),
-			'wp_mail_smtp_from_name_force'       => (bool) $options->get( 'mail', 'from_name_force' ),
-			'wp_mail_smtp_return_path'           => (bool) $options->get( 'mail', 'return_path' ),
-			'wp_mail_smtp_do_not_send'           => (bool) $options->get( 'general', 'do_not_send' ),
-			'wp_mail_smtp_is_white_labeled'      => wp_mail_smtp()->is_white_labeled(),
-			'wp_mail_smtp_is_const_enabled'      => (bool) $options->is_const_enabled(),
-			'wp_mail_smtp_conflicts_is_detected' => ( new Conflicts() )->is_detected(),
-			'wp_mail_smtp_is_mailer_complete'    => empty( $mailer ) ? false : $mailer->is_mailer_complete(),
-		];
+		$data = array_merge(
+			$this->get_required_data(),
+			$this->get_additional_data(),
+			[
+				// Generic data (environment).
+				'mysql_version'                            => $wpdb->db_version(),
+				'server_version'                           => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '',
+				'is_ssl'                                   => is_ssl(),
+				'is_multisite'                             => is_multisite(),
+				'sites_count'                              => $this->get_sites_total(),
+				'theme_name'                               => $theme_data->name,
+				'theme_version'                            => $theme_data->version,
+				'locale'                                   => get_locale(),
+				'timezone_offset'                          => $this->get_timezone_offset(),
+				// WP Mail SMTP - specific data.
+				'wp_mail_smtp_version'                     => WPMS_PLUGIN_VER,
+				'wp_mail_smtp_activated'                   => get_option( 'wp_mail_smtp_activated_time', 0 ),
+				'wp_mail_smtp_mailer'                      => $options->get( 'mail', 'mailer' ),
+				'wp_mail_smtp_from_email_force'            => (bool) $options->get( 'mail', 'from_email_force' ),
+				'wp_mail_smtp_from_name_force'             => (bool) $options->get( 'mail', 'from_name_force' ),
+				'wp_mail_smtp_return_path'                 => (bool) $options->get( 'mail', 'return_path' ),
+				'wp_mail_smtp_do_not_send'                 => (bool) $options->get( 'general', 'do_not_send' ),
+				'wp_mail_smtp_is_white_labeled'            => wp_mail_smtp()->is_white_labeled(),
+				'wp_mail_smtp_is_const_enabled'            => (bool) $options->is_const_enabled(),
+				'wp_mail_smtp_conflicts_is_detected'       => ( new Conflicts() )->is_detected(),
+				'wp_mail_smtp_is_mailer_complete'          => empty( $mailer ) ? false : $mailer->is_mailer_complete(),
+				'wp_mail_smtp_setup_wizard_launched_time'  => isset( $setup_wizard_stats['launched_time'] ) ? (int) $setup_wizard_stats['launched_time'] : 0,
+				'wp_mail_smtp_setup_wizard_completed_time' => isset( $setup_wizard_stats['completed_time'] ) ? (int) $setup_wizard_stats['completed_time'] : 0,
+				'wp_mail_smtp_setup_wizard_completed_successfully' => ! empty( $setup_wizard_stats['was_successful'] ),
+			]
+		);
 
 		if ( 'smtp' === $options->get( 'mail', 'mailer' ) ) {
 			$data['wp_mail_smtp_other_smtp_host']       = $options->get( 'smtp', 'host' );
@@ -150,6 +158,43 @@ class UsageTracking {
 		}
 
 		return apply_filters( 'wp_mail_smtp_usage_tracking_get_data', $data );
+	}
+
+	/**
+	 * Get the required request data.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array
+	 */
+	private function get_required_data() {
+
+		return [
+			'url'            => home_url(),
+			'php_version'    => PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION,
+			'wp_version'     => get_bloginfo( 'version' ),
+			'active_plugins' => $this->get_active_plugins(),
+		];
+	}
+
+	/**
+	 * Get the additional data required by the usage tracking API.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array
+	 */
+	private function get_additional_data() {
+
+		$activated_dates = get_option( 'wp_mail_smtp_activated', [] );
+
+		return [
+			'wp_mail_smtp_license_key'         => wp_mail_smtp()->get_license_key(),
+			'wp_mail_smtp_license_type'        => wp_mail_smtp()->get_license_type(),
+			'wp_mail_smtp_is_pro'              => wp_mail_smtp()->is_pro(),
+			'wp_mail_smtp_lite_installed_date' => $this->get_installed( $activated_dates, 'lite' ),
+			'wp_mail_smtp_pro_installed_date'  => $this->get_installed( $activated_dates, 'pro' ),
+		];
 	}
 
 	/**
@@ -246,5 +291,80 @@ class UsageTracking {
 	private function get_sites_total() {
 
 		return function_exists( 'get_blog_count' ) ? (int) get_blog_count() : 1;
+	}
+
+	/**
+	 * Send failed Setup Wizard usage tracking data, if usage tracking is enabled.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param null|DomainChecker $domain_checker The optional DomainChecker object.
+	 */
+	public function send_failed_setup_wizard_usage_tracking_data( $domain_checker = null ) {
+
+		if ( ! $this->is_enabled() ) {
+			return;
+		}
+
+		$options = Options::init();
+
+		$data = array_merge(
+			$this->get_required_data(),
+			$this->get_additional_data(),
+			[
+				'wp_mail_smtp_mailer'     => $options->get( 'mail', 'mailer' ),
+				'wp_mail_smtp_mail_error' => Debug::get_last(),
+			],
+			$this->get_domain_checker_results( $domain_checker )
+		);
+
+		wp_remote_post(
+			self::FAILED_SETUP_WIZARD_DATA_URL,
+			[
+				'timeout'     => 5,
+				'redirection' => 5,
+				'httpversion' => '1.1',
+				'blocking'    => true,
+				'body'        => $data,
+				'user-agent'  => $this->get_user_agent(),
+			]
+		);
+	}
+
+	/**
+	 * Reformat the domain checker results, so it can be submitted to the usage tracking API.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param DomainChecker|null $domain_checker The Domain Checker object.
+	 *
+	 * @return array
+	 */
+	private function get_domain_checker_results( $domain_checker ) {
+
+		if ( ! is_a( $domain_checker, DomainChecker::class ) ) {
+			return [];
+		}
+
+		$data    = [];
+		$results = $domain_checker->get_results();
+
+		$data['wp_mail_smtp_domain_checker_success'] = isset( $results['success'] ) ? (bool) $results['success'] : false;
+		$data['wp_mail_smtp_domain_checker_message'] = isset( $results['message'] ) ? $results['message'] : '';
+
+		// Return early if checks are not available.
+		if ( empty( $results['checks'] ) || ! is_array( $results['checks'] ) ) {
+			return $data;
+		}
+
+		foreach ( $results['checks'] as $check ) {
+			if ( empty( $check['type'] ) || empty( $check['state'] ) ) {
+				continue;
+			}
+
+			$data[ 'wp_mail_smtp_domain_checker_check_' . $check['type'] ] = $check['state'];
+		}
+
+		return $data;
 	}
 }

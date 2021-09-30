@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.8
-Stable tag: 3.0.3
+Stable tag: 3.1.0
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -48,11 +48,12 @@ WP Mail SMTP plugin includes many different SMTP setup options:
 2. Sendinblue SMTP <strong>(Recommended)</strong>
 3. Mailgun SMTP
 4. SendGrid SMTP
-5. Gmail SMTP
-6. Microsoft SMTP (Outlook.com and Office 365) <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
-7. Amazon SES SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
-8. Zoho Mail SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">[Pro]</a>
-9. All Other SMTP
+5. Postmark SMTP
+6. Gmail SMTP
+7. Microsoft SMTP (Outlook.com and Office 365) <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">[Pro]</a>
+8. Amazon SES SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">[Pro]</a>
+9. Zoho Mail SMTP <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">[Pro]</a>
+10. All Other SMTP
 
 For most options, you can specify the "from name" and "email address" for outgoing emails.
 
@@ -91,6 +92,12 @@ Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-i
 SendGrid has a free SMTP plan that you can use to send up to 100 emails per day. With our native SendGrid SMTP integration, you can easily and securely set up SendGrid SMTP on your WordPress site.
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/" rel="friend">SendGrid documentation</a> for more details.
+
+= Postmark SMTP =
+
+Send emails securely using your Postmark account with our API integration. You can sign up for a free trial without a credit card, which allows you to send up to 100 emails per month.
+
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-postmark-mailer-in-wp-mail-smtp/" rel="friend">Postmark documentation</a> for more details.
 
 = Gmail SMTP =
 
@@ -140,7 +147,7 @@ We hope that you find WP Mail SMTP plugin helpful!
 
 In addition to native Microsoft, Amazon SES, and Zoho Mail integrations, WP Mail SMTP Pro provides access to many other powerful features and services.
 
-<a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">Click here to purchase WP Mail SMTP Pro now!</a>
+<a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">Click here to purchase WP Mail SMTP Pro now!</a>
 
 = Email Log =
 
@@ -190,7 +197,7 @@ For users running a multisite network, our network settings provide a centralize
 
 = Expert Support =
 
-We provide <a href="https://wordpress.org/support/topic/wp-mail-smtp-support-policy/">limited support</a> for the WP Mail SMTP plugin on the WordPress.org forums. Access to our world class one-on-one email support is available to <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend">WP Mail SMTP Pro</a> users.
+We provide <a href="https://wordpress.org/support/topic/wp-mail-smtp-support-policy/">limited support</a> for the WP Mail SMTP plugin on the WordPress.org forums. Access to our world class one-on-one email support is available to <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">WP Mail SMTP Pro</a> users.
 
 = White Glove Setup =
 
@@ -202,7 +209,7 @@ You can sit back and relax while we set up everything for you. White glove setup
 
 The WP Mail SMTP team takes security very seriously. Not only does the plugin follow all security best practices, but we have several options available to ensure your site is safe and secure.
 
-- Direct SMTP mailer integrations (recommended), such as SMTP.com, SendGrid and Mailgun, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
+- Direct SMTP mailer integrations (recommended), such as SMTP.com, Sendinblue, Mailgun, SendGrid and Postmark, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
 
 - When using Other SMTP mailer, we provide the option to insert your password in your `wp-config.php` file, so it's not visible in your WordPress settings or saved in the database.
 
@@ -233,8 +240,8 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 1. Install WP Mail SMTP by WPForms either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
 2. Activate WP Mail SMTP by WPForms.
 3. Navigate to the Settings area of WP Mail SMTP in the WordPress admin.
-4. Choose your SMTP option (Mailgun SMTP, SendGrid SMTP, Gmail SMTP, or Other SMTP) and follow the instructions to set it up.
-5. Need more help? Get support with <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion&utm_content=readme" rel="friend" title="WPForms">WP Mail SMTP PRO</a>.
+4. Choose your SMTP option (SMTP.com, Sendinblue, Mailgun SMTP, SendGrid SMTP, Postmark, Gmail SMTP, or Other SMTP) and follow the instructions to set it up.
+5. Need more help? Get support with <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend" title="WPForms">WP Mail SMTP PRO</a>.
 
 == Frequently Asked Questions ==
 
@@ -279,6 +286,17 @@ By all means please contact us to discuss features or options you'd like to see 
 12. Email Log bulk Export (Pro)
 
 == Changelog ==
+
+= 3.1.0 - 2021-09-28 =
+- Added: New transactional mailer - Postmark integration.
+- Added: Support for string attachments (added via PHPMailer object).
+- Changed: Improved Email Source detection in Debug Events for WP Core sent emails.
+- Changed: Improved uninstall process. It now removes all plugin DB data and tables.
+- Fixed: Email Source detection in Debug Events for file paths with backslashes.
+- Fixed: Blurry image assets in Weekly Email Summary.
+- Fixed: PHP extension mb_strings not polyfilled correctly.
+- Fixed: Added missing is_email_sent filters for Sendinblue, Mailgun, and Gmail mailers.
+- Fixed: Debug Events double-entry DB save, because of a bug in is_email_sent method for certain mailers.
 
 = 3.0.3 - 2021-08-09 =
 - Fixed: Weekly Summary Email sending when migration code didn't trigger yet.

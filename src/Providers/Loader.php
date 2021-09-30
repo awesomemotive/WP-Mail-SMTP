@@ -29,6 +29,7 @@ class Loader {
 		'pepipostapi' => 'WPMailSMTP\Providers\PepipostAPI\\',
 		'mailgun'     => 'WPMailSMTP\Providers\Mailgun\\',
 		'sendgrid'    => 'WPMailSMTP\Providers\Sendgrid\\',
+		'postmark'    => 'WPMailSMTP\Providers\Postmark\\',
 		'amazonses'   => 'WPMailSMTP\Providers\AmazonSES\\',
 		'gmail'       => 'WPMailSMTP\Providers\Gmail\\',
 		'outlook'     => 'WPMailSMTP\Providers\Outlook\\',

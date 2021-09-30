@@ -520,7 +520,11 @@ class WP {
 		}
 
 		if ( empty( $name ) ) {
-			$name = esc_html__( 'WP Core', 'wp-mail-smtp' );
+			$name = self::get_initiator_wp_core( $file_path );
+		}
+
+		if ( empty( $name ) ) {
+			$name = esc_html__( 'N/A', 'wp-mail-smtp' );
 		}
 
 		$initiators_cache[ $file_path ] = $name;
@@ -547,9 +551,10 @@ class WP {
 			return false;
 		}
 
-		$root = basename( constant( $constant ) );
+		$root      = basename( constant( $constant ) );
+		$separator = defined( 'DIRECTORY_SEPARATOR' ) ? '\\' . DIRECTORY_SEPARATOR : '\/';
 
-		preg_match( "/\/$root\/(.[^\/]+)(\/|\.php)/", $file_path, $result );
+		preg_match( "/$separator$root$separator(.[^$separator]+)($separator|\.php)/", $file_path, $result );
 
 		if ( ! empty( $result[1] ) ) {
 			if ( ! function_exists( 'get_plugins' ) ) {
@@ -589,9 +594,10 @@ class WP {
 			return false;
 		}
 
-		$root = basename( WP_CONTENT_DIR );
+		$root      = basename( WP_CONTENT_DIR );
+		$separator = defined( 'DIRECTORY_SEPARATOR' ) ? '\\' . DIRECTORY_SEPARATOR : '\/';
 
-		preg_match( "/\/$root\/themes\/(.[^\/]+)/", $file_path, $result );
+		preg_match( "/$separator$root{$separator}themes{$separator}(.[^$separator]+)/", $file_path, $result );
 
 		if ( ! empty( $result[1] ) ) {
 			$theme = wp_get_theme( $result[1] );
@@ -601,6 +607,34 @@ class WP {
 			}
 
 			return $result[1];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return WP Core if the file path is from WP Core (wp-admin or wp-includes folders).
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $file_path The absolute path of a file.
+	 *
+	 * @return false|string
+	 */
+	private static function get_initiator_wp_core( $file_path ) {
+
+		if ( ! defined( 'ABSPATH' ) ) {
+			return false;
+		}
+
+		$wp_includes = defined( 'WPINC' ) ? trailingslashit( ABSPATH . WPINC ) : false;
+		$wp_admin    = trailingslashit( ABSPATH . 'wp-admin' );
+
+		if (
+			strpos( $file_path, $wp_includes ) === 0 ||
+			strpos( $file_path, $wp_admin ) === 0
+		) {
+			return esc_html__( 'WP Core', 'wp-mail-smtp' );
 		}
 
 		return false;

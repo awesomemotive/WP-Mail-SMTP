@@ -203,12 +203,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 				$buttonIcon
 					.removeClass( 'dashicons-admin-page' )
-					.addClass( 'dashicons-yes-alt wp-mail-smtp-success wp-mail-smtp-animate' );
+					.addClass( 'wp-mail-smtp-dashicons-yes-alt-green wp-mail-smtp-success wp-mail-smtp-animate' );
 
 				setTimeout(
 					function() {
 						$buttonIcon
-							.removeClass( 'dashicons-yes-alt wp-mail-smtp-success wp-mail-smtp-animate' )
+							.removeClass( 'wp-mail-smtp-dashicons-yes-alt-green wp-mail-smtp-success wp-mail-smtp-animate' )
 							.addClass( 'dashicons-admin-page' );
 					},
 					1000

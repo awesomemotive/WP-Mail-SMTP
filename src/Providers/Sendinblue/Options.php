@@ -29,10 +29,10 @@ class Options extends OptionsAbstract {
 
 		$description = sprintf(
 			wp_kses( /* translators: %1$s - URL to sendinblue.com site. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is a recommended transactional email service.</strong> Founded in 2012, they serve 80,000+ growing companies around the world and send over 30 million emails each day. They understand that transactional emails are the heart of your customer relationships. Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure.<br><br>Sendinblue provides users 300 free emails per day.', 'wp-mail-smtp' ) .
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is one of our recommended mailers.</strong> It\'s a transactional email provider with scalable price plans, so it\'s suitable for any size of business.<br><br>If you\'re just starting out, you can use Sendinblue\'s free plan to send up to 300 emails a day. You don\'t need to use a credit card to try it out. When you\'re ready, you can upgrade to a higher plan to increase your sending limits.', 'wp-mail-smtp' ) .
 				'<br><br>' .
 				/* translators: %2$s - URL to wpmailsmtp.com doc. */
-				__( 'Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a> to learn how to configure Sendinblue and improve your email deliverability.', 'wp-mail-smtp' ),
+				__( 'To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a>.', 'wp-mail-smtp' ),
 				[
 					'strong' => true,
 					'br'     => true,

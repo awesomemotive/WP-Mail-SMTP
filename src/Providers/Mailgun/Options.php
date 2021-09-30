@@ -26,7 +26,7 @@ class Options extends OptionsAbstract {
 				'description' => sprintf(
 					wp_kses(
 						/* translators: %1$s - URL to mailgun.com; %2$s - URL to Mailgun documentation on wpmailsmtp.com */
-						__( '<a href="%1$s" target="_blank" rel="noopener noreferrer">Mailgun</a> is one of the leading transactional email services trusted by over 150,000+ businesses. They provide 5,000 free emails per month for 3 months.<br><br>Read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Mailgun documentation</a> to learn how to configure Mailgun and improve your email deliverability.', 'wp-mail-smtp' ),
+						__( '<a href="%1$s" target="_blank" rel="noopener noreferrer">Mailgun</a> is a transactional email provider that offers a generous 3-month free trial. After that, it offers a \'Pay As You Grow\' plan that allows you to pay for what you use without committing to a fixed monthly rate.<br><br>To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Mailgun documentation</a>.', 'wp-mail-smtp' ),
 						array(
 							'br' => array(),
 							'a'  => array(

@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
-use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\Vendor\Google\Service\Gmail;
@@ -115,14 +114,7 @@ class Mailer extends MailerAbstract {
 
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
-			$this->error_message = $e->getMessage();
-
-			Debug::set(
-				'Mailer: Gmail' . "\r\n" .
-				$this->process_exception_message( $e->getMessage() )
-			);
-
-			return;
+			$this->error_message = $this->process_exception_message( $e->getMessage() );
 		}
 	}
 
@@ -162,19 +154,12 @@ class Mailer extends MailerAbstract {
 
 		$is_sent = false;
 
-		if ( method_exists( $this->response, 'getId' ) ) {
-			$message_id = $this->response->getId();
-			if ( ! empty( $message_id ) ) {
-				$is_sent = true;
-			}
+		if ( method_exists( $this->response, 'getId' ) && ! empty( $this->response->getId() ) ) {
+			$is_sent = true;
 		}
 
-		// Clear debug messages if email is successfully sent.
-		if ( $is_sent ) {
-			Debug::clear();
-		}
-
-		return $is_sent;
+		/** This filter is documented in src/Providers/MailerAbstract.php. */
+		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent, $this->mailer );
 	}
 
 	/**

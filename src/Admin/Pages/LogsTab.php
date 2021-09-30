@@ -188,7 +188,7 @@ class LogsTab extends PageAbstract {
 						</ul>
 						<ul>
 							<li><?php esc_html_e( 'Print email logs or save as PDF', 'wp-mail-smtp' ); ?></li>
-							<li><?php esc_html_e( 'Export email logs to CSV, XLSX, and EML', 'wp-mail-smtp' ); ?></li>
+							<li><?php esc_html_e( 'Export logs to CSV, XLSX, or EML', 'wp-mail-smtp' ); ?></li>
 						</ul>
 					</div>
 				</div>

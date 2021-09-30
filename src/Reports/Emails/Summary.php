@@ -347,6 +347,7 @@ class Summary {
 		$percent_change = $this->calc_percent_change( $value, $prev_value );
 
 		$images_dir_url = wp_mail_smtp()->assets_url . '/images/reports/email/';
+		$icon_width     = ( $icon === 'icon-email.png' ) ? 34 : 32;
 
 		ob_start();
 		?>
@@ -354,7 +355,7 @@ class Summary {
 			<tr style="padding: 0;vertical-align: top;text-align: left;">
 				<td class="stats-total-item-inner" style="word-wrap: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 15px 5px;vertical-align: top;text-align: center;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #444444;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;margin: 0;mso-line-height-rule: exactly;line-height: 140%;font-size: 14px;border-collapse: collapse !important; width: 100%; min-width:100%; border: 1px solid #DDDDDD;border-radius: 4px;<?php echo esc_attr( $wrapper_style ); ?>">
 					<p class="stats-total-item-icon-wrapper" style="margin: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: <?php echo esc_attr( $color ); ?>;padding: 0;text-align: center;mso-line-height-rule: exactly;margin-bottom: 10px;height: 32px;">
-						<img class="stats-total-item-icon" src="<?php echo esc_url( $images_dir_url . $icon ); ?>" alt="<?php echo esc_attr( $title ); ?>" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;width: 32px;height:32px;clear: both;display: inline-block;" width="32" height="32">
+						<img class="stats-total-item-icon" src="<?php echo esc_url( $images_dir_url . $icon ); ?>" alt="<?php echo esc_attr( $title ); ?>" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;width: <?php echo esc_attr( $icon_width ); ?>px;height:32px;clear: both;display: inline-block;" width="<?php echo esc_attr( $icon_width ); ?>" height="32">
 					</p>
 					<p class="stats-total-item-title" style="margin: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: <?php echo esc_attr( $color ); ?>;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: bold;padding: 0;text-align: center;mso-line-height-rule: exactly;line-height: 14px;font-size: 13px;margin-bottom: 11px;white-space: nowrap;">
 						<?php echo esc_html( $title ); ?>

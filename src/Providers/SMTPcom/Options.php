@@ -39,7 +39,7 @@ class Options extends OptionsAbstract {
 
 		$description  = sprintf(
 			wp_kses( /* translators: %s - URL to smtp.com site. */
-				__( '<strong><a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com</a> is a recommended transactional email service.</strong> With a 22 year track record of reliable email delivery, SMTP.com is a premiere solution for WordPress developers and website owners. SMTP.com has been around for almost as long as email itself. Their super simple integration interface makes it easy to get started, while a powerful API and robust documentation make it a preferred choice among developers.<br><br>Start a 30-day free trial with 50,000 emails.', 'wp-mail-smtp' ),
+				__( '<strong><a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com</a> is one of our recommended mailers.</strong> It\'s a transactional email provider that\'s currently used by 100,000+ businesses. SMTP.com is an established brand that\'s been offering email services for more than 20 years.<br><br>SMTP.com offers a free 30-day trial that allows you to send up to 50,000 emails.', 'wp-mail-smtp' ),
 				$allowed_kses_html
 			),
 			'https://wpmailsmtp.com/go/smtp/'
@@ -47,7 +47,7 @@ class Options extends OptionsAbstract {
 		$description .= '<br><br>';
 		$description .= sprintf(
 			wp_kses( /* translators: %s - URL to wpmailsmtp.com doc page for stmp.com. */
-				__( 'Read our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com documentation</a> to learn how to configure SMTP.com and improve your email deliverability.', 'wp-mail-smtp' ),
+				__( 'To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com documentation</a>.', 'wp-mail-smtp' ),
 				$allowed_kses_html
 			),
 			'https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp'

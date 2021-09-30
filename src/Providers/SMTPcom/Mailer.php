@@ -274,7 +274,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $attachments
+	 * @param array $attachments The array of attachments data.
 	 */
 	public function set_attachments( $attachments ) {
 
@@ -282,23 +282,10 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$data = array();
+		$data = [];
 
 		foreach ( $attachments as $attachment ) {
-			$file = false;
-
-			/*
-			 * We are not using WP_Filesystem API as we can't reliably work with it.
-			 * It is not always available, same as credentials for FTP.
-			 */
-			try {
-				if ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
-					$file = file_get_contents( $attachment[0] ); // phpcs:ignore
-				}
-			}
-			catch ( \Exception $e ) {
-				$file = false;
-			}
+			$file = $this->get_attachment_file_content( $attachment );
 
 			if ( $file === false ) {
 				continue;
@@ -306,23 +293,23 @@ class Mailer extends MailerAbstract {
 
 			$filetype = str_replace( ';', '', trim( $attachment[4] ) );
 
-			$data[] = array(
-				'content'     => chunk_split( base64_encode( $file ) ), // phpcs:ignore
+			$data[] = [
+				'content'     => chunk_split( base64_encode( $file ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'type'        => $filetype,
 				'encoding'    => 'base64',
 				'filename'    => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
-				'disposition' => in_array( $attachment[6], array( 'inline', 'attachment' ), true ) ? $attachment[6] : 'attachment', // either inline or attachment.
+				'disposition' => in_array( $attachment[6], [ 'inline', 'attachment' ], true ) ? $attachment[6] : 'attachment', // either inline or attachment.
 				'cid'         => empty( $attachment[7] ) ? '' : trim( (string) $attachment[7] ),
-			);
+			];
 		}
 
 		if ( ! empty( $data ) ) {
 			$this->set_body_param(
-				array(
-					'body' => array(
+				[
+					'body' => [
 						'attachments' => $data,
-					),
-				)
+					],
+				]
 			);
 		}
 	}

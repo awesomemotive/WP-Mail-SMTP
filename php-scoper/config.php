@@ -600,6 +600,17 @@ if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
 	);
 }
 
+if ( file_exists( 'vendor/aws/aws-crt-php' ) ) {
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/aws/aws-crt-php' )
+		->name( [ 'LICENSE.md', 'composer.json' ] );
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/aws/aws-crt-php/src' )
+		->name( [ '*.php' ] );
+}
+
 if ( file_exists( 'vendor/mtdowling/jmespath.php' ) ) {
 	$config['finders'][] = Finder::create()
 		->files()

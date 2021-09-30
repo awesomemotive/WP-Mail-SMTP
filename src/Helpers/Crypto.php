@@ -111,7 +111,7 @@ class Crypto {
 	 * @return string
 	 * @throws \Exception The exception object.
 	 */
-	public static function decrypt( $encrypted, $key = '' ) {
+	public static function decrypt( $encrypted, $key = '' ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		if ( apply_filters( 'wp_mail_smtp_helpers_crypto_stop', false ) ) {
 			return $encrypted;
@@ -122,6 +122,11 @@ class Crypto {
 
 		if ( false === $decoded ) {
 			return $encrypted;
+		}
+
+		// Include polyfill if mbstring PHP extension is not enabled.
+		if ( ! function_exists( 'mb_strlen' ) || ! function_exists( 'mb_substr' ) ) {
+			Helpers::include_mbstring_polyfill();
 		}
 
 		if ( mb_strlen( $decoded, '8bit' ) < ( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES ) ) { // phpcs:ignore

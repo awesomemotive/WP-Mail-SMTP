@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
-use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
@@ -346,27 +345,16 @@ abstract class MailerAbstract implements MailerInterface {
 
 		if ( wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code ) {
 			$is_sent = true;
-		} else {
-			$error = $this->get_response_error();
-
-			if ( ! empty( $error ) ) {
-				// Add mailer to the beginning and save to display later.
-				$message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $this->mailer )->get_title() ) . "\r\n";
-
-				$conflicts = new Conflicts();
-				if ( $conflicts->is_detected() ) {
-					$message .= 'Conflicts: ' . esc_html( $conflicts->get_conflict_name() ) . "\r\n";
-				}
-
-				Debug::set( $message . $error );
-			}
 		}
 
-		// Clear debug messages if email is successfully sent.
-		if ( $is_sent ) {
-			Debug::clear();
-		}
-
+		/**
+		 * Filters whether the email is sent or not.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool           $is_sent Whether the email is sent or not.
+		 * @param MailerAbstract $mailer  Mailer object.
+		 */
 		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent, $this->mailer );
 	}
 
@@ -532,5 +520,35 @@ abstract class MailerAbstract implements MailerInterface {
 	public function get_mailer_name() {
 
 		return $this->mailer;
+	}
+
+	/**
+	 * Get the PHPMailer attachment file content.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param array $attachment PHPMailer attachment.
+	 *
+	 * @return string
+	 */
+	protected function get_attachment_file_content( $attachment ) {
+
+		$file = false;
+
+		/*
+		 * We are not using WP_Filesystem API as we can't reliably work with it.
+		 * It is not always available, same as credentials for FTP.
+		 */
+		try {
+			if ( $attachment[5] === true ) {  // Whether there is string attachment.
+				$file = $attachment[0];
+			} elseif ( is_file( $attachment[0] ) && is_readable( $attachment[0] ) ) {
+				$file = file_get_contents( $attachment[0] );
+			}
+		} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			// We don't handle this exception as we define a default value above.
+		}
+
+		return $file;
 	}
 }

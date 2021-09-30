@@ -570,12 +570,11 @@
 			&-applied {
 				display: flex;
 
-				.dashicons-yes-alt {
+				.wp-mail-smtp-dashicons-yes-alt-green {
 					margin-right: 10px;
 					width: 16px;
 					height: 16px;
-					font-size: 16px;
-					color: rgb(106, 160, 139);
+					background-image: url('../images/dash-widget/yes-green.svg');
 				}
 			}
 		}

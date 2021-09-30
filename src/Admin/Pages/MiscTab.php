@@ -81,16 +81,16 @@ class MiscTab extends PageAbstract {
 						<?php checked( true, $options->get( 'general', 'do_not_send' ) ); ?>
 					>
 					<label for="wp-mail-smtp-setting-do_not_send">
-						<?php esc_html_e( 'Check this if you would like to stop sending all emails.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Stop sending all emails.', 'wp-mail-smtp' ); ?>
 					</label>
 					<p class="desc">
 						<?php
 						printf(
 							wp_kses(
 								__( 'Some plugins, like BuddyPress and Events Manager, are using their own email delivery solutions. By default, this option does not block their emails, as those plugins do not use default <code>wp_mail()</code> function to send emails.', 'wp-mail-smtp' ),
-								array(
-									'code' => array(),
-								)
+								[
+									'code' => [],
+								]
 							)
 						);
 						?>
@@ -135,7 +135,7 @@ class MiscTab extends PageAbstract {
 						id="wp-mail-smtp-setting-am_notifications_hidden"
 					>
 					<label for="wp-mail-smtp-setting-am_notifications_hidden">
-						<?php esc_html_e( 'Check this if you would like to hide plugin announcements and update details.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Hide plugin announcements and update details.', 'wp-mail-smtp' ); ?>
 					</label>
 				</div>
 			</div>
@@ -161,7 +161,7 @@ class MiscTab extends PageAbstract {
 					<?php endif; ?>
 
 					<label for="wp-mail-smtp-setting-email_delivery_errors_hidden">
-						<?php esc_html_e( 'Check this if you would like to hide warnings alerting of email delivery errors.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Hide warnings alerting of email delivery errors.', 'wp-mail-smtp' ); ?>
 					</label>
 
 					<?php if ( $is_hard_disabled ) : ?>
@@ -201,7 +201,7 @@ class MiscTab extends PageAbstract {
 						   id="wp-mail-smtp-setting-dashboard_widget_hidden"
 					>
 					<label for="wp-mail-smtp-setting-dashboard_widget_hidden">
-						<?php esc_html_e( 'Check this if you would like to hide the WP Mail SMTP Dashboard Widget.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Hide the WP Mail SMTP Dashboard Widget.', 'wp-mail-smtp' ); ?>
 					</label>
 				</div>
 			</div>
@@ -218,7 +218,7 @@ class MiscTab extends PageAbstract {
 						value="true" <?php checked( true, $options->get( 'general', 'uninstall' ) ); ?>
 						id="wp-mail-smtp-setting-uninstall">
 					<label for="wp-mail-smtp-setting-uninstall">
-						<?php esc_html_e( 'Check this if you would like to remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Remove ALL WP Mail SMTP data upon plugin deletion. All settings will be unrecoverable.', 'wp-mail-smtp' ); ?>
 					</label>
 				</div>
 			</div>

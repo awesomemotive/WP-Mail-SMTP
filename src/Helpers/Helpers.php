@@ -30,4 +30,15 @@ class Helpers {
 			true
 		);
 	}
+
+	/**
+	 * Include mbstring polyfill.
+	 *
+	 * @since 3.1.0
+	 */
+	public static function include_mbstring_polyfill() {
+
+		require_once wp_mail_smtp()->plugin_path . '/vendor_prefixed/symfony/polyfill-mbstring/Mbstring.php';
+		require_once wp_mail_smtp()->plugin_path . '/vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php';
+	}
 }

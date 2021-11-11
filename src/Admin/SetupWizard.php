@@ -222,6 +222,7 @@ class SetupWizard {
 				'plugin_version'     => WPMS_PLUGIN_VER,
 				'other_smtp_plugins' => $this->detect_other_smtp_plugins(),
 				'mailer_options'     => $this->prepare_mailer_options(),
+				'defined_constants'  => $this->prepare_defined_constants(),
 				'upgrade_link'       => wp_mail_smtp()->get_upgrade_link( 'setup-wizard' ),
 				'versions'           => $this->prepare_versions_data(),
 				'public_url'         => wp_mail_smtp()->assets_url . '/vue/',
@@ -633,8 +634,10 @@ class SetupWizard {
 	 * - Post SMTP Mailer
 	 * - SMTP Mailer
 	 * - WP SMTP
+	 * - FluentSMTP
 	 *
 	 * @since 2.6.0
+	 * @since 3.2.0 Added FluentSMTP.
 	 *
 	 * @return array
 	 */
@@ -647,6 +650,7 @@ class SetupWizard {
 			'post-smtp-mailer' => 'postman_options',
 			'smtp-mailer'      => 'smtp_mailer_options',
 			'wp-smtp'          => 'wp_smtp_options',
+			'fluent-smtp'      => 'fluentmail-settings',
 		];
 
 		foreach ( $plugins as $plugin_slug => $plugin_options ) {
@@ -1270,5 +1274,72 @@ class SetupWizard {
 				'was_successful' => $was_successful,
 			]
 		);
+	}
+
+	/**
+	 * Prepare an array of WP Mail SMTP PHP constants in use.
+	 * Those that are used in the setup wizard.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array
+	 */
+	private function prepare_defined_constants() {
+
+		$options = new Options();
+
+		if ( ! $options->is_const_enabled() ) {
+			return [];
+		}
+
+		$constants = [
+			'WPMS_MAIL_FROM'                     => [ 'mail', 'from_email' ],
+			'WPMS_MAIL_FROM_FORCE'               => [ 'mail', 'from_email_force' ],
+			'WPMS_MAIL_FROM_NAME'                => [ 'mail', 'from_name' ],
+			'WPMS_MAIL_FROM_NAME_FORCE'          => [ 'mail', 'from_name_force' ],
+			'WPMS_MAILER'                        => [ 'mail', 'mailer' ],
+			'WPMS_SMTPCOM_API_KEY'               => [ 'smtpcom', 'api_key' ],
+			'WPMS_SMTPCOM_CHANNEL'               => [ 'smtpcom', 'channel' ],
+			'WPMS_SENDINBLUE_API_KEY'            => [ 'sendinblue', 'api_key' ],
+			'WPMS_SENDINBLUE_DOMAIN'             => [ 'sendinblue', 'domain' ],
+			'WPMS_AMAZONSES_CLIENT_ID'           => [ 'amazonses', 'client_id' ],
+			'WPMS_AMAZONSES_CLIENT_SECRET'       => [ 'amazonses', 'client_secret' ],
+			'WPMS_AMAZONSES_REGION'              => [ 'amazonses', 'region' ],
+			'WPMS_GMAIL_CLIENT_ID'               => [ 'gmail', 'client_id' ],
+			'WPMS_GMAIL_CLIENT_SECRET'           => [ 'gmail', 'client_secret' ],
+			'WPMS_MAILGUN_API_KEY'               => [ 'mailgun', 'api_key' ],
+			'WPMS_MAILGUN_DOMAIN'                => [ 'mailgun', 'domain' ],
+			'WPMS_MAILGUN_REGION'                => [ 'mailgun', 'region' ],
+			'WPMS_OUTLOOK_CLIENT_ID'             => [ 'outlook', 'client_id' ],
+			'WPMS_OUTLOOK_CLIENT_SECRET'         => [ 'outlook', 'client_secret' ],
+			'WPMS_POSTMARK_SERVER_API_TOKEN'     => [ 'postmark', 'server_api_token' ],
+			'WPMS_POSTMARK_MESSAGE_STREAM'       => [ 'postmark', 'message_stream' ],
+			'WPMS_SENDGRID_API_KEY'              => [ 'sendgrid', 'api_key' ],
+			'WPMS_SENDGRID_DOMAIN'               => [ 'sendgrid', 'domain' ],
+			'WPMS_SPARKPOST_API_KEY'             => [ 'sparkpost', 'api_key' ],
+			'WPMS_SPARKPOST_REGION'              => [ 'sparkpost', 'region' ],
+			'WPMS_ZOHO_DOMAIN'                   => [ 'zoho', 'domain' ],
+			'WPMS_ZOHO_CLIENT_ID'                => [ 'zoho', 'client_id' ],
+			'WPMS_ZOHO_CLIENT_SECRET'            => [ 'zoho', 'client_secret' ],
+			'WPMS_SMTP_HOST'                     => [ 'smtp', 'host' ],
+			'WPMS_SMTP_PORT'                     => [ 'smtp', 'port' ],
+			'WPMS_SSL'                           => [ 'smtp', 'encryption' ],
+			'WPMS_SMTP_AUTH'                     => [ 'smtp', 'auth' ],
+			'WPMS_SMTP_AUTOTLS'                  => [ 'smtp', 'autotls' ],
+			'WPMS_SMTP_USER'                     => [ 'smtp', 'user' ],
+			'WPMS_SMTP_PASS'                     => [ 'smtp', 'pass' ],
+			'WPMS_LOGS_ENABLED'                  => [ 'logs', 'enabled' ],
+			'WPMS_SUMMARY_REPORT_EMAIL_DISABLED' => [ 'general', SummaryReportEmail::SETTINGS_SLUG ],
+		];
+
+		$defined = [];
+
+		foreach ( $constants as $constant => $group_and_key ) {
+			if ( $options->is_const_defined( $group_and_key[0], $group_and_key[1] ) ) {
+				$defined[] = $constant;
+			}
+		}
+
+		return $defined;
 	}
 }

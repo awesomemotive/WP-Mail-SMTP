@@ -30,7 +30,7 @@ class Options extends OptionsAbstract {
 			[
 				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/google.svg',
 				'slug'        => self::SLUG,
-				'title'       => esc_html__( 'Gmail', 'wp-mail-smtp' ),
+				'title'       => esc_html__( 'Google / Gmail', 'wp-mail-smtp' ),
 				'description' => sprintf(
 					wp_kses( /* translators: %s - URL to our Gmail doc. */
 						__( 'Our Gmail mailer works with any Gmail or Google Workspace account via the Google API. You can send WordPress emails from your main email address or a Gmail alias, and it\'s more secure than connecting to Gmail using SMTP credentials. The set-up steps are more technical than other options, so we created a detailed guide to walk you through the process.<br><br>To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail documentation</a>.', 'wp-mail-smtp' ),

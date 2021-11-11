@@ -72,6 +72,10 @@ class Options {
 			'api_key',
 			'domain',
 		],
+		'sparkpost'   => [
+			'api_key',
+			'region',
+		],
 		'postmark'    => [
 			'server_api_token',
 			'message_stream',
@@ -361,7 +365,7 @@ class Options {
 				break;
 
 			case 'region':
-				$value = $group === 'mailgun' ? 'US' : $value;
+				$value = $group === 'mailgun' || $group === 'sparkpost' ? 'US' : $value;
 				break;
 
 			case 'auth':
@@ -564,6 +568,20 @@ class Options {
 					case 'domain':
 						/** @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ? WPMS_SENDGRID_DOMAIN : $value;
+						break;
+				}
+
+				break;
+
+			case 'sparkpost':
+				switch ( $key ) {
+					case 'api_key':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SPARKPOST_API_KEY : $value;
+						break;
+					case 'region':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SPARKPOST_REGION : $value;
 						break;
 				}
 
@@ -830,6 +848,18 @@ class Options {
 
 				break;
 
+			case 'sparkpost':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_SPARKPOST_API_KEY' ) && WPMS_SPARKPOST_API_KEY;
+						break;
+					case 'region':
+						$return = defined( 'WPMS_SPARKPOST_REGION' ) && WPMS_SPARKPOST_REGION;
+						break;
+				}
+
+				break;
+
 			case 'postmark':
 				switch ( $key ) {
 					case 'server_api_token':
@@ -1019,7 +1049,7 @@ class Options {
 		if (
 			! empty( $options['mail']['mailer'] ) &&
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], [ 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'postmark', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook', 'zoho' ], true )
+			in_array( $options['mail']['mailer'], [ 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'sparkpost', 'postmark', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook', 'zoho' ], true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
@@ -1029,7 +1059,7 @@ class Options {
 					case 'host': // smtp.
 					case 'user': // smtp.
 					case 'encryption': // smtp.
-					case 'region': // mailgun/amazonses.
+					case 'region': // mailgun/amazonses/sparkpost.
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : sanitize_text_field( $option_value );
 						break; // smtp.
 					case 'port':
@@ -1054,7 +1084,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.
 					case 'client_secret': // gmail/outlook/amazonses/zoho.

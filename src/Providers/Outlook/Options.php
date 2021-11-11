@@ -22,7 +22,7 @@ class Options extends OptionsAbstract {
 			array(
 				'logo_url' => wp_mail_smtp()->assets_url . '/images/providers/microsoft.svg',
 				'slug'     => 'outlook',
-				'title'    => esc_html__( 'Outlook / 365', 'wp-mail-smtp' ),
+				'title'    => esc_html__( '365 / Outlook', 'wp-mail-smtp' ),
 				'disabled' => true,
 			)
 		);

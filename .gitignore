@@ -7,3 +7,4 @@ node_modules/
 .phpcs-cache
 *.hot-update.json
 *.hot-update.js
+.env

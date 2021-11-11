@@ -432,12 +432,15 @@ class TestTab extends PageAbstract {
 							<tr style="padding: 0; vertical-align: top; text-align: left;">
 								<td align="left" valign="top" class="aside upsell-mi" style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; margin: 0; Margin: 0; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; background-color: #f8f8f8; border-top: 1px solid #dddddd; border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; border-left: 1px solid #dddddd; text-align: center !important; padding: 30px 75px 25px 75px;">
 									<h6 style="padding: 0; color: #444444; word-wrap: normal; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: bold; mso-line-height-rule: exactly; line-height: 130%; font-size: 18px; text-align: center; margin: 0 0 15px 0; Margin: 0 0 15px 0;">
-										Unlock More Features with WP Mail SMTP Pro
+										Unlock Powerful Features with WP Mail SMTP Pro
 									</h6>
 									<p class="text-large" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; margin: 0 0 15px 0; Margin: 0 0 15px 0; font-size: 16px; text-align: center;">
-										Email Logs and Notification Controls<br>
-										Amazon SES / Outlook.com / Office 365 integrations<br>
-										Access to our world class support team
+										Email Logging and Exporting<br>
+										Amazon SES / Microsoft 365 / Zoho Mail<br>
+										Open and Click Tracking<br>
+										Email Resending<br>
+										Email Reports<br>
+										World-Class Support
 									</p>
 									<p class="text-large last" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; padding: 0; mso-line-height-rule: exactly; line-height: 140%; font-size: 13px; text-align: center; margin: 0 0 0 0; Margin: 0 0 0 0;">
 										WP Mail SMTP users get <span style="font-weight:700;color:#218900;">$50 off</span>, automatically applied at checkout
@@ -507,11 +510,14 @@ If you find this free plugin useful, please consider giving WP Mail SMTP Pro a t
 
 https://wpmailsmtp.com/lite-upgrade/
 
-Unlock More Features with WP Mail SMTP Pro:
+Unlock These Powerful Features with WP Mail SMTP Pro:
 
-+ Email Logs and Notification Controls
-+ Amazon SES / Outlook.com / Office 365 integrations
-+ Access to our world class support team
++ Log all emails and export your email logs in different formats
++ Send emails with Amazon SES / Microsoft 365 / Zoho Mail
++ Track opens and clicks to measure engagement
++ Resend failed emails from your email log
++ Create email reports and graphs
++ Get help from our world-class support team
 
 - Jared Atchison
 Co-Founder, WP Mail SMTP';
@@ -880,7 +886,7 @@ Co-Founder, WP Mail SMTP';
 				],
 				'title'       => esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ),
 				'description' => [
-					esc_html__( 'Typically this error is because there is an issue with your Mailgun settings, in many cases the API key.', 'wp-mail-smtp' ),
+					esc_html__( 'Typically this error occurs because there is an issue with your Mailgun settings, in many cases the API key.', 'wp-mail-smtp' ),
 				],
 				'steps'       => [
 					esc_html__( 'Verify your API key is correct.', 'wp-mail-smtp' ),
@@ -897,7 +903,7 @@ Co-Founder, WP Mail SMTP';
 				'title'       => esc_html__( 'Mailgun failed.', 'wp-mail-smtp' ),
 				'description' => [
 					esc_html__( 'Your Mailgun account does not have access to send emails.', 'wp-mail-smtp' ),
-					esc_html__( 'Typically this error is because you have not set up and/or complete domain name verification for your Mailgun account.', 'wp-mail-smtp' ),
+					esc_html__( 'Typically this error occurs because you have not set up and/or complete domain name verification for your Mailgun account.', 'wp-mail-smtp' ),
 				],
 				'steps'       => [
 					sprintf(
@@ -973,7 +979,7 @@ Co-Founder, WP Mail SMTP';
 				],
 				'title'       => esc_html__( 'Google API Error.', 'wp-mail-smtp' ),
 				'description' => [
-					esc_html__( 'Typically this error is because address the email was sent to is invalid or was empty.', 'wp-mail-smtp' ),
+					esc_html__( 'Typically this error occurs because the address to which the email was sent to is invalid or was empty.', 'wp-mail-smtp' ),
 				],
 				'steps'       => [
 					esc_html__( 'Check the "Send To" email address used and confirm it is a valid email and was not empty.', 'wp-mail-smtp' ),
@@ -1150,6 +1156,49 @@ Co-Founder, WP Mail SMTP';
 					esc_html__( '(Recommended) Enable PHP extension: cURL, by adding "extension=curl" to the php.ini file (without the quotation marks) OR', 'wp-mail-smtp' ),
 					esc_html__( '(If cURL can\'t be enabled on your hosting server) Enable PHP setting: allow_url_fopen, by adding "allow_url_fopen = On" to the php.ini file (without the quotation marks)', 'wp-mail-smtp' ),
 					esc_html__( 'If you don\'t know how to do the above we strongly suggest contacting your hosting support and provide them the "full Error Log for debugging" below and these steps. They should be able to fix this issue for you.', 'wp-mail-smtp' ),
+				],
+			],
+			// [sparkpost] - Forbidden.
+			[
+				'mailer'      => 'sparkpost',
+				'errors'      => [
+					[ 'Forbidden' ],
+				],
+				'title'       => esc_html__( 'SparkPost API failed.', 'wp-mail-smtp' ),
+				'description' => [
+					esc_html__( 'Typically this error occurs because there is an issue with your SparkPost settings, in many cases an incorrect API key.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					sprintf(
+						wp_kses( /* translators: %1$s - SparkPost API Keys area URL, %1$s - SparkPost EU API Keys area URL. */
+							__( 'Go to your <a href="%1$s" target="_blank" rel="noopener noreferrer">SparkPost account</a> or <a href="%2$s" target="_blank" rel="noopener noreferrer">SparkPost EU account</a> and verify that your API key is correct.', 'wp-mail-smtp' ),
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+								'b' => [],
+							]
+						),
+						'https://app.sparkpost.com/account/api-keys',
+						'https://app.eu.sparkpost.com/account/api-keys'
+					),
+					esc_html__( 'Verify that your API key has "Transmissions: Read/Write" permission.', 'wp-mail-smtp' ),
+				],
+			],
+			// [sparkpost] - Unauthorized.
+			[
+				'mailer'      => 'sparkpost',
+				'errors'      => [
+					[ 'Unauthorized' ],
+				],
+				'title'       => esc_html__( 'SparkPost API failed.', 'wp-mail-smtp' ),
+				'description' => [
+					esc_html__( 'Typically this error occurs because there is an issue with your SparkPost settings, in many cases an incorrect region.', 'wp-mail-smtp' ),
+				],
+				'steps'       => [
+					esc_html__( 'Verify that your SparkPost account region is selected in WP Mail SMTP settings.', 'wp-mail-smtp' ),
 				],
 			],
 		];

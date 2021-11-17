@@ -130,7 +130,7 @@ class Mailer extends MailerAbstract {
 
 		$this->response = $response;
 
-		if ( ! method_exists( $this->response, 'getId' ) ) {
+		if ( empty( $this->response ) || ! method_exists( $this->response, 'getId' ) ) {
 			$this->error_message = esc_html__( 'The response object is invalid (missing getId method).', 'wp-mail-smtp' );
 		} else {
 			$message_id = $this->response->getId();
@@ -154,7 +154,11 @@ class Mailer extends MailerAbstract {
 
 		$is_sent = false;
 
-		if ( method_exists( $this->response, 'getId' ) && ! empty( $this->response->getId() ) ) {
+		if (
+			! empty( $this->response ) &&
+			method_exists( $this->response, 'getId' ) &&
+			! empty( $this->response->getId() )
+		) {
 			$is_sent = true;
 		}
 

@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 4.9
 Tested up to: 5.8
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -305,6 +305,9 @@ By all means please contact us to discuss features or options you'd like to see 
 12. Email Log bulk Export (Pro)
 
 == Changelog ==
+
+= 3.2.1 - 2021-11-17 =
+- Fixed: PHP 8 compatibility when existing Gmail mailer connection is revoked.
 
 = 3.2.0 - 2021-11-11 =
 - Added: New transactional mailer - SparkPost integration.

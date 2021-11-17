@@ -9,6 +9,20 @@
 ## Bugs ##
 If you find an bug or problem, please let us know by [creating an issue](https://github.com/awesomemotive/wp-mail-smtp/issues?state=open)!
 
+## Development Requirements ##
+
+* **PHP 7.3+**
+* **Composer v1.x**. If you are currently using the composer v2.x please switch to v1.x with this command: `composer self-update --1`
+* **WP-CLI** must be accessible by `wp` command
+* **Node.js**. Check required version in package.json
+* **GIT**
+
+## Development ##
+
+1. clone this repository to your computer
+2. in the root of the repository run `npm install` and `composer build-lite`
+3. WP Mail SMTP Lite is ready for development
+
 ## Contributions ##
 Contributions to WPForms are welcome!
 

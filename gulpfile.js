@@ -3,7 +3,7 @@
  */
 var gulp = require( 'gulp' ),
 	cached = require( 'gulp-cached' ),
-	sass = require( 'gulp-sass' ),
+	sass = require( 'gulp-sass' )(require( 'sass' )),
 	sourcemaps = require( 'gulp-sourcemaps' ),
 	rename = require( 'gulp-rename' ),
 	debug = require( 'gulp-debug' ),
@@ -118,6 +118,7 @@ var plugin = {
 		'!vendor/wpforms/**',
 		'!vendor/wpforms/',
 		'!build.sh',
+		'!phpcs.xml',
 		'!.env.example',
 		'!.env'
 	],
@@ -334,7 +335,6 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/symfony/polyfill-mbstring',
 				'vendor/symfony/polyfill-php72',
 				'vendor/symfony/polyfill-intl-idn',
-				'vendor/goodby',
 				'vendor/mk-j',
 			],
 			{ allowEmpty: true, read: false }
@@ -504,8 +504,8 @@ gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 're
 // Build tasks without PHP composer install step
 // The composer install should be done on PHP 5.6 before running below commands:
 // `composer build-lite-php5` or `composer build-pro-php5`.
-gulp.task( 'build:lite_no_composer', gulp.series( 'php:min73', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:prefix_lite', 'zip:lite' ) );
-gulp.task( 'build:pro_no_composer', gulp.series( 'php:min73', 'build:assets', 'rename:pro', 'composer:prefix', 'zip:pro' ) );
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:min73', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'rename:lite', 'pot:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:pro_no_composer', gulp.series( 'php:min73', 'rename:pro', 'build:assets', 'composer:prefix', 'zip:pro' ) );
 
 /**
  * Look out for relevant sass/js changes.

@@ -306,10 +306,12 @@ class Task {
 	public function cancel() {
 
 		// Exit if AS function does not exist.
-		if ( ! function_exists( 'as_unschedule_all_actions' ) ) {
+		if ( ! function_exists( 'as_unschedule_all_actions' ) || ! Tasks::is_usable() ) {
 			return false;
 		}
 
-		return as_unschedule_all_actions( $this->action );
+		as_unschedule_all_actions( $this->action );
+
+		return true;
 	}
 }

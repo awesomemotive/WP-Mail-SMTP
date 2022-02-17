@@ -315,6 +315,29 @@ class Conflicts {
 				'slug'  => 'disable-emails/disable-emails.php',
 				'class' => '\webaware\disable_emails\Plugin',
 			],
+
+			/**
+			 * Url: https://wordpress.org/plugins/fluent-smtp/
+			 */
+			[
+				'name'     => 'FluentSMTP',
+				'slug'     => 'fluent-smtp/fluent-smtp.php',
+				'function' => 'fluentSmtpInit',
+			],
+
+			/**
+			 * This plugin can be used along with our plugin if enable next option
+			 * Settings > Email template > Sender (tab) -> Do not change email sender by default.
+			 *
+			 * Url: https://wordpress.org/plugins/wp-html-mail/
+			 */
+			[
+				'name'     => 'WP HTML Mail - Email Template Designer',
+				'slug'     => 'wp-html-mail/wp-html-mail.php',
+				'function' => 'Haet_Mail',
+				'test'     => 'test_wp_html_mail_integration',
+				'message'  => esc_html__( 'Or enable "Do not change email sender by default" setting in Settings > Email template > Sender (tab).', 'wp-mail-smtp' ),
+			],
 		];
 	}
 
@@ -465,5 +488,28 @@ class Conflicts {
 		// phpcs:enable
 
 		return \WC_Sendinblue_Integration::$ws_smtp_enabled === 'yes';
+	}
+
+	/**
+	 * Check whether we have conflict with "WP HTML Mail - Email Template Designer" plugin.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @return bool Returns true if we have conflict otherwise false.
+	 */
+	protected function test_wp_html_mail_integration() {
+
+		// Check requirements for test.
+		if (
+			! function_exists( 'Haet_Mail' ) ||
+			! is_object( Haet_Mail() ) ||
+			! method_exists( Haet_Mail(), 'get_options' )
+		) {
+			return true;
+		}
+
+		$options = Haet_Mail()->get_options();
+
+		return ! isset( $options['disable_sender'] ) || ! $options['disable_sender'];
 	}
 }

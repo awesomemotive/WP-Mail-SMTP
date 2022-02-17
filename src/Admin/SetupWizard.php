@@ -77,8 +77,8 @@ class SetupWizard {
 		// Check if current user is allowed to save settings.
 		if (
 			! (
-				isset( $_GET['page'] ) && // phpcs:ignore
-				Area::SLUG . '-setup-wizard' === $_GET['page'] && // phpcs:ignore
+				isset( $_GET['page'] ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				Area::SLUG . '-setup-wizard' === $_GET['page'] && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$this->should_setup_wizard_load() &&
 				current_user_can( 'manage_options' )
 			)
@@ -104,7 +104,7 @@ class SetupWizard {
 	 *
 	 * @since 2.6.0
 	 */
-	public function maybe_redirect_after_activation() {
+	public function maybe_redirect_after_activation() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
@@ -123,7 +123,7 @@ class SetupWizard {
 		}
 
 		// Only do this for single site installs.
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // WPCS: CSRF ok.
+		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -358,7 +358,7 @@ class SetupWizard {
 				background: #fff;
 				border: 1px solid #DDDDDD;
 				border-radius: 6px;
-				webkit-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+				-webkit-box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
 				box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
 				padding: 20px 30px;
 			}
@@ -537,7 +537,7 @@ class SetupWizard {
 			wp_send_json_error( esc_html__( 'You don\'t have permission to change options for this WP site!', 'wp-mail-smtp' ) );
 		}
 
-		$options = new Options();
+		$options = Options::init();
 
 		wp_send_json_success( $options->get_all() );
 	}
@@ -577,9 +577,11 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
-		$options   = new Options();
+		$options   = Options::init();
 		$overwrite = ! empty( $_POST['overwrite'] );
-		$value     = isset( $_POST['value'] ) ? wp_slash( json_decode( wp_unslash( $_POST['value'] ), true ) ) : []; // phpcs:ignore
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$value = isset( $_POST['value'] ) ? wp_slash( json_decode( wp_unslash( $_POST['value'] ), true ) ) : [];
 
 		// Cancel summary report email task if summary report email was disabled.
 		if (
@@ -589,6 +591,15 @@ class SetupWizard {
 		) {
 			( new SummaryReportEmailTask() )->cancel();
 		}
+
+		/**
+		 * Before updating settings in Setup Wizard.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param array $post POST data.
+		 */
+		do_action( 'wp_mail_smtp_admin_setup_wizard_update_settings', $value );
 
 		$options->set( $value, false, $overwrite );
 
@@ -620,7 +631,7 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
-		$options = new Options();
+		$options = Options::init();
 
 		$options->set( $other_plugin_settings, false, false );
 
@@ -698,7 +709,7 @@ class SetupWizard {
 	 *
 	 * @since 2.6.0
 	 */
-	public function get_oauth_url() {
+	public function get_oauth_url() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
@@ -706,9 +717,11 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
-		$data     = [];
-		$mailer   = ! empty( $_POST['mailer'] ) ? sanitize_text_field( $_POST['mailer'] ) : ''; // phpcs:ignore
-		$settings = isset( $_POST['settings'] ) ? wp_slash( json_decode( wp_unslash( $_POST['settings'] ), true ) ) : []; // phpcs:ignore
+		$data   = [];
+		$mailer = ! empty( $_POST['mailer'] ) ? sanitize_text_field( wp_unslash( $_POST['mailer'] ) ) : '';
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$settings = isset( $_POST['settings'] ) ? wp_slash( json_decode( wp_unslash( $_POST['settings'] ), true ) ) : [];
 
 		if ( empty( $mailer ) || empty( $settings ) ) {
 			wp_send_json_error();
@@ -716,7 +729,7 @@ class SetupWizard {
 
 		$settings = array_merge( $settings, [ 'is_setup_wizard_auth' => true ] );
 
-		$options = new Options();
+		$options = Options::init();
 		$options->set( [ $mailer => $settings ], false, false );
 
 		switch ( $mailer ) {
@@ -739,7 +752,7 @@ class SetupWizard {
 	 *
 	 * @since 2.6.0
 	 */
-	public function get_connected_data() { // phpcs:ignore
+	public function get_connected_data() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
@@ -796,7 +809,7 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
-		$options = new Options();
+		$options = Options::init();
 		$old_opt = $options->get_all_raw();
 
 		foreach ( $old_opt[ $mailer ] as $key => $value ) {
@@ -817,7 +830,7 @@ class SetupWizard {
 	 *
 	 * @since 2.6.0
 	 */
-	public function install_plugin() { // phpcs:ignore
+	public function install_plugin() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
@@ -826,10 +839,18 @@ class SetupWizard {
 			wp_send_json_error( esc_html__( 'Could not install the plugin. You don\'t have permission to install plugins.', 'wp-mail-smtp' ) );
 		}
 
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( esc_html__( 'Could not install the plugin. You don\'t have permission to activate plugins.', 'wp-mail-smtp' ) );
+		}
+
 		$slug = ! empty( $_POST['slug'] ) ? sanitize_text_field( wp_unslash( $_POST['slug'] ) ) : '';
 
 		if ( empty( $slug ) ) {
 			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin slug is missing.', 'wp-mail-smtp' ) );
+		}
+
+		if ( ! in_array( $slug, wp_list_pluck( $this->get_partner_plugins(), 'slug' ), true ) ) {
+			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
 		}
 
 		$url   = esc_url_raw( WP::admin_url( 'admin.php?page=' . Area::SLUG . '-setup-wizard' ) );
@@ -905,12 +926,12 @@ class SetupWizard {
 
 			// Disable the RafflePress redirect after plugin activation.
 			if ( $slug === 'rafflepress' ) {
-				delete_transient('_rafflepress_welcome_screen_activation_redirect');
+				delete_transient( '_rafflepress_welcome_screen_activation_redirect' );
 			}
 
 			// Disable the MonsterInsights redirect after plugin activation.
 			if ( $slug === 'google-analytics-for-wordpress' ) {
-				delete_transient('_monsterinsights_activation_redirect');
+				delete_transient( '_monsterinsights_activation_redirect' );
 			}
 
 			// Disable the SeedProd redirect after the plugin activation.
@@ -949,9 +970,53 @@ class SetupWizard {
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
+		$plugins = $this->get_partner_plugins();
+
+		$contact_form_plugin_already_installed = false;
+
+		$contact_form_basenames = [
+			'wpforms-lite/wpforms.php',
+			'wpforms/wpforms.php',
+			'formidable/formidable.php',
+			'formidable/formidable-pro.php',
+			'gravityforms/gravityforms.php',
+			'ninja-forms/ninja-forms.php',
+		];
+
 		$installed_plugins = get_plugins();
 
-		$plugins = [
+		foreach ( $installed_plugins as $basename => $plugin_info ) {
+			if ( in_array( $basename, $contact_form_basenames, true ) ) {
+				$contact_form_plugin_already_installed = true;
+				break;
+			}
+		}
+
+		// Final check if maybe WPForms is already install and active as a MU plugin.
+		if ( class_exists( '\WPForms\WPForms' ) ) {
+			$contact_form_plugin_already_installed = true;
+		}
+
+		$data = [
+			'plugins'                               => $plugins,
+			'contact_form_plugin_already_installed' => $contact_form_plugin_already_installed,
+		];
+
+		wp_send_json_success( $data );
+	}
+
+	/**
+	 * Get the partner plugins data.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @return array[]
+	 */
+	private function get_partner_plugins() {
+
+		$installed_plugins = get_plugins();
+
+		return [
 			[
 				'slug'         => 'wpforms-lite',
 				'name'         => esc_html__( 'Contact Forms by WPForms', 'wp-mail-smtp' ),
@@ -995,31 +1060,6 @@ class SetupWizard {
 				'is_installed' => array_key_exists( 'wp-call-button/wp-call-button.php', $installed_plugins ),
 			],
 		];
-
-		$contact_form_plugin_already_installed = false;
-
-		$contact_form_basenames = [
-			'wpforms-lite/wpforms.php',
-			'wpforms/wpforms.php',
-			'formidable/formidable.php',
-			'formidable/formidable-pro.php',
-			'gravityforms/gravityforms.php',
-			'ninja-forms/ninja-forms.php',
-		];
-
-		foreach ( $installed_plugins as $basename => $plugin_info ) {
-			if ( in_array( $basename, $contact_form_basenames, true ) ) {
-				$contact_form_plugin_already_installed = true;
-				break;
-			}
-		}
-
-		$data = [
-			'plugins'                               => $plugins,
-			'contact_form_plugin_already_installed' => $contact_form_plugin_already_installed,
-		];
-
-		wp_send_json_success( $data );
 	}
 
 	/**
@@ -1041,7 +1081,7 @@ class SetupWizard {
 			'https://connect.wpmailsmtp.com/subscribe/drip/',
 			[
 				'body' => [
-					'email' => base64_encode( $email ), // phpcs:ignore
+					'email' => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				],
 			]
 		);
@@ -1097,7 +1137,7 @@ class SetupWizard {
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
-		$options = new Options();
+		$options = Options::init();
 		$mailer  = $options->get( 'mail', 'mailer' );
 		$email   = $options->get( 'mail', 'from_email' );
 		$domain  = '';
@@ -1150,7 +1190,9 @@ class SetupWizard {
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
-		$data       = ! empty( $_POST['data'] ) ? json_decode( wp_unslash( $_POST['data'] ), true ) : []; // phpcs:ignore
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data = ! empty( $_POST['data'] ) ? json_decode( wp_unslash( $_POST['data'] ), true ) : [];
+
 		$feedback   = ! empty( $data['feedback'] ) ? sanitize_textarea_field( $data['feedback'] ) : '';
 		$permission = ! empty( $data['permission'] );
 
@@ -1205,8 +1247,8 @@ class SetupWizard {
 	public function maybe_disable_automatic_query_args_removal( $defaults ) {
 
 		if (
-			( isset( $_GET['page'] ) && $_GET['page'] === 'wp-mail-smtp-setup-wizard' ) &&
-			( ! empty( $_GET['error'] ) )
+			( isset( $_GET['page'] ) && $_GET['page'] === 'wp-mail-smtp-setup-wizard' ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			( ! empty( $_GET['error'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		) {
 			$defaults = array_values( array_diff( $defaults, [ 'error' ] ) );
 		}
@@ -1286,7 +1328,7 @@ class SetupWizard {
 	 */
 	private function prepare_defined_constants() {
 
-		$options = new Options();
+		$options = Options::init();
 
 		if ( ! $options->is_const_enabled() ) {
 			return [];

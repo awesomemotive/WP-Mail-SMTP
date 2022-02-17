@@ -76,7 +76,7 @@ class Notifications {
 
 		if (
 			current_user_can( 'manage_options' ) &&
-			! ( new Options() )->get( 'general', 'am_notifications_hidden' )
+			! Options::init()->get( 'general', 'am_notifications_hidden' )
 		) {
 			$access = true;
 		}

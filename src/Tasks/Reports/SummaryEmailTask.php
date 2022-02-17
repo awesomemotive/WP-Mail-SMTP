@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Tasks\Reports;
 
+use WPMailSMTP\Tasks\Tasks;
 use WPMailSMTP\WP;
 use WPMailSMTP\Tasks\Task;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
@@ -40,15 +41,10 @@ class SummaryEmailTask extends Task {
 		// Register the action handler.
 		add_action( self::ACTION, array( $this, 'process' ) );
 
-		// Exit if AS function does not exist.
-		if ( ! function_exists( 'as_next_scheduled_action' ) ) {
-			return;
-		}
-
 		$is_disabled = SummaryReportEmail::is_disabled();
 
 		// Exit if summary report email is disabled or this task is already scheduled.
-		if ( ! empty( $is_disabled ) || as_next_scheduled_action( self::ACTION ) !== false ) {
+		if ( ! empty( $is_disabled ) || Tasks::is_scheduled( self::ACTION ) !== false ) {
 			return;
 		}
 

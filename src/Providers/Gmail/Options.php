@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Providers\OptionsAbstract;
+use WPMailSMTP\Options as PluginOptions;
 
 /**
  * Class Option.
@@ -243,12 +244,12 @@ class Options extends OptionsAbstract {
 
 		if (
 			! isset( $_GET['gmail_remove_nonce'] ) ||
-			! wp_verify_nonce( $_GET['gmail_remove_nonce'], 'gmail_remove' ) // phpcs:ignore
+			! wp_verify_nonce( sanitize_key( $_GET['gmail_remove_nonce'] ), 'gmail_remove' )
 		) {
 			return;
 		}
 
-		$options = new \WPMailSMTP\Options();
+		$options = PluginOptions::init();
 
 		if ( $options->get( 'mail', 'mailer' ) !== $this->get_slug() ) {
 			return;

@@ -134,7 +134,6 @@
 						float: right;
 
 						button {
-							background: none;
 							cursor: pointer;
 							width: 140px;
 							text-align: center;
@@ -273,7 +272,7 @@
 		}
 
 		.wp-mail-smtp-admin-column-40 {
-			padding-left: $padding-default/2;
+			padding-left: calc($padding-default / 2);
 
 			@include media("<tablet") {
 				width: 100%;
@@ -282,7 +281,7 @@
 			}
 		}
 		.wp-mail-smtp-admin-column-60 {
-			padding-right: $padding-default/2;
+			padding-right: calc($padding-default / 2);
 
 			@include media("<tablet") {
 				width: 100%;
@@ -407,7 +406,7 @@
 		}
 
 		.wp-mail-smtp-admin-about-section-post-link {
-			padding: 10px $padding-default/2;
+			padding: 10px calc( $padding-default / 2);
 			background-color: #DF7739;
 			color: #fff;
 			border-radius: 3px;

@@ -49,7 +49,7 @@ class DomainChecker {
 
 		$params = [
 			'mailer' => $mailer,
-			'email'  => base64_encode( $email ), // phpcs:ignore
+			'email'  => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			'domain' => $sending_domain,
 		];
 

@@ -325,7 +325,7 @@ class TestTab extends PageAbstract {
 		 * Notify a user about the results.
 		 */
 		if ( $result ) {
-			$options = new Options();
+			$options = Options::init();
 			$mailer  = $options->get( 'mail', 'mailer' );
 			$email   = $options->get( 'mail', 'from_email' );
 			$domain  = '';
@@ -551,7 +551,7 @@ Co-Founder, WP Mail SMTP';
 	 */
 	protected function get_debug_messages( $phpmailer, $smtp_debug ) {
 
-		$options   = new Options();
+		$options   = Options::init();
 		$conflicts = new Conflicts();
 
 		$this->debug['mailer'] = $options->get( 'mail', 'mailer' );
@@ -644,7 +644,7 @@ Co-Founder, WP Mail SMTP';
 	 */
 	protected function get_debug_details() {
 
-		$options         = new Options();
+		$options         = Options::init();
 		$smtp_host       = $options->get( 'smtp', 'host' );
 		$smtp_port       = $options->get( 'smtp', 'port' );
 		$smtp_encryption = $options->get( 'smtp', 'encryption' );
@@ -748,6 +748,19 @@ Co-Founder, WP Mail SMTP';
 					esc_html__( 'Triple check your SMTP settings including host address, email, and password. If you have recently reset your password you will need to update the settings.', 'wp-mail-smtp' ),
 					esc_html__( 'Contact your SMTP host to confirm you are using the correct username and password.', 'wp-mail-smtp' ),
 					esc_html__( 'Verify with your SMTP host that your account has permissions to send emails using outside connections.', 'wp-mail-smtp' ),
+					sprintf(
+						wp_kses( /* translators: %s - URL to the wpmailsmtp.com doc page. */
+							__( 'Visit <a href="%s" target="_blank" rel="noopener noreferrer">our documentation</a> for additional tips on how to resolve this error.', 'wp-mail-smtp' ),
+							[
+								'a' => [
+									'href'   => [],
+									'target' => [],
+									'rel'    => [],
+								],
+							]
+						),
+						'https://wpmailsmtp.com/docs/how-to-set-up-the-other-smtp-mailer-in-wp-mail-smtp/#auth-type'
+					),
 				],
 			],
 			// [smtp] - Sending bulk email, hitting rate limit.

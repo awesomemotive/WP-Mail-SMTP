@@ -76,7 +76,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 */
 	protected function update_auth_code( $code ) {
 
-		$options = new PluginOptions();
+		$options = PluginOptions::init();
 		$all     = $options->get_all();
 
 		// To save in DB.
@@ -98,7 +98,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 */
 	public function update_is_setup_wizard_auth( $state ) {
 
-		$options = new PluginOptions();
+		$options = PluginOptions::init();
 		$all     = $options->get_all();
 
 		// To save in DB.
@@ -120,7 +120,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 */
 	protected function update_access_token( $token ) {
 
-		$options = new PluginOptions();
+		$options = PluginOptions::init();
 		$all     = $options->get_all();
 
 		// To save in DB.
@@ -142,7 +142,7 @@ abstract class AuthAbstract implements AuthInterface {
 	 */
 	protected function update_refresh_token( $token ) {
 
-		$options = new PluginOptions();
+		$options = PluginOptions::init();
 		$all     = $options->get_all();
 
 		// To save in DB.

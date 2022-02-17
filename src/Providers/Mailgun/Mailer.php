@@ -4,6 +4,7 @@ namespace WPMailSMTP\Providers\Mailgun;
 
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
+use WPMailSMTP\Options as PluginOptions;
 
 /**
  * Class Mailer.
@@ -443,7 +444,7 @@ class Mailer extends MailerAbstract {
 
 		$mg_text = array();
 
-		$options = new \WPMailSMTP\Options();
+		$options = PluginOptions::init();
 		$mailgun = $options->get_group( 'mailgun' );
 
 		$mg_text[] = '<strong>Api Key / Domain:</strong> ' . ( ! empty( $mailgun['api_key'] ) && ! empty( $mailgun['domain'] ) ? 'Yes' : 'No' );

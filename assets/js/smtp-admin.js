@@ -107,7 +107,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					type: 'POST',
 					data: {
 						action: 'wp_mail_smtp_ajax',
-						task: 'pro_banner_dismiss'
+						task: 'pro_banner_dismiss',
+						nonce: wp_mail_smtp.nonce
 					}
 				} )
 					.always( function() {
@@ -132,6 +133,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					type: 'POST',
 					data: {
 						action: 'wp_mail_smtp_ajax',
+						nonce: wp_mail_smtp.nonce,
 						task: 'notice_dismiss',
 						notice: $notice.data( 'notice' ),
 						mailer: $notice.data( 'mailer' )

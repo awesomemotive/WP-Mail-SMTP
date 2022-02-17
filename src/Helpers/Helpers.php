@@ -26,6 +26,8 @@ class Helpers {
 				'smtpcom',
 				'sendinblue',
 				'mailgun',
+				'postmark',
+				'sparkpost'
 			],
 			true
 		);
@@ -40,5 +42,40 @@ class Helpers {
 
 		require_once wp_mail_smtp()->plugin_path . '/vendor_prefixed/symfony/polyfill-mbstring/Mbstring.php';
 		require_once wp_mail_smtp()->plugin_path . '/vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php';
+	}
+
+	/**
+	 * Test if the REST API is accessible.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @return true|\WP_Error
+	 */
+	public static function test_rest_availability() {
+
+		$headers = [
+			'Cache-Control' => 'no-cache',
+		];
+
+		/** This filter is documented in wp-includes/class-wp-http-streams.php */
+		$sslverify = apply_filters( 'https_local_ssl_verify', false );
+
+		$url = rest_url( 'wp-mail-smtp/v1' );
+
+		$response = wp_remote_get(
+			$url,
+			[
+				'headers'   => $headers,
+				'sslverify' => $sslverify,
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		} elseif ( wp_remote_retrieve_response_code( $response ) !== 200 ) {
+			return new \WP_Error( wp_remote_retrieve_response_code( $response ), wp_remote_retrieve_body( $response ) );
+		}
+
+		return true;
 	}
 }

@@ -119,7 +119,7 @@ class Meta {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table_name} WHERE {$this->primary_key} = %s LIMIT 1;", // phpcs:ignore
+				"SELECT * FROM {$this->table_name} WHERE {$this->primary_key} = %s LIMIT 1;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$row_id
 			)
 		);
@@ -146,7 +146,7 @@ class Meta {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $this->table_name WHERE $column = '%s' LIMIT 1;", // phpcs:ignore
+				"SELECT * FROM $this->table_name WHERE $column = '%s' LIMIT 1;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.QuotedSimplePlaceholder
 				$row_id
 			)
 		);
@@ -173,7 +173,7 @@ class Meta {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT $column FROM $this->table_name WHERE $this->primary_key = '%s' LIMIT 1;", // phpcs:ignore
+				"SELECT $column FROM $this->table_name WHERE $this->primary_key = '%s' LIMIT 1;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.QuotedSimplePlaceholder
 				$row_id
 			)
 		);
@@ -201,7 +201,7 @@ class Meta {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", // phpcs:ignore
+				"SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$column_value
 			)
 		);
@@ -322,8 +322,8 @@ class Meta {
 		do_action( 'wp_mail_smtp_pre_delete', $row_id );
 		do_action( 'wp_mail_smtp_pre_delete_' . $this->type, $row_id );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-		if ( false === $wpdb->query( $wpdb->prepare( "DELETE FROM {$this->table_name} WHERE {$this->primary_key} = %d", $row_id ) ) ) { // phpcs:ignore
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		if ( false === $wpdb->query( $wpdb->prepare( "DELETE FROM {$this->table_name} WHERE {$this->primary_key} = %d", $row_id ) ) ) {
 			return false;
 		}
 
@@ -354,8 +354,8 @@ class Meta {
 		do_action( 'wp_mail_smtp_pre_delete', $column_value );
 		do_action( 'wp_mail_smtp_pre_delete_' . $this->type, $column_value );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-		if ( false === $wpdb->query( $wpdb->prepare( "DELETE FROM {$this->table_name} WHERE $column = %s", $column_value ) ) ) { // phpcs:ignore
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		if ( false === $wpdb->query( $wpdb->prepare( "DELETE FROM {$this->table_name} WHERE $column = %s", $column_value ) ) ) {
 			return false;
 		}
 
@@ -386,6 +386,10 @@ class Meta {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		$db_result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+
+		if ( is_null( $db_result ) ) {
+			return false;
+		}
 
 		return strtolower( $db_result ) === strtolower( $table );
 	}

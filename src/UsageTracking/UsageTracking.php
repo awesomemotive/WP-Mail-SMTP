@@ -42,7 +42,7 @@ class UsageTracking {
 
 		return (bool) apply_filters(
 			'wp_mail_smtp_usage_tracking_is_enabled',
-			( new Options() )->get( 'general', self::SETTINGS_SLUG )
+			Options::init()->get( 'general', self::SETTINGS_SLUG )
 		);
 	}
 

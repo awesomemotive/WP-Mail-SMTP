@@ -33,7 +33,7 @@ class Auth extends AuthAbstract {
 	 */
 	public function __construct() {
 
-		$options           = new PluginOptions();
+		$options           = PluginOptions::init();
 		$this->mailer_slug = $options->get( 'mail', 'mailer' );
 
 		if ( $this->mailer_slug !== Options::SLUG ) {
@@ -81,7 +81,7 @@ class Auth extends AuthAbstract {
 	 *
 	 * @return Google_Client
 	 */
-	public function get_client( $force = false ) { // phpcs:ignore
+	public function get_client( $force = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		// Doesn't load client twice + gives ability to overwrite.
 		if ( ! empty( $this->client ) && ! $force ) {
@@ -182,7 +182,7 @@ class Auth extends AuthAbstract {
 	 *
 	 * @since 1.0.0
 	 */
-	public function process() {
+	public function process() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$redirect_url         = wp_mail_smtp()->get_admin()->get_admin_page_url();
 		$is_setup_wizard_auth = ! empty( $this->options['is_setup_wizard_auth'] );
@@ -193,7 +193,7 @@ class Auth extends AuthAbstract {
 			$redirect_url = \WPMailSMTP\Admin\SetupWizard::get_site_url() . '#/step/configure_mailer/gmail';
 		}
 
-		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) { // phpcs:ignore
+		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			wp_safe_redirect( $redirect_url );
 			exit;
 		}
@@ -219,8 +219,8 @@ class Auth extends AuthAbstract {
 		$scope = '';
 		$error = '';
 
-		if ( isset( $_GET['error'] ) ) { // phpcs:ignore
-			$error = sanitize_key( $_GET['error'] ); // phpcs:ignore
+		if ( isset( $_GET['error'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$error = sanitize_key( $_GET['error'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		// In case of any error: display a message to a user.
@@ -242,11 +242,15 @@ class Auth extends AuthAbstract {
 			exit;
 		}
 
-		if ( isset( $_GET['code'] ) ) { // phpcs:ignore
-			$code = urldecode( $_GET['code'] ); // phpcs:ignore
+		if ( isset( $_GET['code'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$code = urldecode( $_GET['code'] );
 		}
-		if ( isset( $_GET['scope'] ) ) { // phpcs:ignore
-			$scope = urldecode( base64_decode( $_GET['scope'] ) ); // phpcs:ignore
+		if ( isset( $_GET['scope'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$scope = urldecode( base64_decode( $_GET['scope'] ) );
 		}
 
 		// Let's try to get the access token.
@@ -361,7 +365,9 @@ class Auth extends AuthAbstract {
 		$gmail = new Gmail( $this->get_client() );
 
 		try {
-			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' ); // phpcs:ignore
+
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' );
 
 			// phpcs:disable
 			$this->aliases = array_map(

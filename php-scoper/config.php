@@ -99,7 +99,9 @@ $config = [
 					'test',
 				]
 			)
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+			->name( [ '*.php', 'LICENSE', 'composer.json' ] )
+			// These are not needed and are using parent calls without having a parent class (PHP 7.4 issue).
+			->notName( [ 'GetStatsByDomain.php', 'GetStatsByBrowser.php', 'GetChildDomains.php', 'AbTestVersionClicks.php' ] ),
 		Finder::create()
 			->files()
 			->in( 'vendor/symfony/polyfill-mbstring' )
@@ -573,6 +575,7 @@ if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
 		->in( 'vendor/aws/aws-sdk-php/src/ClientSideMonitoring' )
 		->in( 'vendor/aws/aws-sdk-php/src/Credentials' )
 		->in( 'vendor/aws/aws-sdk-php/src/Crypto' )
+		->in( 'vendor/aws/aws-sdk-php/src/DefaultsMode' )
 		->in( 'vendor/aws/aws-sdk-php/src/data/email' )
 		->in( 'vendor/aws/aws-sdk-php/src/data/sesv2' )
 		->in( 'vendor/aws/aws-sdk-php/src/Endpoint' )
@@ -616,17 +619,6 @@ if ( file_exists( 'vendor/mtdowling/jmespath.php' ) ) {
 		->files()
 		->in( 'vendor/mtdowling/jmespath.php' )
 		->name( [ '*.php', 'LICENSE', 'composer.json' ] );
-}
-
-if ( file_exists( 'vendor/goodby/csv/src/Goodby/CSV/Export/Standard/CsvFileObject.php' ) ) {
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/goodby/csv/' )
-		->name( [ 'LICENSE', 'composer.json' ] );
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/goodby/csv/src/Goodby/CSV/Export/Standard/' )
-		->name( [ 'CsvFileObject.php' ] );
 }
 
 if ( file_exists( 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php' ) ) {

@@ -1,9 +1,9 @@
 === WP Mail SMTP by WPForms ===
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
-Requires at least: 4.9
-Tested up to: 5.8
-Stable tag: 3.2.1
+Requires at least: 5.2
+Tested up to: 5.9
+Stable tag: 3.3.0
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
@@ -251,6 +251,11 @@ If you like our WP Mail SMTP plugin, then consider checking out our other projec
 * <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 2 million sites).
 * <a href="https://www.pushengage.com/" rel="friend" title="PushEngage">PushEngage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
 * <a href="https://trustpulse.com/" rel="friend" title="TrustPulse">TrustPulse</a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
+* <a href="https://searchwp.com/" rel="friend" title="SearchWP">SearchWP</a> - The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.
+* <a href="https://affiliatewp.com/" rel="friend" title="AffiliateWP">AffiliateWP</a> - The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.
+* <a href="https://wpsimplepay.com/" rel="friend" title="WP Simple Pay">WP Simple Pay</a> - The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.
+* <a href="https://easydigitaldownloads.com/" rel="friend" title="Easy Digital Downloads">Easy Digital Downloads</a> - The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.
+* <a href="https://sugarcalendar.com/" rel="friend" title="Sugar Calendar">Sugar Calendar</a> - A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.
 
 Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
 
@@ -305,6 +310,18 @@ By all means please contact us to discuss features or options you'd like to see 
 12. Email Log bulk Export (Pro)
 
 == Changelog ==
+
+= 3.3.0 - 2022-02-17 =
+- IMPORTANT: Support for WordPress versions 5.1.x or lower has been discontinued. If you are using one of those versions, you MUST upgrade WordPress before installing or upgrading to WP Mail SMTP v3.3. Failure to do that will disable WP Mail SMTP functionality.
+- Added: PHP 8.1 compatibility.
+- Changed: Updated the list of conflicting plugins (added FluentSMTP and WP HTML Mail).
+- Changed: Improved debug error message for the Other SMTP mailer in Debug Events.
+- Changed: Updated Action Scheduler library to 3.4.0.
+- Changed: Improved Action Scheduler performance.
+- Fixed: PHP deprecated notices in Sendinblue library (PHP 7.4+).
+- Fixed: DB tables row in Site Health Info section is now private.
+- Fixed: Debug Events' screen options visible on general Tools page.
+- Fixed: Screen Options right alignment.
 
 = 3.2.1 - 2021-11-17 =
 - Fixed: PHP 8 compatibility when existing Gmail mailer connection is revoked.

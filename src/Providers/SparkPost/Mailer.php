@@ -436,6 +436,7 @@ class Mailer extends MailerAbstract {
 			! empty( $this->response['body']->results->id )
 		) {
 			$this->phpmailer->addCustomHeader( 'X-Msg-ID', $this->response['body']->results->id );
+			$this->verify_sent_status = true;
 		}
 	}
 

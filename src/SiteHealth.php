@@ -142,9 +142,10 @@ class SiteHealth {
 					'value' => ! empty( $debug_notices ) ? implode( '; ', $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
 				],
 				'db_tables'        => [
-					'label' => esc_html__( 'DB tables', 'wp-mail-smtp' ),
-					'value' => ! empty( $db_tables ) ?
+					'label'   => esc_html__( 'DB tables', 'wp-mail-smtp' ),
+					'value'   => ! empty( $db_tables ) ?
 						implode( ', ', $db_tables ) : esc_html__( 'No DB tables found.', 'wp-mail-smtp' ),
+					'private' => true,
 				],
 			],
 		];
@@ -297,7 +298,7 @@ class SiteHealth {
 			wp_send_json_error();
 		}
 
-		$options = new Options();
+		$options = Options::init();
 		$mailer  = $options->get( 'mail', 'mailer' );
 		$email   = $options->get( 'mail', 'from_email' );
 		$domain  = '';
@@ -374,9 +375,11 @@ class SiteHealth {
 		$existing_tables = [];
 
 		foreach ( $tables as $table ) {
-			$db_result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ); // phpcs:ignore
 
-			if ( strtolower( $db_result ) !== strtolower( $table ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+			$db_result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+
+			if ( is_null( $db_result ) || strtolower( $db_result ) !== strtolower( $table ) ) {
 				$missing_tables[] = $table;
 			} else {
 				$existing_tables[] = $table;

@@ -29,7 +29,7 @@ class Summary {
 	 */
 	public static function is_disabled() {
 
-		$value = ( new Options() )->get( 'general', self::SETTINGS_SLUG );
+		$value = Options::init()->get( 'general', self::SETTINGS_SLUG );
 
 		// If option was not already set, then plugin was updated from lower version.
 		if (

@@ -6,6 +6,7 @@ use WPMailSMTP\Vendor\SendinBlue\Client\Api\AccountApi;
 use WPMailSMTP\Vendor\SendinBlue\Client\Api\SendersApi;
 use WPMailSMTP\Vendor\SendinBlue\Client\Api\TransactionalEmailsApi;
 use WPMailSMTP\Vendor\SendinBlue\Client\Configuration;
+use WPMailSMTP\Options as PluginOptions;
 
 /**
  * Class Api is a wrapper for Sendinblue library with handy methods.
@@ -30,7 +31,7 @@ class Api {
 	 */
 	public function __construct() {
 
-		$this->options = \WPMailSMTP\Options::init()->get_group( Options::SLUG );
+		$this->options = PluginOptions::init()->get_group( Options::SLUG );
 	}
 
 	/**

@@ -102,7 +102,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function __construct( MailCatcherInterface $phpmailer ) {
 
-		$this->options = new Options();
+		$this->options = Options::init();
 		$this->mailer  = $this->options->get( 'mail', 'mailer' );
 
 		// Only non-SMTP mailers need URL and extra processing for PHPMailer class.

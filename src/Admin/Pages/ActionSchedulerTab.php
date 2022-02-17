@@ -72,7 +72,7 @@ class ActionSchedulerTab extends PageAbstract {
 	 */
 	public function hooks() {
 
-		add_action( 'admin_init', [ $this, 'init' ], 20 );
+		add_action( 'current_screen', [ $this, 'init' ], 20 );
 	}
 
 	/**

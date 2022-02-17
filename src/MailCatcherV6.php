@@ -26,6 +26,15 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	public $action_function = '\WPMailSMTP\Processor::send_callback';
 
 	/**
+	 * Debug output buffer.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @var array
+	 */
+	private $debug_output_buffer = [];
+
+	/**
 	 * Modify the default send() behaviour.
 	 * For those mailers, that relies on PHPMailer class - call it directly.
 	 * For others - init the correct provider and process it.
@@ -38,10 +47,11 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	 */
 	public function send() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
-		$options     = new Options();
+		$options     = Options::init();
 		$mail_mailer = sanitize_key( $options->get( 'mail', 'mailer' ) );
 
 		$is_emailing_blocked = false;
+		$is_test_email       = false;
 
 		if ( wp_mail_smtp()->is_blocked() ) {
 			$is_emailing_blocked = true;
@@ -56,6 +66,7 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 				trim( $header[1] ) === 'WPMailSMTP/Admin/Test'
 			) {
 				$is_emailing_blocked = false;
+				$is_test_email       = true;
 			}
 		};
 
@@ -74,6 +85,10 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 			$mail_mailer === 'pepipost'
 		) {
 			try {
+				if ( DebugEvents::is_debug_enabled() && ! $is_test_email ) {
+					$this->SMTPDebug   = 3; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$this->Debugoutput = [ $this, 'debug_output_callback' ]; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				}
 
 				/**
 				 * Fires before email pre send via SMTP.
@@ -105,20 +120,31 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 				$post_send = $this->postSend();
 
 				DebugEvents::add_debug(
-					esc_html__( 'An email request was sent.' )
+					esc_html__( 'An email request was sent.', 'wp-mail-smtp' )
 				);
 
 				return $post_send;
 			} catch ( \PHPMailer\PHPMailer\Exception $e ) {
-				$this->mailHeader = ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$this->mailHeader = '';
+
 				$this->setError( $e->getMessage() );
 
 				// Set the debug error, but not for default PHP mailer.
 				if ( $mail_mailer !== 'mail' ) {
-					Debug::set(
-						'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . PHP_EOL .
-						$e->getMessage()
-					);
+
+					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$debug_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
+
+					Debug::set( $debug_message );
+
+					if ( DebugEvents::is_debug_enabled() && ! empty( $this->debug_output_buffer ) ) {
+						$debug_message .= "\r\n" . esc_html__( 'Debug Output:', 'wp-mail-smtp' ) . "\r\n";
+						$debug_message .= implode( "\r\n", $this->debug_output_buffer );
+
+						DebugEvents::add_debug( $debug_message );
+					}
 				}
 
 				if ( $this->exceptions ) {
@@ -126,6 +152,10 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 				}
 
 				return false;
+			} finally {
+
+				// Clear debug output buffer.
+				$this->debug_output_buffer = [];
 			}
 		}
 
@@ -157,6 +187,17 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 		if ( ! $mailer->is_php_compatible() ) {
 			return false;
 		}
+
+		/**
+		 * Fires before email send.
+		 *
+		 * Allows to hook after all the preparation before the actual sending.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param MailerAbstract $mailer The Mailer object.
+		 */
+		do_action( 'wp_mail_smtp_mailcatcher_send_before', $mailer );
 
 		/*
 		 * Send the actual email.
@@ -212,7 +253,7 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	 */
 	public function get_line_ending() {
 
-		return static::$LE; // phpcs:ignore
+		return static::$LE; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 	}
 
 	/**
@@ -225,5 +266,27 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	public function generate_id() {
 
 		return $this->generateId();
+	}
+
+	/**
+	 * Debug output callback.
+	 * Save debugging info to buffer array.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param string $str   Message.
+	 * @param int    $level Debug level.
+	 */
+	public function debug_output_callback( $str, $level ) {
+
+		/*
+		 * Filter out all higher levels than 3.
+		 * SMTPDebug level 3 is commands, data and connection status.
+		 */
+		if ( $level > 3 ) {
+			return;
+		}
+
+		$this->debug_output_buffer[] = trim( $str, "\r\n" );
 	}
 }

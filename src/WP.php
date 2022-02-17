@@ -254,7 +254,9 @@ class WP {
 	public static function get_default_email() {
 
 		if ( version_compare( get_bloginfo( 'version' ), '5.5-alpha', '<' ) ) {
-			$sitename = strtolower( $_SERVER['SERVER_NAME'] ); // phpcs:ignore
+			$sitename = ! empty( $_SERVER['SERVER_NAME'] ) ?
+				strtolower( sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ) ) :
+				wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
 		} else {
 			$sitename = wp_parse_url( network_home_url(), PHP_URL_HOST );
 		}
@@ -483,7 +485,8 @@ class WP {
 	 */
 	public static function is_doing_self_ajax() {
 
-		$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : false;
 
 		return self::is_doing_ajax() && $action && substr( $action, 0, 12 ) === 'wp_mail_smtp';
 	}

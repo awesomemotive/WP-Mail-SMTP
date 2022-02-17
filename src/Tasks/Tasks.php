@@ -19,6 +19,15 @@ class Tasks {
 	const GROUP = 'wp_mail_smtp';
 
 	/**
+	 * WP Mail SMTP pending or in-progress actions.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @var array
+	 */
+	private static $active_actions = null;
+
+	/**
 	 * Perform certain things on class init.
 	 *
 	 * @since 2.1.0
@@ -156,14 +165,46 @@ class Tasks {
 	 *
 	 * @param string $hook Hook to check for.
 	 *
-	 * @return bool
+	 * @return bool|null
 	 */
 	public static function is_scheduled( $hook ) {
 
-		if ( ! function_exists( 'as_next_scheduled_action' ) ) {
-			return false;
+		if ( ! function_exists( 'as_has_scheduled_action' ) ) {
+			return null;
 		}
 
-		return as_next_scheduled_action( $hook );
+		if ( is_null( self::$active_actions ) ) {
+			self::$active_actions = self::get_active_actions();
+		}
+
+		if ( in_array( $hook, self::$active_actions, true ) ) {
+			return true;
+		}
+
+		// Action is not in the array, so it is not scheduled or belongs to another group.
+		return as_has_scheduled_action( $hook );
+	}
+
+	/**
+	 * Get all WP Mail SMTP pending or in-progress actions.
+	 *
+	 * @since 3.3.0
+	 */
+	private static function get_active_actions() {
+
+		global $wpdb;
+
+		$group = self::GROUP;
+		$sql   = "SELECT a.hook FROM {$wpdb->prefix}actionscheduler_actions a
+					JOIN {$wpdb->prefix}actionscheduler_groups g ON g.group_id = a.group_id
+					WHERE g.slug = '$group' AND a.status IN ('in-progress', 'pending')";
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+		$results = $wpdb->get_results( $sql, 'ARRAY_N' );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+
+		return $results ? array_merge( ...$results ) : [];
 	}
 }

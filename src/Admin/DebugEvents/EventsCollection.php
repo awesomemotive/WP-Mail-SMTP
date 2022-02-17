@@ -297,7 +297,7 @@ class EventsCollection implements \Countable, \Iterator {
 			"SELECT COUNT(id) FROM $table
 			WHERE {$where}"
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:enable
 	}
 
 	/**
@@ -324,7 +324,7 @@ class EventsCollection implements \Countable, \Iterator {
 			{$order}
 			{$limit}"
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:enable
 
 		if ( ! empty( $data ) ) {
 			// As we got raw data we need to convert each row to Event.
@@ -347,6 +347,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count() {
 
 		return count( $this->list );
@@ -361,6 +362,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @since 3.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 
 		$this->iterator_position = 0;
@@ -373,6 +375,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @return Event|null Return null when no items in collection.
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 
 		return $this->valid() ? $this->list[ $this->iterator_position ] : null;
@@ -385,6 +388,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 
 		return $this->iterator_position;
@@ -395,6 +399,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @since 3.0.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 
 		++ $this->iterator_position;
@@ -407,6 +412,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 
 		return isset( $this->list[ $this->iterator_position ] );

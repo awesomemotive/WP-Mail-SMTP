@@ -483,41 +483,37 @@ class Core {
 				<p>
 					<?php
 					$notices[] = sprintf(
-						wp_kses( /* translators: %s - plugin name and its version. */
-							__( '<strong>EMAILING DISABLED:</strong> The %s is currently blocking all emails from being sent.', 'wp-mail-smtp' ),
-							array(
-								'strong' => true,
-							)
-						),
+						/* translators: %s - plugin name and its version. */
+						__( '<strong>EMAILING DISABLED:</strong> The %s is currently blocking all emails from being sent.', 'wp-mail-smtp' ),
 						esc_html( 'WP Mail SMTP v' . WPMS_PLUGIN_VER )
 					);
 
 					if ( Options::init()->is_const_defined( 'general', 'do_not_send' ) ) {
 						$notices[] = sprintf(
-							wp_kses( /* translators: %1$s - constant name; %2$s - constant value. */
-								__( 'To send emails, change the value of the %1$s constant to %2$s.', 'wp-mail-smtp' ),
-								array(
-									'code' => true,
-								)
-							),
+							/* translators: %1$s - constant name; %2$s - constant value. */
+							__( 'To send emails, change the value of the %1$s constant to %2$s.', 'wp-mail-smtp' ),
 							'<code>WPMS_DO_NOT_SEND</code>',
 							'<code>false</code>'
 						);
 					} else {
 						$notices[] = sprintf(
-							wp_kses( /* translators: %s - plugin Misc settings page URL. */
-								__( 'To send emails, go to plugin <a href="%s">Misc settings</a> and disable the "Do Not Send" option.', 'wp-mail-smtp' ),
-								array(
-									'a' => array(
-										'href' => true,
-									),
-								)
-							),
+							/* translators: %s - plugin Misc settings page URL. */
+							__( 'To send emails, go to plugin <a href="%s">Misc settings</a> and disable the "Do Not Send" option.', 'wp-mail-smtp' ),
 							esc_url( add_query_arg( 'tab', 'misc', wp_mail_smtp()->get_admin()->get_admin_page_url() ) )
 						);
 					}
 
-					echo implode( ' ', $notices );
+					if (
+						wp_mail_smtp()->get_admin()->is_admin_page( 'tools' ) &&
+						(
+							! isset( $_GET['tab'] ) ||
+							( isset( $_GET['tab'] ) && $_GET['tab'] === 'test' )
+						)
+					) {
+						$notices[] = esc_html__( 'If you create a test email on this page, it will still be sent.', 'wp-mail-smtp' );
+					}
+
+					echo wp_kses_post( implode( ' ', $notices ) );
 					?>
 				</p>
 			</div>
@@ -558,7 +554,7 @@ class Core {
 					</p>
 
 					<blockquote>
-						<pre><?php echo $notice; ?></pre>
+						<pre><?php echo wp_kses_post( $notice ); ?></pre>
 					</blockquote>
 
 					<p>

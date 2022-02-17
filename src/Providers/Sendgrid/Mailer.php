@@ -339,7 +339,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @return string
 	 */
-	public function get_response_error() { // phpcs:ignore
+	public function get_response_error() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded, Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		$body = (array) wp_remote_retrieve_body( $this->response );
 

@@ -105,6 +105,29 @@ class Options {
 	];
 
 	/**
+	 * List of all mailers (except PHP default mailer 'mail').
+	 *
+	 * @since 3.3.0
+	 *
+	 * @var string[]
+	 */
+	public static $mailers = [
+		'smtpcom',
+		'sendinblue',
+		'amazonses',
+		'gmail',
+		'mailgun',
+		'outlook',
+		'postmark',
+		'sendgrid',
+		'sparkpost',
+		'zoho',
+		'smtp',
+		'pepipost',
+		'pepipostapi',
+	];
+
+	/**
 	 * That's where plugin options are saved in wp_options table.
 	 *
 	 * @since 1.0.0
@@ -120,28 +143,22 @@ class Options {
 	 *
 	 * @var array
 	 */
-	private $_options = array();
+	private $_options = [];
 
 	/**
 	 * Init the Options class.
 	 * TODO: add a flag to process without retrieving const values.
 	 *
 	 * @since 1.0.0
+	 * @since 3.3.0 Deprecated instantiation via new keyword. `Options::init()` must be used.
 	 */
 	public function __construct() {
+
 		$this->populate_options();
 	}
 
 	/**
-	 * Initialize all the options, used for chaining.
-	 *
-	 * One-liner:
-	 *      Options::init()->get('smtp', 'host');
-	 *      Options::init()->is_mailer_active( 'pepipost' );
-	 *
-	 * Or multiple-usage:
-	 *      $options = new Options();
-	 *      $options->get('smtp', 'host');
+	 * Initialize all the options.
 	 *
 	 * @since 1.0.0
 	 *
@@ -981,7 +998,7 @@ class Options {
 	 *
 	 * @return array
 	 */
-	private function process_generic_options( $options ) { // phpcs:ignore
+	private function process_generic_options( $options ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.NestingLevel.MaxExceeded
 
 		foreach ( (array) $options as $group => $keys ) {
 			foreach ( $keys as $option_name => $option_value ) {
@@ -989,8 +1006,14 @@ class Options {
 					case 'mail':
 						switch ( $option_name ) {
 							case 'from_name':
-							case 'mailer':
 								$options[ $group ][ $option_name ] = sanitize_text_field( $option_value );
+								break;
+							case 'mailer':
+								$mailer = sanitize_text_field( $option_value );
+
+								$mailer = in_array( $mailer, self::$mailers, true ) ? $mailer : 'mail';
+
+								$options[ $group ][ $option_name ] = $mailer;
 								break;
 							case 'from_email':
 								if ( filter_var( $option_value, FILTER_VALIDATE_EMAIL ) ) {
@@ -1044,12 +1067,12 @@ class Options {
 	 *
 	 * @return array
 	 */
-	private function process_mailer_specific_options( $options ) { // phpcs:ignore
+	private function process_mailer_specific_options( $options ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.NestingLevel.MaxExceeded
 
 		if (
 			! empty( $options['mail']['mailer'] ) &&
 			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], [ 'pepipost', 'pepipostapi', 'smtp', 'sendgrid', 'sparkpost', 'postmark', 'smtpcom', 'sendinblue', 'mailgun', 'gmail', 'outlook', 'zoho' ], true )
+			in_array( $options['mail']['mailer'], self::$mailers, true )
 		) {
 
 			$mailer = $options['mail']['mailer'];
@@ -1080,7 +1103,7 @@ class Options {
 						if ( $mailer === 'smtp' && ! $this->is_const_defined( 'smtp', 'pass' ) ) {
 							try {
 								$options[ $mailer ][ $option_name ] = Crypto::encrypt( $option_value );
-							} catch ( \Exception $e ) {} // phpcs:ignore
+							} catch ( \Exception $e ) {} // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch, Squiz.Commenting.EmptyCatchComment.Missing, Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
 						}
 						break;
 

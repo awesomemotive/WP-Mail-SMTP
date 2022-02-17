@@ -212,7 +212,11 @@ class Event {
 	public function get_created_at() {
 
 		$timezone = new \DateTimeZone( 'UTC' );
-		$date     = \DateTime::createFromFormat( WP::datetime_mysql_format(), $this->created_at, $timezone );
+		$date     = false;
+
+		if ( ! empty( $this->created_at ) ) {
+			$date = \DateTime::createFromFormat( WP::datetime_mysql_format(), $this->created_at, $timezone );
+		}
 
 		if ( $date === false ) {
 			$date = new \DateTime( 'now', $timezone );
@@ -343,7 +347,9 @@ class Event {
 			</div>
 			<div class="wp-mail-smtp-debug-event-row wp-mail-smtp-debug-event-preview-content">
 				<span class="debug-event-label"><?php esc_html_e( 'Content', 'wp-mail-smtp' ); ?></span>
-				<div class="debug-event-value"><?php echo esc_html( $this->get_content() ); ?></div>
+				<div class="debug-event-value">
+						<?php echo wp_kses( str_replace( [ "\r\n", "\r", "\n" ], '<br>', $this->get_content() ), [ 'br' => [] ] ); ?>
+				</div>
 			</div>
 			<?php if ( ! empty( $initiator ) ) : ?>
 			<div class="wp-mail-smtp-debug-event-row wp-mail-smtp-debug-event-preview-caller">

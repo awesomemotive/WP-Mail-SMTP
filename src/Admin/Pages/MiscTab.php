@@ -55,7 +55,7 @@ class MiscTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$options = new Options();
+		$options = Options::init();
 		?>
 
 		<form method="POST" action="">
@@ -305,7 +305,7 @@ class MiscTab extends PageAbstract {
 
 		$this->check_admin_referer();
 
-		$options = new Options();
+		$options = Options::init();
 
 		// Unchecked checkboxes doesn't exist in $_POST, so we need to ensure we actually have them in data to save.
 		if ( empty( $data['general']['do_not_send'] ) ) {

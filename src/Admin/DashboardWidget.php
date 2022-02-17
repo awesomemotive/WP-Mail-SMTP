@@ -212,7 +212,7 @@ class DashboardWidget {
 			wp_send_json_error();
 		}
 
-		$options = new Options();
+		$options = Options::init();
 
 		$data = [
 			'general' => [

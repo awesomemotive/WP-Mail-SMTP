@@ -42,9 +42,9 @@ class Processor {
 	 *
 	 * @param \PHPMailer $phpmailer It's passed by reference, so no need to return anything.
 	 */
-	public function phpmailer_init( $phpmailer ) {
+	public function phpmailer_init( $phpmailer ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
-		$options = new Options();
+		$options = Options::init();
 		$mailer  = $options->get( 'mail', 'mailer' );
 
 		// Check that mailer is not blank, and if mailer=smtp, host is not blank.
@@ -62,6 +62,8 @@ class Processor {
 		) {
 			return;
 		}
+
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		// Set the mailer type as per config above, this overrides the already called isMail method.
 		// It's basically always 'smtp'.
@@ -111,13 +113,14 @@ class Processor {
 			$phpmailer->Username   = $options->get( $mailer, 'user' );
 			$phpmailer->Password   = $options->get( $mailer, 'pass' );
 		}
+		// phpcs:enable
 
 		// Maybe set default reply-to header.
 		$this->set_default_reply_to( $phpmailer );
 
 		// You can add your own options here.
 		// See the phpmailer documentation for more info: https://github.com/PHPMailer/PHPMailer/tree/5.2-stable.
-		/** @noinspection PhpUnusedLocalVariableInspection It's passed by reference. */
+		/* @noinspection PhpUnusedLocalVariableInspection It's passed by reference. */
 		$phpmailer = apply_filters( 'wp_mail_smtp_custom_options', $phpmailer );
 	}
 
@@ -133,7 +136,7 @@ class Processor {
 	 */
 	protected function allow_setting_original_from_email_to_reply_to( $reply_to, $mailer ) {
 
-		$options    = new Options();
+		$options    = Options::init();
 		$forced     = $options->get( 'mail', 'from_email_force' );
 		$from_email = $options->get( 'mail', 'from_email' );
 
@@ -163,13 +166,13 @@ class Processor {
 	 * @since 1.3.0
 	 * @since 1.5.0 Added a do_action() to be able to hook into.
 	 *
-	 * @param bool $is_sent
-	 * @param array $to
-	 * @param array $cc
-	 * @param array $bcc
-	 * @param string $subject
-	 * @param string $body
-	 * @param string $from
+	 * @param bool   $is_sent If the email was sent.
+	 * @param array  $to      To email address.
+	 * @param array  $cc      CC email addresses.
+	 * @param array  $bcc     BCC email addresses.
+	 * @param string $subject The email subject.
+	 * @param string $body    The email body.
+	 * @param string $from    The from email address.
 	 */
 	public static function send_callback( $is_sent, $to, $cc, $bcc, $subject, $body, $from ) {
 
@@ -199,7 +202,7 @@ class Processor {
 	 */
 	public function filter_mail_from_email( $wp_email ) {
 
-		$options    = new Options();
+		$options    = Options::init();
 		$forced     = $options->get( 'mail', 'from_email_force' );
 		$from_email = $options->get( 'mail', 'from_email' );
 		$def_email  = WP::get_default_email();
@@ -228,13 +231,13 @@ class Processor {
 	 * @since 1.0.0
 	 * @since 1.3.0 Forcing name rewrite if option is selected.
 	 *
-	 * @param string $name
+	 * @param string $name The from name passed through the filter.
 	 *
 	 * @return string
 	 */
 	public function filter_mail_from_name( $name ) {
 
-		$options = new Options();
+		$options = Options::init();
 		$force   = $options->get( 'mail', 'from_name_force' );
 
 		// If the FROM NAME is not the default and not forced, return it unchanged.
@@ -296,7 +299,7 @@ class Processor {
 
 		// Make sure the PHPMailer class has been instantiated.
 		if ( ! is_object( $phpmailer ) || ! is_a( $phpmailer, 'PHPMailer' ) ) {
-			$phpmailer = wp_mail_smtp()->generate_mail_catcher( true ); // phpcs:ignore
+			$phpmailer = wp_mail_smtp()->generate_mail_catcher( true ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
 		return $phpmailer;

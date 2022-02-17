@@ -135,7 +135,7 @@ class AboutTab extends PageAbstract {
 		<div class="wp-mail-smtp-admin-about-plugins">
 			<div class="plugins-container">
 				<?php
-				foreach ( $this->get_am_plugins() as $key => $plugin ) :
+				foreach ( self::get_am_plugins() as $key => $plugin ) :
 					$is_url_external = false;
 
 					$data = $this->get_about_plugins_data( $plugin );
@@ -241,6 +241,13 @@ class AboutTab extends PageAbstract {
 				$data['action_class'] = $data['status_class'] . ' button button-primary';
 				$data['action_text']  = esc_html__( 'Install Plugin', 'wp-mail-smtp' );
 				$data['plugin_src']   = esc_url( $plugin['url'] );
+
+				// If plugin URL is not a zip file, open a new tab with site URL.
+				if ( preg_match( '/.*\.zip$/', $plugin['url'] ) === 0 ) {
+					$data['status_class'] = 'status-open';
+					$data['action_class'] = $data['status_class'] . ' button button-primary';
+					$data['action_text']  = esc_html__( 'Visit Site', 'wp-mail-smtp' );
+				}
 			}
 		}
 
@@ -254,7 +261,7 @@ class AboutTab extends PageAbstract {
 	 *
 	 * @return array
 	 */
-	private function get_am_plugins() {
+	private static function get_am_plugins() {
 
 		$data = [
 			'om'                            => [
@@ -349,7 +356,7 @@ class AboutTab extends PageAbstract {
 				'url'  => 'https://downloads.wordpress.org/plugin/instagram-feed.zip',
 				'pro'  => [
 					'path' => 'instagram-feed-pro/instagram-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-instagram-feeds.png',
 					'name' => esc_html__( 'Smash Balloon Instagram Feeds', 'wp-mail-smtp' ),
 					'desc' => esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
 					'url'  => 'https://smashballoon.com/instagram-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
@@ -363,7 +370,7 @@ class AboutTab extends PageAbstract {
 				'url'  => 'https://downloads.wordpress.org/plugin/custom-facebook-feed.zip',
 				'pro'  => [
 					'path' => 'custom-facebook-feed-pro/custom-facebook-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-facebook-feeds.png',
 					'name' => esc_html__( 'Smash Balloon Facebook Feeds', 'wp-mail-smtp' ),
 					'desc' => esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
 					'url'  => 'https://smashballoon.com/custom-facebook-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
@@ -377,7 +384,7 @@ class AboutTab extends PageAbstract {
 				'url'  => 'https://downloads.wordpress.org/plugin/feeds-for-youtube.zip',
 				'pro'  => [
 					'path' => 'youtube-feed-pro/youtube-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-youtube-feeds.png',
 					'name' => esc_html__( 'Smash Balloon YouTube Feeds', 'wp-mail-smtp' ),
 					'desc' => esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
 					'url'  => 'https://smashballoon.com/youtube-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
@@ -391,7 +398,7 @@ class AboutTab extends PageAbstract {
 				'url'  => 'https://downloads.wordpress.org/plugin/custom-twitter-feeds.zip',
 				'pro'  => [
 					'path' => 'custom-twitter-feeds-pro/custom-twitter-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-twitter-feeds.png',
 					'name' => esc_html__( 'Smash Balloon Twitter Feeds', 'wp-mail-smtp' ),
 					'desc' => esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
 					'url'  => 'https://smashballoon.com/custom-twitter-feeds/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
@@ -403,6 +410,69 @@ class AboutTab extends PageAbstract {
 				'name' => esc_html__( 'TrustPulse', 'wp-mail-smtp' ),
 				'desc' => esc_html__( 'Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/trustpulse-api.zip',
+			],
+			'searchwp'                     => [
+				'path' => '',
+				'icon' => wp_mail_smtp()->assets_url . '/images/about/searchwp.png',
+				'name' => esc_html__( 'SearchWP', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'wp-mail-smtp' ),
+				'url'  => 'https://searchwp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				'pro'  => [
+					'path' => 'searchwp/index.php',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/searchwp.png',
+					'name' => esc_html__( 'SearchWP', 'wp-mail-smtp' ),
+					'desc' => esc_html__( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'wp-mail-smtp' ),
+					'url'  => 'https://searchwp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				],
+			],
+			'affiliatewp'                   => [
+				'path' => '',
+				'icon' => wp_mail_smtp()->assets_url . '/images/about/affiliatewp.png',
+				'name' => esc_html__( 'AffiliateWP', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'wp-mail-smtp' ),
+				'url'  => 'https://affiliatewp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				'pro'  => [
+					'path' => 'affiliate-wp/affiliate-wp.php',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/affiliatewp.png',
+					'name' => esc_html__( 'AffiliateWP', 'wp-mail-smtp' ),
+					'desc' => esc_html__( 'The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'wp-mail-smtp' ),
+					'url'  => 'https://affiliatewp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				],
+			],
+			'wp-simple-pay'                 => [
+				'path' => 'stripe/stripe-checkout.php',
+				'icon' => wp_mail_smtp()->assets_url . '/images/about/wp-simple-pay.png',
+				'name' => esc_html__( 'WP Simple Pay', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/stripe.zip',
+				'pro'  => [
+					'path' => 'wp-simple-pay-pro-3/simple-pay.php',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/wp-simple-pay.png',
+					'name' => esc_html__( 'WP Simple Pay Pro', 'wp-mail-smtp' ),
+					'desc' => esc_html__( 'The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'wp-mail-smtp' ),
+					'url'  => 'https://wpsimplepay.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				],
+			],
+			'easy-digital-downloads'        => [
+				'path' => 'easy-digital-downloads/easy-digital-downloads.php',
+				'icon' => wp_mail_smtp()->assets_url . '/images/about/edd.png',
+				'name' => esc_html__( 'Easy Digital Downloads', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/easy-digital-downloads.zip',
+			],
+			'sugar-calendar'                => [
+				'path' => 'sugar-calendar-lite/sugar-calendar-lite.php',
+				'icon' => wp_mail_smtp()->assets_url . '/images/about/sugar-calendar.png',
+				'name' => esc_html__( 'Sugar Calendar Lite', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'wp-mail-smtp' ),
+				'url'  => 'https://downloads.wordpress.org/plugin/sugar-calendar-lite.zip',
+				'pro'  => [
+					'path' => 'sugar-calendar/sugar-calendar.php',
+					'icon' => wp_mail_smtp()->assets_url . '/images/about/sugar-calendar.png',
+					'name' => esc_html__( 'Sugar Calendar', 'wp-mail-smtp' ),
+					'desc' => esc_html__( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'wp-mail-smtp' ),
+					'url'  => 'https://sugarcalendar.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
+				],
 			],
 		];
 
@@ -426,13 +496,32 @@ class AboutTab extends PageAbstract {
 			wp_send_json_error( $error );
 		}
 
-		if ( isset( $_POST['plugin'] ) ) {
+		if ( empty( $_POST['plugin'] ) ) {
+			wp_send_json_error( $error );
+		}
 
-			$activate = activate_plugins( $_POST['plugin'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$plugin_slug = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
 
-			if ( ! is_wp_error( $activate ) ) {
-				wp_send_json_success( esc_html__( 'Plugin activated.', 'wp-mail-smtp' ) );
+		$whitelisted_plugins = [];
+
+		foreach ( self::get_am_plugins() as $item ) {
+			if ( ! empty( $item['path'] ) ) {
+				$whitelisted_plugins[] = $item['path'];
 			}
+
+			if ( ! empty( $item['pro']['path'] ) ) {
+				$whitelisted_plugins[] = $item['pro']['path'];
+			}
+		}
+
+		if ( ! in_array( $plugin_slug, $whitelisted_plugins, true ) ) {
+			wp_send_json_error( esc_html__( 'Could not activate the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
+		}
+
+		$activate = activate_plugins( $plugin_slug );
+
+		if ( ! is_wp_error( $activate ) ) {
+			wp_send_json_success( esc_html__( 'Plugin activated.', 'wp-mail-smtp' ) );
 		}
 
 		wp_send_json_error( $error );
@@ -457,6 +546,12 @@ class AboutTab extends PageAbstract {
 
 		if ( empty( $_POST['plugin'] ) ) {
 			wp_send_json_error();
+		}
+
+		$plugin_url = esc_url_raw( wp_unslash( $_POST['plugin'] ) );
+
+		if ( ! in_array( $plugin_url, wp_list_pluck( array_values( self::get_am_plugins() ), 'url' ) , true ) ) {
+			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
 		}
 
 		// Set the current screen to avoid undefined notices.
@@ -490,11 +585,11 @@ class AboutTab extends PageAbstract {
 		$installer = new PluginsInstallUpgrader( new PluginsInstallSkin() );
 
 		// Error check.
-		if ( ! method_exists( $installer, 'install' ) || empty( $_POST['plugin'] ) ) {
+		if ( ! method_exists( $installer, 'install' ) ) {
 			wp_send_json_error( $error );
 		}
 
-		$installer->install( $_POST['plugin'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$installer->install( $plugin_url );
 
 		// Flush the cache and return the newly installed plugin basename.
 		wp_cache_flush();

@@ -132,7 +132,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 
 		$this->supports = ( ! empty( $params['supports'] ) ) ? $params['supports'] : $this->get_supports_defaults();
 
-		$this->options = new Options();
+		$this->options = Options::init();
 	}
 
 	/**

@@ -264,7 +264,7 @@ abstract class ParentPageAbstract implements PageInterface {
 
 			$this->tabs[ $this->get_current_tab() ]->process_post( $post );
 		}
-		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:enable
 
 		// This won't do anything for most pages.
 		// Works for plugin page only, when GET params are allowed.

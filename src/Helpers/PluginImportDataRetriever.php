@@ -200,7 +200,7 @@ class PluginImportDataRetriever {
 	 *
 	 * @return array
 	 */
-	private function get_post_smtp_mailer() {
+	private function get_post_smtp_mailer() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$options = get_option( 'postman_options' );
 
@@ -227,7 +227,7 @@ class PluginImportDataRetriever {
 				'port'       => isset( $options['port'] ) ? $options['port'] : 25,
 				'auth'       => isset( $options['auth_type'] ) && $options['auth_type'] !== 'none',
 				'user'       => isset( $options['basic_auth_username'] ) ? $options['basic_auth_username'] : '',
-				'pass'       => ! empty( $options['basic_auth_password'] ) ? base64_decode( $options['basic_auth_password'] ) : '', // phpcs:ignore
+				'pass'       => ! empty( $options['basic_auth_password'] ) ? base64_decode( $options['basic_auth_password'] ) : '', // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				'autotls'    => true,
 			],
 			'gmail'    => [
@@ -235,10 +235,10 @@ class PluginImportDataRetriever {
 				'client_secret' => isset( $options['oauth_client_secret'] ) ? $options['oauth_client_secret'] : '',
 			],
 			'sendgrid' => [
-				'api_key' => ! empty( $options['sendgrid_api_key'] ) ? base64_decode( $options['sendgrid_api_key'] ) : '', // phpcs:ignore
+				'api_key' => ! empty( $options['sendgrid_api_key'] ) ? base64_decode( $options['sendgrid_api_key'] ) : '', // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 			],
 			'mailgun'  => [
-				'api_key' => ! empty( $options['mailgun_api_key'] ) ? base64_decode( $options['mailgun_api_key'] ) : '', // phpcs:ignore
+				'api_key' => ! empty( $options['mailgun_api_key'] ) ? base64_decode( $options['mailgun_api_key'] ) : '', // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				'domain'  => isset( $options['mailgun_domain_name'] ) ? $options['mailgun_domain_name'] : '',
 				'region'  => ( isset( $options['mailgun_region'] ) && ! empty( $options['mailgun_region'] ) ) ? 'EU' : 'US',
 			],
@@ -282,7 +282,7 @@ class PluginImportDataRetriever {
 				'port'       => isset( $options['smtp_port'] ) ? $options['smtp_port'] : 25,
 				'auth'       => isset( $options['smtp_auth'] ) && $options['smtp_auth'] === 'true',
 				'user'       => isset( $options['smtp_username'] ) ? $options['smtp_username'] : '',
-				'pass'       => ! empty( $options['smtp_password'] ) ? base64_decode( $options['smtp_password'] ) : '', // phpcs:ignore
+				'pass'       => ! empty( $options['smtp_password'] ) ? base64_decode( $options['smtp_password'] ) : '', // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 				'autotls'    => true,
 			],
 		];

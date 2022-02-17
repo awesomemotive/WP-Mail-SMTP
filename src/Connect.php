@@ -91,7 +91,7 @@ class Connect {
 				'version'  => WPMS_PLUGIN_VER,
 				'siteurl'  => admin_url(),
 				'homeurl'  => home_url(),
-				'redirect' => rawurldecode( base64_encode( $redirect ) ), // phpcs:ignore
+				'redirect' => rawurldecode( base64_encode( $redirect ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'v'        => 2,
 			],
 			'https://upgrade.wpmailsmtp.com'
@@ -103,7 +103,7 @@ class Connect {
 	 *
 	 * @since 2.6.0
 	 */
-	public function ajax_generate_url() {
+	public function ajax_generate_url() { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		// Run a security check.
 		check_ajax_referer( 'wp-mail-smtp-connect', 'nonce' );
@@ -181,7 +181,7 @@ class Connect {
 	 *
 	 * @since 2.6.0
 	 */
-	public function process() {
+	public function process() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$error = esc_html__( 'There was an error while installing an upgrade. Please download the plugin from wpmailsmtp.com and install it manually.', 'wp-mail-smtp' );
 
@@ -196,7 +196,7 @@ class Connect {
 		// Verify oth.
 		$oth = get_option( 'wp_mail_smtp_connect_token' );
 
-		if ( empty( $oth ) || ! hash_equals( $oth, $post_oth ) ) { // phpcs:ignore
+		if ( empty( $oth ) || ! hash_equals( $oth, $post_oth ) ) {
 			wp_send_json_error( $error );
 		}
 
@@ -259,7 +259,7 @@ class Connect {
 			);
 		}
 
-		$installer->install( $post_url ); // phpcs:ignore
+		$installer->install( $post_url );
 
 		// Flush the cache and return the newly installed plugin basename.
 		wp_cache_flush();
@@ -277,7 +277,7 @@ class Connect {
 			if ( ! is_wp_error( $activated ) ) {
 
 				// Save the license data, since it was verified on the connect page.
-				$options = new Options();
+				$options = Options::init();
 				$all_opt = $options->get_all_raw();
 
 				$all_opt['license']['key']         = $key;

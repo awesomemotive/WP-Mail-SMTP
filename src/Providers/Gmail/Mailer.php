@@ -7,6 +7,7 @@ use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\Vendor\Google\Service\Gmail;
 use WPMailSMTP\Vendor\Google\Service\Gmail\Message;
+use WPMailSMTP\Options as PluginOptions;
 
 /**
  * Class Mailer.
@@ -174,15 +175,15 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @return string
 	 */
-	public function get_debug_info() {
+	public function get_debug_info() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$gmail_text = array();
 
-		$options  = new \WPMailSMTP\Options();
+		$options  = PluginOptions::init();
 		$gmail    = $options->get_group( 'gmail' );
 		$curl_ver = 'No';
 		if ( function_exists( 'curl_version' ) ) {
-			$curl     = curl_version(); // phpcs:ignore
+			$curl     = curl_version();
 			$curl_ver = $curl['version'];
 		}
 
@@ -196,7 +197,7 @@ class Mailer extends MailerAbstract {
 		$gmail_text[] = '<strong>PHP.allow_url_fopen:</strong> ' . ( ini_get( 'allow_url_fopen' ) ? 'Yes' : 'No' );
 		$gmail_text[] = '<strong>PHP.stream_socket_client():</strong> ' . ( function_exists( 'stream_socket_client' ) ? 'Yes' : 'No' );
 		$gmail_text[] = '<strong>PHP.fsockopen():</strong> ' . ( function_exists( 'fsockopen' ) ? 'Yes' : 'No' );
-		$gmail_text[] = '<strong>PHP.curl_version():</strong> ' . $curl_ver; // phpcs:ignore
+		$gmail_text[] = '<strong>PHP.curl_version():</strong> ' . $curl_ver;
 		if ( function_exists( 'apache_get_modules' ) ) {
 			$modules      = apache_get_modules();
 			$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );

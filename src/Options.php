@@ -88,6 +88,9 @@ class Options {
 			'api_key',
 			'domain',
 		],
+		'sendlayer'   => [
+			'api_key',
+		],
 		'pepipostapi' => [
 			'api_key',
 		],
@@ -112,6 +115,7 @@ class Options {
 	 * @var string[]
 	 */
 	public static $mailers = [
+		'sendlayer',
 		'smtpcom',
 		'sendinblue',
 		'amazonses',
@@ -494,6 +498,16 @@ class Options {
 
 				break;
 
+			case 'sendlayer':
+				switch ( $key ) {
+					case 'api_key':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SENDLAYER_API_KEY : $value;
+						break;
+				}
+
+				break;
+
 			case 'gmail':
 				switch ( $key ) {
 					case 'client_id':
@@ -779,6 +793,15 @@ class Options {
 						break;
 					case 'pass':
 						$return = defined( 'WPMS_SMTP_PASS' ) && WPMS_SMTP_PASS;
+						break;
+				}
+
+				break;
+
+			case 'sendlayer':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_SENDLAYER_API_KEY' ) && WPMS_SENDLAYER_API_KEY;
 						break;
 				}
 
@@ -1107,7 +1130,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.
 					case 'client_secret': // gmail/outlook/amazonses/zoho.

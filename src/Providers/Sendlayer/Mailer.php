@@ -1,6 +1,6 @@
 <?php
 
-namespace WPMailSMTP\Providers\SparkPost;
+namespace WPMailSMTP\Providers\Sendlayer;
 
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\WP;
@@ -10,91 +10,41 @@ use WPMailSMTP\Providers\MailerAbstract;
 /**
  * Class Mailer.
  *
- * @since 3.2.0
+ * @since 3.4.0
  */
 class Mailer extends MailerAbstract {
 
 	/**
-	 * API endpoint used for sites from all regions.
+	 * URL to make an API request to.
 	 *
-	 * @since 3.2.0
-	 *
-	 * @var string
-	 */
-	const API_BASE_US = 'https://api.sparkpost.com/api/v1';
-
-	/**
-	 * API endpoint used for sites from EU region.
-	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @var string
 	 */
-	const API_BASE_EU = 'https://api.eu.sparkpost.com/api/v1';
+	protected $url = 'https://console.sendlayer.com/api/v1/email';
 
 	/**
 	 * Mailer constructor.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
 	public function __construct( $phpmailer ) {
 
-		// Default value should be defined before the parent class constructor fires.
-		$this->url = self::API_BASE_US;
-
 		// We want to prefill everything from MailCatcher class, which extends PHPMailer.
 		parent::__construct( $phpmailer );
 
-		// We have a special API URL to query in case of EU region.
-		if ( $this->options->get( $this->mailer, 'region' ) === 'EU' ) {
-			$this->url = self::API_BASE_EU;
-		}
-
-		$this->url .= '/transmissions';
-
 		// Set mailer specific headers.
-		$this->set_header( 'Authorization', $this->options->get( $this->mailer, 'api_key' ) );
+		$this->set_header( 'Authorization', 'Bearer ' . $this->options->get( $this->mailer, 'api_key' ) );
+		$this->set_header( 'Accept', 'application/json' );
 		$this->set_header( 'Content-Type', 'application/json' );
-
-		// Set default body params.
-		$this->set_body_param(
-			[
-				'options' => [
-					'open_tracking'  => false,
-					'click_tracking' => false,
-					'transactional'  => true,
-				],
-			]
-		);
-
-		/**
-		 * Filters return path.
-		 *
-		 * Email address to use for envelope FROM.
-		 * The domain of the return_path address must be a CNAME-verified sending domain.
-		 * The local part of the return_path address will be overwritten by SparkPost.
-		 *
-		 * @since 3.2.0
-		 *
-		 * @param string  $return_path Email address, by default will be used value configured in SparkPost dashboard.
-		 */
-		$return_path = apply_filters( 'wp_mail_smtp_providers_sparkpost_mailer_return_path', '' );
-
-		if ( $return_path && filter_var( $return_path, FILTER_VALIDATE_EMAIL ) ) {
-			$this->set_body_param(
-				[
-					'return_path' => $return_path,
-				]
-			);
-		}
 	}
 
 	/**
 	 * Redefine the way custom headers are processed for this mailer - they should be in body.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param array $headers Headers array.
 	 */
@@ -107,15 +57,14 @@ class Mailer extends MailerAbstract {
 			$this->set_body_header( $name, $value );
 		}
 
-		// Add custom PHPMailer-specific header.
+		// Add custom header.
 		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
-		$this->set_body_header( 'Message-ID', $this->phpmailer->getLastMessageID() );
 	}
 
 	/**
 	 * This mailer supports email-related custom headers inside a body of the message.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param string $name  Header name.
 	 * @param string $value Header value.
@@ -128,19 +77,13 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$headers = isset( $this->body['content']['headers'] ) ? (array) $this->body['content']['headers'] : [];
+		$headers = isset( $this->body['Headers'] ) ? (array) $this->body['Headers'] : [];
 
-		if ( ! in_array( $name, [ 'Message-ID', 'CC' ], true ) ) {
-			$value = WP::sanitize_value( $value );
-		}
-
-		$headers[ $name ] = $value;
+		$headers[ $name ] = WP::sanitize_value( $value );
 
 		$this->set_body_param(
 			[
-				'content' => [
-					'headers' => $headers,
-				],
+				'Headers' => $headers,
 			]
 		);
 	}
@@ -148,7 +91,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set the From information for an email.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param string $email The sender email address.
 	 * @param string $name  The sender name.
@@ -159,17 +102,9 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$from['email'] = $email;
-
-		if ( ! empty( $name ) ) {
-			$from['name'] = $name;
-		}
-
 		$this->set_body_param(
 			[
-				'content' => [
-					'from' => $from,
-				],
+				'From' => $this->address_format( [ $email, $name ] ),
 			]
 		);
 	}
@@ -177,7 +112,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set email recipients: to, cc, bcc.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param array $recipients Email recipients.
 	 */
@@ -187,53 +122,41 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$recipients_to = isset( $recipients['to'] ) && is_array( $recipients['to'] ) ? $recipients['to'] : [];
-		$header_to     = implode( ',', array_map( [ $this->phpmailer, 'addrFormat' ], $recipients_to ) );
-
-		$default = [ 'to', 'cc', 'bcc' ];
+		// Allow only these recipient types.
+		$allowed_types = [ 'to', 'cc', 'bcc' ];
+		$data          = [];
 
 		foreach ( $recipients as $type => $emails ) {
 			if (
-				! in_array( $type, $default, true ) ||
+				! in_array( $type, $allowed_types, true ) ||
 				empty( $emails ) ||
 				! is_array( $emails )
 			) {
 				continue;
 			}
 
-			$data = [];
+			$type = ucfirst( $type );
 
+			// Iterate over all emails for each type.
+			// There might be multiple cc/to/bcc emails.
 			foreach ( $emails as $email ) {
-				$addr = isset( $email[0] ) ? $email[0] : false;
-
-				if ( ! filter_var( $addr, FILTER_VALIDATE_EMAIL ) ) {
+				if ( ! isset( $email[0] ) || ! filter_var( $email[0], FILTER_VALIDATE_EMAIL ) ) {
 					continue;
 				}
 
-				$data[] = [
-					'address' => $this->build_recipient( $email, $header_to ),
-				];
+				$data[ $type ][] = $this->address_format( $email );
 			}
+		}
 
-			// CC recipients must be also included as header.
-			if ( $type === 'cc' ) {
-				$this->set_body_header( 'CC', implode( ',', array_map( [ $this->phpmailer, 'addrFormat' ], $emails ) ) );
-			}
-
-			if ( ! empty( $data ) ) {
-				$this->set_body_param(
-					[
-						'recipients' => $data,
-					]
-				);
-			}
+		if ( ! empty( $data ) ) {
+			$this->set_body_param( $data );
 		}
 	}
 
 	/**
 	 * Set the Reply To information for an email.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param array $emails Reply To email addresses.
 	 */
@@ -246,21 +169,17 @@ class Mailer extends MailerAbstract {
 		$data = [];
 
 		foreach ( $emails as $email ) {
-			$addr = isset( $email[0] ) ? $email[0] : false;
-
-			if ( ! filter_var( $addr, FILTER_VALIDATE_EMAIL ) ) {
+			if ( ! isset( $email[0] ) || ! filter_var( $email[0], FILTER_VALIDATE_EMAIL ) ) {
 				continue;
 			}
 
-			$data[] = $this->phpmailer->addrFormat( $email );
+			$data[] = $this->address_format( $email );
 		}
 
 		if ( ! empty( $data ) ) {
 			$this->set_body_param(
 				[
-					'content' => [
-						'reply_to' => implode( ',', $data ),
-					],
+					'ReplyTo' => $data,
 				]
 			);
 		}
@@ -269,7 +188,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set email subject.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param string $subject Email subject.
 	 */
@@ -277,9 +196,7 @@ class Mailer extends MailerAbstract {
 
 		$this->set_body_param(
 			[
-				'content' => [
-					'subject' => $subject,
-				],
+				'Subject' => $subject,
 			]
 		);
 	}
@@ -287,7 +204,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set email content.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param string|array $content Email content.
 	 */
@@ -301,9 +218,8 @@ class Mailer extends MailerAbstract {
 			if ( ! empty( $content['text'] ) ) {
 				$this->set_body_param(
 					[
-						'content' => [
-							'text' => $content['text'],
-						],
+						'ContentType'  => 'plain',
+						'PlainContent' => $content['text'],
 					]
 				);
 			}
@@ -311,9 +227,8 @@ class Mailer extends MailerAbstract {
 			if ( ! empty( $content['html'] ) ) {
 				$this->set_body_param(
 					[
-						'content' => [
-							'html' => $content['html'],
-						],
+						'ContentType' => 'html',
+						'HTMLContent' => $content['html'],
 					]
 				);
 			}
@@ -321,17 +236,15 @@ class Mailer extends MailerAbstract {
 			if ( $this->phpmailer->ContentType === 'text/plain' ) {
 				$this->set_body_param(
 					[
-						'content' => [
-							'text' => $content,
-						],
+						'ContentType'  => 'plain',
+						'PlainContent' => $content,
 					]
 				);
 			} else {
 				$this->set_body_param(
 					[
-						'content' => [
-							'html' => $content,
-						],
+						'ContentType' => 'html',
+						'HTMLContent' => $content,
 					]
 				);
 			}
@@ -341,7 +254,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set attachments for an email.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param array $attachments Attachments array.
 	 */
@@ -356,18 +269,16 @@ class Mailer extends MailerAbstract {
 		if ( ! empty( $data ) ) {
 			$this->set_body_param(
 				[
-					'content' => [
-						'attachments' => $data,
-					],
+					'Attachments' => $data,
 				]
 			);
 		}
 	}
 
 	/**
-	 * Prepare attachments data for SparkPost API.
+	 * Prepare attachments data for SendLayer API.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param array $attachments Array of attachments.
 	 *
@@ -384,10 +295,15 @@ class Mailer extends MailerAbstract {
 				continue;
 			}
 
+			$filetype = str_replace( ';', '', trim( $attachment[4] ) );
+
 			$data[] = [
-				'name' => $this->get_attachment_file_name( $attachment ),
-				'data' => base64_encode( $file ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-				'type' => $attachment[4],
+				'Filename'    => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+				'Content'     => base64_encode( $file ),
+				'Type'        => $attachment[4],
+				'Disposition' => in_array( $attachment[6], [ 'inline', 'attachment' ], true ) ? $attachment[6] : 'attachment',
+				'ContentId'   => empty( $attachment[7] ) ? '' : trim( (string) $attachment[7] ),
 			];
 		}
 
@@ -396,9 +312,9 @@ class Mailer extends MailerAbstract {
 
 	/**
 	 * Doesn't support this.
-	 * Return path can be configured in SparkPost account.
+	 * So we do nothing.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param string $email Return Path email address.
 	 */
@@ -407,9 +323,9 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Redefine the way email body is returned.
 	 * By default, we are sending an array of data.
-	 * SparkPost requires a JSON, so we encode the body.
+	 * SendLayer requires a JSON, so we encode the body.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 */
 	public function get_body() {
 
@@ -422,7 +338,7 @@ class Mailer extends MailerAbstract {
 	 * We might need to do something after the email was sent to the API.
 	 * In this method we preprocess the response from the API.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @param mixed $response Response data.
 	 */
@@ -432,40 +348,41 @@ class Mailer extends MailerAbstract {
 
 		if (
 			! is_wp_error( $response ) &&
-			! empty( $this->response['body']->results->id )
+			! empty( $this->response['body']->MessageID )
 		) {
-			$this->phpmailer->addCustomHeader( 'X-Msg-ID', $this->response['body']->results->id );
+			$this->phpmailer->addCustomHeader( 'X-Msg-ID', $this->response['body']->MessageID );
 			$this->verify_sent_status = true;
 		}
 	}
 
 	/**
-	 * Get a SparkPost-specific response with a helpful error.
+	 * Get a SendLayer-specific response with a helpful error.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @return string
 	 */
-	public function get_response_error() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.MaxExceeded
+	public function get_response_error() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 
 		$error_text[] = $this->error_message;
 
 		if ( ! empty( $this->response ) ) {
 			$body = wp_remote_retrieve_body( $this->response );
 
-			if ( ! empty( $body->errors ) && is_array( $body->errors ) ) {
-				foreach ( $body->errors as $error ) {
-					if ( ! empty( $error->message ) ) {
-						$message     = $error->message;
-						$code        = ! empty( $error->code ) ? $error->code : '';
-						$description = ! empty( $error->description ) ? $error->description : '';
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $body->Errors ) && is_array( $body->Errors ) ) {
+				foreach ( $body->Errors as $error ) {
+					if ( ! empty( $error->Message ) ) {
+						$message = $error->Message;
+						$code    = ! empty( $error->Code ) ? $error->Code : '';
 
-						$error_text[] = Helpers::format_error_message( $message, $code, $description );
+						$error_text[] = Helpers::format_error_message( $message, $code );
 					}
 				}
 			} else {
 				$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
 			}
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 
 		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
@@ -474,7 +391,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Get mailer debug information, that is helpful during support.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @return string
 	 */
@@ -484,8 +401,6 @@ class Mailer extends MailerAbstract {
 
 		$text[] = '<strong>' . esc_html__( 'API Key:', 'wp-mail-smtp' ) . '</strong> ' .
 							( ! empty( $options['api_key'] ) ? 'Yes' : 'No' );
-		$text[] = '<strong>' . esc_html__( 'Region:', 'wp-mail-smtp' ) . '</strong> ' .
-							( ! empty( $options['region'] ) ? 'Yes' : 'No' );
 
 		return implode( '<br>', $text );
 	}
@@ -493,9 +408,9 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Whether the mailer has all its settings correctly set up and saved.
 	 *
-	 * This mailer is configured when `api_key` setting is defined.
+	 * This mailer is configured when `server_api_token` setting is defined.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
 	 * @return bool
 	 */
@@ -511,30 +426,26 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Build recipient array.
+	 * Prepare address param.
 	 *
-	 * @since 3.2.0
+	 * @since 3.4.0
 	 *
-	 * @param array  $address   Email address array.
-	 * @param string $header_to Email recipients To header.
+	 * @param array $address Address array.
 	 *
 	 * @return array
 	 */
-	private function build_recipient( $address, $header_to ) {
+	private function address_format( $address ) {
 
-		$holder = [];
+		$result = [];
+		$email  = isset( $address[0] ) ? $address[0] : false;
+		$name   = isset( $address[1] ) ? $address[1] : false;
 
-		$holder['email'] = $address[0];
+		$result['Email'] = $email;
 
-		if ( ! empty( $address[1] ) ) {
-			$holder['name'] = $address[1];
+		if ( ! empty( $name ) ) {
+			$result['Name'] = $name;
 		}
 
-		if ( ! empty( $header_to ) ) {
-			$holder['header_to'] = $header_to;
-			unset( $holder['name'] );
-		}
-
-		return $holder;
+		return $result;
 	}
 }

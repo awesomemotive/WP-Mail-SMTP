@@ -3,11 +3,13 @@
 namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\Vendor\Google\Service\Gmail;
 use WPMailSMTP\Vendor\Google\Service\Gmail\Message;
 use WPMailSMTP\Options as PluginOptions;
+use WPMailSMTP\WP;
 
 /**
  * Class Mailer.
@@ -110,7 +112,7 @@ class Mailer extends MailerAbstract {
 			$response = $service->users_messages->send( 'me', $message );
 
 			DebugEvents::add_debug(
-				esc_html__( 'An email request was sent to the Gmail API.' )
+				esc_html__( 'An email request was sent to the Gmail API.', 'wp-mail-smtp' )
 			);
 
 			$this->process_response( $response );
@@ -256,22 +258,22 @@ class Mailer extends MailerAbstract {
 		}
 
 		// Define known errors, that we will scan the message with.
-		$known_errors = array(
-			array(
-				'errors'      => array(
+		$known_errors = [
+			[
+				'errors'      => [
 					'invalid_grant',
-				),
-				'explanation' => esc_html__( 'Please re-grant Google app permissions!', 'wp-mail-smtp' ) . ' ' . PHP_EOL .
-					esc_html__( 'Go to WP Mail SMTP plugin settings page. Click the “Remove Connection” button.', 'wp-mail-smtp' ) . ' ' . PHP_EOL .
+				],
+				'explanation' => esc_html__( 'Please re-grant Google app permissions!', 'wp-mail-smtp' ) . ' ' . WP::EOL .
+					esc_html__( 'Go to WP Mail SMTP plugin settings page. Click the “Remove Connection” button.', 'wp-mail-smtp' ) . ' ' . WP::EOL .
 					esc_html__( 'Then click the “Allow plugin to send emails using your Google account” button and re-enable access.', 'wp-mail-smtp' ),
-			),
-		);
+			],
+		];
 
 		// Check if we get a match and append the explanation to the original message.
 		foreach ( $known_errors as $error ) {
 			foreach ( $error['errors'] as $error_fragment ) {
 				if ( false !== strpos( $message, $error_fragment ) ) {
-					return $message . PHP_EOL . $error['explanation'];
+					return Helpers::format_error_message( $message, '', $error['explanation'] );
 				}
 			}
 		}

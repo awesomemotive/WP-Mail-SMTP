@@ -788,10 +788,34 @@ class Core {
 	 */
 	public function get_upgrade_link( $utm ) {
 
+		$url = $this->get_utm_url( 'https://wpmailsmtp.com/lite-upgrade/', $utm );
+
+		/**
+		 * Filters upgrade link.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param string $url Upgrade link.
+		 */
+		return apply_filters( 'wp_mail_smtp_core_get_upgrade_link', $url );
+	}
+
+	/**
+	 * Get UTM URL.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string       $url Base url.
+	 * @param array|string $utm Array of UTM params, or if string provided - utm_content URL parameter.
+	 *
+	 * @return string
+	 */
+	public function get_utm_url( $url, $utm ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+
 		// Defaults.
 		$source   = 'WordPress';
 		$medium   = 'plugin-settings';
-		$campaign = 'liteplugin';
+		$campaign = $this->is_pro() ? 'plugin' : 'liteplugin';
 		$content  = 'general';
 
 		if ( is_array( $utm ) ) {
@@ -811,13 +835,20 @@ class Core {
 			$content = $utm;
 		}
 
-		$url = 'https://wpmailsmtp.com/lite-upgrade/?utm_source=' . esc_attr( rawurlencode( $source ) ) . '&utm_medium=' . esc_attr( rawurlencode( $medium ) ) . '&utm_campaign=' . esc_attr( rawurlencode( $campaign ) );
+		$url = add_query_arg(
+			[
+				'utm_source'   => esc_attr( rawurlencode( $source ) ),
+				'utm_medium'   => esc_attr( rawurlencode( $medium ) ),
+				'utm_campaign' => esc_attr( rawurlencode( $campaign ) ),
+			],
+			$url
+		);
 
 		if ( ! empty( $content ) ) {
-			$url .= '&utm_content=' . esc_attr( rawurlencode( $content ) );
+			$url = add_query_arg( 'utm_content', esc_attr( rawurlencode( $content ) ), $url );
 		}
 
-		return apply_filters( 'wp_mail_smtp_core_get_upgrade_link', $url );
+		return $url;
 	}
 
 	/**

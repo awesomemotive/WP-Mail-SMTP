@@ -71,6 +71,9 @@ class Area {
 		// Add the options page.
 		add_action( 'admin_menu', [ $this, 'add_admin_options_page' ] );
 
+		// Add inline styles for "Upgrade to Pro" left sidebar menu item.
+		add_action( 'admin_head', [ $this, 'style_upgrade_pro_link' ] );
+
 		// Add WPMS network-wide setting page for product education.
 		add_action( 'network_admin_menu', [ $this, 'add_wpms_network_wide_setting_product_education_page' ] );
 
@@ -270,6 +273,17 @@ class Area {
 				$access_capability,
 				self::SLUG . '-' . $page->get_slug(),
 				[ $this, 'display' ]
+			);
+		}
+
+		if ( ! wp_mail_smtp()->is_pro() ) {
+			add_submenu_page(
+				self::SLUG,
+				esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
+				esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
+				$access_capability,
+				// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+				esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'admin-menu', 'content' => 'Upgrade to Pro' ] ) )
 			);
 		}
 	}
@@ -1154,6 +1168,18 @@ class Area {
 			return $links;
 		}
 
+		$custom['pro'] = sprintf(
+			'<a href="%1$s" aria-label="%2$s" target="_blank" rel="noopener noreferrer" 
+				style="color: #00a32a; font-weight: 700;" 
+				onmouseover="this.style.color=\'#008a20\';" 
+				onmouseout="this.style.color=\'#00a32a\';"
+				>%3$s</a>',
+			// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'all-plugins', 'content' => 'Get WP Mail SMTP Pro' ] ) ),
+			esc_attr__( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ),
+			esc_html__( 'Get WP Mail SMTP Pro', 'wp-mail-smtp' )
+		);
+
 		$custom['settings'] = sprintf(
 			'<a href="%s" aria-label="%s">%s</a>',
 			esc_url( $this->get_admin_page_url() ),
@@ -1161,11 +1187,21 @@ class Area {
 			esc_html__( 'Settings', 'wp-mail-smtp' )
 		);
 
-		$custom['support'] = sprintf(
-			'<a href="%1$s" aria-label="%2$s" style="font-weight:bold;">%3$s</a>',
-			esc_url( add_query_arg( 'tab','versus', $this->get_admin_page_url( self::SLUG . '-about' ) ) ),
-			esc_attr__( 'Go to WP Mail SMTP Lite vs Pro comparison page', 'wp-mail-smtp' ),
-			esc_html__( 'Premium Support', 'wp-mail-smtp' )
+		$custom['docs'] = sprintf(
+			'<a href="%1$s" target="_blank" aria-label="%2$s" rel="noopener noreferrer">%3$s</a>',
+			esc_url(
+				add_query_arg(
+					[
+						'utm_content'  => 'Documentation',
+						'utm_campaign' => 'liteplugin',
+						'utm_medium'   => 'all-plugins',
+						'utm_source'   => 'WordPress',
+					],
+					'https://wpmailsmtp.com/docs/'
+				)
+			),
+			esc_attr__( 'Go to WPMailSMTP.com documentation page', 'wp-mail-smtp' ),
+			esc_html__( 'Docs', 'wp-mail-smtp' )
 		);
 
 		return array_merge( $custom, (array) $links );
@@ -1209,6 +1245,7 @@ class Area {
 		$this->remove_unrelated_actions( 'user_admin_notices' );
 		$this->remove_unrelated_actions( 'admin_notices' );
 		$this->remove_unrelated_actions( 'all_admin_notices' );
+		$this->remove_unrelated_actions( 'network_admin_notices' );
 	}
 
 	/**
@@ -1258,5 +1295,46 @@ class Area {
 		if ( $this->is_admin_page( 'general' ) && $this->get_current_tab() === 'test' ) {
 			wp_safe_redirect( add_query_arg( 'tab', 'test', $this->get_admin_page_url( self::SLUG . '-tools' ) ) );
 		}
+	}
+
+	/**
+	 * Define inline styles for "Upgrade to Pro" left sidebar menu item.
+	 *
+	 * @since 3.4.0
+	 */
+	public function style_upgrade_pro_link() {
+
+		global $submenu;
+
+		// Bail if plugin menu is not registered.
+		if ( ! isset( $submenu[ self::SLUG ] ) ) {
+			return;
+		}
+
+		$upgrade_link_position = key(
+			array_filter(
+				$submenu[ self::SLUG ],
+				function ( $item ) {
+					return strpos( $item[2], 'https://wpmailsmtp.com/lite-upgrade' ) !== false;
+				}
+			)
+		);
+
+		// Bail if "Upgrade to Pro" menu item is not registered.
+		if ( is_null( $upgrade_link_position ) ) {
+			return;
+		}
+
+		// Prepare a HTML class.
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
+		if ( isset( $submenu[ self::SLUG ][ $upgrade_link_position ][4] ) ) {
+			$submenu[ self::SLUG ][ $upgrade_link_position ][4] .= ' wp-mail-smtp-sidebar-upgrade-pro';
+		} else {
+			$submenu[ self::SLUG ][ $upgrade_link_position ][] = 'wp-mail-smtp-sidebar-upgrade-pro';
+		}
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		// Output inline styles.
+		echo '<style>a.wp-mail-smtp-sidebar-upgrade-pro { background-color: #00a32a !important; color: #fff !important; font-weight: 600 !important; }</style>';
 	}
 }

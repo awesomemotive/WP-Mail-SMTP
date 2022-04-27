@@ -54,8 +54,8 @@ class SettingsTab extends PageAbstract {
 		$options = Options::init();
 		$mailer  = $options->get( 'mail', 'mailer' );
 
-		$disabled_email = in_array( $mailer, [ 'outlook', 'zoho' ], true ) ? 'disabled' : '';
-		$disabled_name  = 'outlook' === $mailer ? 'disabled' : '';
+		$disabled_email = in_array( $mailer, [ 'zoho' ], true ) ? 'disabled' : '';
+		$disabled_name  = in_array( $mailer, [ 'outlook' ], true ) ? 'disabled' : '';
 
 		if ( empty( $mailer ) || ! in_array( $mailer, Options::$mailers, true ) ) {
 			$mailer = 'mail';
@@ -149,7 +149,7 @@ class SettingsTab extends PageAbstract {
 
 						<?php endif; ?>
 
-						<?php if ( ! in_array( $mailer, [ 'gmail', 'outlook', 'zoho' ], true ) ) : ?>
+						<?php if ( ! in_array( $mailer, [ 'gmail', 'zoho' ], true ) ) : ?>
 							<p class="desc">
 								<?php esc_html_e( 'The email address that emails are sent from.', 'wp-mail-smtp' ); ?><br/>
 								<?php esc_html_e( 'If you\'re using an email provider (Yahoo, Outlook.com, etc) this should be your email address for that account.', 'wp-mail-smtp' ); ?>
@@ -590,7 +590,7 @@ class SettingsTab extends PageAbstract {
 
 			// Save correct from email address if Zoho or Outlook mailers are already configured.
 			if (
-				in_array( $data['mail']['mailer'], [ 'zoho', 'outlook' ], true ) &&
+				in_array( $data['mail']['mailer'], [ 'zoho' ], true ) &&
 				! empty( $old_opt[ $data['mail']['mailer'] ]['user_details']['email'] )
 			) {
 				$data['mail']['from_email'] = $old_opt[ $data['mail']['mailer'] ]['user_details']['email'];

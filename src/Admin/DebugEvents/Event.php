@@ -472,7 +472,7 @@ class Event {
 		if ( ! is_string( $content ) ) {
 			$this->content = wp_json_encode( $content );
 		} else {
-			$this->content = wp_strip_all_tags( $content, false );
+			$this->content = wp_strip_all_tags( str_replace( '<br>', "\r\n", $content ), false );
 		}
 	}
 

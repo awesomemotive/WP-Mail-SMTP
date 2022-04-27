@@ -10,6 +10,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
+// Prevent data removal if Pro plugin is active.
+if ( is_plugin_active( 'wp-mail-smtp-pro/wp_mail_smtp.php' ) ) {
+	return;
+}
+
 // Load plugin file.
 require_once 'wp_mail_smtp.php';
 require_once dirname( __FILE__ ) . '/vendor/woocommerce/action-scheduler/action-scheduler.php';

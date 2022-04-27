@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\SMTPcom;
 
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
@@ -297,7 +298,7 @@ class Mailer extends MailerAbstract {
 				'content'     => chunk_split( base64_encode( $file ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'type'        => $filetype,
 				'encoding'    => 'base64',
-				'filename'    => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
+				'filename'    => $this->get_attachment_file_name( $attachment ),
 				'disposition' => in_array( $attachment[6], [ 'inline', 'attachment' ], true ) ? $attachment[6] : 'attachment', // either inline or attachment.
 				'cid'         => empty( $attachment[7] ) ? '' : trim( (string) $attachment[7] ),
 			];
@@ -419,19 +420,21 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_response_error() {
 
-		$body = (array) wp_remote_retrieve_body( $this->response );
+		$error_text[] = $this->error_message;
 
-		$error_text = array();
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
 
-		if ( ! empty( $body['data'] ) ) {
-			foreach ( (array) $body['data'] as $error_key => $error_message ) {
-				$error_text[] = $error_key . ' - ' . $error_message;
+			if ( ! empty( $body->data ) ) {
+				foreach ( (array) $body->data as $error_key => $error_message ) {
+					$error_text[] = Helpers::format_error_message( $error_message, $error_key );
+				}
+			} else {
+				$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
 			}
-		} elseif ( ! empty( $this->error_message ) ) {
-			$error_text[] = $this->error_message;
 		}
 
-		return implode( PHP_EOL, array_map( 'esc_textarea', $error_text ) );
+		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
 	}
 
 	/**

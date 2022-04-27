@@ -156,6 +156,28 @@ abstract class AuthAbstract implements AuthInterface {
 	}
 
 	/**
+	 * Update access token scopes in our DB.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param array $scopes Scopes array.
+	 */
+	protected function update_scopes( $scopes ) {
+
+		$options = PluginOptions::init();
+		$all     = $options->get_all();
+
+		// To save in DB.
+		$all[ $this->mailer_slug ]['scopes'] = $scopes;
+
+		// To save in currently retrieved options array.
+		$this->options['scopes'] = $scopes;
+
+		// NOTE: These options need to be saved by overwriting all options, because WP automatic updates can cause an issue: GH #575!
+		$options->set( $all, false, true );
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function is_clients_saved() {

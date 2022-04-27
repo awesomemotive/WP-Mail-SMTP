@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Mailgun;
 
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Providers\MailerAbstract;
 use WPMailSMTP\WP;
 use WPMailSMTP\Options as PluginOptions;
@@ -247,7 +248,7 @@ class Mailer extends MailerAbstract {
 
 			$data[] = [
 				'content' => $file,
-				'name'    => $attachment[2],
+				'name'    => $this->get_attachment_file_name( $attachment ),
 			];
 		}
 
@@ -373,8 +374,6 @@ class Mailer extends MailerAbstract {
 		if ( ! empty( $this->response['body']->id ) ) {
 			$this->phpmailer->MessageID = $this->response['body']->id;
 			$this->verify_sent_status   = true;
-		} else {
-			$this->error_message = esc_html__( 'It looks like there\'s most likely a setup issue. Please check your WP Mail SMTP settings to see if any details might be missing or incorrect.', 'wp-mail-smtp' );
 		}
 	}
 
@@ -414,27 +413,19 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_response_error() {
 
-		$body = (array) wp_remote_retrieve_body( $this->response );
+		$error_text[] = $this->error_message;
 
-		$error_text = array();
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
 
-		if ( ! empty( $body['message'] ) ) {
-			if ( is_string( $body['message'] ) ) {
-				$error_text[] = $body['message'];
+			if ( ! empty( $body->message ) ) {
+				$error_text[] = Helpers::format_error_message( $body->message );
 			} else {
-				$error_text[] = \json_encode( $body['message'] );
-			}
-		} elseif ( ! empty( $this->error_message ) ) {
-			$error_text[] = $this->error_message;
-		} elseif ( ! empty( $body[0] ) ) {
-			if ( is_string( $body[0] ) ) {
-				$error_text[] = $body[0];
-			} else {
-				$error_text[] = \json_encode( $body[0] );
+				$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
 			}
 		}
 
-		return implode( '<br>', array_map( 'esc_textarea', $error_text ) );
+		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
 	}
 
 	/**

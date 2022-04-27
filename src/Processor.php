@@ -144,7 +144,7 @@ class Processor {
 			return false;
 		}
 
-		if ( in_array( $mailer, [ 'outlook', 'zoho' ], true ) ) {
+		if ( in_array( $mailer, [ 'zoho' ], true ) ) {
 			$sender     = $options->get( $mailer, 'user_details' );
 			$from_email = ! empty( $sender['email'] ) ? $sender['email'] : '';
 			$forced     = true;
@@ -213,7 +213,7 @@ class Processor {
 		}
 
 		// Return FROM EMAIL if forced in settings.
-		if ( $forced & ! empty( $from_email ) ) {
+		if ( $forced && ! empty( $from_email ) ) {
 			return $from_email;
 		}
 

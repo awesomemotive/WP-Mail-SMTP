@@ -37,7 +37,7 @@ class Options extends OptionsAbstract {
 						)
 					),
 					'https://www.mailgun.com',
-					'https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/'
+					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-mailgun-mailer-in-wp-mail-smtp/', 'Mailgun documentation' ) )
 				),
 			)
 		);

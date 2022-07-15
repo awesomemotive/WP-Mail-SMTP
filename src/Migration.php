@@ -2,9 +2,10 @@
 
 namespace WPMailSMTP;
 
-use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
+use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\Tasks\Reports\SummaryEmailTask as SummaryReportEmailTask;
+use WPMailSMTP\Tasks\Tasks;
 
 /**
  * Class Migration helps migrate plugin options, DB tables and more.
@@ -20,7 +21,7 @@ class Migration extends MigrationAbstract {
 	 *
 	 * @since 2.1.0
 	 */
-	const VERSION = 4;
+	const VERSION = 5;
 
 	/**
 	 * Option key where we save the current migration version.
@@ -274,6 +275,61 @@ class Migration extends MigrationAbstract {
 		}
 
 		$this->update_db_ver( 4 );
+	}
+
+	/**
+	 * Cleanup scheduled actions meta table.
+	 *
+	 * @since 3.5.0
+	 */
+	protected function migrate_to_5() {
+
+		$this->maybe_required_older_migrations( 4 );
+
+		global $wpdb;
+
+		$meta = new Meta();
+
+		if (
+			$meta->table_exists() &&
+			$meta->table_exists( $wpdb->prefix . 'actionscheduler_actions' ) &&
+			$meta->table_exists( $wpdb->prefix . 'actionscheduler_groups' )
+		) {
+			$group = Tasks::GROUP;
+			$sql   = "SELECT DISTINCT a.args FROM {$wpdb->prefix}actionscheduler_actions a
+					JOIN {$wpdb->prefix}actionscheduler_groups g ON g.group_id = a.group_id
+					WHERE g.slug = '$group' AND a.status IN ('pending', 'in-progress')";
+
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			$results = $wpdb->get_results( $sql, 'ARRAY_A' );
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+
+			$results  = $results ? $results : [];
+			$meta_ids = [];
+
+			foreach ( $results as $result ) {
+				$args = isset( $result['args'] ) ? json_decode( $result['args'], true ) : null;
+
+				if ( $args && isset( $args[0] ) && is_numeric( $args[0] ) ) {
+					$meta_ids[] = $args[0];
+				}
+			}
+
+			$table  = Meta::get_table_name();
+			$not_in = 0;
+
+			if ( ! empty( $meta_ids ) ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$not_in = $wpdb->prepare( implode( ',', array_fill( 0, count( $meta_ids ), '%d' ) ), $meta_ids );
+			}
+
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( "DELETE FROM $table WHERE id NOT IN ($not_in)" );
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching
+		}
+
+		// Save the current version to DB.
+		$this->update_db_ver( 5 );
 	}
 
 	/**

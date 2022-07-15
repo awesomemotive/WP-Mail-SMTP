@@ -45,7 +45,7 @@ class Options extends OptionsAbstract {
 							],
 						]
 					),
-					'https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/'
+					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/', 'Gmail documentation' ) )
 				),
 				'notices'     => [
 					'educational' => wp_kses(
@@ -208,7 +208,7 @@ class Options extends OptionsAbstract {
 								],
 							]
 						),
-						'https://wpmailsmtp.com/gmail-send-from-alias-wp-mail-smtp/'
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/gmail-send-from-alias-wp-mail-smtp/', 'Gmail aliases description - Follow these instructions' ) )
 					);
 					?>
 				</p>

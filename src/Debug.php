@@ -39,13 +39,16 @@ class Debug {
 	 *
 	 * @since 1.2.0
 	 * @since 3.0.0 Start saving the Debug Event IDs, instead of error messages.
+	 * @since 3.5.0 Returns Event ID.
 	 *
 	 * @param mixed $message An array or string error message.
+	 *
+	 * @return bool|int
 	 */
 	public static function set( $message ) {
 
 		if ( empty( $message ) ) {
-			return;
+			return false;
 		}
 
 		self::clear_cache();
@@ -68,6 +71,8 @@ class Debug {
 		}
 
 		update_option( self::OPTION_KEY, array_unique( $all ), false );
+
+		return $event_id;
 	}
 
 	/**

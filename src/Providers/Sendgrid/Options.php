@@ -38,7 +38,7 @@ class Options extends OptionsAbstract {
 						]
 					),
 					'https://sendgrid.com',
-					'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/'
+					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/', 'SendGrid documentation' ) )
 				),
 				'supports'    => [
 					'from_email'       => true,
@@ -123,7 +123,7 @@ class Options extends OptionsAbstract {
 								],
 							]
 						),
-						'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/#setup'
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendgrid-mailer-in-wp-mail-smtp/#setup', 'SendGrid documentation - setup' ) )
 					);
 					?>
 				</p>

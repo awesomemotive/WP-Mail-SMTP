@@ -358,9 +358,13 @@ abstract class OptionsAbstract implements OptionsInterface {
 					<p class="desc">
 						<?php esc_html_e( 'The password is encrypted in the database, but for improved security we recommend using your site\'s WordPress configuration file to set your password.', 'wp-mail-smtp' ); ?>
 						<br>
-						<a href="https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/" target="_blank" rel="noopener noreferrer">
-							<strong><?php esc_html_e( 'Learn More', 'wp-mail-smtp' ); ?></strong>
-						</a>
+						<?php
+						printf(
+							'<a href="%1$s" target="_blank" rel="noopener noreferrer"><strong>%2$s</strong></a>',
+							esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/', 'SMTP Password - Learn More' ) ),
+							esc_html__( 'Learn More', 'wp-mail-smtp' )
+						)
+						?>
 					</p>
 				<?php endif; ?>
 			</div>

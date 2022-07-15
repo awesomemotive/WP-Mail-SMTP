@@ -527,28 +527,53 @@ class WP {
 			return $initiators_cache[ $file_path ];
 		}
 
+		$name = self::get_initiator( $file_path )['name'];
+
+		$initiators_cache[ $file_path ] = $name;
+
+		set_transient( $cache_key, $initiators_cache, HOUR_IN_SECONDS );
+
+		return $name;
+	}
+
+	/**
+	 * Get the info of the plugin/theme/wp-core function.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param string $file_path The absolute path of the function location.
+	 *
+	 * @return array
+	 */
+	public static function get_initiator( $file_path ) {
+
 		$name = self::get_initiator_plugin( $file_path );
+		$type = 'plugin';
 
 		if ( empty( $name ) ) {
 			$name = self::get_initiator_plugin( $file_path, true );
+			$type = 'mu-plugin';
 		}
 
 		if ( empty( $name ) ) {
 			$name = self::get_initiator_theme( $file_path );
+			$type = 'theme';
 		}
 
 		if ( empty( $name ) ) {
 			$name = self::get_initiator_wp_core( $file_path );
+			$type = 'wp-core';
 		}
 
 		if ( empty( $name ) ) {
 			$name = esc_html__( 'N/A', 'wp-mail-smtp' );
+			$type = 'unknown';
 		}
 
-		$initiators_cache[ $file_path ] = $name;
-		set_transient( $cache_key, $initiators_cache, HOUR_IN_SECONDS );
-
-		return $name;
+		return [
+			'name' => $name,
+			'type' => $type,
+		];
 	}
 
 	/**

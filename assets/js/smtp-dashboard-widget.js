@@ -1,4 +1,4 @@
-/* global wp_mail_smtp_dashboard_widget, ajaxurl, moment, Chart */
+/* global wp_mail_smtp_dashboard_widget, ajaxurl, moment, WPMailSMTPChart */
 /**
  * WP Mail SMTP Dashboard Widget function.
  *
@@ -144,7 +144,7 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 
 			ctx = el.$canvas[ 0 ].getContext( '2d' );
 
-			chart.instance = new Chart( ctx, chart.settings );
+			chart.instance = new WPMailSMTPChart( ctx, chart.settings );
 
 			chart.updateWithDummyData();
 

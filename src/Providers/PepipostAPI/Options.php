@@ -43,15 +43,17 @@ class Options extends OptionsAbstract {
 				)
 			),
 			'https://wpmailsmtp.com/go/pepipost/',
-			'https://wpmailsmtp.com/docs/how-to-set-up-the-pepipost-mailer-in-wp-mail-smtp'
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-pepipost-mailer-in-wp-mail-smtp/', 'Pepipost documentation' ) )
 		);
 
 		$api_key = PluginOptions::init()->get( self::SLUG, 'api_key' );
 
 		if ( empty( $api_key ) ) {
-			$description .= '</p><p class="buttonned"><a href="https://wpmailsmtp.com/go/pepipost/" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">' .
-								esc_html__( 'Get Started with Pepipost', 'wp-mail-smtp' ) .
-							'</a></p>';
+			$description .= sprintf(
+				'</p><p class="buttonned"><a href="%1$s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">%2$s</a></p>',
+				'https://wpmailsmtp.com/go/pepipost/',
+				esc_html__( 'Get Started with Pepipost', 'wp-mail-smtp' )
+			);
 		}
 
 		parent::__construct(

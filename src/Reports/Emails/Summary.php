@@ -254,7 +254,7 @@ class Summary {
 			<?php esc_html_e( 'Hi there,', 'wp-mail-smtp' ); ?>
 		</h6>
 		<p class="main-description dark-white-color" style="margin: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #444444;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;padding: 0;text-align: left;mso-line-height-rule: exactly;line-height: 19px;font-size: 16px;margin-bottom: 40px;">
-			<?php esc_html_e( 'Let’s see how your emails performed in the past week.', 'wp-mail-smtp' ); ?>
+			<?php esc_html_e( 'Let’s see how many emails you’ve sent with WP Mail SMTP.', 'wp-mail-smtp' ); ?>
 		</p>
 
 		<table class="stats-totals-wrapper two" style="border-collapse: collapse;border-spacing: 0;padding: 0;vertical-align: top;text-align: left;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;width: 100%;">

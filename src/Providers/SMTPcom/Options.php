@@ -50,15 +50,17 @@ class Options extends OptionsAbstract {
 				__( 'To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">SMTP.com documentation</a>.', 'wp-mail-smtp' ),
 				$allowed_kses_html
 			),
-			'https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp'
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp/', 'SMTP.com documentation' ) )
 		);
 
 		$mailer_options = PluginOptions::init()->get_group( self::SLUG );
 
 		if ( empty( $mailer_options['api_key'] ) && empty( $mailer_options['channel'] ) ) {
-			$description .= '</p><p class="buttonned"><a href="https://wpmailsmtp.com/go/smtp/" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">' .
-											esc_html__( 'Get Started with SMTP.com', 'wp-mail-smtp' ) .
-											'</a></p>';
+			$description .= sprintf(
+				'</p><p class="buttonned"><a href="%1$s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">%2$s</a></p>',
+				'https://wpmailsmtp.com/go/smtp/',
+				esc_html__( 'Get Started with SMTP.com', 'wp-mail-smtp' )
+			);
 		}
 
 		$description .= '<p class="wp-mail-smtp-tooltip">' .

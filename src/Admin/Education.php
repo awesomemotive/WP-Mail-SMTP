@@ -66,7 +66,7 @@ class Education {
 			</div>',
 			wp_kses(
 				sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-					__( 'You’re using WP Mail SMTP Lite. To unlock more features consider <a href="%s" target="_blank" rel="noopener noreferrer">upgrading to Pro</a>.', 'wp-mail-smtp' ),
+					__( 'You’re using WP Mail SMTP Lite. To unlock more features, consider <a href="%s" target="_blank" rel="noopener noreferrer">upgrading to Pro</a>.', 'wp-mail-smtp' ),
 					wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'notice-bar' ] )
 				),
 				[

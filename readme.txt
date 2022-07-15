@@ -1,12 +1,12 @@
-=== WP Mail SMTP by WPForms ===
+=== WP Mail SMTP by WPForms - The Most Popular SMTP and Email Log Plugin ===
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 5.2
-Tested up to: 5.9
-Stable tag: 3.4.0
+Tested up to: 6.0
+Stable tag: 3.5.0
 Requires PHP: 5.6.20
 
-Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.
+Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more. Rated #1 WordPress SMTP Email plugin.
 
 == Description ==
 
@@ -178,7 +178,7 @@ In addition to native Microsoft, Amazon SES, and Zoho Mail integrations, WP Mail
 
 <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">Click here to purchase WP Mail SMTP Pro now!</a>
 
-### Email Log
+#### Email Log
 
 Email Logging lets you log and view all emails sent from your site. Email logs are helpful for storing emails for your records, auditing outgoing emails, and debugging during site development.
 
@@ -207,6 +207,17 @@ Once you've activated email logging, any individual log file can be printed in a
 #### Manage Multisite Email Logs Easily
 
 WP Mail SMTP makes it easy for Network Admins to view and manage email logs for subsites. You can access all of your deliverability information from the Network Admin dashboard and quickly switch between subsites. That makes it easy to review email logging data for all subsites on one centralized page.
+
+#### Email Alerts
+
+Get instantly notified about failed emails! If your site's mailer or SMTP service stops sending your emails, you'll immediately receive a notification. Choose from several helpful alert methods, including:
+
+- Email Notifications
+- Slack Notifications
+- SMS/Twilio Notifications
+- Webhook Notifications
+
+In combination with Email Logging and Email Resend, Email Alerts let you ensure that no important email will ever be lost.
 
 #### Email Reports
 
@@ -318,8 +329,19 @@ By all means please contact us to discuss features or options you'd like to see 
 10. Email Log single page (Pro)
 11. Email Reports - Email Log statistics grouped by email subject (Pro)
 12. Email Log bulk Export (Pro)
+13. Email Alerts - Get notified about failed emails (Pro)
 
 == Changelog ==
+
+= 3.5.0 - 2022-07-14 =
+- Added: Check if `wp_mail` function is overwritten.
+- Added: DB table (`wpmailsmtp_tasks_meta`) cleanup after scheduled actions execution. Keeps DB size small.
+- Changed: Updated the list of conflicting plugins (added Branda and MailPoet).
+- Changed: Updated Action Scheduler library to 3.4.2.
+- Fixed: SMTP.com mailer email content-encoding.
+- Fixed: Dashboard widget graph when there is no email logs data.
+- Fixed: Missing Sendinblue email body WP filter.
+- Fixed: Chart.js library conflicts with other plugins.
 
 = 3.4.0 - 2022-04-27 =
 - Added: New transactional mailer: SendLayer integration.

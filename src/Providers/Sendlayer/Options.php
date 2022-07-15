@@ -43,9 +43,9 @@ class Options extends OptionsAbstract {
 				]
 			),
 			// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound, WordPress.Security.NonceVerification.Recommended
-			wp_mail_smtp()->get_utm_url( 'https://sendlayer.com/wp-mail-smtp/', [ 'source' => 'wpmailsmtpplugin', 'medium' => 'WordPress', 'content' => isset( $_GET['page'] ) && $_GET['page'] === 'wp-mail-smtp-setup-wizard' ? 'Setup Wizard - Mailer Description' : 'Plugin Settings - Mailer Description' ] ),
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://sendlayer.com/wp-mail-smtp/', [ 'source' => 'wpmailsmtpplugin', 'medium' => 'WordPress', 'content' => isset( $_GET['page'] ) && $_GET['page'] === 'wp-mail-smtp-setup-wizard' ? 'Setup Wizard - Mailer Description' : 'Plugin Settings - Mailer Description' ] ) ),
 			// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendlayer-mailer-in-wp-mail-smtp/', 'Mailer Description' )
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendlayer-mailer-in-wp-mail-smtp/', 'Mailer Description' ) )
 		);
 
 		$mailer_options = PluginOptions::init()->get_group( self::SLUG );
@@ -54,7 +54,7 @@ class Options extends OptionsAbstract {
 			$description .= sprintf(
 				'</p><p class="buttonned"><a href="%1$s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">%2$s</a></p>',
 				// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-				wp_mail_smtp()->get_utm_url( 'https://sendlayer.com/wp-mail-smtp/', [ 'source' => 'wpmailsmtpplugin', 'medium' => 'WordPress', 'content' => 'Plugin Settings - Mailer Button' ] ),
+				esc_url( wp_mail_smtp()->get_utm_url( 'https://sendlayer.com/wp-mail-smtp/', [ 'source' => 'wpmailsmtpplugin', 'medium' => 'WordPress', 'content' => 'Plugin Settings - Mailer Button' ] ) ),
 				esc_html__( 'Get Started with SendLayer', 'wp-mail-smtp' )
 			);
 		}

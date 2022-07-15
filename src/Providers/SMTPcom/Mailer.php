@@ -166,16 +166,16 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @param array|string $content String when text/plain, array otherwise.
 	 */
-	public function set_content( $content ) {
+	public function set_content( $content ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		if ( empty( $content ) ) {
 			return;
 		}
 
-		$parts = array();
+		$parts = [];
 
 		if ( is_array( $content ) ) {
-			$allowed = array( 'text', 'html' );
+			$allowed = [ 'text', 'html' ];
 
 			foreach ( $content as $type => $body ) {
 				if (
@@ -192,12 +192,11 @@ class Mailer extends MailerAbstract {
 					$content_type = 'text/html';
 				}
 
-				$parts[] = array(
-					'type'     => $content_type,
-					'content'  => $content_value,
-					'charset'  => $this->phpmailer->CharSet,
-					'encoding' => $this->phpmailer->Encoding,
-				);
+				$parts[] = [
+					'type'    => $content_type,
+					'content' => $content_value,
+					'charset' => $this->phpmailer->CharSet,
+				];
 			}
 		} else {
 			$content_type  = 'text/html';
@@ -207,20 +206,19 @@ class Mailer extends MailerAbstract {
 				$content_type = 'text/plain';
 			}
 
-			$parts[] = array(
-				'type'     => $content_type,
-				'content'  => $content_value,
-				'charset'  => $this->phpmailer->CharSet,
-				'encoding' => $this->phpmailer->Encoding,
-			);
+			$parts[] = [
+				'type'    => $content_type,
+				'content' => $content_value,
+				'charset' => $this->phpmailer->CharSet,
+			];
 		}
 
 		$this->set_body_param(
-			array(
-				'body' => array(
+			[
+				'body' => [
 					'parts' => $parts,
-				),
-			)
+				],
+			]
 		);
 	}
 

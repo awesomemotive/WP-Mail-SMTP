@@ -276,7 +276,7 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Get the email body.
 	 *
 	 * @since 1.6.0
 	 *
@@ -284,7 +284,16 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_body() {
 
-		return new SendSmtpEmail( $this->body );
+		/**
+		 * Filters Sendinblue email body.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $body Email body.
+		 */
+		$body = apply_filters( 'wp_mail_smtp_providers_sendinblue_mailer_get_body', $this->body );
+
+		return new SendSmtpEmail( $body );
 	}
 
 	/**

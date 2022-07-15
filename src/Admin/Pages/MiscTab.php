@@ -114,7 +114,8 @@ class MiscTab extends PageAbstract {
 										],
 									]
 								),
-								'https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/'
+								// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+								esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-secure-smtp-settings-by-using-constants/', [ 'medium' => 'misc-settings', 'content' => 'Do not send setting description - support article' ] ) )
 							);
 						}
 						?>

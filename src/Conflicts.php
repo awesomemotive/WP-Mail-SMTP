@@ -338,6 +338,28 @@ class Conflicts {
 				'test'     => 'test_wp_html_mail_integration',
 				'message'  => esc_html__( 'Or enable "Do not change email sender by default" setting in Settings > Email template > Sender (tab).', 'wp-mail-smtp' ),
 			],
+
+			/**
+			 * This plugin can be used along with our plugin if "SMTP" module is deactivated.
+			 *
+			 * Url: https://wordpress.org/plugins/branda-white-labeling/
+			 */
+			[
+				'name'     => 'Branda',
+				'slug'     => 'branda-white-labeling/ultimate-branding.php',
+				'function' => 'set_ultimate_branding',
+				'test'     => 'test_branda_integration',
+				'message'  => esc_html__( 'Or deactivate "SMTP" module in Branda > Emails > SMTP.', 'wp-mail-smtp' ),
+			],
+
+			/**
+			 * Url: https://wordpress.org/plugins/mailpoet/
+			 */
+			[
+				'name'     => 'MailPoet 3 (New)',
+				'slug'     => 'mailpoet/mailpoet.php',
+				'function' => 'mailpoet_wp_version_notice',
+			],
 		];
 	}
 
@@ -511,5 +533,22 @@ class Conflicts {
 		$options = Haet_Mail()->get_options();
 
 		return ! isset( $options['disable_sender'] ) || ! $options['disable_sender'];
+	}
+
+	/**
+	 * Check whether we have conflict with "Branda" plugin.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool Returns true if we have conflict otherwise false.
+	 */
+	protected function test_branda_integration() {
+
+		// Check requirements for test.
+		if ( ! function_exists( 'branda_is_active_module' ) ) {
+			return true;
+		}
+
+		return branda_is_active_module( 'emails/smtp.php' );
 	}
 }

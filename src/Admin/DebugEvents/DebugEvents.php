@@ -138,12 +138,15 @@ class DebugEvents {
 	 * Save the debug message.
 	 *
 	 * @since 3.0.0
+	 * @since 3.5.0 Returns Event ID.
 	 *
 	 * @param string $message The debug message.
+	 *
+	 * @return bool|int
 	 */
 	public static function add_debug( $message = '' ) {
 
-		self::add( $message, Event::TYPE_DEBUG );
+		return self::add( $message, Event::TYPE_DEBUG );
 	}
 
 	/**

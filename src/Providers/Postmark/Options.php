@@ -42,7 +42,7 @@ class Options extends OptionsAbstract {
 				]
 			),
 			'https://postmarkapp.com',
-			'https://wpmailsmtp.com/docs/how-to-set-up-the-postmark-mailer-in-wp-mail-smtp/'
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-postmark-mailer-in-wp-mail-smtp/', 'Postmark documentation' ) )
 		);
 
 		parent::__construct(
@@ -138,7 +138,7 @@ class Options extends OptionsAbstract {
 								],
 							]
 						),
-						'https://wpmailsmtp.com/docs/how-to-set-up-the-postmark-mailer-in-wp-mail-smtp/#message-stream'
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-postmark-mailer-in-wp-mail-smtp/#message-stream', 'Postmark documentation - message stream' ) )
 					);
 					?>
 				</p>

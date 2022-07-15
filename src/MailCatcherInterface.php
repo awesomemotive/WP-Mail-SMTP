@@ -39,4 +39,31 @@ interface MailCatcherInterface {
 	 * @return string
 	 */
 	public function generate_id();
+
+	/**
+	 * Get debug event ID.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool|int
+	 */
+	public function get_debug_event_id();
+
+	/**
+	 * Whether the current email is a test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool
+	 */
+	public function is_test_email();
+
+	/**
+	 * Whether the current email is a Setup Wizard test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool
+	 */
+	public function is_setup_wizard_test_email();
 }

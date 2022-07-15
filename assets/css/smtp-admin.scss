@@ -229,7 +229,7 @@
 						white-space: nowrap;
 
 						&:checked + .wp-mail-smtp-setting-toggle-switch {
-							background-color: #46B450;
+							background-color: #00a32a;
 
 							&:before {
 								-webkit-transform: translateX(16px);
@@ -254,7 +254,7 @@
 							}
 
 							&:checked + .wp-mail-smtp-setting-toggle-switch {
-								background-color: lighten(#46B450, 25);
+								background-color: lighten(#00a32a, 25);
 								cursor: default;
 							}
 						}
@@ -275,7 +275,7 @@
 						&:checked:hover,
 						&:checked:focus {
 							& + .wp-mail-smtp-setting-toggle-switch {
-								box-shadow: 0 0 0 1px #fff, 0 0 0 3px #46B450;
+								box-shadow: 0 0 0 1px #fff, 0 0 0 3px #00a32a;
 							}
 						}
 
@@ -311,7 +311,7 @@
 						transition:         all 0.2s ease-in-out;
 						vertical-align: middle;
 						display: inline-block;
-						margin: 0 5px 0 0;
+						margin: -1px 5px 0 0;
 						width: 36px;
 						height: 20px;
 
@@ -406,6 +406,85 @@
 								}
 							}
 						}
+					}
+				}
+			}
+
+			&.wp-mail-smtp-setting-row-alert {
+				padding-top: 20px;
+				padding-bottom: 25px;
+
+				.wp-mail-smtp-setting-row {
+					border: none;
+				}
+
+				.section-heading {
+					margin-bottom: 25px;
+
+					h3 {
+						margin-bottom: 10px;
+						font-weight: 500;
+						font-size: 18px;
+						line-height: 22px;
+					}
+
+					.notice {
+						margin-top: 20px;
+
+						p {
+							margin: 6.5px 0;
+							font-size: 13px;
+						}
+					}
+				}
+
+				.wp-mail-smtp-setting-row {
+					padding: 0 !important;
+
+					& + .wp-mail-smtp-setting-row {
+						margin-top: 20px;
+					}
+				}
+
+				.wp-mail-smtp-setting-field {
+
+					.wp-mail-smtp-setting-toggle-checked-label,
+					.wp-mail-smtp-setting-toggle-unchecked-label {
+						text-transform: none;
+					}
+				}
+
+				.wp-mail-smtp-setting-label {
+					label {
+						font-weight: 500;
+					}
+				}
+
+				.dashicons-trash {
+					position: relative;
+					top: 6px;
+					color: #A7AAAD;
+					cursor: pointer;
+					transition: 0.2s;
+
+					&:hover {
+						color: #d63638;
+					}
+				}
+			}
+
+			&#wp-mail-smtp-setting-row-alerts-twilio_sms {
+
+				.wp-mail-smtp-setting-row-alert-connection-options {
+					position: relative;
+
+					& + .wp-mail-smtp-setting-row-alert-connection-options:before {
+						content: '';
+						display: block;
+						max-width: 605px;
+						height: 1px;
+						margin-bottom: 20px;
+						background-color: #DCDCDE;
 					}
 				}
 			}

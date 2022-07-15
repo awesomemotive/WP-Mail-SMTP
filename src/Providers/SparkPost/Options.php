@@ -41,7 +41,7 @@ class Options extends OptionsAbstract {
 				]
 			),
 			'https://www.sparkpost.com/',
-			'https://wpmailsmtp.com/docs/how-to-set-up-the-sparkpost-mailer-in-wp-mail-smtp/'
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sparkpost-mailer-in-wp-mail-smtp/', 'SparkPost documentation' ) )
 		);
 
 		parent::__construct(

@@ -40,6 +40,33 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	private $debug_output_buffer = [];
 
 	/**
+	 * Debug event ID.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @var int
+	 */
+	private $debug_event_id = false;
+
+	/**
+	 * Whether the current email is a test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @var bool
+	 */
+	private $is_test_email = false;
+
+	/**
+	 * Whether the current email is a Setup Wizard test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @var bool
+	 */
+	private $is_setup_wizard_test_email = false;
+
+	/**
 	 * Modify the default send() behaviour.
 	 * For those mailers, that relies on PHPMailer class - call it directly.
 	 * For others - init the correct provider and process it.
@@ -56,8 +83,12 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 		$options     = Options::init();
 		$mail_mailer = sanitize_key( $options->get( 'mail', 'mailer' ) );
 
+		// Reset email related variables.
+		$this->debug_event_id             = false;
+		$this->is_test_email              = false;
+		$this->is_setup_wizard_test_email = false;
+
 		$is_emailing_blocked = false;
-		$is_test_email       = false;
 
 		if ( wp_mail_smtp()->is_blocked() ) {
 			$is_emailing_blocked = true;
@@ -68,13 +99,16 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 			if (
 				! empty( $header[0] ) &&
 				! empty( $header[1] ) &&
-				$header[0] === 'X-Mailer-Type' &&
-				trim( $header[1] ) === 'WPMailSMTP/Admin/Test'
+				$header[0] === 'X-Mailer-Type'
 			) {
-				$is_emailing_blocked = false;
-				$is_test_email       = true;
+				if ( trim( $header[1] ) === 'WPMailSMTP/Admin/Test' ) {
+					$is_emailing_blocked = false;
+					$this->is_test_email = true;
+				} elseif ( trim( $header[1] ) === 'WPMailSMTP/Admin/SetupWizard/Test' ) {
+					$this->is_setup_wizard_test_email = true;
+				}
 			}
-		};
+		}
 
 		// Do not send emails if admin desired that.
 		if ( $is_emailing_blocked ) {
@@ -91,7 +125,7 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 			$mail_mailer === 'pepipost'
 		) {
 			try {
-				if ( DebugEvents::is_debug_enabled() && ! $is_test_email ) {
+				if ( DebugEvents::is_debug_enabled() && ! $this->is_test_email ) {
 					$this->SMTPDebug   = 3; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$this->Debugoutput = [ $this, 'debug_output_callback' ]; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				}
@@ -141,17 +175,28 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 				if ( $mail_mailer !== 'mail' ) {
 
 					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$debug_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
+					$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
 
-					Debug::set( $debug_message );
+					$this->debug_event_id = Debug::set( $error_message );
 
 					if ( DebugEvents::is_debug_enabled() && ! empty( $this->debug_output_buffer ) ) {
-						$debug_message .= "\r\n" . esc_html__( 'Debug Output:', 'wp-mail-smtp' ) . "\r\n";
+						$debug_message  = $error_message . "\r\n" . esc_html__( 'Debug Output:', 'wp-mail-smtp' ) . "\r\n";
 						$debug_message .= implode( "\r\n", $this->debug_output_buffer );
 
-						DebugEvents::add_debug( $debug_message );
+						$this->debug_event_id = DebugEvents::add_debug( $debug_message );
 					}
 				}
+
+				/**
+				 * Fires after email sent failure via SMTP.
+				 *
+				 * @since 3.5.0
+				 *
+				 * @param string               $error_message Error message.
+				 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
+				 * @param string               $mail_mailer   Current mailer name.
+				 */
+				do_action( 'wp_mail_smtp_mailcatcher_send_failed', $error_message, $this, $mail_mailer );
 
 				if ( $this->exceptions ) {
 					throw $e;
@@ -227,7 +272,20 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 					$message .= 'Conflicts: ' . esc_html( $conflicts->get_conflict_name() ) . "\r\n";
 				}
 
-				Debug::set( $message . $error );
+				$error_message = $message . $error;
+
+				$this->debug_event_id = Debug::set( $error_message );
+
+				/**
+				 * Fires after email sent failure.
+				 *
+				 * @since 3.5.0
+				 *
+				 * @param string               $error_message Error message.
+				 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
+				 * @param string               $mail_mailer   Current mailer name.
+				 */
+				do_action( 'wp_mail_smtp_mailcatcher_send_failed', $error_message, $this, $mail_mailer );
 			}
 		} else {
 
@@ -240,7 +298,7 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 		 *
 		 * Allow to perform any actions with the data.
 		 *
-		 * @since  {VERSION}
+		 * @since 3.5.0
 		 *
 		 * @param MailerAbstract       $mailer      The Mailer object.
 		 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
@@ -308,5 +366,41 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 		}
 
 		$this->debug_output_buffer[] = trim( $str, "\r\n" );
+	}
+
+	/**
+	 * Get debug event ID.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool|int
+	 */
+	public function get_debug_event_id() {
+
+		return $this->debug_event_id;
+	}
+
+	/**
+	 * Whether the current email is a test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool
+	 */
+	public function is_test_email() {
+
+		return $this->is_test_email;
+	}
+
+	/**
+	 * Whether the current email is a Setup Wizard test email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return bool
+	 */
+	public function is_setup_wizard_test_email() {
+
+		return $this->is_setup_wizard_test_email;
 	}
 }

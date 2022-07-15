@@ -46,7 +46,7 @@ class Area {
 	 *
 	 * @var array
 	 */
-	public static $pages_registered = [ 'general', 'logs', 'about', 'tools', 'reports' ];
+	public static $pages_registered = [ 'general', 'logs', 'about', 'tools', 'reports', 'alerts' ];
 
 	/**
 	 * Area constructor.
@@ -480,9 +480,12 @@ class Area {
 												'$50'
 											)
 											. '</p>',
-				'upgrade_doc'       => '<a href="https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/?utm_source=WordPress&amp;utm_medium=link&amp;utm_campaign=liteplugin" target="_blank" rel="noopener noreferrer" class="already-purchased">
-												' . esc_html__( 'Already purchased?', 'wp-mail-smtp' ) . '
-											</a>',
+				'upgrade_doc'       => sprintf(
+					'<a href="%1$s" target="_blank" rel="noopener noreferrer" class="already-purchased">%2$s</a>',
+					// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/', [ 'medium' => 'plugin-settings', 'content' => 'Pro Mailer Popup - Already purchased' ] ) ),
+					esc_html__( 'Already purchased?', 'wp-mail-smtp' )
+				),
 			],
 			'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),
 			'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
@@ -828,7 +831,7 @@ class Area {
 	 *
 	 * @return string
 	 */
-	protected function get_current_tab() {
+	public function get_current_tab() {
 
 		$current = '';
 
@@ -895,19 +898,20 @@ class Area {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \WPMailSMTP\Admin\PageAbstract[]
+	 * @return PageAbstract[]
 	 */
 	public function get_pages() {
 
 		if ( empty( $this->pages ) ) {
-			$this->pages = array(
+			$this->pages = [
 				'settings' => new Pages\SettingsTab(),
 				'test'     => new Pages\TestTab( new Pages\Tools() ),
 				'logs'     => new Pages\LogsTab(),
 				'control'  => new Pages\ControlTab(),
+				'alerts'   => new Pages\AlertsTab(),
 				'misc'     => new Pages\MiscTab(),
 				'auth'     => new Pages\AuthTab(),
-			);
+			];
 		}
 
 		return apply_filters( 'wp_mail_smtp_admin_get_pages', $this->pages );
@@ -1189,17 +1193,8 @@ class Area {
 
 		$custom['docs'] = sprintf(
 			'<a href="%1$s" target="_blank" aria-label="%2$s" rel="noopener noreferrer">%3$s</a>',
-			esc_url(
-				add_query_arg(
-					[
-						'utm_content'  => 'Documentation',
-						'utm_campaign' => 'liteplugin',
-						'utm_medium'   => 'all-plugins',
-						'utm_source'   => 'WordPress',
-					],
-					'https://wpmailsmtp.com/docs/'
-				)
-			),
+			// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/', [ 'medium' => 'all-plugins', 'content' => 'Documentation' ] ) ),
 			esc_attr__( 'Go to WPMailSMTP.com documentation page', 'wp-mail-smtp' ),
 			esc_html__( 'Docs', 'wp-mail-smtp' )
 		);

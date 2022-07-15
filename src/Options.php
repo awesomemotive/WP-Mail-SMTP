@@ -28,7 +28,7 @@ class Options {
 	 * @var array Map of all the default options of the plugin.
 	 */
 	private static $map = [
-		'mail'        => [
+		'mail'                 => [
 			'from_name',
 			'from_email',
 			'mailer',
@@ -36,7 +36,7 @@ class Options {
 			'from_name_force',
 			'from_email_force',
 		],
-		'smtp'        => [
+		'smtp'                 => [
 			'host',
 			'port',
 			'encryption',
@@ -45,56 +45,56 @@ class Options {
 			'user',
 			'pass',
 		],
-		'gmail'       => [
+		'gmail'                => [
 			'client_id',
 			'client_secret',
 		],
-		'outlook'     => [
+		'outlook'              => [
 			'client_id',
 			'client_secret',
 		],
-		'zoho'        => [
+		'zoho'                 => [
 			'domain',
 			'client_id',
 			'client_secret',
 		],
-		'amazonses'   => [
+		'amazonses'            => [
 			'client_id',
 			'client_secret',
 			'region',
 		],
-		'mailgun'     => [
+		'mailgun'              => [
 			'api_key',
 			'domain',
 			'region',
 		],
-		'sendgrid'    => [
+		'sendgrid'             => [
 			'api_key',
 			'domain',
 		],
-		'sparkpost'   => [
+		'sparkpost'            => [
 			'api_key',
 			'region',
 		],
-		'postmark'    => [
+		'postmark'             => [
 			'server_api_token',
 			'message_stream',
 		],
-		'smtpcom'     => [
+		'smtpcom'              => [
 			'api_key',
 			'channel',
 		],
-		'sendinblue'  => [
+		'sendinblue'           => [
 			'api_key',
 			'domain',
 		],
-		'sendlayer'   => [
+		'sendlayer'            => [
 			'api_key',
 		],
-		'pepipostapi' => [
+		'pepipostapi'          => [
 			'api_key',
 		],
-		'pepipost'    => [
+		'pepipost'             => [
 			'host',
 			'port',
 			'encryption',
@@ -102,8 +102,24 @@ class Options {
 			'user',
 			'pass',
 		],
-		'license'     => [
+		'license'              => [
 			'key',
+		],
+		'alert_email'          => [
+			'enabled',
+			'connections',
+		],
+		'alert_slack_webhook'  => [
+			'enabled',
+			'connections',
+		],
+		'alert_twilio_sms'     => [
+			'enabled',
+			'connections',
+		],
+		'alert_custom_webhook' => [
+			'enabled',
+			'connections',
 		],
 	];
 
@@ -668,6 +684,51 @@ class Options {
 						break;
 				}
 
+			case 'alert_email':
+				switch ( $key ) {
+					case 'connections':
+						$return = $this->is_const_defined( $group, $key ) ? [ [ 'send_to' => WPMS_ALERT_EMAIL_SEND_TO ] ] : $value;
+						break;
+				}
+
+				break;
+
+			case 'alert_slack_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => WPMS_ALERT_SLACK_WEBHOOK_URL ] ] : $value;
+						break;
+				}
+
+				break;
+
+			case 'alert_twilio_sms':
+				switch ( $key ) {
+					case 'connections':
+						if ( $this->is_const_defined( $group, $key ) ) {
+							$return = [
+								[
+									'account_sid'       => WPMS_ALERT_TWILIO_SMS_ACCOUNT_SID,
+									'auth_token'        => WPMS_ALERT_TWILIO_SMS_AUTH_TOKEN,
+									'from_phone_number' => WPMS_ALERT_TWILIO_SMS_FROM_PHONE_NUMBER,
+									'to_phone_number'   => WPMS_ALERT_TWILIO_SMS_TO_PHONE_NUMBER,
+								],
+							];
+						} else {
+							$return = $value;
+						}
+						break;
+				}
+
+				break;
+
+			case 'alert_custom_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => WPMS_ALERT_CUSTOM_WEBHOOK_URL ] ] : $value;
+						break;
+				}
+
 				break;
 
 			case 'license':
@@ -940,6 +1001,45 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						$return = defined( 'WPMS_PEPIPOST_API_KEY' ) && WPMS_PEPIPOST_API_KEY;
+						break;
+				}
+
+				break;
+
+			case 'alert_email':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'WPMS_ALERT_EMAIL_SEND_TO' ) && WPMS_ALERT_EMAIL_SEND_TO;
+						break;
+				}
+
+				break;
+
+			case 'alert_slack_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'WPMS_ALERT_SLACK_WEBHOOK_URL' ) && WPMS_ALERT_SLACK_WEBHOOK_URL;
+						break;
+				}
+
+				break;
+
+			case 'alert_twilio_sms':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'WPMS_ALERT_TWILIO_SMS_ACCOUNT_SID' ) && WPMS_ALERT_TWILIO_SMS_ACCOUNT_SID &&
+											defined( 'WPMS_ALERT_TWILIO_SMS_AUTH_TOKEN' ) && WPMS_ALERT_TWILIO_SMS_AUTH_TOKEN &&
+											defined( 'WPMS_ALERT_TWILIO_SMS_FROM_PHONE_NUMBER' ) && WPMS_ALERT_TWILIO_SMS_FROM_PHONE_NUMBER &&
+											defined( 'WPMS_ALERT_TWILIO_SMS_TO_PHONE_NUMBER' ) && WPMS_ALERT_TWILIO_SMS_TO_PHONE_NUMBER;
+						break;
+				}
+
+				break;
+
+			case 'alert_custom_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'WPMS_ALERT_CUSTOM_WEBHOOK_URL' ) && WPMS_ALERT_CUSTOM_WEBHOOK_URL;
 						break;
 				}
 

@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 5.2
 Tested up to: 6.0
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more. Rated #1 WordPress SMTP Email plugin.
@@ -332,6 +332,10 @@ By all means please contact us to discuss features or options you'd like to see 
 13. Email Alerts - Get notified about failed emails (Pro)
 
 == Changelog ==
+
+= 3.5.1 - 2022-07-14 =
+- Changed: Removed MailPoet from the list of conflicting plugins.
+- Fixed: PHP warning for undefined variable when using the Default (none) mailer.
 
 = 3.5.0 - 2022-07-14 =
 - Added: Check if `wp_mail` function is overwritten.

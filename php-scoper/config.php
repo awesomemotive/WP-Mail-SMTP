@@ -585,6 +585,7 @@ if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
 		->in( 'vendor/aws/aws-sdk-php/src/Multipart' )
 		->in( 'vendor/aws/aws-sdk-php/src/Retry' )
 		->in( 'vendor/aws/aws-sdk-php/src/Ses' )
+		->in( 'vendor/aws/aws-sdk-php/src/SesV2' )
 		->in( 'vendor/aws/aws-sdk-php/src/Signature' )
 		->name( [ '*.php' ] );
 	$config['finders'][] = Finder::create()

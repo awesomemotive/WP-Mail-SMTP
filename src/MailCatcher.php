@@ -171,12 +171,11 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 
 				$this->setError( $e->getMessage() );
 
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
+
 				// Set the debug error, but not for default PHP mailer.
 				if ( $mail_mailer !== 'mail' ) {
-
-					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
-
 					$this->debug_event_id = Debug::set( $error_message );
 
 					if ( DebugEvents::is_debug_enabled() && ! empty( $this->debug_output_buffer ) ) {

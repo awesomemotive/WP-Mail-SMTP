@@ -351,15 +351,6 @@ class Conflicts {
 				'test'     => 'test_branda_integration',
 				'message'  => esc_html__( 'Or deactivate "SMTP" module in Branda > Emails > SMTP.', 'wp-mail-smtp' ),
 			],
-
-			/**
-			 * Url: https://wordpress.org/plugins/mailpoet/
-			 */
-			[
-				'name'     => 'MailPoet 3 (New)',
-				'slug'     => 'mailpoet/mailpoet.php',
-				'function' => 'mailpoet_wp_version_notice',
-			],
 		];
 	}
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP Pro
- * Version: 3.5.0
+ * Version: 3.5.1
  * Requires at least: 5.2
  * Requires PHP: 5.6.20
  * Plugin URI: https://wpmailsmtp.com/
@@ -222,7 +222,7 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '3.5.0' );
+	define( 'WPMS_PLUGIN_VER', '3.5.1' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.6.20' );

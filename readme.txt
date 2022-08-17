@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 5.2
 Tested up to: 6.0
-Stable tag: 3.5.1
+Stable tag: 3.5.2
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more. Rated #1 WordPress SMTP Email plugin.
@@ -66,7 +66,7 @@ Instead of having users use different SMTP plugins and workflows for different S
 SendLayer is our #1 recommended transactional email service.
 
 Its affordable pricing and simple setup make it the perfect choice for sending emails from WordPress. It also has open and click tracking, email logs, and email list management.
-SendLayer is the best choice if you want a mailer that's reliable, fast, and easy to set up. You can send up to 500 emails for free when you sign up for a trial.
+SendLayer is the best choice if you want a mailer that's reliable, fast, and easy to set up. You can send hundreds of emails for free when you sign up for a trial.
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendlayer-mailer-in-wp-mail-smtp/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">SendLayer documentation</a> for more details.
 
@@ -332,6 +332,9 @@ By all means please contact us to discuss features or options you'd like to see 
 13. Email Alerts - Get notified about failed emails (Pro)
 
 == Changelog ==
+
+= 3.5.2 - 2022-08-17 =
+- Fixed: The check if `wp_mail` function is overwritten on Windows servers.
 
 = 3.5.1 - 2022-07-14 =
 - Changed: Removed MailPoet from the list of conflicting plugins.

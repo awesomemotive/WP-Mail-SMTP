@@ -31,7 +31,7 @@ class Options extends OptionsAbstract {
 		$description = sprintf(
 			wp_kses(
 			/* translators: %1$s - URL to sendlayer.com; %2$s - URL to SendLayer documentation on wpmailsmtp.com. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">SendLayer</a> is our #1 recommended mailer.</strong> Its affordable pricing and simple setup make it the perfect choice for WordPress sites. SendLayer will authenticate your outgoing emails to make sure they always hit customers’ inboxes, and it has detailed documentation to help you authorize your domain.<br><br>You can send up to 500 emails for free when you sign up for a trial.<br><br>To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">SendLayer documentation</a>.', 'wp-mail-smtp' ),
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">SendLayer</a> is our #1 recommended mailer.</strong> Its affordable pricing and simple setup make it the perfect choice for WordPress sites. SendLayer will authenticate your outgoing emails to make sure they always hit customers’ inboxes, and it has detailed documentation to help you authorize your domain.<br><br>You can send hundreds of emails for free when you sign up for a trial.<br><br>To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">SendLayer documentation</a>.', 'wp-mail-smtp' ),
 				[
 					'strong' => [],
 					'br'     => [],

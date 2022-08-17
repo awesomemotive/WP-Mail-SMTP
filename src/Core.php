@@ -1227,7 +1227,7 @@ class Core {
 
 			$wp_mail_original_filepath = ABSPATH . WPINC . $separator . 'pluggable.php';
 
-			if ( $wp_mail_filepath === $wp_mail_original_filepath ) {
+			if ( str_replace( '\\', '/', $wp_mail_filepath ) === str_replace( '\\', '/', $wp_mail_original_filepath ) ) {
 				return;
 			}
 

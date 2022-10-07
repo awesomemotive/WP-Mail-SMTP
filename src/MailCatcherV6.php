@@ -53,6 +53,18 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	private $is_test_email = false;
 
 	/**
+	 * Which validator to use by default when validating email addresses.
+	 * We are using built-in WordPress function `is_email` to validate the email address.
+	 *
+	 * @see PHPMailer::validateAddress()
+	 *
+	 * @since 3.6.0
+	 *
+	 * @var string|callable
+	 */
+	public static $validator = [ Processor::class, 'is_email_callback' ];
+
+	/**
 	 * Whether the current email is a Setup Wizard test email.
 	 *
 	 * @since 3.5.0
@@ -262,7 +274,9 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 				$conflicts = new Conflicts();
 
 				if ( $conflicts->is_detected() ) {
-					$message .= 'Conflicts: ' . esc_html( $conflicts->get_conflict_name() ) . "\r\n";
+					$conflict_plugin_names = implode( ', ', $conflicts->get_all_conflict_names() );
+
+					$message .= 'Conflicts: ' . esc_html( $conflict_plugin_names ) . "\r\n";
 				}
 
 				$error_message = $message . $error;

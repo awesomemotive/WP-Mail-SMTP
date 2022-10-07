@@ -139,6 +139,24 @@ class Auth extends AuthAbstract {
 
 			$this->update_access_token( $client->getAccessToken() );
 			$this->update_refresh_token( $client->getRefreshToken() );
+
+			/*
+			 * We need to set the correct `from_email` address, to avoid the SPF and DKIM issue.
+			 */
+			$gmail_aliases = $this->is_clients_saved() ? $this->get_user_possible_send_from_addresses() : [];
+			$options       = PluginOptions::init();
+			$all_options   = $options->get_all();
+
+			if (
+				! empty( $gmail_aliases ) &&
+				isset( $gmail_aliases[0] ) &&
+				is_email( $gmail_aliases[0] ) !== false &&
+				! in_array( $all_options['mail']['from_email'], $gmail_aliases, true )
+			) {
+				$all_options['mail']['from_email'] = $gmail_aliases[0];
+
+				$options->set( $all_options );
+			}
 		}
 
 		if ( ! empty( $this->options['access_token'] ) ) {

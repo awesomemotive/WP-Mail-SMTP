@@ -190,6 +190,20 @@ class Processor {
 	}
 
 	/**
+	 * Validate the email address.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $email The email address.
+	 *
+	 * @return boolean True if email address is valid, false on failure.
+	 */
+	public static function is_email_callback( $email ) {
+
+		return (bool) is_email( $email );
+	}
+
+	/**
 	 * Modify the email address that is used for sending emails.
 	 *
 	 * @since 1.0.0

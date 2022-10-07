@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WP Mail SMTP
- * Version: 3.5.2
+ * Plugin Name: WP Mail SMTP Pro
+ * Version: 3.6.1
  * Requires at least: 5.2
  * Requires PHP: 5.6.20
  * Plugin URI: https://wpmailsmtp.com/
@@ -194,6 +194,17 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 				?>
 				<br><br>
 				<?php
+
+				$doc_link = add_query_arg(
+					[
+						'utm_source'   => 'WordPress',
+						'utm_medium'   => 'Admin Notice',
+						'utm_campaign' => is_readable( rtrim( plugin_dir_path( __FILE__ ), '/\\' ) . '/src/Pro/Pro.php' ) ? 'plugin' : 'liteplugin',
+						'utm_content'  => 'Minimal Required PHP Version',
+					],
+					'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/'
+				);
+
 				printf(
 					wp_kses( /* translators: %s - WPMailSMTP.com docs URL with more details. */
 						__( '<strong>WP Mail SMTP plugin is disabled</strong> on your site until you fix the issue. <a href="%s" target="_blank" rel="noopener noreferrer">Read more for additional information.</a>', 'wp-mail-smtp' ),
@@ -206,7 +217,7 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 							'strong' => array(),
 						)
 					),
-					'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/'
+					esc_url( $doc_link )
 				);
 				?>
 			</p>
@@ -222,7 +233,7 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 }
 
 if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
-	define( 'WPMS_PLUGIN_VER', '3.5.2' );
+	define( 'WPMS_PLUGIN_VER', '3.6.1' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	define( 'WPMS_PHP_VER', '5.6.20' );

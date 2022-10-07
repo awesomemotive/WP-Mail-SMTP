@@ -575,8 +575,11 @@ Co-Founder, WP Mail SMTP';
 
 		$mailer_text .= '<strong>Mailer:</strong> ' . $this->debug['mailer'] . '<br>';
 		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
+
 		if ( $conflicts->is_detected() ) {
-			$mailer_text .= '<strong>Conflicts:</strong> ' . esc_html( $conflicts->get_conflict_name() ) . '<br>';
+			$conflict_plugin_names = implode( ', ', $conflicts->get_all_conflict_names() );
+
+			$mailer_text .= '<strong>Conflicts:</strong> ' . esc_html( $conflict_plugin_names ) . '<br>';
 		}
 
 		// Display different debug info based on the mailer.

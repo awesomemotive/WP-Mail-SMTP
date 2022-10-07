@@ -240,6 +240,35 @@ class DebugEventsTab extends PageAbstract {
 					</div>
 				</div>
 
+				<div id="wp-mail-smtp-setting-row-debug_events_retention_period" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-select wp-mail-smtp-clear">
+					<div class="wp-mail-smtp-setting-label">
+						<label for="wp-mail-smtp-setting-debug_events_retention_period">
+							<?php esc_html_e( 'Events Retention Period', 'wp-mail-smtp' ); ?>
+						</label>
+					</div>
+					<div class="wp-mail-smtp-setting-field">
+						<select name="wp-mail-smtp[debug_events][retention_period]" id="wp-mail-smtp-setting-debug_events_retention_period"
+							<?php disabled( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ); ?>>
+							<option value=""><?php esc_html_e( 'Forever', 'wp-mail-smtp' ); ?></option>
+							<?php foreach ( $this->get_debug_events_retention_period_options() as $value => $label ) : ?>
+								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $this->options->get( 'debug_events', 'retention_period' ), $value ); ?>>
+									<?php echo esc_html( $label ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="desc">
+							<?php
+							esc_html_e( 'Debug events older than the selected period will be permanently deleted from the database.', 'wp-mail-smtp' );
+
+							if ( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ) {
+								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo '<br>' . $this->options->get_const_set_message( 'WPMS_DEBUG_EVENTS_RETENTION_PERIOD' );
+							}
+							?>
+						</p>
+					</div>
+				</div>
+
 				<?php $this->display_save_btn(); ?>
 			</form>
 		<?php endif; ?>
@@ -469,5 +498,54 @@ class DebugEventsTab extends PageAbstract {
 				$_SERVER['REQUEST_URI'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			);
 		}
+	}
+
+	/**
+	 * Get debug events retention period options.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return array
+	 */
+	protected function get_debug_events_retention_period_options() {
+
+		$options = [
+			604800   => esc_html__( '1 Week', 'wp-mail-smtp' ),
+			2628000  => esc_html__( '1 Month', 'wp-mail-smtp' ),
+			7885000  => esc_html__( '3 Months', 'wp-mail-smtp' ),
+			15770000 => esc_html__( '6 Months', 'wp-mail-smtp' ),
+			31540000 => esc_html__( '1 Year', 'wp-mail-smtp' ),
+		];
+
+		$debug_event_retention_period = $this->options->get( 'debug_events', 'retention_period' );
+
+		// Check if defined value already in list and add it if not.
+		if (
+			! empty( $debug_event_retention_period ) &&
+			! isset( $options[ $debug_event_retention_period ] )
+		) {
+			$debug_event_retention_period_days = floor( $debug_event_retention_period / DAY_IN_SECONDS );
+
+			$options[ $debug_event_retention_period ] = sprintf(
+				/* translators: %d - days count. */
+				_n( '%d Day', '%d Days', $debug_event_retention_period_days, 'wp-mail-smtp' ),
+				$debug_event_retention_period_days
+			);
+
+			ksort( $options );
+		}
+
+		/**
+		 * Filter debug events retention period options.
+		 *
+		 * @since 3.6.0
+		 *
+		 * @param array $options Debug Events retention period options.
+		 *                       Option key in seconds.
+		 */
+		return apply_filters(
+			'wp_mail_smtp_admin_pages_debug_events_tab_get_debug_events_retention_period_options',
+			$options
+		);
 	}
 }

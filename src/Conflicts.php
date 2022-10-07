@@ -3,7 +3,7 @@
 namespace WPMailSMTP;
 
 /**
- * Class Conflicts
+ * Class Conflicts.
  *
  * @since 1.5.0
  */
@@ -20,7 +20,10 @@ class Conflicts {
 	public static $plugins = [];
 
 	/**
-	 * Conflict information.
+	 * All detected conflicting plugins.
+	 *
+	 * @since 1.5.0
+	 * @since 3.6.0 Changed from storing a single conflicting plugin info to storing multiple conflicting plugin items.
 	 *
 	 * @var array
 	 */
@@ -351,6 +354,15 @@ class Conflicts {
 				'test'     => 'test_branda_integration',
 				'message'  => esc_html__( 'Or deactivate "SMTP" module in Branda > Emails > SMTP.', 'wp-mail-smtp' ),
 			],
+
+			/**
+			 * Url: https://wordpress.org/plugins/zoho-mail/
+			 */
+			[
+				'name'     => 'Zoho Mail for WordPress',
+				'slug'     => 'zoho-mail/zohoMail.php',
+				'function' => 'zmail_send_mail_callback',
+			],
 		];
 	}
 
@@ -365,8 +377,7 @@ class Conflicts {
 
 		foreach ( self::$plugins as $plugin ) {
 			if ( $this->is_conflicting_plugin( $plugin ) ) {
-				$this->conflict = $plugin;
-				break;
+				$this->conflict[] = $plugin;
 			}
 		}
 
@@ -429,22 +440,32 @@ class Conflicts {
 			return;
 		}
 
-		WP::add_admin_notice( $this->get_conflict_message(), WP::ADMIN_NOTICE_WARNING );
+		foreach ( $this->conflict as $conflict_plugin ) {
+			WP::add_admin_notice( $this->get_conflict_message( $conflict_plugin ), WP::ADMIN_NOTICE_WARNING );
+		}
 	}
 
 	/**
 	 * Get the conflicting plugin name is any.
 	 *
 	 * @since 1.5.0
+	 * @since 3.6.0 Added optional conflict_plugin parameter.
+	 *
+	 * @param array $conflict_plugin The conflicting plugin array. If provided then extract the name from the array.
+	 * Else get the name from first conflicting plugin.
 	 *
 	 * @return null|string
 	 */
-	public function get_conflict_name() {
+	public function get_conflict_name( $conflict_plugin = [] ) {
 
 		$name = null;
 
-		if ( ! empty( $this->conflict['name'] ) ) {
-			$name = $this->conflict['name'];
+		if ( empty( $conflict_plugin ) && isset( $this->conflict[0] ) ) {
+			$conflict_plugin = $this->conflict[0];
+		}
+
+		if ( ! empty( $conflict_plugin['name'] ) ) {
+			$name = $conflict_plugin['name'];
 		}
 
 		return $name;
@@ -454,21 +475,51 @@ class Conflicts {
 	 * Get the conflicting plugin message.
 	 *
 	 * @since 2.9.0
+	 * @since 3.6.0 Added optional conflict_plugin parameter.
+	 *
+	 * @param array $conflict_plugin The conflicting plugin array. If provided then extract the message from the array.
+	 * Else get the message from first conflicting plugin.
 	 *
 	 * @return string
 	 */
-	public function get_conflict_message() {
+	public function get_conflict_message( $conflict_plugin = [] ) {
+
+		if ( empty( $conflict_plugin ) && isset( $this->conflict[0] ) ) {
+			$conflict_plugin = $this->conflict[0];
+		}
 
 		$message = sprintf( /* translators: %1$s - Plugin name causing conflict. */
 			esc_html__( 'Heads up! WP Mail SMTP has detected %1$s is activated. Please deactivate %1$s to prevent conflicts.', 'wp-mail-smtp' ),
-			$this->get_conflict_name()
+			$this->get_conflict_name( $conflict_plugin )
 		);
 
-		if ( ! empty( $this->conflict['message'] ) ) {
-			$message .= ' ' . $this->conflict['message'];
+		if ( ! empty( $conflict_plugin['message'] ) ) {
+			$message .= ' ' . $conflict_plugin['message'];
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Returns array containing (names) of all the conflicting plugins.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return array
+	 */
+	public function get_all_conflict_names() {
+
+		if ( empty( $this->conflict ) ) {
+			return [];
+		}
+
+		$names_arr = [];
+
+		foreach ( $this->conflict as $conflict_plugin ) {
+			$names_arr[] = $this->get_conflict_name( $conflict_plugin );
+		}
+
+		return $names_arr;
 	}
 
 	/**

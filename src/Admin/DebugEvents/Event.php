@@ -321,6 +321,24 @@ class Event {
 	}
 
 	/**
+	 * Get the event's initiator backtrace.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return array
+	 */
+	private function get_initiator_backtrace() {
+
+		$initiator = (array) $this->get_initiator_raw();
+
+		if ( empty( $initiator['backtrace'] ) ) {
+			return [];
+		}
+
+		return $initiator['backtrace'];
+	}
+
+	/**
 	 * Get the event preview HTML.
 	 *
 	 * @since 3.0.0
@@ -329,7 +347,8 @@ class Event {
 	 */
 	public function get_details_html() {
 
-		$initiator = $this->get_initiator();
+		$initiator           = $this->get_initiator();
+		$initiator_backtrace = $this->get_initiator_backtrace();
 
 		ob_start();
 		?>
@@ -364,6 +383,25 @@ class Event {
 							esc_html( $this->get_initiator_file_line() )
 						);
 						?>
+
+						<?php if ( ! empty( $initiator_backtrace ) ) : ?>
+							<br><br>
+							<b><?php esc_html_e( 'Backtrace:', 'wp-mail-smtp' ); ?></b>
+							<br>
+							<?php
+							foreach ( $initiator_backtrace as $i => $item ) {
+								printf(
+									/* translators: %1$d - index number; %2$s - function name; %3$s - file path; %4$s - line number. */
+									esc_html__( '[%1$d] %2$s called at [%3$s:%4$s]', 'wp-mail-smtp' ),
+									$i,
+									isset( $item['class'] ) ? esc_html( $item['class'] . $item['type'] . $item['function'] ) : esc_html( $item['function'] ),
+									isset( $item['file'] ) ? esc_html( $item['file'] ) : '', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									isset( $item['line'] ) ? esc_html( $item['line'] ) : '' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								);
+								echo '<br>';
+							}
+							?>
+						<?php endif; ?>
 					</p>
 				</div>
 			</div>
@@ -557,10 +595,14 @@ class Event {
 
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 
-		foreach ( $backtrace as $item ) {
+		foreach ( $backtrace as $i => $item ) {
 			if ( $item['function'] === 'wp_mail' ) {
 				if ( isset( $item['function'] ) ) {
 					unset( $item['function'] );
+				}
+
+				if ( DebugEvents::is_debug_enabled() ) {
+					$item['backtrace'] = array_slice( $backtrace, $i );
 				}
 
 				return $item;

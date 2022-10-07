@@ -94,7 +94,8 @@ class AboutTab extends PageAbstract {
 						'https://www.wpbeginner.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://optinmonster.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
 						'https://www.monsterinsights.com/?utm_source=wpmailsmtpplugin&utm_medium=pluginaboutpage&utm_campaign=aboutwpmailsmtp',
-						'https://awesomemotive.com/'
+						// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://awesomemotive.com/', [ 'medium' => 'pluginaboutpage', 'content' => 'aboutwpmailsmtp' ] ) )
 					);
 					?>
 				</p>

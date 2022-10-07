@@ -71,7 +71,7 @@ class Options extends OptionsAbstract {
 					<?php
 					printf(
 						/* translators: %s - API key link. */
-						esc_html__( 'Follow this link to get an API Key from Mailgun: %s.', 'wp-mail-smtp' ),
+						esc_html__( 'Follow this link to get a Private API Key from Mailgun: %s.', 'wp-mail-smtp' ),
 						'<a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get a Private API Key', 'wp-mail-smtp' ) .
 						'</a>'

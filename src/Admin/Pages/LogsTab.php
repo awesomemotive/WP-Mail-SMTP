@@ -108,7 +108,7 @@ class LogsTab extends PageAbstract {
 			wp_mail_smtp()->get_upgrade_link(
 				[
 					'medium'  => 'logs',
-					'content' => '',
+					'content' => 'Upgrade to Pro Button',
 				]
 			)
 		);

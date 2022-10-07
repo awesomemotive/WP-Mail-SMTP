@@ -4,6 +4,8 @@ namespace WPMailSMTP\Admin\DebugEvents;
 
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Options;
+use WPMailSMTP\Tasks\DebugEventsCleanupTask;
+use WPMailSMTP\WP;
 
 /**
  * Debug Events class.
@@ -27,6 +29,51 @@ class DebugEvents {
 		add_action( 'load-wp-mail-smtp_page_wp-mail-smtp-tools', [ $this, 'screen_options' ] );
 		add_filter( 'set-screen-option', [ $this, 'set_screen_options' ], 10, 3 );
 		add_filter( 'set_screen_option_wp_mail_smtp_debug_events_per_page', [ $this, 'set_screen_options' ], 10, 3 );
+
+		// Cancel previous debug events cleanup task if retention period option was changed.
+		add_filter( 'wp_mail_smtp_options_set', [ $this, 'maybe_cancel_debug_events_cleanup_task' ] );
+
+		// Detect debug events log retention period constant change.
+		if ( Options::init()->is_const_defined( 'debug_events', 'retention_period' ) ) {
+			add_action( 'admin_init', [ $this, 'detect_debug_events_retention_period_constant_change' ] );
+		}
+	}
+
+	/**
+	 * Detect debug events retention period constant change.
+	 *
+	 * @since 3.6.0
+	 */
+	public function detect_debug_events_retention_period_constant_change() {
+
+		if ( ! WP::in_wp_admin() ) {
+			return;
+		}
+
+		if ( Options::init()->is_const_changed( 'debug_events', 'retention_period' ) ) {
+			( new DebugEventsCleanupTask() )->cancel();
+		}
+	}
+
+	/**
+	 * Cancel previous debug events cleanup task if retention period option was changed.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $options Currently processed options passed to a filter hook.
+	 *
+	 * @return array
+	 */
+	public function maybe_cancel_debug_events_cleanup_task( $options ) {
+
+		if ( isset( $options['debug_events']['retention_period'] ) ) {
+			// If this option has changed, cancel the recurring cleanup task and init again.
+			if ( Options::init()->is_option_changed( $options['debug_events']['retention_period'], 'debug_events', 'retention_period' ) ) {
+				( new DebugEventsCleanupTask() )->cancel();
+			}
+		}
+
+		return $options;
 	}
 
 	/**

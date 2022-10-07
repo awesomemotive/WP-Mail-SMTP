@@ -226,6 +226,8 @@ class SetupWizard {
 				'upgrade_link'       => wp_mail_smtp()->get_upgrade_link( 'setup-wizard' ),
 				'versions'           => $this->prepare_versions_data(),
 				'public_url'         => wp_mail_smtp()->assets_url . '/vue/',
+				'current_user_email' => wp_get_current_user()->user_email,
+				'completed_time'     => self::get_stats()['completed_time'],
 				'education'          => [
 					'upgrade_text'   => esc_html__( 'We\'re sorry, the %mailer% mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features.', 'wp-mail-smtp' ),
 					'upgrade_button' => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
@@ -1084,12 +1086,24 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
+		if ( function_exists( 'wpforms' ) && ( wpforms()->pro ) ) {
+			$wpforms_version_type = 'pro';
+		} elseif ( function_exists( 'wpforms' ) && ( ! wpforms()->pro ) ) {
+			$wpforms_version_type = 'lite';
+		}
+
+		$body = [
+			'email' => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		];
+
+		if ( isset( $wpforms_version_type ) ) {
+			$body['wpforms_version_type'] = $wpforms_version_type;
+		}
+
 		wp_remote_post(
 			'https://connect.wpmailsmtp.com/subscribe/drip/',
 			[
-				'body' => [
-					'email' => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-				],
+				'body' => $body,
 			]
 		);
 

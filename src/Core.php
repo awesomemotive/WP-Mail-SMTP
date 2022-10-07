@@ -136,6 +136,7 @@ class Core {
 		add_action( 'plugins_loaded', [ $this, 'get_compatibility' ], 0 );
 		add_action( 'plugins_loaded', [ $this, 'get_dashboard_widget' ], 20 );
 		add_action( 'plugins_loaded', [ $this, 'get_reports' ] );
+		add_action( 'plugins_loaded', [ $this, 'get_db_repair' ] );
 	}
 
 	/**
@@ -449,7 +450,7 @@ class Core {
 					),
 					'<strong>WP Mail SMTP</strong>',
 					// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/', [ 'medium' => 'outdated-php-notice', 'content' => 'Read more' ] ) )
+					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/', [ 'medium' => 'Admin Notice', 'content' => 'Upgrade PHP Recommendation' ] ) )
 				) .
 				'<br><br><em>' .
 				wp_kses(
@@ -931,6 +932,10 @@ class Core {
 			}
 
 			$mail_catcher = new MailCatcher( $exceptions );
+
+			$mail_catcher::$validator = static function ( $email ) {
+				return (bool) is_email( $email );
+			};
 		} else {
 			if ( ! class_exists( '\PHPMailer\PHPMailer\PHPMailer', false ) ) {
 				require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
@@ -1201,6 +1206,37 @@ class Core {
 	}
 
 	/**
+	 * Get the DBRepair object (lite or pro version).
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return DBRepair
+	 */
+	public function get_db_repair() {
+
+		static $db_repair;
+
+		if ( ! isset( $db_repair ) ) {
+
+			/**
+			 * Filter the DBRepair class name.
+			 *
+			 * @since 3.6.0
+			 *
+			 * @param DBRepair $class_name The reports class name to be instantiated.
+			 */
+			$class_name = apply_filters( 'wp_mail_smtp_core_get_db_repair', DBRepair::class );
+			$db_repair  = new $class_name();
+
+			if ( method_exists( $db_repair, 'hooks' ) ) {
+				$db_repair->hooks();
+			}
+		}
+
+		return $db_repair;
+	}
+
+	/**
 	 * Detect incorrect `wp_mail` function location and display warning.
 	 *
 	 * @since 3.5.0
@@ -1228,6 +1264,10 @@ class Core {
 			$wp_mail_original_filepath = ABSPATH . WPINC . $separator . 'pluggable.php';
 
 			if ( str_replace( '\\', '/', $wp_mail_filepath ) === str_replace( '\\', '/', $wp_mail_original_filepath ) ) {
+				return;
+			}
+
+			if ( strpos( $wp_mail_filepath, WPINC . $separator . 'pluggable.php' ) !== false ) {
 				return;
 			}
 

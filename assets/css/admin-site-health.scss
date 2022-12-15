@@ -1,3 +1,5 @@
+@import "variables";
+
 #health-check-accordion-block-wp_mail_smtp_email_domain_check {
  & > p:first-child {
 	 margin-top: 0;
@@ -35,12 +37,12 @@
 					font-size: 14px;
 					line-height: 17px;
 					margin: 0 0 4px 0;
-					color: #444;
+					color: $primary-text;
 				}
 
 				p {
 					margin: 0 0 10px 0;
-					color: #777;
+					color: $secondary-text;
 				}
 			}
 		}

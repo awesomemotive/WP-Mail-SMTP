@@ -70,7 +70,7 @@ class ExportTab extends PageAbstract {
 
 		?>
 		<div id="wp-mail-smtp-tools-export-email-logs-product-education" class="wp-mail-smtp-product-education">
-			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--full-width">
+			<div class="wp-mail-smtp-product-education__row">
 				<h4 class="wp-mail-smtp-product-education__heading">
 					<?php esc_html_e( 'Export Email Logs', 'wp-mail-smtp' ); ?>
 				</h4>

@@ -1,4 +1,7 @@
 // WP Mail SMTP admin bar menu styles.
+
+@import "variables";
+
 #wpadminbar {
 	.wp-mail-smtp-admin-bar-menu-notification-counter,
 	.wp-mail-smtp-admin-bar-menu-error {
@@ -10,7 +13,7 @@
 		min-width: 18px !important;
 		height: 18px !important;
 		border-radius: 9px !important;
-		background-color: #d63638 !important;
+		background-color: $negative !important;
 		color: #fff !important;
 		font-size: 11px !important;
 		line-height: 1.6 !important;

@@ -17,7 +17,7 @@ class Mailer extends MailerAbstract {
 	 */
 	public function is_mailer_complete() {
 
-		$options = $this->options->get_group( $this->mailer );
+		$options = $this->connection_options->get_group( $this->mailer );
 
 		// Host and Port are the only really required options.
 		if (

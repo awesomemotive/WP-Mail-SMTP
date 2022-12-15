@@ -1,5 +1,7 @@
 // Admin notification styles.
 
+@import "variables";
+
 #wp-mail-smtp-notifications {
 	position: relative;
 	background: #FFFFFF 0 0 no-repeat padding-box;
@@ -50,11 +52,11 @@
 		}
 
 		.wp-mail-smtp-notifications-title {
-			font-weight: bold;
+			font-weight: 600;
 			font-size: 17px;
 			line-height: 17px;
 			margin: 0;
-			color: #444;
+			color: $primary-text;
 		}
 
 		.wp-mail-smtp-notifications-content {
@@ -62,7 +64,7 @@
 			font-size: 14px;
 			line-height: 18px;
 			margin: 8px 0 41px 0;
-			color: #777777;
+			color: $secondary-text;
 		}
 
 		.wp-mail-smtp-notifications-buttons {
@@ -96,7 +98,7 @@
 		line-height: 16px;
 
 		&:hover {
-			color: #dc3232;
+			color: $negative;
 		}
 
 		i {

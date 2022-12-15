@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\MailCatcherInterface;
@@ -95,19 +96,45 @@ abstract class MailerAbstract implements MailerInterface {
 	protected $verify_sent_status = false;
 
 	/**
+	 * The Connection object.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @var ConnectionInterface
+	 */
+	protected $connection;
+
+	/**
+	 * The connection options object.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @var Options
+	 */
+	protected $connection_options;
+
+	/**
 	 * Mailer constructor.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
+	 * @param MailCatcherInterface $phpmailer  The MailCatcher object.
+	 * @param ConnectionInterface  $connection The Connection object.
 	 */
-	public function __construct( MailCatcherInterface $phpmailer ) {
+	public function __construct( MailCatcherInterface $phpmailer, $connection = null ) {
 
-		$this->options = Options::init();
-		$this->mailer  = $this->options->get( 'mail', 'mailer' );
+		if ( ! is_null( $connection ) ) {
+			$this->connection = $connection;
+		} else {
+			$this->connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+		}
+
+		$this->connection_options = $this->connection->get_options();
+		$this->mailer             = $this->connection->get_mailer_slug();
+		$this->options            = Options::init();
 
 		// Only non-SMTP mailers need URL and extra processing for PHPMailer class.
-		if ( ! $this->options->is_mailer_smtp() && empty( $this->url ) ) {
+		if ( ! $this->connection_options->is_mailer_smtp() && empty( $this->url ) ) {
 			return;
 		}
 
@@ -131,7 +158,7 @@ abstract class MailerAbstract implements MailerInterface {
 		$this->phpmailer = $phpmailer;
 
 		// Prevent working with those methods, as they are not needed for SMTP-like mailers.
-		if ( $this->options->is_mailer_smtp() ) {
+		if ( $this->connection_options->is_mailer_smtp() ) {
 			return;
 		}
 
@@ -381,7 +408,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function is_php_compatible() {
 
-		$options = wp_mail_smtp()->get_providers()->get_options( $this->mailer );
+		$options = wp_mail_smtp()->get_providers()->get_options( $this->mailer, $this->connection );
 
 		return version_compare( phpversion(), $options->get_php_version(), '>=' );
 	}
@@ -401,7 +428,7 @@ abstract class MailerAbstract implements MailerInterface {
 		$smtp_text = array();
 
 		// Mail mailer has nothing to return.
-		if ( $this->options->is_mailer_smtp() ) {
+		if ( $this->connection_options->is_mailer_smtp() ) {
 			// phpcs:disable
 			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( wp_strip_all_tags( $phpmailer->ErrorInfo ) );
 			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
@@ -629,5 +656,17 @@ abstract class MailerAbstract implements MailerInterface {
 		$url = apply_filters( 'wp_mail_smtp_providers_mailer_remote_request_url', $url, $this );
 
 		return wp_safe_remote_request( $url, $params );
+	}
+
+	/**
+	 * Get the Connection object.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return ConnectionInterface
+	 */
+	public function get_connection() {
+
+		return $this->connection;
 	}
 }

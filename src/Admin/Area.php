@@ -137,6 +137,20 @@ class Area {
 		}
 
 		switch ( $error ) {
+			case 'oauth_invalid_state':
+				WP::add_admin_notice(
+					esc_html__( 'There was an error while processing the authentication request. The state key is invalid. Please try again.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
+
+			case 'google_invalid_nonce':
+				WP::add_admin_notice(
+					esc_html__( 'There was an error while processing the authentication request. The nonce is invalid. Please try again.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
+
 			case 'google_access_denied':
 				WP::add_admin_notice( /* translators: %s - error code, returned by Google API. */
 					sprintf( esc_html__( 'There was an error while processing the authentication request: %s. Please try again.', 'wp-mail-smtp' ), '<code>' . $error . '</code>' ),
@@ -904,13 +918,15 @@ class Area {
 
 		if ( empty( $this->pages ) ) {
 			$this->pages = [
-				'settings' => new Pages\SettingsTab(),
-				'test'     => new Pages\TestTab( new Pages\Tools() ),
-				'logs'     => new Pages\LogsTab(),
-				'control'  => new Pages\ControlTab(),
-				'alerts'   => new Pages\AlertsTab(),
-				'misc'     => new Pages\MiscTab(),
-				'auth'     => new Pages\AuthTab(),
+				'settings'    => new Pages\SettingsTab(),
+				'test'        => new Pages\TestTab( new Pages\Tools() ),
+				'logs'        => new Pages\LogsTab(),
+				'alerts'      => new Pages\AlertsTab(),
+				'connections' => new Pages\AdditionalConnectionsTab(),
+				'routing'     => new Pages\SmartRoutingTab(),
+				'control'     => new Pages\ControlTab(),
+				'misc'        => new Pages\MiscTab(),
+				'auth'        => new Pages\AuthTab(),
 			];
 		}
 

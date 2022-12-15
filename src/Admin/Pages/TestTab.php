@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\DomainChecker;
 use WPMailSMTP\Conflicts;
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
@@ -95,6 +96,15 @@ class TestTab extends PageAbstract {
 	private $post_data = [];
 
 	/**
+	 * Test email connection.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @var ConnectionInterface
+	 */
+	private $connection;
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_label() {
@@ -154,6 +164,15 @@ class TestTab extends PageAbstract {
 					</p>
 				</div>
 			</div>
+
+			<?php
+			/**
+			 * Fires after "Send To" section on the test email page.
+			 *
+			 * @since 3.7.0
+			 */
+			do_action( 'wp_mail_smtp_admin_pages_test_tab_display_form_send_to_after' );
+			?>
 
 			<!-- HTML/Plain -->
 			<div id="wp-mail-smtp-setting-row-test_email_html" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle wp-mail-smtp-clear">
@@ -270,6 +289,18 @@ class TestTab extends PageAbstract {
 
 		$this->post_data = $data;
 
+		$connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+
+		/**
+		 * Filters test email connection object.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param ConnectionInterface $connection The Connection object.
+		 * @param array               $data       Post data.
+		 */
+		$this->connection = apply_filters( 'wp_mail_smtp_admin_pages_test_tab_process_post_connection', $connection, $data );
+
 		if ( ! empty( $data['test']['email'] ) ) {
 			$data['test']['email'] = filter_var( $data['test']['email'], FILTER_VALIDATE_EMAIL );
 		}
@@ -325,14 +356,14 @@ class TestTab extends PageAbstract {
 		 * Notify a user about the results.
 		 */
 		if ( $result ) {
-			$options = Options::init();
-			$mailer  = $options->get( 'mail', 'mailer' );
-			$email   = $options->get( 'mail', 'from_email' );
-			$domain  = '';
+			$connection_options = $this->connection->get_options();
+			$mailer             = $connection_options->get( 'mail', 'mailer' );
+			$email              = $connection_options->get( 'mail', 'from_email' );
+			$domain             = '';
 
 			// Add the optional sending domain parameter.
 			if ( in_array( $mailer, [ 'mailgun', 'sendinblue', 'sendgrid' ], true ) ) {
-				$domain = $options->get( $mailer, 'domain' );
+				$domain = $connection_options->get( $mailer, 'domain' );
 			}
 
 			$this->domain_checker = new DomainChecker( $mailer, $email, $domain );
@@ -551,10 +582,10 @@ Co-Founder, WP Mail SMTP';
 	 */
 	protected function get_debug_messages( $phpmailer, $smtp_debug ) {
 
-		$options   = Options::init();
-		$conflicts = new Conflicts();
+		$connection_options = $this->connection->get_options();
+		$conflicts          = new Conflicts();
 
-		$this->debug['mailer'] = $options->get( 'mail', 'mailer' );
+		$this->debug['mailer'] = $connection_options->get( 'mail', 'mailer' );
 
 		/*
 		 * Versions Debug.
@@ -574,7 +605,7 @@ Co-Founder, WP Mail SMTP';
 		$mailer_text = '<strong>Params:</strong><br>';
 
 		$mailer_text .= '<strong>Mailer:</strong> ' . $this->debug['mailer'] . '<br>';
-		$mailer_text .= '<strong>Constants:</strong> ' . ( $options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
+		$mailer_text .= '<strong>Constants:</strong> ' . ( $connection_options->is_const_enabled() ? 'Yes' : 'No' ) . '<br>';
 
 		if ( $conflicts->is_detected() ) {
 			$conflict_plugin_names = implode( ', ', $conflicts->get_all_conflict_names() );
@@ -583,7 +614,7 @@ Co-Founder, WP Mail SMTP';
 		}
 
 		// Display different debug info based on the mailer.
-		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $this->debug['mailer'], $phpmailer );
+		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $this->debug['mailer'], $phpmailer, $this->connection );
 
 		if ( $mailer ) {
 			$mailer_text .= $mailer->get_debug_info();
@@ -594,7 +625,7 @@ Co-Founder, WP Mail SMTP';
 		// Append any PHPMailer errors to the mailer debug (except SMTP mailer, which has the full error output below).
 		if (
 			! empty( $phpmailer_error ) &&
-			! $options->is_mailer_smtp()
+			! $connection_options->is_mailer_smtp()
 		) {
 			$mailer_text .= '<br><br><strong>PHPMailer Debug:</strong><br>' .
 			                wp_strip_all_tags( $phpmailer_error ) .
@@ -616,7 +647,7 @@ Co-Founder, WP Mail SMTP';
 		 */
 
 		$smtp_text = '';
-		if ( $options->is_mailer_smtp() ) {
+		if ( $connection_options->is_mailer_smtp() ) {
 			$smtp_text = '<strong>SMTP Debug:</strong><br>';
 			if ( ! empty( $smtp_debug ) ) {
 				$smtp_text .= '<pre>' . $smtp_debug . '</pre>';
@@ -647,10 +678,10 @@ Co-Founder, WP Mail SMTP';
 	 */
 	protected function get_debug_details() {
 
-		$options         = Options::init();
-		$smtp_host       = $options->get( 'smtp', 'host' );
-		$smtp_port       = $options->get( 'smtp', 'port' );
-		$smtp_encryption = $options->get( 'smtp', 'encryption' );
+		$connection_options = $this->connection->get_options();
+		$smtp_host          = $connection_options->get( 'smtp', 'host' );
+		$smtp_port          = $connection_options->get( 'smtp', 'port' );
+		$smtp_encryption    = $connection_options->get( 'smtp', 'encryption' );
 
 		$details = [
 			// [any] - cURL error 60/77.
@@ -1057,7 +1088,7 @@ Co-Founder, WP Mail SMTP';
 					),
 				],
 				'steps'       => [
-					esc_html__( 'Go to WP Mail SMTP plugin settings page. Click the “Remove Connection” button.', 'wp-mail-smtp' ),
+					esc_html__( 'Go to WP Mail SMTP plugin settings page. Click the “Remove OAuth Connection” button.', 'wp-mail-smtp' ),
 					esc_html__( 'Then click the “Allow plugin to send emails using your Google account” button and re-enable access.', 'wp-mail-smtp' ),
 				],
 			],

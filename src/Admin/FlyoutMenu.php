@@ -100,8 +100,8 @@ class FlyoutMenu {
 				'title'         => esc_html__( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ),
 				'url'           => wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'quick-link-menu' ] ),
 				'icon'          => $icons_url . '/star.svg',
-				'bgcolor'       => '#FF982D ',
-				'hover_bgcolor' => '#F97F00',
+				'bgcolor'       => '#E27730',
+				'hover_bgcolor' => '#B85A1B',
 			],
 			[
 				'title' => esc_html__( 'Support & Docs', 'wp-mail-smtp' ),

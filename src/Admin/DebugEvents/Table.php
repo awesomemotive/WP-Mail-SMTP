@@ -548,11 +548,11 @@ class Table extends \WP_List_Table {
 		?>
 		<div class="alignleft actions wp-mail-smtp-filter-date">
 
-			<input type="text" name="date" class="regular-text wp-mail-smtp-filter-date-selector"
+			<input type="text" name="date" class="regular-text wp-mail-smtp-filter-date-selector wp-mail-smtp-filter-date__control"
 						 placeholder="<?php esc_attr_e( 'Select a date range', 'wp-mail-smtp' ); ?>"
 						 value="<?php echo esc_attr( $date ); ?>">
 
-			<button type="submit" name="action" value="filter_date" class="button">
+			<button type="submit" name="action" value="filter_date" class="button wp-mail-smtp-filter-date__btn">
 				<?php esc_html_e( 'Filter', 'wp-mail-smtp' ); ?>
 			</button>
 

@@ -1,5 +1,7 @@
 // Flyout Menu styles.
 
+@import "variables";
+
 #wp-mail-smtp-flyout {
 	$start: 75px;
 	$step: 55px;
@@ -91,7 +93,7 @@
 		transition: all $trans ease-in-out;
 		transform: scale(0);
 		border-radius: 50%;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+		box-shadow: $shadow-lg;
 		background-color: #738E9E;
 
 		img {

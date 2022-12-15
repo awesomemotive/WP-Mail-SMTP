@@ -21,7 +21,7 @@
 	.wp-mail-smtp-notice-bar-container {
 		background-color: #DDDDDD;
 		border-top: 3px solid $orange;
-		color: #777777;
+		color: $secondary-text;
 		text-align: center;
 		padding: 7px;
 	}
@@ -31,7 +31,7 @@
 	}
 
 	a:hover {
-		color: $orange_dark;
+		color: $orange-dark;
 	}
 
 	.dismiss {
@@ -91,6 +91,14 @@
 				max-width: unset;
 			}
 
+			&--no-border {
+				border-bottom: none !important;
+			}
+
+			&--no-padding {
+				padding: 0 !important;
+			}
+
 			&:first-of-type {
 				padding-top: 10px;
 			}
@@ -107,7 +115,7 @@
 			margin-bottom: 10px;
 			font-size: 20px;
 			line-height: 24px;
-			color: #444;
+			color: $primary-text;
 
 			&:after {
 				content: '';
@@ -123,7 +131,7 @@
 		&__description {
 			margin-top: 0;
 			margin-bottom: 20px;
-			color: #444;
+			color: $secondary-text;
 			font-size: 14px;
 			line-height: 1.5em;
 		}
@@ -132,11 +140,20 @@
 			display: flex;
 			flex-wrap: wrap;
 
+			@include media("<phone") {
+				flex-direction: column;
+			}
+
 			& > div {
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				margin: 0 25px 20px 0;
+
+				@include media("<phone") {
+					margin-right: 0;
+					max-width: unset !important;
+				}
 
 				&:last-child {
 					margin-right: 0;
@@ -181,7 +198,7 @@
 					font-size: 14px;
 					line-height: 18px;
 					text-align: center;
-					color: #777777;
+					color: $secondary-text;
 				}
 			}
 
@@ -201,7 +218,7 @@
 				margin-bottom: 20px;
 				font-size: 16px;
 				line-height: 20px;
-				color: #23282D;
+				color: $primary-text;
 			}
 
 			& > div {
@@ -219,6 +236,7 @@
 					font-size: 14px;
 					line-height: 20px;
 					margin-bottom: 0;
+					color: $secondary-text;
 
 					& + li {
 						margin-top: 20px;
@@ -248,7 +266,7 @@
 			h5 {
 				clear: both;
 				margin: 0 0 10px 0;
-				color: #444;
+				color: $primary-text;
 				font-size: 16px;
 				font-weight: 600;
 			}

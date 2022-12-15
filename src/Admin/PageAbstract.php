@@ -65,6 +65,18 @@ abstract class PageAbstract implements PageInterface {
 	}
 
 	/**
+	 * Title of a tab.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string
+	 */
+	public function get_title() {
+
+		return $this->get_label();
+	}
+
+	/**
 	 * Get tab slug.
 	 *
 	 * @since 2.8.0

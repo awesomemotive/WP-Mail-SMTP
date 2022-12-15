@@ -1,0 +1,96 @@
+#wp-mail-smtp {
+
+	.wp-mail-smtp-conditional {
+
+		button {
+			cursor: pointer;
+		}
+
+		table {
+			width: 100%;
+			max-width: 740px;
+			padding: 0;
+			margin: 0;
+			border-collapse: collapse;
+			border-spacing: 0;
+			font-size: 13px;
+		}
+
+		table td {
+			padding: 0 10px 20px 0;
+		}
+
+		&__row {
+
+			@include media("<=phone") {
+				display: flex;
+				flex-direction: column;
+			}
+
+			input,
+			select {
+				width: 100% !important;
+				max-width: 100%;
+				margin: 0;
+				text-overflow: ellipsis;
+			}
+		}
+
+		&__property-col {
+			width: 23%;
+
+			@include media("<=phone") {
+				width: 100%;
+			}
+		}
+
+		&__operator-col {
+			width: 23%;
+
+			@include media("<=phone") {
+				width: 100%;
+			}
+		}
+
+		&__value-col {
+			width: 42%;
+
+			@include media("<=phone") {
+				width: 100%;
+			}
+		}
+
+		&__value :disabled {
+			background-color: #f1f1f1;
+			cursor: not-allowed;
+		}
+
+		&__actions {
+			display: flex;
+			align-items: center;
+			padding-right: 0;
+		}
+
+		&__delete-rule {
+			background-color: transparent;
+			border: none;
+			color: #999999;
+			margin: 0 0 0 10px;
+			padding: 0;
+			vertical-align: middle;
+
+			&:hover {
+				color: $negative;
+			}
+		}
+
+		&__group-delimiter {
+			margin: 0 0 20px;
+			font-size: 14px;
+			font-style: italic;
+			font-weight: 400;
+			line-height: 17px;
+			color: $description-text;
+		}
+	}
+}

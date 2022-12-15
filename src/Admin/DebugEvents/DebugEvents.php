@@ -350,8 +350,17 @@ class DebugEvents {
 
 		global $wpdb;
 
+		static $is_valid = null;
+
+		// Return cached value only if table already exists.
+		if ( $is_valid === true ) {
+			return true;
+		}
+
 		$table = self::get_table_name();
 
-		return (bool) $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s;', $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+		$is_valid = (bool) $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s;', $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		return $is_valid;
 	}
 }

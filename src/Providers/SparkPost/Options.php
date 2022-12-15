@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\SparkPost;
 
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -22,8 +23,10 @@ class Options extends OptionsAbstract {
 	 * Options constructor.
 	 *
 	 * @since 3.2.0
+	 *
+	 * @param ConnectionInterface $connection The Connection object.
 	 */
-	public function __construct() {
+	public function __construct( $connection = null ) {
 
 		$description = sprintf(
 			wp_kses( /* translators: %1$s - URL to SparkPost website. */
@@ -59,7 +62,8 @@ class Options extends OptionsAbstract {
 					'from_name_force'  => true,
 				],
 				'recommended' => false,
-			]
+			],
+			$connection
 		);
 	}
 
@@ -83,7 +87,7 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'API Key', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<?php if ( $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
+				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
 					<input type="text" disabled value="****************************************"
 								 id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
@@ -91,14 +95,14 @@ class Options extends OptionsAbstract {
 				<?php else : ?>
 					<input type="password" spellcheck="false"
 								 name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
-								 value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+								 value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'api_key' ) ); ?>"
 								 id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
 				<?php endif; ?>
 				<p class="desc">
 					<?php
 					$url = 'sparkpost.com';
-					$url = $this->options->get( $this->get_slug(), 'region' ) === 'EU' ? 'eu.' . $url : $url;
+					$url = $this->connection_options->get( $this->get_slug(), 'region' ) === 'EU' ? 'eu.' . $url : $url;
 					$url = 'https://app.' . $url . '/account/api-keys';
 
 					printf( /* translators: %s - API Key link. */
@@ -122,8 +126,8 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-region-us">
 					<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-region-us"
 								 name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][region]" value="US"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'region' ) ? 'disabled' : ''; ?>
-						<?php checked( 'US', $this->options->get( $this->get_slug(), 'region' ) ); ?>
+						<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'region' ) ? 'disabled' : ''; ?>
+						<?php checked( 'US', $this->connection_options->get( $this->get_slug(), 'region' ) ); ?>
 					/>
 					<?php esc_html_e( 'US', 'wp-mail-smtp' ); ?>
 				</label>
@@ -131,14 +135,14 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-region-eu">
 					<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-region-eu"
 								 name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][region]" value="EU"
-						<?php echo $this->options->is_const_defined( $this->get_slug(), 'region' ) ? 'disabled' : ''; ?>
-						<?php checked( 'EU', $this->options->get( $this->get_slug(), 'region' ) ); ?>
+						<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'region' ) ? 'disabled' : ''; ?>
+						<?php checked( 'EU', $this->connection_options->get( $this->get_slug(), 'region' ) ); ?>
 					/>
 					<?php esc_html_e( 'EU', 'wp-mail-smtp' ); ?>
 				</label>
 
 				<?php
-				if ( $this->options->is_const_defined( $this->get_slug(), 'region' ) ) {
+				if ( $this->connection_options->is_const_defined( $this->get_slug(), 'region' ) ) {
 					$this->display_const_set_message( 'WPMS_SPARKPOST_REGION' );
 				}
 				?>

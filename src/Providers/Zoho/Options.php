@@ -36,11 +36,11 @@ class Options extends OptionsAbstract {
 	public function display_options() {
 
 		?>
-
-		<p>
-			<?php esc_html_e( 'We\'re sorry, the Zoho Mail mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features.', 'wp-mail-smtp' ); ?>
-		</p>
-
+		<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading">
+			<p>
+				<?php esc_html_e( 'We\'re sorry, the Zoho Mail mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features.', 'wp-mail-smtp' ); ?>
+			</p>
+		</div>
 		<?php
 	}
 }

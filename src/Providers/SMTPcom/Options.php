@@ -2,7 +2,7 @@
 
 namespace WPMailSMTP\Providers\SMTPcom;
 
-use WPMailSMTP\Options as PluginOptions;
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -24,8 +24,14 @@ class Options extends OptionsAbstract {
 	 *
 	 * @since 2.0.0
 	 * @since 2.3.0 Added supports parameter.
+	 *
+	 * @param ConnectionInterface $connection The Connection object.
 	 */
-	public function __construct() {
+	public function __construct( $connection = null ) {
+
+		if ( is_null( $connection ) ) {
+			$connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+		}
 
 		$allowed_kses_html = array(
 			'strong' => array(),
@@ -53,7 +59,7 @@ class Options extends OptionsAbstract {
 			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp/', 'SMTP.com documentation' ) )
 		);
 
-		$mailer_options = PluginOptions::init()->get_group( self::SLUG );
+		$mailer_options = $connection->get_options()->get_group( self::SLUG );
 
 		if ( empty( $mailer_options['api_key'] ) && empty( $mailer_options['channel'] ) ) {
 			$description .= sprintf(
@@ -83,7 +89,8 @@ class Options extends OptionsAbstract {
 					'from_email_force' => true,
 					'from_name_force'  => true,
 				],
-			]
+			],
+			$connection
 		);
 	}
 
@@ -99,7 +106,7 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'API Key', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<?php if ( $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
+				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
 					<input type="text" disabled value="****************************************"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
@@ -107,7 +114,7 @@ class Options extends OptionsAbstract {
 				<?php else : ?>
 					<input type="password" spellcheck="false"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+						value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'api_key' ) ); ?>"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
 				<?php endif; ?>
@@ -131,12 +138,12 @@ class Options extends OptionsAbstract {
 			</div>
 			<div class="wp-mail-smtp-setting-field">
 				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][channel]" type="text"
-					value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'channel' ) ); ?>"
-					<?php echo $this->options->is_const_defined( $this->get_slug(), 'channel' ) ? 'disabled' : ''; ?>
+					value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'channel' ) ); ?>"
+					<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'channel' ) ? 'disabled' : ''; ?>
 					id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-channel" spellcheck="false"
 				/>
 				<?php
-				if ( $this->options->is_const_defined( $this->get_slug(), 'channel' ) ) {
+				if ( $this->connection_options->is_const_defined( $this->get_slug(), 'channel' ) ) {
 					$this->display_const_set_message( 'WPMS_SMTPCOM_CHANNEL' );
 				}
 				?>

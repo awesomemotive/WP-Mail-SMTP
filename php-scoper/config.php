@@ -330,6 +330,27 @@ $config = [
 		},
 
 		/**
+		 * Prefix the aws-sdk-php namespace in strings for the Sdk class.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+			if ( strpos( $file_path, 'aws/aws-sdk-php/src/EndpointV2/Ruleset/RulesetStandardLibrary.php' ) !== false ) {
+				return str_replace(
+					'Aws\\\\EndpointV2\\\\Ruleset\\\\RulesetStandardLibrary',
+					sprintf( '%s\\\\Aws\\\\EndpointV2\\\\Ruleset\\\\RulesetStandardLibrary', addslashes( $prefix ) ),
+					$content
+				);
+			}
+
+			return $content;
+		},
+
+		/**
 		 * Fix the  over-prefixed aws-sdk-php date format in the SignatureV4 class.
 		 *
 		 * @param string $filePath The path of the current file.
@@ -580,6 +601,7 @@ if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
 		->in( 'vendor/aws/aws-sdk-php/src/data/sesv2' )
 		->in( 'vendor/aws/aws-sdk-php/src/Endpoint' )
 		->in( 'vendor/aws/aws-sdk-php/src/EndpointDiscovery' )
+		->in( 'vendor/aws/aws-sdk-php/src/EndpointV2' )
 		->in( 'vendor/aws/aws-sdk-php/src/Exception' )
 		->in( 'vendor/aws/aws-sdk-php/src/Handler' )
 		->in( 'vendor/aws/aws-sdk-php/src/Multipart' )
@@ -587,11 +609,12 @@ if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
 		->in( 'vendor/aws/aws-sdk-php/src/Ses' )
 		->in( 'vendor/aws/aws-sdk-php/src/SesV2' )
 		->in( 'vendor/aws/aws-sdk-php/src/Signature' )
+		->in( 'vendor/aws/aws-sdk-php/src/Token' )
 		->name( [ '*.php' ] );
 	$config['finders'][] = Finder::create()
 		->files()
 		->in( 'vendor/aws/aws-sdk-php/src/data/' )
-		->name( [ 'aliases.json.php', 'endpoints.json.php', 'endpoints_prefix_history.json.php', 'manifest.json.php' ] );
+		->name( [ 'aliases.json.php', 'endpoints.json.php', 'endpoints_prefix_history.json.php', 'manifest.json.php', 'partitions.json.php' ] );
 	$config['finders'][] = Finder::create()
 		->depth( '==0' )
 		->files()

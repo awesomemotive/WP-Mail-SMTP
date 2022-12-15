@@ -529,13 +529,23 @@ class Event {
 	 */
 	public function set_initiator() {
 
-		$backtrace = $this->get_wpmail_backtrace();
+		$initiator = wp_mail_smtp()->get_wp_mail_initiator();
 
-		if ( empty( $backtrace ) ) {
+		if ( empty( $initiator->get_file() ) ) {
 			return;
 		}
 
-		$this->initiator = wp_json_encode( $backtrace );
+		$data['file'] = $initiator->get_file();
+
+		if ( ! empty( $initiator->get_line() ) ) {
+			$data['line'] = $initiator->get_line();
+		}
+
+		if ( DebugEvents::is_debug_enabled() ) {
+			$data['backtrace'] = $initiator->get_backtrace();
+		}
+
+		$this->initiator = wp_json_encode( $data );
 	}
 
 	/**
@@ -582,34 +592,6 @@ class Event {
 	public function is_debug() {
 
 		return self::TYPE_DEBUG === $this->get_type();
-	}
-
-	/**
-	 * Get the wpmail function backtrace, if it exists.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @return array
-	 */
-	private function get_wpmail_backtrace() {
-
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-
-		foreach ( $backtrace as $i => $item ) {
-			if ( $item['function'] === 'wp_mail' ) {
-				if ( isset( $item['function'] ) ) {
-					unset( $item['function'] );
-				}
-
-				if ( DebugEvents::is_debug_enabled() ) {
-					$item['backtrace'] = array_slice( $backtrace, $i );
-				}
-
-				return $item;
-			}
-		}
-
-		return [];
 	}
 }
 

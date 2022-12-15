@@ -22,6 +22,31 @@ class Processor {
 	protected $wp_mail_from;
 
 	/**
+	 * Connections manager.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @var ConnectionsManager
+	 */
+	private $connections_manager;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param ConnectionsManager $connections_manager Connections manager.
+	 */
+	public function __construct( $connections_manager = null ) {
+
+		if ( is_null( $connections_manager ) ) {
+			$this->connections_manager = wp_mail_smtp()->get_connections_manager();
+		} else {
+			$this->connections_manager = $connections_manager;
+		}
+	}
+
+	/**
 	 * Assign all hooks to proper places.
 	 *
 	 * @since 1.0.0
@@ -44,13 +69,14 @@ class Processor {
 	 */
 	public function phpmailer_init( $phpmailer ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
-		$options = Options::init();
-		$mailer  = $options->get( 'mail', 'mailer' );
+		$connection         = $this->connections_manager->get_mail_connection();
+		$connection_options = $connection->get_options();
+		$mailer             = $connection->get_mailer_slug();
 
 		// Check that mailer is not blank, and if mailer=smtp, host is not blank.
 		if (
 			! $mailer ||
-			( 'smtp' === $mailer && ! $options->get( 'smtp', 'host' ) )
+			( 'smtp' === $mailer && ! $connection_options->get( 'smtp', 'host' ) )
 		) {
 			return;
 		}
@@ -58,7 +84,7 @@ class Processor {
 		// If the mailer is pepipost, make sure we have a username and password.
 		if (
 			'pepipost' === $mailer &&
-			( ! $options->get( 'pepipost', 'user' ) && ! $options->get( 'pepipost', 'pass' ) )
+			( ! $connection_options->get( 'pepipost', 'user' ) && ! $connection_options->get( 'pepipost', 'pass' ) )
 		) {
 			return;
 		}
@@ -70,19 +96,19 @@ class Processor {
 		$phpmailer->Mailer = $mailer;
 
 		// Set the Sender (return-path) if required.
-		if ( $options->get( 'mail', 'return_path' ) ) {
+		if ( $connection_options->get( 'mail', 'return_path' ) ) {
 			$phpmailer->Sender = $phpmailer->From;
 		}
 
 		// Set the SMTPSecure value, if set to none, leave this blank. Possible values: 'ssl', 'tls', ''.
-		if ( 'none' === $options->get( $mailer, 'encryption' ) ) {
+		if ( 'none' === $connection_options->get( $mailer, 'encryption' ) ) {
 			$phpmailer->SMTPSecure = '';
 		} else {
-			$phpmailer->SMTPSecure = $options->get( $mailer, 'encryption' );
+			$phpmailer->SMTPSecure = $connection_options->get( $mailer, 'encryption' );
 		}
 
 		// Check if user has disabled SMTPAutoTLS.
-		if ( $options->get( $mailer, 'encryption' ) !== 'tls' && ! $options->get( $mailer, 'autotls' ) ) {
+		if ( $connection_options->get( $mailer, 'encryption' ) !== 'tls' && ! $connection_options->get( $mailer, 'autotls' ) ) {
 			$phpmailer->SMTPAutoTLS = false;
 		}
 
@@ -94,24 +120,24 @@ class Processor {
 		// If we're sending via SMTP, set the host.
 		if ( 'smtp' === $mailer ) {
 			// Set the other options.
-			$phpmailer->Host = $options->get( $mailer, 'host' );
-			$phpmailer->Port = $options->get( $mailer, 'port' );
+			$phpmailer->Host = $connection_options->get( $mailer, 'host' );
+			$phpmailer->Port = $connection_options->get( $mailer, 'port' );
 
 			// If we're using smtp auth, set the username & password.
-			if ( $options->get( $mailer, 'auth' ) ) {
+			if ( $connection_options->get( $mailer, 'auth' ) ) {
 				$phpmailer->SMTPAuth = true;
-				$phpmailer->Username = $options->get( $mailer, 'user' );
-				$phpmailer->Password = $options->get( $mailer, 'pass' );
+				$phpmailer->Username = $connection_options->get( $mailer, 'user' );
+				$phpmailer->Password = $connection_options->get( $mailer, 'pass' );
 			}
 		} elseif ( 'pepipost' === $mailer ) {
 			// Set the Pepipost settings for BC.
 			$phpmailer->Mailer     = 'smtp';
 			$phpmailer->Host       = 'smtp.pepipost.com';
-			$phpmailer->Port       = $options->get( $mailer, 'port' );
-			$phpmailer->SMTPSecure = $options->get( $mailer, 'encryption' ) === 'none' ? '' : $options->get( $mailer, 'encryption' );
+			$phpmailer->Port       = $connection_options->get( $mailer, 'port' );
+			$phpmailer->SMTPSecure = $connection_options->get( $mailer, 'encryption' ) === 'none' ? '' : $connection_options->get( $mailer, 'encryption' );
 			$phpmailer->SMTPAuth   = true;
-			$phpmailer->Username   = $options->get( $mailer, 'user' );
-			$phpmailer->Password   = $options->get( $mailer, 'pass' );
+			$phpmailer->Username   = $connection_options->get( $mailer, 'user' );
+			$phpmailer->Password   = $connection_options->get( $mailer, 'pass' );
 		}
 		// phpcs:enable
 
@@ -136,16 +162,17 @@ class Processor {
 	 */
 	protected function allow_setting_original_from_email_to_reply_to( $reply_to, $mailer ) {
 
-		$options    = Options::init();
-		$forced     = $options->get( 'mail', 'from_email_force' );
-		$from_email = $options->get( 'mail', 'from_email' );
+		$connection         = $this->connections_manager->get_mail_connection();
+		$connection_options = $connection->get_options();
+		$forced             = $connection_options->get( 'mail', 'from_email_force' );
+		$from_email         = $connection_options->get( 'mail', 'from_email' );
 
 		if ( ! empty( $reply_to ) || empty( $this->wp_mail_from ) ) {
 			return false;
 		}
 
 		if ( in_array( $mailer, [ 'zoho' ], true ) ) {
-			$sender     = $options->get( $mailer, 'user_details' );
+			$sender     = $connection_options->get( $mailer, 'user_details' );
 			$from_email = ! empty( $sender['email'] ) ? $sender['email'] : '';
 			$forced     = true;
 		}
@@ -179,7 +206,7 @@ class Processor {
 		if ( ! $is_sent ) {
 			// Add mailer to the beginning and save to display later.
 			Debug::set(
-				'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( Options::init()->get( 'mail', 'mailer' ) )->get_title() ) . "\r\n" .
+				'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( wp_mail_smtp()->get_connections_manager()->get_mail_connection()->get_mailer_slug() )->get_title() ) . "\r\n" .
 				'PHPMailer was able to connect to SMTP server but failed while trying to send an email.'
 			);
 		} else {
@@ -216,10 +243,11 @@ class Processor {
 	 */
 	public function filter_mail_from_email( $wp_email ) {
 
-		$options    = Options::init();
-		$forced     = $options->get( 'mail', 'from_email_force' );
-		$from_email = $options->get( 'mail', 'from_email' );
-		$def_email  = WP::get_default_email();
+		$connection         = $this->connections_manager->get_mail_connection();
+		$connection_options = $connection->get_options();
+		$forced             = $connection_options->get( 'mail', 'from_email_force' );
+		$from_email         = $connection_options->get( 'mail', 'from_email' );
+		$def_email          = WP::get_default_email();
 
 		// Save the "original" set WP email from address for later use.
 		if ( $wp_email !== $def_email ) {
@@ -251,15 +279,16 @@ class Processor {
 	 */
 	public function filter_mail_from_name( $name ) {
 
-		$options = Options::init();
-		$force   = $options->get( 'mail', 'from_name_force' );
+		$connection         = $this->connections_manager->get_mail_connection();
+		$connection_options = $connection->get_options();
+		$force              = $connection_options->get( 'mail', 'from_name_force' );
 
 		// If the FROM NAME is not the default and not forced, return it unchanged.
 		if ( ! $force && $name !== $this->get_default_name() ) {
 			return $name;
 		}
 
-		$name = $options->get( 'mail', 'from_name' );
+		$name = $connection_options->get( 'mail', 'from_name' );
 
 		return $name;
 	}

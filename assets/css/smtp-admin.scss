@@ -6,6 +6,7 @@
 @import "loader";
 @import "flyout-menu";
 @import "tooltip";
+@import "conditional-logic";
 
 // Screen options are hidden on load, then made visible with JS, to
 // prevent it from "jumping".
@@ -38,6 +39,19 @@
 	}
 }
 
+.wp-mail-smtp-page {
+	color: $primary-text;
+
+	a {
+		color: $link;
+
+		&:hover,
+		&:active {
+			color: $link-hover;
+		}
+	}
+}
+
 #wp-mail-smtp {
 	margin: 0;
 
@@ -46,7 +60,7 @@
 	}
 
 	.wp-mail-smtp-page-title {
-		height: 58px;
+		min-height: 58px;
 		background-color: #fff;
 		font-size: 14px;
 		margin: 0 0 20px 0;
@@ -73,7 +87,14 @@
 		a.action {
 			color: #fff;
 			font-weight: 600;
-			margin: 14px 0 0 10px;
+			margin: 14px 0 14px 10px;
+			line-height: 28px;
+			min-height: 30px;
+			vertical-align: top;
+
+			@include media("<=phone") {
+				margin-left: 0;
+			}
 		}
 
 		.page-title {
@@ -149,6 +170,10 @@
 					margin: 0;
 					max-width: 1005px;
 				}
+
+				.desc {
+					font-style: normal;
+				}
 			}
 
 			// Checkbox settings field.
@@ -209,6 +234,14 @@
 
 			}
 
+			&.wp-mail-smtp-setting-row-no-border {
+				border-bottom: none;
+			}
+
+			&.wp-mail-smtp-setting-row-no-padding {
+				padding: 0;
+			}
+
 			// Radio settings field.
 			&.wp-mail-smtp-setting-row-checkbox-toggle {
 
@@ -229,7 +262,7 @@
 						white-space: nowrap;
 
 						&:checked + .wp-mail-smtp-setting-toggle-switch {
-							background-color: #00a32a;
+							background-color: $positive;
 
 							&:before {
 								-webkit-transform: translateX(16px);
@@ -254,7 +287,7 @@
 							}
 
 							&:checked + .wp-mail-smtp-setting-toggle-switch {
-								background-color: lighten(#00a32a, 25);
+								background-color: lighten($positive, 25);
 								cursor: default;
 							}
 						}
@@ -275,7 +308,7 @@
 						&:checked:hover,
 						&:checked:focus {
 							& + .wp-mail-smtp-setting-toggle-switch {
-								box-shadow: 0 0 0 1px #fff, 0 0 0 3px #00a32a;
+								box-shadow: 0 0 0 1px #fff, 0 0 0 3px $positive;
 							}
 						}
 
@@ -292,7 +325,7 @@
 					.wp-mail-smtp-setting-toggle-checked-label {
 						text-transform: uppercase;
 						font-weight: 400;
-						color: #777;
+						color: $secondary-text;
 						font-size: 13px;
 					}
 
@@ -468,7 +501,7 @@
 					transition: 0.2s;
 
 					&:hover {
-						color: #d63638;
+						color: $negative;
 					}
 				}
 			}
@@ -491,9 +524,9 @@
 
 			// General elements.
 			h2, h4 {
-				color: #444;
+				color: $primary-text;
 				font-size: 20px;
-				font-weight: 700;
+				font-weight: 600;
 				margin: 0 0 6px 0;
 			}
 
@@ -502,14 +535,14 @@
 			}
 
 			h3 {
-				color: #444;
+				color: $primary-text;
 				font-size: 24px;
 				font-weight: 600;
 				margin: 0 0 20px 0;
 			}
 
 			h5 {
-				color: #444;
+				color: $primary-text;
 				font-size: 16px;
 				font-weight: 600;
 				margin: 0 0 20px 0;
@@ -525,8 +558,13 @@
 				}
 
 				&.desc {
+					margin: 10px 0 0;
 					font-style: italic;
-					color: #777;
+					color: $secondary-text;
+
+					& + .desc {
+						font-style: normal;
+					}
 				}
 				&.buttonned {
 					margin-top: 30px;
@@ -540,7 +578,7 @@
 					box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
 
 					&.inline-error {
-						border-color: #dc3232;
+						border-color: $negative;
 						margin-bottom: 5px;
 						padding: 10px;
 					}
@@ -597,10 +635,10 @@
 
 								&[class*=delete],
 								&[class*=error] {
-									color: $red;
+									color: $negative;
 
 									&:hover, &:active, &:focus {
-										color: darken( $red, 20 );
+										color: darken( $negative, 20 );
 									}
 								}
 							}
@@ -617,10 +655,10 @@
 			input[type=password],
 			select {
 				background-color: #fff;
-				border: 1px solid #ddd;
+				border: 1px solid $field-border;
 				border-radius: 4px;
 				box-shadow: none;
-				color: #333;
+				color: $field-text;
 				display: inline-block;
 				vertical-align: middle;
 				padding: 7px 12px;
@@ -631,6 +669,16 @@
 
 				@include media("<desktop") {
 					width: 300px;
+				}
+
+				@include media("<phone") {
+					width: 100%;
+					max-width: unset;
+					margin-right: 0;
+
+					& ~ button {
+						margin-top: 8px;
+					}
 				}
 
 				&[readonly] {
@@ -669,7 +717,7 @@
 				}
 
 				&.wp-mail-smtp-success {
-					color: #46b450;
+					color: $positive;
 				}
 			}
 		}
@@ -741,7 +789,8 @@
 					font-size: 14px;
 					margin: 20px 0;
 					padding: 15px;
-					width: 1005px;
+					max-width: 1005px;
+					width: 100%;
 				}
 			}
 		}
@@ -760,7 +809,7 @@
 			padding: 1px 12px;
 
 			&.notice-success {
-				border-left-color: #46b450;
+				border-left-color: $positive;
 			}
 
 			&.notice-warning {
@@ -768,7 +817,7 @@
 			}
 
 			&.notice-error {
-				border-left-color: #dc3232;
+				border-left-color: $negative;
 			}
 
 			&.notice-info {
@@ -792,6 +841,12 @@
 
 		.connected-as {
 			margin-left: $padding-default;
+
+			@include media("<phone") {
+				display: block;
+				margin-left: 0;
+				margin-top: 8px;
+			}
 		}
 
 		#wp-mail-smtp-pro-banner {
@@ -817,15 +872,15 @@
 			}
 
 			h2 {
-				color: #444;
+				color: $primary-text;
 				margin-top: 0;
 				font-size: 16px;
-				font-weight: 700;
+				font-weight: 600;
 			}
 
 			p {
 				font-size: 14px;
-				color: #555;
+				color: $secondary-text;
 				margin-bottom: 1.1em;
 
 				&:last-of-type {
@@ -852,7 +907,7 @@
 					li {
 						margin: 0;
 						padding: 0 0 2px 16px;
-						color: #555;
+						color: $secondary-text;
 						font-size: 14px;
 						position: relative;
 
@@ -874,7 +929,7 @@
 				color: $orange;
 
 				&:hover, &:active, &:focus {
-					color: $orange_dark;
+					color: $orange-dark;
 				}
 			}
 
@@ -890,8 +945,8 @@
 			}
 
 			.price-off {
-				color: green;
-				font-weight: bold;
+				color: $positive;
+				font-weight: 600;
 			}
 		}
 	}
@@ -952,7 +1007,7 @@
 
 			&:focus,
 			&:hover {
-				color: #d83638;
+				color: $negative;
 			}
 		}
 	}
@@ -977,7 +1032,19 @@
 
 	// Flatpicker (date picker) style in the WP List Table filter.
 	.wp-mail-smtp-filter-date {
-		.wp-mail-smtp-filter-date-selector {
+
+		@include media("<=tablet") {
+			display: flex !important;
+			flex-direction: column;
+			align-items: flex-start;
+			float: none;
+			width: 100%;
+			padding-right: 0;
+			margin-bottom: 10px;
+			max-width: 600px;
+		}
+
+		&__control {
 			float: left;
 			margin: 0 5px 0 0;
 			min-height: 30px;
@@ -985,11 +1052,112 @@
 			vertical-align: middle;
 			max-width: 210px;
 			line-height: normal;
+
+			@include media("<=tablet") {
+				flex-grow: 1;
+				width: 100%;
+				max-width: none;
+				min-height: 40px;
+				margin-right: 0;
+				margin-bottom: 5px;
+			}
 		}
 
-		button {
+		&__btn {
 			margin: 0;
 			vertical-align: top;
+		}
+	}
+
+	.wp-mail-smtp-setting-toggle {
+		vertical-align: middle;
+		display: inline-block;
+
+		&__switch {
+			position: relative;
+			cursor: pointer;
+			background-color: #ccc;
+			border-radius: 15px;
+			-webkit-transition: all 0.2s ease-in-out;
+			-moz-transition: all 0.2s ease-in-out;
+			-ms-transition: all 0.2s ease-in-out;
+			transition: all 0.2s ease-in-out;
+			vertical-align: middle;
+			display: inline-block;
+			margin: -1px 0 0 0;
+			width: 36px;
+			height: 20px;
+
+			&:before {
+				position: absolute;
+				content: "";
+				height: 16px;
+				width: 16px;
+				left: 2px;
+				top: 2px;
+				background-color: #fff;
+				border-radius: 50%;
+				-webkit-transition: all 0.2s ease-in-out;
+				-moz-transition: all 0.2s ease-in-out;
+				-ms-transition: all 0.2s ease-in-out;
+				transition: all 0.2s ease-in-out;
+			}
+		}
+
+		input[type=checkbox] {
+			position: absolute;
+			top: auto;
+			overflow: hidden;
+			clip: rect(1px, 1px, 1px, 1px);
+			width: 1px;
+			height: 1px;
+			white-space: nowrap;
+
+			&:checked + .wp-mail-smtp-setting-toggle__switch {
+				background-color: $positive;
+
+				&:before {
+					-webkit-transform: translateX(16px);
+					-ms-transform: translateX(16px);
+					transform: translateX(16px);
+				}
+			}
+
+			&:checked:hover,
+			&:checked:focus {
+				& + .wp-mail-smtp-setting-toggle__switch {
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px #00a32a;
+				}
+			}
+
+			&:not(:checked):hover,
+			&:not(:checked):focus {
+				& + .wp-mail-smtp-setting-toggle__switch {
+					background-color: #999;
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px #999;
+				}
+			}
+
+			&:disabled {
+				&:checked:hover + .wp-mail-smtp-setting-toggle__switch,
+				&:not(:checked):hover + .wp-mail-smtp-setting-toggle__switch {
+					box-shadow: none;
+				}
+
+				&:not(:checked):hover + .wp-mail-smtp-setting-toggle__switch {
+					background-color: #ddd;
+				}
+
+				& + .wp-mail-smtp-setting-toggle__switch {
+					background-color: #ddd;
+					cursor: default;
+				}
+
+				&:checked + .wp-mail-smtp-setting-toggle__switch {
+					background-color: lighten(#00a32a, 25);
+					cursor: default;
+				}
+			}
 		}
 	}
 }
@@ -1033,7 +1201,8 @@
 		padding: 16px 28px;
 	}
 
-	&.wp-mail-smtp-btn-upgrade {
+	&.wp-mail-smtp-btn-upgrade,
+	&.wp-mail-smtp-btn-cta {
 		font-size: 16px;
 		line-height: 20px;
 		font-weight: 500;
@@ -1048,42 +1217,44 @@
 		&:hover,
 		&:active,
 		&:focus {
-			background-color: $orange_dark;
-			border-color: $orange_dark;
+			background-color: $orange-dark;
+			border-color: $orange-dark;
+			color: #FFFFFF;
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $orange_dark;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $orange-dark;
 		}
 	}
 
 	&.wp-mail-smtp-btn-red {
-		background-color: #DC3232;
-		border-color: #DC3232;
+		background-color: $negative;
+		border-color: $negative;
 		color: #fff;
 
 		&:hover,
 		&:active,
 		&:focus {
-			background-color: darkred;
-			border-color: darkred;
+			background-color: #b32d2e;
+			border-color: #b32d2e;
+			color: #FFFFFF;
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 1px #fff, 0 0 0 3px darkred;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #b32d2e;
 		}
 	}
 
 	&.wp-mail-smtp-btn-grey {
-		background-color: #f5f5f5;
-		border: 1px solid #ccc;
-		color: #666;
+		background-color: #F8F8F8;
+		border: 1px solid #999999;
+		color: #555555;
 
 		&:hover,
 		&:active,
 		&:focus {
-			background-color: #d7d7d7;
-			border-color: #ccc;
+			background-color: #eee;
+			border-color: #555555;
 			color: #444;
 		}
 	}
@@ -1127,10 +1298,10 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 // Domain Checker Results section on Email Test tab.
 #wp-mail-smtp-domain-check-details {
 	h2 {
-		color: #444;
+		color: $primary-text;
 		font-size: 20px;
 		line-height: 24px;
-		font-weight: 700;
+		font-weight: 600;
 		margin: 28px 0 23px;
 	}
 
@@ -1157,12 +1328,12 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 					font-weight: 500;
 					font-size: 14px;
 					line-height: 17px;
-					color: #444444;
+					color: $primary-text;
 					margin: 0 0 4px 0;
 				}
 
 				p {
-					color: #777777;
+					color: $secondary-text;
 					font-size: 14px;
 					line-height: 20px;
 					margin: 0 0 10px 0;
@@ -1213,14 +1384,14 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 			font-weight: 500;
 			font-size: 24px;
 			line-height: 29px;
-			color: #444444;
+			color: $primary-text;
 		}
 
 		p {
 			margin-top: 0;
 			font-size: 16px;
 			line-height: 24px;
-			color: #777777;
+			color: $secondary-text;
 		}
 	}
 
@@ -1245,15 +1416,15 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 
 		h2 {
 			margin: 20px 0 10px;
-			color: #444;
+			color: $primary-text;
 			font-size: 16px;
 			line-height: 20px;
-			font-weight: 700;
+			font-weight: 600;
 		}
 
 		p {
 			margin: 10px 0;
-			color: #777;
+			color: $secondary-text;
 			font-size: 14px;
 			line-height: 20px;
 		}
@@ -1265,7 +1436,7 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		ul,
 		ol {
 			margin: 10px 0 10px 15px;
-			color: #777;
+			color: $secondary-text;
 			font-size: 14px;
 			line-height: 20px;
 
@@ -1291,8 +1462,8 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		}
 
 		.price-off {
-			color: green;
-			font-weight: bold;
+			color: $positive;
+			font-weight: 600;
 		}
 
 		.error-log-button-container {
@@ -1351,9 +1522,9 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		}
 
 		& > h1 {
-			color: #444;
+			color: $primary-text;
 			font-size: 20px;
-			font-weight: 700;
+			font-weight: 600;
 			margin: 0 0 15px 0;
 			padding: 0;
 		}
@@ -1395,6 +1566,18 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 			max-width: 80vw !important;
 		}
 	}
+
+	#wpfooter {
+
+		a {
+			color: $link !important;
+
+			&:hover,
+			&:active {
+				color: $link-hover !important;
+			}
+		}
+	}
 }
 
 // The single Debug Event popup preview.
@@ -1411,7 +1594,7 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		text-align: center;
 
 		span {
-			color: #777777;
+			color: $secondary-text;
 			font-size: 16px;
 			line-height: 22px;
 		}
@@ -1442,7 +1625,7 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		}
 
 		.debug-event-code {
-			color: #777777;
+			color: $secondary-text;
 		}
 
 		&:last-child {

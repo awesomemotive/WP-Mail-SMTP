@@ -77,7 +77,7 @@ class AlertsTab extends PageAbstract {
 
 		?>
 		<div class="wp-mail-smtp-product-education">
-			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--full-width">
+			<div class="wp-mail-smtp-product-education__row">
 				<h4 class="wp-mail-smtp-product-education__heading">
 					<?php esc_html_e( 'Alerts', 'wp-mail-smtp' ); ?>
 				</h4>

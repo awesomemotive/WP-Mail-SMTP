@@ -152,7 +152,7 @@ if ( is_multisite() ) {
 		/*
 		 * Drop all Action Scheduler data and unschedule all plugin ActionScheduler actions.
 		 */
-		( new \WPMailSMTP\Tasks\Tasks() )->cancel_all();
+		( new \WPMailSMTP\Tasks\Tasks() )->remove_all();
 
 		$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
 		$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB
@@ -234,7 +234,7 @@ if ( is_multisite() ) {
 	/*
 	 * Drop all Action Scheduler data and unschedule all plugin ActionScheduler actions.
 	 */
-	( new \WPMailSMTP\Tasks\Tasks() )->cancel_all();
+	( new \WPMailSMTP\Tasks\Tasks() )->remove_all();
 
 	$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
 	$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB

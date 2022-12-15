@@ -517,23 +517,7 @@ class WP {
 	 */
 	public static function get_initiator_name( $file_path ) {
 
-		$cache_key = 'wp_mail_smtp_initiators';
-
-		// Mainly we have several initiators and we can cache them for better performance.
-		$initiators_cache = get_transient( $cache_key );
-		$initiators_cache = is_array( $initiators_cache ) ? $initiators_cache : [];
-
-		if ( isset( $initiators_cache[ $file_path ] ) ) {
-			return $initiators_cache[ $file_path ];
-		}
-
-		$name = self::get_initiator( $file_path )['name'];
-
-		$initiators_cache[ $file_path ] = $name;
-
-		set_transient( $cache_key, $initiators_cache, HOUR_IN_SECONDS );
-
-		return $name;
+		return self::get_initiator( $file_path )['name'];
 	}
 
 	/**
@@ -545,48 +529,67 @@ class WP {
 	 *
 	 * @return array
 	 */
-	public static function get_initiator( $file_path ) {
+	public static function get_initiator( $file_path ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$name = self::get_initiator_plugin( $file_path );
-		$type = 'plugin';
+		$cache_key = 'wp_mail_smtp_initiators_data';
 
-		if ( empty( $name ) ) {
-			$name = self::get_initiator_plugin( $file_path, true );
-			$type = 'mu-plugin';
+		// Mainly we have several initiators and we can cache them for better performance.
+		$initiators_cache = get_transient( $cache_key );
+		$initiators_cache = is_array( $initiators_cache ) ? $initiators_cache : [];
+
+		if ( isset( $initiators_cache[ $file_path ] ) ) {
+			return $initiators_cache[ $file_path ];
 		}
 
-		if ( empty( $name ) ) {
-			$name = self::get_initiator_theme( $file_path );
-			$type = 'theme';
+		$initiator = self::get_initiator_plugin( $file_path );
+
+		// Change the initiator name if the email was sent from the reloaded method in the email controls.
+		if (
+			! empty( $initiator ) &&
+			strpos( str_replace( '\\', '/', $file_path ), 'src/Pro/Emails/Control/Reload.php' )
+		) {
+			$initiator['name'] = sprintf( /* translators: %s - plugin name. */
+				esc_html__( 'WP Core (%s)', 'wp-mail-smtp' ),
+				$initiator['name']
+			);
 		}
 
-		if ( empty( $name ) ) {
-			$name = self::get_initiator_wp_core( $file_path );
-			$type = 'wp-core';
+		if ( empty( $initiator ) ) {
+			$initiator = self::get_initiator_plugin( $file_path, true );
 		}
 
-		if ( empty( $name ) ) {
-			$name = esc_html__( 'N/A', 'wp-mail-smtp' );
-			$type = 'unknown';
+		if ( empty( $initiator ) ) {
+			$initiator = self::get_initiator_theme( $file_path );
 		}
 
-		return [
-			'name' => $name,
-			'type' => $type,
-		];
+		if ( empty( $initiator ) ) {
+			$initiator = self::get_initiator_wp_core( $file_path );
+		}
+
+		if ( empty( $initiator ) ) {
+			$initiator['name'] = esc_html__( 'N/A', 'wp-mail-smtp' );
+			$initiator['slug'] = '';
+			$initiator['type'] = 'unknown';
+		}
+
+		$initiators_cache[ $file_path ] = $initiator;
+
+		set_transient( $cache_key, $initiators_cache, HOUR_IN_SECONDS );
+
+		return $initiator;
 	}
 
 	/**
-	 * Get the initiator's name, if it's a plugin (or mu plugin).
+	 * Get the initiator's data, if it's a plugin (or mu plugin).
 	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $file_path       The absolute path of a file.
 	 * @param bool   $check_mu_plugin Whether to check for mu plugins or not.
 	 *
-	 * @return false|string
+	 * @return false|array
 	 */
-	private static function get_initiator_plugin( $file_path, $check_mu_plugin = false ) {
+	private static function get_initiator_plugin( $file_path, $check_mu_plugin = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
 		$constant = empty( $check_mu_plugin ) ? 'WP_PLUGIN_DIR' : 'WPMU_PLUGIN_DIR';
 
@@ -612,24 +615,32 @@ class WP {
 					1 === preg_match( "/^$plugin_slug(\/|\.php)/", $plugin ) &&
 					isset( $plugin_data['Name'] )
 				) {
-					return $plugin_data['Name'];
+					return [
+						'name' => $plugin_data['Name'],
+						'slug' => $plugin,
+						'type' => $check_mu_plugin ? 'mu-plugin' : 'plugin',
+					];
 				}
 			}
 
-			return $result[1];
+			return [
+				'name' => $result[1],
+				'slug' => '',
+				'type' => $check_mu_plugin ? 'mu-plugin' : 'plugin',
+			];
 		}
 
 		return false;
 	}
 
 	/**
-	 * Get the initiator's name, if it's a theme.
+	 * Get the initiator's data, if it's a theme.
 	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $file_path The absolute path of a file.
 	 *
-	 * @return false|string
+	 * @return false|array
 	 */
 	private static function get_initiator_theme( $file_path ) {
 
@@ -645,11 +656,11 @@ class WP {
 		if ( ! empty( $result[1] ) ) {
 			$theme = wp_get_theme( $result[1] );
 
-			if ( method_exists( $theme, 'get' ) ) {
-				return $theme->get( 'Name' );
-			}
-
-			return $result[1];
+			return [
+				'name' => method_exists( $theme, 'get' ) ? $theme->get( 'Name' ) : $result[1],
+				'slug' => $result[1],
+				'type' => 'theme',
+			];
 		}
 
 		return false;
@@ -662,7 +673,7 @@ class WP {
 	 *
 	 * @param string $file_path The absolute path of a file.
 	 *
-	 * @return false|string
+	 * @return false|array
 	 */
 	private static function get_initiator_wp_core( $file_path ) {
 
@@ -677,7 +688,11 @@ class WP {
 			strpos( $file_path, $wp_includes ) === 0 ||
 			strpos( $file_path, $wp_admin ) === 0
 		) {
-			return esc_html__( 'WP Core', 'wp-mail-smtp' );
+			return [
+				'name' => esc_html__( 'WP Core', 'wp-mail-smtp' ),
+				'slug' => 'wp-core',
+				'type' => 'wp-core',
+			];
 		}
 
 		return false;
@@ -764,5 +779,24 @@ class WP {
 		}
 
 		return Helpers::format_error_message( $message, $code, $description );
+	}
+
+	/**
+	 * Clean variables using sanitize_text_field. Arrays are cleaned recursively.
+	 * Non-string values are ignored.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string|array $var Data to sanitize.
+	 *
+	 * @return string|array
+	 */
+	public static function sanitize_text( $var ) {
+
+		if ( is_array( $var ) ) {
+			return array_map( [ __CLASS__, 'sanitize_text' ], $var );
+		} else {
+			return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+		}
 	}
 }

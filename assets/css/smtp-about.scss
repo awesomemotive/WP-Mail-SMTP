@@ -39,7 +39,7 @@
 
 				h5 {
 					font-size: 17px;
-					font-weight: 700;
+					font-weight: 600;
 				}
 
 				.plugin-item {
@@ -104,11 +104,11 @@
 							justify-content: center;
 
 							&.success {
-								color: $green;
+								color: $positive;
 							}
 
 							&.error {
-								color: red;
+								color: $negative;
 							}
 						}
 					}
@@ -118,7 +118,7 @@
 						padding-top: 8px;
 
 						.status-inactive {
-							color: red;
+							color: $negative;
 						}
 
 						.status-download {
@@ -126,7 +126,7 @@
 						}
 
 						.status-active {
-							color: $green;
+							color: $positive;
 						}
 					}
 
@@ -184,7 +184,7 @@
 							}
 
 							&.button-secondary {
-								color: #555;
+								color: $secondary-text;
 								border-color: #cccccc;
 								background: #f7f7f7;
 								box-shadow: 0 1px 0 #cccccc;
@@ -196,8 +196,8 @@
 								}
 							}
 
-							&.status-active .fa {color: $green}
-							&.status-inactive .fa {color: red}
+							&.status-active .fa {color: $positive}
+							&.status-inactive .fa {color: $negative}
 							&.status-download .fa {color: #999}
 							&.loading .fa {color: #666}
 
@@ -264,7 +264,7 @@
 
 			figcaption {
 				font-size: 14px;
-				color: #888888;
+				color: $description-text;
 				margin-top: 5px;
 				text-align: center;
 				line-height: initial;
@@ -300,7 +300,7 @@
 
 		ul.list-features {
 			li .fa {
-				color: #2a9b39;
+				color: $positive;
 				margin: 0 8px 0 0;
 			}
 		}
@@ -353,7 +353,7 @@
 		}
 
 		span.price-off {
-			color: #6AB255;
+			color: $positive;
 		}
 	}
 

@@ -191,22 +191,24 @@ class Task {
 		}
 
 		// Save data to tasks meta table.
-		$task_meta = new Meta();
+		if ( ! is_null( $this->params ) ) {
+			$task_meta = new Meta();
 
-		// No processing if meta table was not created on multisite subsite.
-		if ( is_multisite() && ! $task_meta->table_exists() ) {
-			return $action_id;
-		}
+			// No processing if meta table was not created.
+			if ( ! $task_meta->table_exists() ) {
+				return $action_id;
+			}
 
-		$this->meta_id = $task_meta->add(
-			[
-				'action' => $this->action,
-				'data'   => isset( $this->params ) ? $this->params : [],
-			]
-		);
+			$this->meta_id = $task_meta->add(
+				[
+					'action' => $this->action,
+					'data'   => isset( $this->params ) ? $this->params : [],
+				]
+			);
 
-		if ( empty( $this->meta_id ) ) {
-			return $action_id;
+			if ( empty( $this->meta_id ) ) {
+				return $action_id;
+			}
 		}
 
 		// Prevent 500 errors when Action Scheduler tables don't exist.

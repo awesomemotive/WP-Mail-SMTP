@@ -113,6 +113,9 @@ class Core {
 		// Activation hook.
 		register_activation_hook( WPMS_PLUGIN_FILE, [ $this, 'activate' ] );
 
+		// Load Pro if available.
+		add_action( 'plugins_loaded', [ $this, 'get_pro' ] );
+
 		// Redefine PHPMailer.
 		add_action( 'plugins_loaded', [ $this, 'get_processor' ] );
 		add_action( 'plugins_loaded', [ $this, 'replace_phpmailer' ] );
@@ -128,7 +131,6 @@ class Core {
 		// Initialize DB migrations.
 		add_action( 'admin_init', [ $this, 'init_migrations' ] );
 
-		add_action( 'plugins_loaded', [ $this, 'get_pro' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_usage_tracking' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_admin_bar_menu' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_notifications' ] );
@@ -137,6 +139,8 @@ class Core {
 		add_action( 'plugins_loaded', [ $this, 'get_dashboard_widget' ], 20 );
 		add_action( 'plugins_loaded', [ $this, 'get_reports' ] );
 		add_action( 'plugins_loaded', [ $this, 'get_db_repair' ] );
+		add_action( 'plugins_loaded', [ $this, 'get_connections_manager' ], 20 );
+		add_action( 'plugins_loaded', [ $this, 'get_wp_mail_initiator' ] );
 	}
 
 	/**
@@ -926,16 +930,14 @@ class Core {
 	 */
 	public function generate_mail_catcher( $exceptions = null ) {
 
-		if ( version_compare( get_bloginfo( 'version' ), '5.5-alpha', '<' ) ) {
+		$is_old_version = version_compare( get_bloginfo( 'version' ), '5.5-alpha', '<' );
+
+		if ( $is_old_version ) {
 			if ( ! class_exists( '\PHPMailer', false ) ) {
 				require_once ABSPATH . WPINC . '/class-phpmailer.php';
 			}
 
-			$mail_catcher = new MailCatcher( $exceptions );
-
-			$mail_catcher::$validator = static function ( $email ) {
-				return (bool) is_email( $email );
-			};
+			$class_name = MailCatcher::class;
 		} else {
 			if ( ! class_exists( '\PHPMailer\PHPMailer\PHPMailer', false ) ) {
 				require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
@@ -949,7 +951,24 @@ class Core {
 				require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
 			}
 
-			$mail_catcher = new MailCatcherV6( $exceptions );
+			$class_name = MailCatcherV6::class;
+		}
+
+		/**
+		 * Filters MailCatcher class name.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $mail_catcher The MailCatcher class name.
+		 */
+		$class_name = apply_filters( 'wp_mail_smtp_core_generate_mail_catcher', $class_name );
+
+		$mail_catcher = new $class_name( $exceptions );
+
+		if ( $is_old_version ) {
+			$mail_catcher::$validator = static function ( $email ) {
+				return (bool) is_email( $email );
+			};
 		}
 
 		return $mail_catcher;
@@ -1234,6 +1253,68 @@ class Core {
 		}
 
 		return $db_repair;
+	}
+
+	/**
+	 * Get connections manager.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return ConnectionsManager
+	 */
+	public function get_connections_manager() {
+
+		static $connections_manager = null;
+
+		if ( is_null( $connections_manager ) ) {
+
+			/**
+			 * Filter the connections manager class name.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param ConnectionsManager $connections_manager The connections manager class name to be instantiated.
+			 */
+			$class_name          = apply_filters( 'wp_mail_smtp_core_get_connections_manager', ConnectionsManager::class );
+			$connections_manager = new $class_name();
+
+			if ( method_exists( $connections_manager, 'hooks' ) ) {
+				$connections_manager->hooks();
+			}
+		}
+
+		return $connections_manager;
+	}
+
+	/**
+	 * Get the `wp_mail` function initiator.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return WPMailInitiator
+	 */
+	public function get_wp_mail_initiator() {
+
+		static $wp_mail_initiator = null;
+
+		if ( is_null( $wp_mail_initiator ) ) {
+
+			/**
+			 * Filter the `wp_mail` function initiator class name.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param WPMailInitiator $wp_mail_initiator The `wp_mail` function initiator class name to be instantiated.
+			 */
+			$class_name        = apply_filters( 'wp_mail_smtp_core_get_wp_mail_initiator', WPMailInitiator::class );
+			$wp_mail_initiator = new $class_name();
+
+			if ( method_exists( $wp_mail_initiator, 'hooks' ) ) {
+				$wp_mail_initiator->hooks();
+			}
+		}
+
+		return $wp_mail_initiator;
 	}
 
 	/**

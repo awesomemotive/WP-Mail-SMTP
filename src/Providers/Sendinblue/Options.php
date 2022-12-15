@@ -2,8 +2,8 @@
 
 namespace WPMailSMTP\Providers\Sendinblue;
 
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Providers\OptionsAbstract;
-use WPMailSMTP\Options as PluginOptions;
 
 /**
  * Class Options.
@@ -24,8 +24,14 @@ class Options extends OptionsAbstract {
 	 *
 	 * @since 1.6.0
 	 * @since 2.3.0 Added supports parameter.
+	 *
+	 * @param ConnectionInterface $connection The Connection object.
 	 */
-	public function __construct() {
+	public function __construct( $connection = null ) {
+
+		if ( is_null( $connection ) ) {
+			$connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+		}
 
 		$description = sprintf(
 			wp_kses( /* translators: %1$s - URL to sendinblue.com site. */
@@ -47,7 +53,7 @@ class Options extends OptionsAbstract {
 			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/', 'Sendinblue documentation' ) )
 		);
 
-		$api_key = PluginOptions::init()->get( self::SLUG, 'api_key' );
+		$api_key = $connection->get_options()->get( self::SLUG, 'api_key' );
 
 		if ( empty( $api_key ) ) {
 			$description .= sprintf(
@@ -78,7 +84,8 @@ class Options extends OptionsAbstract {
 					'from_name_force'  => true,
 				],
 				'recommended' => true,
-			]
+			],
+			$connection
 		);
 	}
 
@@ -104,7 +111,7 @@ class Options extends OptionsAbstract {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'API Key', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<?php if ( $this->options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
+				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
 					<input type="text" disabled value="****************************************"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
@@ -112,7 +119,7 @@ class Options extends OptionsAbstract {
 				<?php else : ?>
 					<input type="password" spellcheck="false"
 						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
-						value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'api_key' ) ); ?>"
+						value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'api_key' ) ); ?>"
 						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
 					/>
 				<?php endif; ?>
@@ -137,8 +144,8 @@ class Options extends OptionsAbstract {
 			</div>
 			<div class="wp-mail-smtp-setting-field">
 				<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][domain]" type="text"
-					   value="<?php echo esc_attr( $this->options->get( $this->get_slug(), 'domain' ) ); ?>"
-					<?php echo $this->options->is_const_defined( $this->get_slug(), 'domain' ) ? 'disabled' : ''; ?>
+					   value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'domain' ) ); ?>"
+					<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'domain' ) ? 'disabled' : ''; ?>
 					   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-domain" spellcheck="false"
 				/>
 				<p class="desc">

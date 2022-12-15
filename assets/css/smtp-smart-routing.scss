@@ -1,0 +1,209 @@
+@import "include-media";
+@import "variables";
+
+#wp-mail-smtp {
+
+	.wp-mail-smtp-smart-routing-header {
+		padding-bottom: 0 !important;
+		border-bottom: none !important;
+
+		&__heading {
+			display: flex;
+			align-items: center;
+
+			> a {
+				margin-left: 15px;
+				font-weight: 600;
+				font-size: 14px;
+				line-height: 22px;
+			}
+		}
+	}
+
+	.wp-mail-smtp-smart-routing-notice-top {
+		max-width: 1000px;
+		margin: 10px 0 0 !important;
+		border: 1px solid #BBBBBB;
+
+		/* Disable all control elements if there are no connections. */
+		&--no-connections {
+
+			& ~ .wp-mail-smtp-setting-row,
+			& ~ .wp-mail-smtp-submit {
+				opacity: 0.5;
+				pointer-events: none;
+			}
+		}
+	}
+
+	.wp-mail-smtp-smart-routing-enable-toggle {
+		display: flex;
+		align-items: center;
+
+		&__label {
+			margin-left: 10px;
+			color: $secondary-text;
+			font-weight: 500;
+		}
+	}
+
+	.wp-mail-smtp-smart-routing-routes {
+		max-width: 1000px;
+		margin-bottom: 30px;
+	}
+
+	.wp-mail-smtp-smart-routing-route {
+		background: #FFFFFF;
+		box-shadow: $shadow-md;
+		border-radius: 6px;
+
+		& + .wp-mail-smtp-smart-routing-route {
+			margin-top: 30px;
+		}
+
+		&__header {
+			display: flex;
+			align-items: center;
+			padding: 20px;
+			border-bottom: 1px solid #F1F1F1;
+
+			@include media("<=phone") {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			> span {
+				margin-right: 10px;
+				font-size: 14px;
+				line-height: 17px;
+				font-style: italic;
+				color: $description-text;
+
+				@include media("<=phone") {
+					margin-right: 0;
+					margin-top: 10px;
+				}
+			}
+
+			> select {
+				margin-right: 10px !important;
+
+				@include media("<=phone") {
+					margin-right: 0;
+					margin-top: 10px !important;
+				}
+			}
+		}
+
+		&__connection {
+			max-width: 273px;
+			width: 100%;
+
+			&--invalid {
+				border-color: $negative !important;
+			}
+		}
+
+		&__actions {
+			display: flex;
+			align-items: center;
+			margin-left: auto;
+
+			@include media("<=phone") {
+				order: -1;
+			}
+		}
+
+		&__order {
+			margin-right: 23px;
+			white-space: nowrap;
+		}
+
+		&__order-btn {
+			background-color: transparent;
+			border: none;
+			padding: 0;
+			vertical-align: middle;
+			cursor: pointer;
+
+			&--down {
+				margin-left: 13px;
+				transform: rotate(-180deg);
+			}
+
+			img {
+				display: block;
+			}
+		}
+
+		&:first-child .wp-mail-smtp-smart-routing-route__order-btn--up,
+		&:last-child .wp-mail-smtp-smart-routing-route__order-btn--down {
+			opacity: 0.25;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+
+		&__delete {
+			background-color: transparent;
+			border: none;
+			color: #999999;
+			padding: 0;
+			vertical-align: middle;
+			cursor: pointer;
+
+			&:hover:not(:disabled) {
+				color: $negative;
+			}
+
+			&:disabled {
+				opacity: 0.25;
+				cursor: not-allowed;
+			}
+		}
+
+		&__main {
+			padding: 20px;
+		}
+
+		&__notice {
+			margin-top: 0 !important;
+			margin-bottom: 20px !important;
+			border: 1px solid #BBBBBB;
+
+			p {
+				margin: 6px 0 !important;
+				font-size: 13px !important;
+			}
+		}
+
+		.wp-mail-smtp-btn-grey {
+			font-weight: 500;
+		}
+	}
+
+	.wp-mail-smtp-smart-routing-routes-note {
+		display: flex;
+		align-items: center;
+		margin-bottom: 5px;
+		font-size: 14px;
+		line-height: 20px;
+		color: $description-text;
+
+		img {
+			margin-right: 10px;
+		}
+
+		p {
+			margin: 0 !important;
+		}
+
+		a {
+			color: inherit;
+
+			&:hover,
+			&:active {
+				color: #555555;
+			}
+		}
+	}
+}

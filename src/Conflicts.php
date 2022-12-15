@@ -526,10 +526,16 @@ class Conflicts {
 	 * Check whether we have conflict with "WooCommerce Sendinblue Newsletter Subscription" plugin.
 	 *
 	 * @since 2.9.0
+	 * @since 3.7.0 Added a version compatibility check.
 	 *
 	 * @return bool Returns true if we have conflict otherwise false.
 	 */
 	protected function test_wc_sendinblue_integration() {
+
+		// Since version `3.0.0` "Sendinblue - WooCommerce Email Marketing" plugin no longer conflicts with WP Mail SMTP.
+		if ( defined( 'SENDINBLUE_WC_PLUGIN_VERSION' ) && version_compare( SENDINBLUE_WC_PLUGIN_VERSION, '3.0.0', '>=' ) ) {
+			return false;
+		}
 
 		// Check requirements for test.
 		if (

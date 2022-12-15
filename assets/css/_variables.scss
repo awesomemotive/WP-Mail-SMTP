@@ -1,13 +1,29 @@
-$orange: #FF982D;
-$orange_dark: darken($orange, 10%);
-$grey: #A9A9A9;
-$green: #2a9b39;
-$red: #a00;
+// Color styles
+$primary-text: #222222;
+$secondary-text: #555555;
+$description-text: #888888;
+$field-text: #555555;
+$field-border: #999999;
+$steel: #738E9E;
+$steel-dark: #395360;
+$orange: #E27730;
+$orange-dark: #B85A1B;
+$link: #2171B1;
+$link-hover: #135e96;
+$positive: #00A32A;
+$negative: #D63638;
 
-$modal-orange: #FFB900;
+$grey: #A9A9A9;
+
+$modal-orange: #E27730;
 $modal-green: #00A32A;
 $modal-red: #D63638;
 $modal-blue: #3582c4;
+
+// Effect styles
+$shadow-sm:  0px 1px 2px rgba(0, 0, 0, 0.07);
+$shadow-md:  0px 2px 4px rgba(0, 0, 0, 0.07);
+$shadow-lg:  0px 2px 10px rgba(0, 0, 0, 0.15);
 
 $content-padding: 20px;
 $padding-default: 30px;

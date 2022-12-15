@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\SMTP;
 
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -15,8 +16,10 @@ class Options extends OptionsAbstract {
 	 * SMTP constructor.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param ConnectionInterface $connection The Connection object.
 	 */
-	public function __construct() {
+	public function __construct( $connection = null ) {
 
 		parent::__construct(
 			[
@@ -38,7 +41,8 @@ class Options extends OptionsAbstract {
 					),
 					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-other-smtp-mailer-in-wp-mail-smtp/', 'Other SMTP documentation' ) )
 				),
-			]
+			],
+			$connection
 		);
 	}
 }

@@ -2,8 +2,8 @@
 Contributors: wpforms, jaredatch, smub, slaFFik
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 5.2
-Tested up to: 6.0
-Stable tag: 3.6.1
+Tested up to: 6.1
+Stable tag: 3.7.0
 Requires PHP: 5.6.20
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more. Rated #1 WordPress SMTP Email plugin.
@@ -12,7 +12,7 @@ Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendG
 
 ### WordPress Mail SMTP Plugin
 
-Having problems with your WordPress site not sending emails? You're not alone. Over 2 million websites use WP Mail SMTP to send their emails reliably.
+Having problems with your WordPress site not sending emails? You're not alone. Over 3 million websites use WP Mail SMTP to send their emails reliably.
 
 Our goal is to make email deliverability easy and reliable. We want to ensure your emails reach the inbox.
 
@@ -208,6 +208,11 @@ Once you've activated email logging, any individual log file can be printed in a
 
 WP Mail SMTP makes it easy for Network Admins to view and manage email logs for subsites. You can access all of your deliverability information from the Network Admin dashboard and quickly switch between subsites. That makes it easy to review email logging data for all subsites on one centralized page.
 
+#### Backup Connection
+
+WP Mail SMTP Pro allows you to configure multiple mailer providers. The main configuration will be your Primary Connection, and you can set another as your Backup Connection.
+If an email fails to send via your Primary Connection, WP Mail SMTP will automatically route it through your Backup Connection and try to send it again. This means fewer missed emails, even when something goes wrong.
+
 #### Email Alerts
 
 Get instantly notified about failed emails! If your site's mailer or SMTP service stops sending your emails, you'll immediately receive a notification. Choose from several helpful alert methods, including:
@@ -218,6 +223,12 @@ Get instantly notified about failed emails! If your site's mailer or SMTP servic
 - Webhook Notifications
 
 In combination with Email Logging and Email Resend, Email Alerts let you ensure that no important email will ever be lost.
+
+#### Smart Routing
+
+Smart Routing enables you to send emails through different mailer providers based on custom criteria. Easily configure your Smart Routing conditions using dozens of pre-determined options, including the contents of the email Subject or Message, From or To addresses, or which plugin initiated the email, just to name a few.
+Using Smart Routing lets you choose the best mailer for each type of email you send. Select a transactional mailer to send out your eCommerce order confirmations, another mailer for your newsletter and marketing emails, and more!
+Selecting the best mailer for each type of email you need to send will improve your overall deliverability and make sure your emails arrive in users' inboxes.
 
 #### Email Reports
 
@@ -269,7 +280,7 @@ If you like our WP Mail SMTP plugin, then consider checking out our other projec
 * <a href="https://www.seedprod.com/" rel="friend" title="SeedProd">SeedProd</a> - Create beautiful landing pages with our powerful drag & drop landing page builder.
 * <a href="https://rafflepress.com/" rel="friend" title="RafflePress">RafflePress</a> - Best WordPress giveaway and contest plugin to grow traffic and social followers.
 * <a href="https://smashballoon.com/" rel="friend" title="Smash Balloon">Smash Balloon</a> - #1 social feeds plugin for WordPress - display social media content in WordPress without code.
-* <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 2 million sites).
+* <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 3 million sites).
 * <a href="https://www.pushengage.com/" rel="friend" title="PushEngage">PushEngage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
 * <a href="https://trustpulse.com/" rel="friend" title="TrustPulse">TrustPulse</a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
 * <a href="https://searchwp.com/" rel="friend" title="SearchWP">SearchWP</a> - The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.
@@ -318,8 +329,8 @@ By all means please contact us to discuss features or options you'd like to see 
 == Screenshots ==
 
 1. WP Mail SMTP Settings page
-2. List of mailers
-3. Other SMTP settings
+2. List of mailers with Other SMTP settings example
+3. Backup Connection (Pro)
 4. Setup Wizard - Select your mailer
 5. Setup Wizard - Example mailer settings
 6. Email Test page
@@ -330,8 +341,20 @@ By all means please contact us to discuss features or options you'd like to see 
 11. Email Reports - Email Log statistics grouped by email subject (Pro)
 12. Email Log bulk Export (Pro)
 13. Email Alerts - Get notified about failed emails (Pro)
+14. Additional Connections - List of connections (Pro)
+15. Additional Connections - Configuration page (Pro)
+16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 3.7.0 - 2022-12-15 =
+- Changed: Improved Action Scheduler data cleanup on plugin uninstall.
+- Changed: Improved performance for database table validation checks.
+- Fixed: Tasks meta database table error.
+- Fixed: Gmail mailer authorization error if the oAuth app already had other non mail scopes attached.
+- Fixed: Email address validation in Setup wizard.
+- Fixed: Removed unneeded composer libraries autoload code.
+- Fixed: Conflict detection for plugin Sendinblue - WooCommerce Email Marketing (v3.0+)
 
 = 3.6.1 - 2022-10-06 =
 - Added: The `wp_mail` function call backtrace to the Debug Events if the "Debug Email Sending" option is enabled.

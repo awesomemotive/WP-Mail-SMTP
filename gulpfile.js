@@ -83,8 +83,6 @@ var plugin = {
 		'!vendor/wikimedia/',
 		'!vendor/firebase/**',
 		'!vendor/firebase/',
-		'!vendor/instituteweb/**',
-		'!vendor/instituteweb/',
 		// symfony is prefixed and located in vendor_prefixed folder.
 		'!vendor/symfony/**',
 		'!vendor/symfony/',
@@ -341,6 +339,16 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 		)
 		.pipe( clean() );
 } );
+gulp.task( 'composer:delete_unneeded_vendor_libraries', function () {
+	return gulp.src(
+		[
+			'vendor/firebase',
+			'vendor/wikimedia',
+		],
+		{ allowEmpty: true, read: false }
+	)
+		.pipe( clean() );
+} );
 gulp.task( 'composer:create_vendor_prefixed_folder', function () {
 	return gulp.src( '*.*', { read: false } )
 		.pipe( gulp.dest( './vendor_prefixed' ) );
@@ -359,6 +367,26 @@ gulp.task( 'composer:prefix', function ( cb ) {
 		cb( err );
 	} );
 } );
+/**
+ * Remove the pro autoload files for the lite build
+ */
+gulp.task( 'composer:remove_pro_autoload_files', function () {
+	return gulp.src( [ 'composer.json' ] )
+		.pipe(
+			replace(
+				/"vendor_prefixed\/mtdowling\/jmespath.php\/src\/JmesPath.php",/gm,
+				''
+			)
+		)
+		.pipe(
+			replace(
+				/"vendor_prefixed\/aws\/aws-sdk-php\/src\/functions.php",/gm,
+				''
+			)
+		)
+		.pipe( gulp.dest( './' ) );
+} );
+
 
 /**
  * Rename plugin name defined the main plugin file.

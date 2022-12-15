@@ -11,6 +11,11 @@ body.wp-mail-smtp-admin-page-body {
 			box-sizing: border-box;
 		}
 
+		.jconfirm-bg {
+			background-color: rgba(114, 119, 124, 0.75);
+			opacity: 1;
+		}
+
 		.jconfirm-box {
 			padding: 30px;
 			border-radius: 6px;
@@ -47,7 +52,7 @@ body.wp-mail-smtp-admin-page-body {
 
 				.jconfirm-title {
 					display: block;
-					color: #444;
+					color: $primary-text;
 					font-weight: 500;
 					font-size: 24px;
 				}
@@ -65,7 +70,7 @@ body.wp-mail-smtp-admin-page-body {
 
 			div.jconfirm-content {
 				font-size: 16px;
-				color: #444444;
+				color: $primary-text;
 				line-height: 1.4;
 
 				p {
@@ -91,7 +96,7 @@ body.wp-mail-smtp-admin-page-body {
 				}
 
 				.wp-mail-smtp-btn {
-					font-weight: bold;
+					font-weight: 600;
 					text-transform: uppercase;
 					-webkit-transition: background .1s;
 					transition: background .1s;
@@ -291,8 +296,8 @@ body.wp-mail-smtp-admin-page-body {
 				}
 
 				span {
-					font-weight: 700;
-					color: #00a32a;
+					font-weight: 600;
+					color: $positive;
 				}
 
 				a {

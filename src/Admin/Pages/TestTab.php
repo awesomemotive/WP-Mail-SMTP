@@ -302,6 +302,7 @@ class TestTab extends PageAbstract {
 		$this->connection = apply_filters( 'wp_mail_smtp_admin_pages_test_tab_process_post_connection', $connection, $data );
 
 		if ( ! empty( $data['test']['email'] ) ) {
+			$data['test']['email'] = wp_unslash( $data['test']['email'] );
 			$data['test']['email'] = filter_var( $data['test']['email'], FILTER_VALIDATE_EMAIL );
 		}
 
@@ -332,6 +333,9 @@ class TestTab extends PageAbstract {
 			/* translators: %s - email address a test email will be sent to. */
 			$subject = 'WP Mail SMTP: HTML ' . sprintf( esc_html__( 'Test email to %s', 'wp-mail-smtp' ), $data['test']['email'] );
 		}
+
+		// Clear debug before send test email.
+		Debug::clear();
 
 		// Start output buffering to grab smtp debugging output.
 		ob_start();

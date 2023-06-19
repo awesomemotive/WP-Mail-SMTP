@@ -1,12 +1,12 @@
 === WP Mail SMTP by WPForms - The Most Popular SMTP and Email Log Plugin ===
-Contributors: wpforms, jaredatch, smub, slaFFik
+Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
 Requires at least: 5.2
-Tested up to: 6.1
-Stable tag: 3.7.0
-Requires PHP: 5.6.20
+Tested up to: 6.2
+Stable tag: 3.8.0
+Requires PHP: 7.2
 
-Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more. Rated #1 WordPress SMTP Email plugin.
+Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
 
 == Description ==
 
@@ -19,6 +19,10 @@ Our goal is to make email deliverability easy and reliable. We want to ensure yo
 WP Mail SMTP fixes your email deliverability by reconfiguring WordPress to use a proper SMTP provider when sending emails.
 
 Best of all, our easy-to-use Setup Wizard and detailed documentation guide you through the process.
+
+WP Mail SMTP is free and has everything you need to reliably send your WordPress emails!
+
+<a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">**WP Mail SMTP Pro**</a> unlocks even more powerful features like email logging, advanced email reporting and stats, backup connections, email alerts, smart conditional routing, and much more.
 
 #### What is SMTP?
 
@@ -178,19 +182,19 @@ In addition to native Microsoft, Amazon SES, and Zoho Mail integrations, WP Mail
 
 <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend">Click here to purchase WP Mail SMTP Pro now!</a>
 
-#### Email Log
+### Email Log
 
 Email Logging lets you log and view all emails sent from your site. Email logs are helpful for storing emails for your records, auditing outgoing emails, and debugging during site development.
 
 But that's just the beginning. Our powerful <a href="https://wpmailsmtp.com/log-emails-wordpress/" rel="friend">WordPress email logs</a> unlock extra tools to help you measure email engagement and improve email deliverability:
 
+#### Email Log Details
+
+Each Email Log entry includes a lot of useful information about the email, including the subject, sender, recipients (TO, CC and BCC), email content, email headers, open&click tracking stats, delivery status, which WordPress plugin sent the email, and more!
+
 #### Resend Emails
 
 You resend any email or forward it to one or more email addresses, right from your email log. From the overview page, you can also resend multiple emails in bulk. This is an awesome way to resend emails that failed or forward important emails to an alternative email address.
-
-#### Track Email Opens and Clicks
-
-Wondering if an important email was actually opened, or if any links in the email were clicked? Our email log lets you <a href="https://wpmailsmtp.com/enable-wordpress-email-tracking/" rel="friend">view open and click tracking stats for your WordPress emails</a>.
 
 #### Store Email Attachments
 
@@ -204,16 +208,19 @@ Easily export your WordPress email logs to CSV, EML, or Excel. You can filter th
 
 Once you've activated email logging, any individual log file can be printed in an easy-to-read format. If you want to archive an email log digitally, it's easy to export it to a PDF document too.
 
-#### Manage Multisite Email Logs Easily
+### Email Reports
 
-WP Mail SMTP makes it easy for Network Admins to view and manage email logs for subsites. You can access all of your deliverability information from the Network Admin dashboard and quickly switch between subsites. That makes it easy to review email logging data for all subsites on one centralized page.
+Email reports make it easy to track deliverability and engagement at-a-glance. Your open and click-through rates are grouped by subject line, making it easy to review the performance of campaigns or notifications. The report also displays Sent and Failed emails each week so you can spot any issues quickly. You'll also see an email report chart right in your WordPress dashboard.
 
-#### Backup Connection
+#### Weekly Email Summary
 
-WP Mail SMTP Pro allows you to configure multiple mailer providers. The main configuration will be your Primary Connection, and you can set another as your Backup Connection.
-If an email fails to send via your Primary Connection, WP Mail SMTP will automatically route it through your Backup Connection and try to send it again. This means fewer missed emails, even when something goes wrong.
+Get statistics about WordPress emails sent directly into your inbox. Our weekly emails reveal how many emails are being sent from your WordPress site, and which ones are getting opens and clicks. The Summary also shows you deliverability statistics at-a-glance so you can spot any issues without logging into WordPress.
 
-#### Email Alerts
+#### Track Email Opens and Clicks
+
+Wondering if your important emails were actually opened, or if any links in the email were clicked? Our email log allows you <a href="https://wpmailsmtp.com/enable-wordpress-email-tracking/" rel="friend">view open and click tracking stats for your WordPress emails</a> and our Email Reports feature groups these stats by subject, so you can analyze their performance.
+
+### Email Alerts
 
 Get instantly notified about failed emails! If your site's mailer or SMTP service stops sending your emails, you'll immediately receive a notification. Choose from several helpful alert methods, including:
 
@@ -224,27 +231,32 @@ Get instantly notified about failed emails! If your site's mailer or SMTP servic
 
 In combination with Email Logging and Email Resend, Email Alerts let you ensure that no important email will ever be lost.
 
-#### Smart Routing
+### Backup Connection
+
+WP Mail SMTP Pro allows you to configure multiple mailer providers. The main configuration will be your Primary Connection, and you can set another as your Backup Connection.
+If an email fails to send via your Primary Connection, WP Mail SMTP will automatically route it through your Backup Connection and try to send it again. This means fewer missed emails, even when something goes wrong.
+
+### Smart Conditional Routing
 
 Smart Routing enables you to send emails through different mailer providers based on custom criteria. Easily configure your Smart Routing conditions using dozens of pre-determined options, including the contents of the email Subject or Message, From or To addresses, or which plugin initiated the email, just to name a few.
+
 Using Smart Routing lets you choose the best mailer for each type of email you send. Select a transactional mailer to send out your eCommerce order confirmations, another mailer for your newsletter and marketing emails, and more!
+
 Selecting the best mailer for each type of email you need to send will improve your overall deliverability and make sure your emails arrive in users' inboxes.
 
-#### Email Reports
-
-Email reports make it easy to track deliverability and engagement at-a-glance. Your open and click-through rates are grouped by subject line, making it easy to review the performance of campaigns or notifications. The report also displays Sent and Failed emails each week so you spot any issues quickly. You'll also see an email report chart right in your WordPress dashboard.
-
-#### Weekly Email Summary
-
-Get statistics about WordPress emails sent directly into your inbox. Our weekly emails reveal how many emails are being sent from your WordPress site, and which ones are getting opens and clicks. The Summary also shows you deliverability statistics at-a-glance so you can spot any issues without logging into WordPress.
-
-#### Manage WordPress Emails and Notifications
+### Manage WordPress Emails and Notifications
 
 The Manage Notification feature gives you full control over which email notifications WordPress sends. This means you can disable different WordPress notification emails. Don't want to receive emails when new users are created? No problem, turn it off.
+
+### WordPress Multisite
 
 #### WordPress Multisite Network Settings
 
 For users running a multisite network, our network settings provide a centralized location to easily configure your SMTP settings for all sites, saving you time.
+
+#### Manage Multisite Email Logs Easily
+
+WP Mail SMTP makes it easy for Network Admins to view and manage email logs for subsites. You can access all of your deliverability information from the Network Admin dashboard and quickly switch between subsites. That makes it easy to review email logging data for all subsites on one centralized page.
 
 ### Expert Support
 
@@ -274,22 +286,24 @@ You can try the <a href="https://wordpress.org/plugins/wpforms-lite/" rel="frien
 
 If you like our WP Mail SMTP plugin, then consider checking out our other projects:
 
-* <a href="https://optinmonster.com/" rel="friend" title="OptinMonster">OptinMonster</a> - Get More Email Subscribers with the most popular conversion optimization plugin for WordPress.
+* <a href="https://optinmonster.com/" rel="friend" title="OptinMonster">OptinMonster</a> - Get more email subscribers with the most popular conversion optimization plugin for WordPress.
 * <a href="https://wpforms.com/" rel="friend" title="WPForms">WPForms</a> - #1 drag & drop online form builder for WordPress (trusted by 5 million sites).
-* <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - See the Stats that Matter and Grow Your Business with Confidence. Best Google Analytics Plugin for WordPress.
+* <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - The original WordPress SEO plugin to help you rank higher in search results (trusted by over 3 million sites).
+* <a href="https://www.monsterinsights.com/" rel="friend" title="MonsterInsights">MonsterInsights</a> - See the stats that matter and grow your business with confidence. Best Google Analytics plugin for WordPress.
 * <a href="https://www.seedprod.com/" rel="friend" title="SeedProd">SeedProd</a> - Create beautiful landing pages with our powerful drag & drop landing page builder.
-* <a href="https://rafflepress.com/" rel="friend" title="RafflePress">RafflePress</a> - Best WordPress giveaway and contest plugin to grow traffic and social followers.
 * <a href="https://smashballoon.com/" rel="friend" title="Smash Balloon">Smash Balloon</a> - #1 social feeds plugin for WordPress - display social media content in WordPress without code.
-* <a href="https://aioseo.com/" rel="friend" title="AIOSEO">AIOSEO</a> - the original WordPress SEO plugin to help you rank higher in search results (trusted by over 3 million sites).
+* <a href="https://wpcode.com/" rel="friend" title="WPCode">WPCode</a> - must have WordPress code snippet management plugin to help you future-proof website customization (trusted by 1.5 million sites).
+* <a href="https://duplicator.com/" rel="friend" title="Duplicator">Duplicator</a> - popular WordPress backup and migration plugin used by over 1 million websites.
+* <a href="https://wpsimplepay.com/" rel="friend" title="WP Simple Pay">WP Simple Pay</a> - #1 Stripe payments plugin for WordPress. Start accepting one-time or recurring payments without a shopping cart.
 * <a href="https://www.pushengage.com/" rel="friend" title="PushEngage">PushEngage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
+* <a href="https://rafflepress.com/" rel="friend" title="RafflePress">RafflePress</a> - Best WordPress giveaway and contest plugin to grow traffic and social followers.
 * <a href="https://trustpulse.com/" rel="friend" title="TrustPulse">TrustPulse</a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
-* <a href="https://searchwp.com/" rel="friend" title="SearchWP">SearchWP</a> - The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.
-* <a href="https://affiliatewp.com/" rel="friend" title="AffiliateWP">AffiliateWP</a> - The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.
-* <a href="https://wpsimplepay.com/" rel="friend" title="WP Simple Pay">WP Simple Pay</a> - The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.
-* <a href="https://easydigitaldownloads.com/" rel="friend" title="Easy Digital Downloads">Easy Digital Downloads</a> - The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.
-* <a href="https://sugarcalendar.com/" rel="friend" title="Sugar Calendar">Sugar Calendar</a> - A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.
+* <a href="https://searchwp.com/" rel="friend" title="SearchWP">SearchWP</a> - The most advanced custom WordPress search plugin to improve WordPress search quality.
+* <a href="https://affiliatewp.com/" rel="friend" title="AffiliateWP">AffiliateWP</a> - #1 affiliate management plugin for WordPress. Add a referral program to your online store.
+* <a href="https://easydigitaldownloads.com/" rel="friend" title="Easy Digital Downloads">Easy Digital Downloads</a> - The best WordPress eCommerce plugin to sell digital products (eBooks, software, music, and more).
+* <a href="https://www.wpcharitable.com/" rel="friend" title="WPCharitable">WPCharitable</a> - Top-rated WordPress donation and fundraising plugin for WordPress.
 
-Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="http://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
+Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="http://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and about the <a href="https://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress plugins">best WordPress plugins</a>.
 
 == Installation ==
 
@@ -346,6 +360,14 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 3.8.0 - 2023-04-26 =
+- IMPORTANT: Support for PHP 5.6, 7.0, and 7.1 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v3.8. Failure to do that will disable WP Mail SMTP functionality.
+- Changed: Updated Moment.js library to 2.29.4.
+- Changed: Removed unneeded sodium_compat library.
+- Fixed: Email address with apostrophes in the Email Test page.
+- Fixed: Review request notice display on subsites admin area in WP Multisite installation.
+- Fixed: Setup Wizard playing UA anthem for certain WP sites.
 
 = 3.7.0 - 2022-12-15 =
 - Changed: Improved Action Scheduler data cleanup on plugin uninstall.

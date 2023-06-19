@@ -50,6 +50,15 @@ trait MailCatcherTrait {
 	private $is_setup_wizard_test_email = false;
 
 	/**
+	 * Whether the current email is blocked to be sent.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @var bool
+	 */
+	private $is_emailing_blocked = false;
+
+	/**
 	 * Holds the most recent error message.
 	 *
 	 * @since 3.7.0
@@ -79,12 +88,11 @@ trait MailCatcherTrait {
 		$this->debug_event_id             = false;
 		$this->is_test_email              = false;
 		$this->is_setup_wizard_test_email = false;
+		$this->is_emailing_blocked        = false;
 		$this->latest_error               = '';
 
-		$is_emailing_blocked = false;
-
 		if ( wp_mail_smtp()->is_blocked() ) {
-			$is_emailing_blocked = true;
+			$this->is_emailing_blocked = true;
 		}
 
 		// Always allow a test email - check for the specific header.
@@ -95,8 +103,8 @@ trait MailCatcherTrait {
 				$header[0] === 'X-Mailer-Type'
 			) {
 				if ( trim( $header[1] ) === 'WPMailSMTP/Admin/Test' ) {
-					$is_emailing_blocked = false;
-					$this->is_test_email = true;
+					$this->is_emailing_blocked = false;
+					$this->is_test_email       = true;
 				} elseif ( trim( $header[1] ) === 'WPMailSMTP/Admin/SetupWizard/Test' ) {
 					$this->is_setup_wizard_test_email = true;
 				}
@@ -104,7 +112,7 @@ trait MailCatcherTrait {
 		}
 
 		// Do not send emails if admin desired that.
-		if ( $is_emailing_blocked ) {
+		if ( $this->is_emailing_blocked ) {
 			return false;
 		}
 
@@ -372,5 +380,17 @@ trait MailCatcherTrait {
 	public function is_setup_wizard_test_email() {
 
 		return $this->is_setup_wizard_test_email;
+	}
+
+	/**
+	 * Whether the current email is blocked to be sent.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @return bool
+	 */
+	public function is_emailing_blocked() {
+
+		return $this->is_emailing_blocked;
 	}
 }

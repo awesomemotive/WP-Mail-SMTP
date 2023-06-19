@@ -122,7 +122,7 @@ class DashboardWidget {
 			'wp-mail-smtp-moment',
 			wp_mail_smtp()->assets_url . '/js/vendor/moment.min.js',
 			[],
-			'2.22.2',
+			'2.29.4',
 			true
 		);
 

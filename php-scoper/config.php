@@ -87,6 +87,8 @@ $config = [
 				[
 					'vendor/psr/cache',
 					'vendor/psr/http-message',
+					'vendor/psr/http-client',
+					'vendor/psr/http-factory',
 					'vendor/psr/log',
 				]
 			)
@@ -113,6 +115,10 @@ $config = [
 		Finder::create()
 			->files()
 			->in( 'vendor/symfony/polyfill-intl-idn' )
+			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		Finder::create()
+			->files()
+			->in( 'vendor/symfony/deprecation-contracts' )
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 	],
 

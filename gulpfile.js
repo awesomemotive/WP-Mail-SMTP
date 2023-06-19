@@ -328,11 +328,14 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/phpseclib',
 				'vendor/psr/cache',
 				'vendor/psr/http-message',
+				'vendor/psr/http-client',
+				'vendor/psr/http-factory',
 				'vendor/psr/log',
 				'vendor/sendinblue',
 				'vendor/symfony/polyfill-mbstring',
 				'vendor/symfony/polyfill-php72',
 				'vendor/symfony/polyfill-intl-idn',
+				'vendor/symfony/deprecation-contracts',
 				'vendor/mk-j',
 			],
 			{ allowEmpty: true, read: false }
@@ -474,9 +477,9 @@ gulp.task( 'prefix_outside_files', function () {
 /**
  * PHP version check, if at least PHP 7.3 is in use.
  */
-gulp.task( 'php:min73', function ( cb ) {
+gulp.task( 'php:check-build-version', function ( cb ) {
 	exec(
-		'composer php-more-than-7-3-check',
+		'composer check-build-php-version',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -531,9 +534,9 @@ gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 're
 
 // Build tasks without PHP composer install step
 // The composer install should be done on PHP 5.6 before running below commands:
-// `composer build-lite-php5` or `composer build-pro-php5`.
-gulp.task( 'build:lite_no_composer', gulp.series( 'php:min73', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'rename:lite', 'pot:lite', 'composer:prefix_lite', 'zip:lite' ) );
-gulp.task( 'build:pro_no_composer', gulp.series( 'php:min73', 'rename:pro', 'build:assets', 'composer:prefix', 'zip:pro' ) );
+// `composer build-lite-step-1` or `composer build-pro-step-1`.
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:check-build-version', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'rename:lite', 'pot:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:pro_no_composer', gulp.series( 'php:check-build-version', 'rename:pro', 'build:assets', 'composer:prefix', 'zip:pro' ) );
 
 /**
  * Look out for relevant sass/js changes.

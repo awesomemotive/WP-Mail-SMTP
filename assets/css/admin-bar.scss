@@ -25,3 +25,16 @@
 		}
 	}
 }
+
+body.wp-admin {
+	#adminmenu #toplevel_page_wp-mail-smtp .wp-menu-image.svg {
+		background-position-x: 11px;
+	}
+
+	&.folded {
+		#adminmenu #toplevel_page_wp-mail-smtp .wp-menu-image.svg {
+			background-position-x: 9px;
+		}
+	}
+}
+

@@ -117,7 +117,7 @@ class Auth extends AuthAbstract {
 		);
 		$client->setApplicationName( 'WP Mail SMTP v' . WPMS_PLUGIN_VER );
 		$client->setAccessType( 'offline' );
-		$client->setApprovalPrompt( 'force' );
+		$client->setPrompt( 'consent' );
 		$client->setIncludeGrantedScopes( false );
 		// We request only the sending capability, as it's what we only need to do.
 		$client->setScopes( array( Gmail::MAIL_GOOGLE_COM ) );

@@ -48,11 +48,13 @@ class DBRepair {
 					$this->fix_missing_db_table( $missing_table );
 				}
 
+				$redirect_page = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : Area::SLUG;
+
 				$redirect_url = add_query_arg(
 					[
 						'check-db-tables' => 1,
 					],
-					wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG )
+					wp_mail_smtp()->get_admin()->get_admin_page_url( $redirect_page )
 				);
 
 				wp_safe_redirect( $redirect_url );

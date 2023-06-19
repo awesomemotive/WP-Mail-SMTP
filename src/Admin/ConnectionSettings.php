@@ -231,12 +231,14 @@ class ConnectionSettings {
 							<div class="wp-mail-smtp-mailer-text">
 								<?php if ( $provider->is_disabled() ) : ?>
 									<input type="radio" name="wp-mail-smtp[mail][mailer]" disabled
+												 data-title="<?php echo esc_attr( $provider->get_title() ); ?>"
 												 class="js-wp-mail-smtp-setting-mailer-radio-input educate"
 												 id="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>"
 												 value="<?php echo esc_attr( $provider->get_slug() ); ?>"
 									/>
 								<?php else : ?>
 									<input id="wp-mail-smtp-setting-mailer-<?php echo esc_attr( $provider->get_slug() ); ?>"
+												 data-title="<?php echo esc_attr( $provider->get_title() ); ?>"
 												 type="radio" name="wp-mail-smtp[mail][mailer]"
 												 value="<?php echo esc_attr( $provider->get_slug() ); ?>"
 												 class="js-wp-mail-smtp-setting-mailer-radio-input<?php echo $provider->is_disabled() ? ' educate' : ''; ?>"

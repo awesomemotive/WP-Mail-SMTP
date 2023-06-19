@@ -201,10 +201,6 @@ class Core {
 			$is_allowed = false;
 		}
 
-		if ( version_compare( phpversion(), '5.6', '<' ) ) {
-			$is_allowed = false;
-		}
-
 		return apply_filters( 'wp_mail_smtp_core_is_pro_allowed', $is_allowed );
 	}
 
@@ -429,52 +425,7 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 */
-	public function init_notifications() {
-
-		// Old PHP version notification.
-		if (
-			version_compare( phpversion(), '5.6', '<' ) &&
-			is_super_admin() &&
-			(
-				isset( $GLOBALS['pagenow'] ) &&
-				$GLOBALS['pagenow'] === 'index.php'
-			)
-		) {
-			WP::add_admin_notice(
-				sprintf(
-					wp_kses( /* translators: %1$s - WP Mail SMTP plugin name; %2$s - WPMailSMTP.com URL to a related doc. */
-						__( 'Your site is running an outdated version of PHP that is no longer supported and may cause issues with %1$s. <a href="%2$s" target="_blank" rel="noopener noreferrer">Read more</a> for additional information.', 'wp-mail-smtp' ),
-						array(
-							'a' => array(
-								'href'   => array(),
-								'target' => array(),
-								'rel'    => array(),
-							),
-						)
-					),
-					'<strong>WP Mail SMTP</strong>',
-					// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/supported-php-versions-for-wp-mail-smtp/', [ 'medium' => 'Admin Notice', 'content' => 'Upgrade PHP Recommendation' ] ) )
-				) .
-				'<br><br><em>' .
-				wp_kses(
-					__( '<strong>Please Note:</strong> Support for PHP 5.5 will be discontinued in 2021. After this, if no further action is taken, WP Mail SMTP functionality will be disabled.', 'wp-mail-smtp' ),
-					array(
-						'strong' => array(),
-						'em'     => array(),
-					)
-				) .
-				'</em>',
-				WP::ADMIN_NOTICE_ERROR,
-				false
-			);
-		}
-
-		// Awesome Motive Notifications.
-		if ( Options::init()->get( 'general', 'am_notifications_hidden' ) ) {
-			return;
-		}
-	}
+	public function init_notifications() { }
 
 	/**
 	 * Display all debug mail-delivery related notices.
@@ -800,7 +751,11 @@ class Core {
 	 */
 	public function get_upgrade_link( $utm ) {
 
-		$url = $this->get_utm_url( 'https://wpmailsmtp.com/lite-upgrade/', $utm );
+		$url = add_query_arg(
+			'utm_locale',
+			sanitize_key( get_locale() ),
+			$this->get_utm_url( 'https://wpmailsmtp.com/lite-upgrade/', $utm )
+		);
 
 		/**
 		 * Filters upgrade link.

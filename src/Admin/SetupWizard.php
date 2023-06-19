@@ -122,8 +122,8 @@ class SetupWizard {
 			return;
 		}
 
-		// Only do this for single site installs.
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Only do this for single site installs if Network Wide setting is not enabled.
+		if ( isset( $_GET['activate-multi'] ) || is_network_admin() || WP::use_global_plugin_settings() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 

@@ -36,8 +36,25 @@ class Review {
 	 */
 	public function hooks() {
 
-		add_action( 'admin_notices', array( $this, 'review_request' ) );
+		add_action( 'admin_init', [ $this, 'admin_notices' ] );
 		add_action( 'wp_ajax_wp_mail_smtp_review_dismiss', array( $this, 'review_dismiss' ) );
+	}
+
+	/**
+	 * Display notices only in Network Admin if in Multisite.
+	 * Otherwise, display in Admin Dashboard.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @return void
+	 */
+	public function admin_notices() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
+
+		if ( is_multisite() ) {
+			add_action( 'network_admin_notices', [ $this, 'review_request' ] );
+		} else {
+			add_action( 'admin_notices', [ $this, 'review_request' ] );
+		}
 	}
 
 	/**

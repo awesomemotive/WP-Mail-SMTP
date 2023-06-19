@@ -259,15 +259,17 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		education: {
 			upgradeMailer: function( $input ) {
 
+				var mailerName = $input.data( 'title' ).trim();
+
 				$.alert( {
 					backgroundDismiss: true,
 					escapeKey: true,
 					animationBounce: 1,
 					type: 'blue',
 					closeIcon: true,
-					title: wp_mail_smtp.education.upgrade_title.replace( /%name%/g, $input.siblings( 'label' ).text().trim() ),
+					title: wp_mail_smtp.education.upgrade_title.replace( /%name%/g, mailerName ),
 					icon: '"></i>' + wp_mail_smtp.education.upgrade_icon_lock + '<i class="',
-					content: $( '.wp-mail-smtp-mailer-options .wp-mail-smtp-mailer-option-' + $input.val() + ' .wp-mail-smtp-setting-field' ).html(),
+					content: wp_mail_smtp.education.upgrade_content.replace( /%name%/g, mailerName ),
 					boxWidth: '550px',
 					onOpenBefore: function() {
 						this.$btnc.after( '<div class="discount-note">' + wp_mail_smtp.education.upgrade_bonus + wp_mail_smtp.education.upgrade_doc + '</div>' );

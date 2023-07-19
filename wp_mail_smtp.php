@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP Mail SMTP Pro
+ * Plugin Name: WP Mail SMTP
  * Version: 3.8.2
  * Requires at least: 5.2
  * Requires PHP: 7.2

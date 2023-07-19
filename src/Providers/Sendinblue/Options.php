@@ -34,11 +34,11 @@ class Options extends OptionsAbstract {
 		}
 
 		$description = sprintf(
-			wp_kses( /* translators: %1$s - URL to sendinblue.com site. */
-				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Sendinblue</a> is one of our recommended mailers.</strong> It\'s a transactional email provider with scalable price plans, so it\'s suitable for any size of business.<br><br>If you\'re just starting out, you can use Sendinblue\'s free plan to send up to 300 emails a day. You don\'t need to use a credit card to try it out. When you\'re ready, you can upgrade to a higher plan to increase your sending limits.', 'wp-mail-smtp' ) .
+			wp_kses( /* translators: %1$s - URL to brevo.com site. */
+				__( '<strong><a href="%1$s" target="_blank" rel="noopener noreferrer">Brevo</a> (formerly Sendinblue) is one of our recommended mailers.</strong> It\'s a transactional email provider with scalable price plans, so it\'s suitable for any size of business.<br><br>If you\'re just starting out, you can use Brevo\'s free plan to send up to 300 emails a day. You don\'t need to use a credit card to try it out. When you\'re ready, you can upgrade to a higher plan to increase your sending limits.', 'wp-mail-smtp' ) .
 				'<br><br>' .
 				/* translators: %2$s - URL to wpmailsmtp.com doc. */
-				__( 'To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a>.', 'wp-mail-smtp' ),
+				__( 'To get started, read our <a href="%2$s" target="_blank" rel="noopener noreferrer">Brevo documentation</a>.', 'wp-mail-smtp' ),
 				[
 					'strong' => true,
 					'br'     => true,
@@ -50,7 +50,7 @@ class Options extends OptionsAbstract {
 				]
 			),
 			'https://wpmailsmtp.com/go/sendinblue/',
-			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/', 'Sendinblue documentation' ) )
+			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/', 'Brevo documentation' ) )
 		);
 
 		$api_key = $connection->get_options()->get( self::SLUG, 'api_key' );
@@ -59,21 +59,21 @@ class Options extends OptionsAbstract {
 			$description .= sprintf(
 				'</p><p class="buttonned"><a href="%1$s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">%2$s</a></p>',
 				'https://wpmailsmtp.com/go/sendinblue/',
-				esc_html__( 'Get Sendinblue Now (Free)', 'wp-mail-smtp' )
+				esc_html__( 'Get Brevo Now (Free)', 'wp-mail-smtp' )
 			);
 		}
 
 		$description .= '<p class="wp-mail-smtp-tooltip">' .
 			esc_html__( 'Transparency and Disclosure', 'wp-mail-smtp' ) .
 			'<span class="wp-mail-smtp-tooltip-text">' .
-			esc_html__( 'We believe in full transparency. The Sendinblue links above are tracking links as part of our partnership with Sendinblue. We can recommend just about any SMTP service, but we only recommend products that we believe will add value to our users.', 'wp-mail-smtp' ) .
+			esc_html__( 'We believe in full transparency. The Brevo (formerly Sendinblue) links above are tracking links as part of our partnership with Brevo. We can recommend just about any SMTP service, but we only recommend products that we believe will add value to our users.', 'wp-mail-smtp' ) .
 			'</span></p>';
 
 		parent::__construct(
 			[
-				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/sendinblue.svg',
+				'logo_url'    => wp_mail_smtp()->assets_url . '/images/providers/brevo.svg',
 				'slug'        => self::SLUG,
-				'title'       => esc_html__( 'Sendinblue', 'wp-mail-smtp' ),
+				'title'       => esc_html__( 'Brevo', 'wp-mail-smtp' ),
 				'php'         => '5.6',
 				'description' => $description,
 				'supports'    => [
@@ -128,7 +128,7 @@ class Options extends OptionsAbstract {
 					<?php
 					printf( /* translators: %s - link to get an API Key. */
 						esc_html__( 'Follow this link to get an API Key: %s.', 'wp-mail-smtp' ),
-						'<a href="https://account.sendinblue.com/advanced/api" target="_blank" rel="noopener noreferrer">' .
+						'<a href="https://app.brevo.com/settings/keys/api" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get v3 API Key', 'wp-mail-smtp' ) .
 						'</a>'
 					);
@@ -153,7 +153,7 @@ class Options extends OptionsAbstract {
 					printf(
 						wp_kses(
 							/* translators: %s - URL to Sendinblue documentation on wpmailsmtp.com */
-							__( 'Please input the sending domain/subdomain you configured in your Sendinblue dashboard. More information can be found in our <a href="%s" target="_blank" rel="noopener noreferrer">Sendinblue documentation</a>.', 'wp-mail-smtp' ),
+							__( 'Please input the sending domain/subdomain you configured in your Brevo (formerly Sendinblue) dashboard. More information can be found in our <a href="%s" target="_blank" rel="noopener noreferrer">Brevo documentation</a>.', 'wp-mail-smtp' ),
 							[
 								'br' => [],
 								'a'  => [
@@ -163,7 +163,7 @@ class Options extends OptionsAbstract {
 								],
 							]
 						),
-						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/#setup-smtp', 'Sendinblue documentation' ) )
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/#setup-smtp', 'Brevo documentation' ) )
 					);
 					?>
 				</p>

@@ -1086,17 +1086,13 @@ class SetupWizard {
 			wp_send_json_error();
 		}
 
-		if ( function_exists( 'wpforms' ) && ( wpforms()->pro ) ) {
-			$wpforms_version_type = 'pro';
-		} elseif ( function_exists( 'wpforms' ) && ( ! wpforms()->pro ) ) {
-			$wpforms_version_type = 'lite';
-		}
-
 		$body = [
 			'email' => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		];
 
-		if ( isset( $wpforms_version_type ) ) {
+		$wpforms_version_type = $this->get_wpforms_version_type();
+
+		if ( ! empty( $wpforms_version_type ) ) {
 			$body['wpforms_version_type'] = $wpforms_version_type;
 		}
 
@@ -1108,6 +1104,28 @@ class SetupWizard {
 		);
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Get the WPForms version type if it's installed.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return false|string Return `false` if WPForms is not installed, otherwise return either `lite` or `pro`.
+	 */
+	private function get_wpforms_version_type() {
+
+		if ( ! function_exists( 'wpforms' ) ) {
+			return false;
+		}
+
+		if ( method_exists( wpforms(), 'is_pro' ) ) {
+			$is_wpforms_pro = wpforms()->is_pro();
+		} else {
+			$is_wpforms_pro = wpforms()->pro;
+		}
+
+		return $is_wpforms_pro ? 'pro' : 'lite';
 	}
 
 	/**
@@ -1133,10 +1151,9 @@ class SetupWizard {
 			wp_send_json_error( esc_html__( 'Please enter a valid license key!', 'wp-mail-smtp' ) );
 		}
 
-		$oth = hash( 'sha512', wp_rand() );
 		$url = Connect::generate_url(
 			$license_key,
-			$oth,
+			'',
 			add_query_arg( 'upgrade-redirect', '1', self::get_site_url() ) . '#/step/license'
 		);
 

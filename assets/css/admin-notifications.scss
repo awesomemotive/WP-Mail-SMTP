@@ -5,7 +5,7 @@
 #wp-mail-smtp-notifications {
 	position: relative;
 	background: #FFFFFF 0 0 no-repeat padding-box;
-	box-shadow: 0 5px 15px #0000000D;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
 	border-radius: 6px;
 	opacity: 1;
 	min-height: 48px;
@@ -65,6 +65,12 @@
 			line-height: 18px;
 			margin: 8px 0 41px 0;
 			color: $secondary-text;
+
+			p {
+				font-size: inherit;
+				line-height: inherit;
+				margin: 0 0 5px;
+			}
 		}
 
 		.wp-mail-smtp-notifications-buttons {

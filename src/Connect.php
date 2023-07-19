@@ -66,17 +66,20 @@ class Connect {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param string $key      The license key.
-	 * @param string $oth      The One-time hash.
-	 * @param string $redirect The redirect URL.
+	 * @param string $key        The license key.
+	 * @param string $oth        The One-time hash.
+	 * @param string $redirect   The redirect URL.
 	 *
 	 * @return bool|string
 	 */
-	public static function generate_url( $key, $oth, $redirect = '' ) {
+	public static function generate_url( $key, $oth = '', $redirect = '' ) {
 
 		if ( empty( $key ) || wp_mail_smtp()->is_pro() ) {
 			return false;
 		}
+
+		$oth        = ! empty( $oth ) ? $oth : hash( 'sha512', wp_rand() );
+		$hashed_oth = hash_hmac( 'sha512', $oth, wp_salt() );
 
 		$redirect = ! empty( $redirect ) ? $redirect : wp_mail_smtp()->get_admin()->get_admin_page_url();
 
@@ -86,7 +89,7 @@ class Connect {
 		return add_query_arg(
 			[
 				'key'      => $key,
-				'oth'      => $oth,
+				'oth'      => $hashed_oth,
 				'endpoint' => admin_url( 'admin-ajax.php' ),
 				'version'  => WPMS_PLUGIN_VER,
 				'siteurl'  => admin_url(),
@@ -151,8 +154,7 @@ class Connect {
 			);
 		}
 
-		$oth = hash( 'sha512', wp_rand() );
-		$url = self::generate_url( $key, $oth );
+		$url = self::generate_url( $key );
 
 		if ( empty( $url ) ) {
 			wp_send_json_error(
@@ -162,18 +164,7 @@ class Connect {
 			);
 		}
 
-		wp_send_json_success(
-			[
-				'url'      => $url,
-				'back_url' => add_query_arg(
-					[
-						'action' => 'wp_mail_smtp_connect',
-						'oth'    => $oth,
-					],
-					admin_url( 'admin-ajax.php' )
-				),
-			]
-		);
+		wp_send_json_success( [ 'url' => $url ] );
 	}
 
 	/**
@@ -196,7 +187,11 @@ class Connect {
 		// Verify oth.
 		$oth = get_option( 'wp_mail_smtp_connect_token' );
 
-		if ( empty( $oth ) || ! hash_equals( $oth, $post_oth ) ) {
+		if ( empty( $oth ) ) {
+			wp_send_json_error( $error );
+		}
+
+		if ( hash_hmac( 'sha512', $oth, wp_salt() ) !== $post_oth ) {
 			wp_send_json_error( $error );
 		}
 

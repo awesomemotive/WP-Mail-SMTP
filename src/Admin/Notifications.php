@@ -392,6 +392,11 @@ class Notifications {
 				'target' => [],
 				'rel'    => [],
 			],
+			'br'     => [],
+			'p'      => [
+				'id'    => [],
+				'class' => [],
+			],
 		];
 
 		foreach ( $notifications as $notification ) {
@@ -418,11 +423,11 @@ class Notifications {
 			$notifications_html .= sprintf(
 				'<div class="wp-mail-smtp-notifications-message%5$s" data-message-id="%4$s">
 					<h3 class="wp-mail-smtp-notifications-title">%1$s</h3>
-					<p class="wp-mail-smtp-notifications-content">%2$s</p>
+					<div class="wp-mail-smtp-notifications-content">%2$s</div>
 					%3$s
 				</div>',
 				! empty( $notification['title'] ) ? sanitize_text_field( $notification['title'] ) : '',
-				! empty( $notification['content'] ) ? wp_kses( $notification['content'], $content_allowed_tags ) : '',
+				! empty( $notification['content'] ) ? wp_kses( wpautop( $notification['content'] ), $content_allowed_tags ) : '',
 				$buttons_html,
 				! empty( $notification['id'] ) ? esc_attr( sanitize_text_field( $notification['id'] ) ) : 0,
 				$current_class

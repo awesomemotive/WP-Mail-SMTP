@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
@@ -175,7 +176,8 @@ class DashboardWidget {
 		unset( $normal_dashboard[ $widget_key ] );
 		$sorted_dashboard = array_merge( $widget_instance, $normal_dashboard );
 
-		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard; //phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
 	}
 
 	/**
@@ -258,8 +260,7 @@ class DashboardWidget {
 	 */
 	private function widget_content_html() {
 
-		$hide_graph                      = (bool) $this->widget_meta( 'get', 'hide_graph' );
-		$hide_summary_report_email_block = (bool) $this->widget_meta( 'get', 'hide_summary_report_email_block' );
+		$hide_graph = (bool) $this->widget_meta( 'get', 'hide_graph' );
 		?>
 
 		<?php if ( ! $hide_graph ) : ?>
@@ -301,37 +302,155 @@ class DashboardWidget {
 			<?php $this->email_stats_block(); ?>
 		</div>
 
-		<?php if ( SummaryReportEmail::is_disabled() && ! $hide_summary_report_email_block ) : ?>
-			<div id="wp-mail-smtp-dash-widget-summary-report-email-block" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-summary-report-email-block">
-				<div>
-					<div class="wp-mail-smtp-dash-widget-summary-report-email-block-setting">
-						<label for="wp-mail-smtp-dash-widget-summary-report-email-enable">
-							<input type="checkbox" id="wp-mail-smtp-dash-widget-summary-report-email-enable">
-							<i class="wp-mail-smtp-dash-widget-loader"></i>
-							<span>
-								<?php
-								echo wp_kses(
-									__( '<b>NEW!</b> Enable Weekly Email Summaries', 'wp-mail-smtp' ),
-									[
-										'b' => [],
-									]
-								);
-								?>
-							</span>
-						</label>
-						<a href="<?php echo esc_url( SummaryReportEmail::get_preview_link() ); ?>" target="_blank">
-							<?php esc_html_e( 'View Example', 'wp-mail-smtp' ); ?>
-						</a>
-						<i class="dashicons dashicons-dismiss wp-mail-smtp-dash-widget-summary-report-email-dismiss"></i>
-					</div>
-					<div class="wp-mail-smtp-dash-widget-summary-report-email-block-applied hidden">
-						<i class="wp-mail-smtp-dashicons-yes-alt-green"></i>
-						<span><?php esc_attr_e( 'Weekly Email Summaries have been enabled', 'wp-mail-smtp' ); ?></span>
-					</div>
+		<?php
+		$this->display_after_email_stats_block_content();
+	}
+
+	/**
+	 * Display the content after the email stats block.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return void
+	 */
+	private function display_after_email_stats_block_content() {
+
+		if ( empty( $this->widget_meta( 'get', 'hide_email_alerts_banner' ) ) ) {
+			// Check if we have error debug events.
+			$error_debug_events_count = DebugEvents::get_error_debug_events_count();
+
+			if ( ! is_wp_error( $error_debug_events_count ) && ! empty( $error_debug_events_count ) ) {
+				$this->show_email_alerts_banner( $error_debug_events_count );
+
+				return;
+			}
+		}
+
+		$hide_summary_report_email_block = (bool) $this->widget_meta( 'get', 'hide_summary_report_email_block' );
+
+		if ( SummaryReportEmail::is_disabled() && ! $hide_summary_report_email_block ) {
+			$this->show_summary_report_email_block();
+		}
+
+		$this->show_upgrade_footer();
+	}
+
+	/**
+	 * Display the email alerts banner.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int $error_count The number of debug events error.
+	 *
+	 * @return void
+	 */
+	private function show_email_alerts_banner( $error_count ) {
+
+		?>
+		<div id="wp-mail-smtp-dash-widget-email-alerts-education" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-email-alerts-education">
+			<div class="wp-mail-smtp-dash-widget-email-alerts-education-error-icon">
+				<?php
+				printf(
+					'<img src="%s" alt="%s"/>',
+					esc_url( wp_mail_smtp()->assets_url . '/images/dash-widget/error-icon.svg' ),
+					esc_attr__( 'Error icon', 'wp-mail-smtp' )
+				);
+				?>
+			</div>
+			<div class="wp-mail-smtp-dash-widget-email-alerts-education-content">
+				<?php
+				if ( $error_count === 1 ) {
+					$error_title = __( 'We detected a failed email in the last 30 days.', 'wp-mail-smtp' );
+				} else {
+					$error_title = sprintf(
+						/* translators: %d - number of failed emails. */
+						__( 'We detected %d failed emails in the last 30 days.', 'wp-mail-smtp' ),
+						$error_count
+					);
+				}
+
+				$content = sprintf(
+					/* translators: %s - URL to WPMailSMTP.com. */
+					__( '<a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to Pro</a> and get instant alert notifications when they fail.', 'wp-mail-smtp' ),
+					esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'dashboard-widget', 'content' => 'alerts-promo-upgrade-to-pro' ] ) ) // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+				);
+				?>
+				<p>
+					<strong><?php echo esc_html( $error_title ); ?></strong><br />
+					<?php
+					echo wp_kses(
+						$content,
+						[
+							'a' => [
+								'href'   => [],
+								'target' => [],
+								'rel'    => [],
+							],
+						]
+					);
+					?>
+				</p>
+			</div>
+
+			<button type="button" id="wp-mail-smtp-dash-widget-dismiss-email-alert-block" class="wp-mail-smtp-dash-widget-dismiss-email-alert-block" title="<?php esc_attr_e( 'Dismiss email alert block', 'wp-mail-smtp' ); ?>">
+				<span class="dashicons dashicons-no-alt"></span>
+			</button>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show the summary report email block.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return void
+	 */
+	private function show_summary_report_email_block() {
+
+		?>
+		<div id="wp-mail-smtp-dash-widget-summary-report-email-block" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-summary-report-email-block">
+			<div>
+				<div class="wp-mail-smtp-dash-widget-summary-report-email-block-setting">
+					<label for="wp-mail-smtp-dash-widget-summary-report-email-enable">
+						<input type="checkbox" id="wp-mail-smtp-dash-widget-summary-report-email-enable">
+						<i class="wp-mail-smtp-dash-widget-loader"></i>
+						<span>
+							<?php
+							echo wp_kses(
+								__( '<b>NEW!</b> Enable Weekly Email Summaries', 'wp-mail-smtp' ),
+								[
+									'b' => [],
+								]
+							);
+							?>
+						</span>
+					</label>
+					<a href="<?php echo esc_url( SummaryReportEmail::get_preview_link() ); ?>" target="_blank">
+						<?php esc_html_e( 'View Example', 'wp-mail-smtp' ); ?>
+					</a>
+					<i class="dashicons dashicons-dismiss wp-mail-smtp-dash-widget-summary-report-email-dismiss"></i>
+				</div>
+				<div class="wp-mail-smtp-dash-widget-summary-report-email-block-applied hidden">
+					<i class="wp-mail-smtp-dashicons-yes-alt-green"></i>
+					<span><?php esc_attr_e( 'Weekly Email Summaries have been enabled', 'wp-mail-smtp' ); ?></span>
 				</div>
 			</div>
-		<?php endif; ?>
+		</div>
+		<?php
+	}
 
+	/**
+	 * Show the upgrade footer.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return void
+	 */
+	private function show_upgrade_footer() {
+
+		$hide_graph = (bool) $this->widget_meta( 'get', 'hide_graph' );
+		?>
 		<div id="wp-mail-smtp-dash-widget-upgrade-footer" class="wp-mail-smtp-dash-widget-block wp-mail-smtp-dash-widget-upgrade-footer wp-mail-smtp-dash-widget-upgrade-footer--<?php echo ! $hide_graph ? 'hide' : 'show'; ?>">
 			<p>
 				<?php
@@ -346,7 +465,8 @@ class DashboardWidget {
 							],
 						]
 					),
-					esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'dashboard-widget', 'content' => 'upgrade-to-pro' ] ) ) // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+					// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+					esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'dashboard-widget', 'content' => 'upgrade-to-pro' ] ) )
 				);
 				?>
 			</p>
@@ -420,7 +540,9 @@ class DashboardWidget {
 		?>
 		<div class="wp-mail-smtp-dash-widget-settings-container">
 			<button id="wp-mail-smtp-dash-widget-settings-button" class="wp-mail-smtp-dash-widget-settings-button button" type="button">
-				<span class="dashicons dashicons-admin-generic"></span>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19">
+					<path d="M18,11l-2.18,0c-0.17,0.7 -0.44,1.35 -0.81,1.93l1.54,1.54l-2.1,2.1l-1.54,-1.54c-0.58,0.36 -1.23,0.63 -1.91,0.79l0,2.18l-3,0l0,-2.18c-0.68,-0.16 -1.33,-0.43 -1.91,-0.79l-1.54,1.54l-2.12,-2.12l1.54,-1.54c-0.36,-0.58 -0.63,-1.23 -0.79,-1.91l-2.18,0l0,-2.97l2.17,0c0.16,-0.7 0.44,-1.35 0.8,-1.94l-1.54,-1.54l2.1,-2.1l1.54,1.54c0.58,-0.37 1.24,-0.64 1.93,-0.81l0,-2.18l3,0l0,2.18c0.68,0.16 1.33,0.43 1.91,0.79l1.54,-1.54l2.12,2.12l-1.54,1.54c0.36,0.59 0.64,1.24 0.8,1.94l2.17,0l0,2.97Zm-8.5,1.5c1.66,0 3,-1.34 3,-3c0,-1.66 -1.34,-3 -3,-3c-1.66,0 -3,1.34 -3,3c0,1.66 1.34,3 3,3Z"></path>
+				</svg>
 			</button>
 			<div class="wp-mail-smtp-dash-widget-settings-menu">
 				<div class="wp-mail-smtp-dash-widget-settings-menu--style">
@@ -580,24 +702,12 @@ class DashboardWidget {
 			return false;
 		}
 
-		$defaults = [
-			'hide_graph'                      => 0,
-			'hide_summary_report_email_block' => 0,
-		];
-
-		if ( ! array_key_exists( $meta, $defaults ) ) {
-			return false;
+		if ( $action === 'get' ) {
+			return $this->get_widget_meta( $meta );
 		}
 
-		$meta_key = 'wp_mail_smtp_' . static::SLUG . '_' . $meta;
-
-		if ( 'get' === $action ) {
-			$meta_value = get_user_meta( get_current_user_id(), $meta_key, true );
-
-			return empty( $meta_value ) ? $defaults[ $meta ] : $meta_value;
-		}
-
-		$value = sanitize_key( $value );
+		$meta_key = $this->get_widget_meta_key( $meta );
+		$value    = sanitize_key( $value );
 
 		if ( 'set' === $action && ! empty( $value ) ) {
 			return update_user_meta( get_current_user_id(), $meta_key, $value );
@@ -608,5 +718,49 @@ class DashboardWidget {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the widget meta value.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $meta Meta name.
+	 *
+	 * @return mixed
+	 */
+	private function get_widget_meta( $meta ) {
+
+		$defaults = [
+			'hide_graph'                      => 0,
+			'hide_summary_report_email_block' => 0,
+			'hide_email_alerts_banner'        => 0,
+		];
+
+		$meta_value = get_user_meta( get_current_user_id(), $this->get_widget_meta_key( $meta ), true );
+
+		if ( ! empty( $meta_value ) ) {
+			return $meta_value;
+		}
+
+		if ( isset( $defaults[ $meta ] ) ) {
+			return $defaults[ $meta ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Retrieve the meta key.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $meta Meta name.
+	 *
+	 * @return string
+	 */
+	private function get_widget_meta_key( $meta ) {
+
+		return 'wp_mail_smtp_' . static::SLUG . '_' . $meta;
 	}
 }

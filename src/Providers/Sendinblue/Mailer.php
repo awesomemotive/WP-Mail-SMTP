@@ -2,13 +2,10 @@
 
 namespace WPMailSMTP\Providers\Sendinblue;
 
-use WPMailSMTP\Admin\DebugEvents\DebugEvents;
+use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Providers\MailerAbstract;
-use WPMailSMTP\Vendor\SendinBlue\Client\ApiException;
-use WPMailSMTP\Vendor\SendinBlue\Client\Model\CreateSmtpEmail;
-use WPMailSMTP\Vendor\SendinBlue\Client\Model\SendSmtpEmail;
 use WPMailSMTP\WP;
 
 /**
@@ -28,14 +25,40 @@ class Mailer extends MailerAbstract {
 	protected $email_sent_code = 201;
 
 	/**
+	 * Response code for scheduled email.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @var int
+	 */
+	protected $email_scheduled_code = 202;
+
+	/**
 	 * URL to make an API request to.
-	 * Not actually used, because we use a lib to make requests.
 	 *
 	 * @since 1.6.0
+	 * @since 3.9.0 Update to use Brevo API.
 	 *
 	 * @var string
 	 */
-	protected $url = 'https://api.sendinblue.com/v3';
+	protected $url = 'https://api.brevo.com/v3/smtp/email';
+
+	/**
+	 * Mailer constructor.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param MailCatcherInterface $phpmailer  The MailCatcher object.
+	 * @param ConnectionInterface  $connection The Connection object.
+	 */
+	public function __construct( $phpmailer, $connection = null ) {
+
+		parent::__construct( $phpmailer, $connection );
+
+		$this->set_header( 'api-key', $this->connection_options->get( $this->mailer, 'api_key' ) );
+		$this->set_header( 'Accept', 'application/json' );
+		$this->set_header( 'content-type', 'application/json' );
+	}
 
 	/**
 	 * The list of allowed attachment files extensions.
@@ -51,15 +74,49 @@ class Mailer extends MailerAbstract {
 	// @formatter:on
 
 	/**
-	 * @inheritDoc
+	 * Redefine the way custom headers are processed for this mailer - they should be in body.
 	 *
-	 * @since 1.6.0
+	 * @since 3.9.0
+	 *
+	 * @param array $headers List of key=>value pairs.
 	 */
-	public function set_header( $name, $value ) {
+	public function set_headers( $headers ) {
+
+		foreach ( $headers as $header ) {
+			$name  = isset( $header[0] ) ? $header[0] : false;
+			$value = isset( $header[1] ) ? $header[1] : false;
+
+			$this->set_body_header( $name, $value );
+		}
+
+		// Add custom PHPMailer-specific header.
+		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
+	}
+
+	/**
+	 * This mailer supports email-related custom headers inside a body of the message.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $name  Key.
+	 * @param string $value Value.
+	 */
+	public function set_body_header( $name, $value ) {
 
 		$name = sanitize_text_field( $name );
 
-		$this->body['headers'][ $name ] = WP::sanitize_value( $value );
+		if ( empty( $name ) ) {
+			return;
+		}
+
+		$headers          = isset( $this->body['headers'] ) ? (array) $this->body['headers'] : [];
+		$headers[ $name ] = WP::sanitize_value( $value );
+
+		$this->set_body_param(
+			[
+				'headers' => $headers,
+			]
+		);
 	}
 
 	/**
@@ -263,8 +320,9 @@ class Mailer extends MailerAbstract {
 	 * Get the email body.
 	 *
 	 * @since 1.6.0
+	 * @since 3.9.0 Returns email body array instead of `SendSmtpEmail` object.
 	 *
-	 * @return SendSmtpEmail
+	 * @return array
 	 */
 	public function get_body() {
 
@@ -275,82 +333,110 @@ class Mailer extends MailerAbstract {
 		 *
 		 * @param array $body Email body.
 		 */
-		$body = apply_filters( 'wp_mail_smtp_providers_sendinblue_mailer_get_body', $this->body );
-
-		return new SendSmtpEmail( $body );
+		return apply_filters( 'wp_mail_smtp_providers_sendinblue_mailer_get_body', $this->body );
 	}
 
 	/**
-	 * Use a library to send emails.
+	 * Send email.
 	 *
 	 * @since 1.6.0
+	 * @since 3.9.0 Use API instead of SDK to send email.
 	 */
 	public function send() {
 
-		try {
-			$api = new Api( $this->connection );
+		$response = wp_safe_remote_post(
+			$this->url,
+			[
+				'headers' => $this->get_headers(),
+				'body'    => wp_json_encode( $this->get_body() ),
+			]
+		);
 
-			$response = $api->get_smtp_client()->sendTransacEmail( $this->get_body() );
+		$this->process_response( $response );
+	}
 
-			DebugEvents::add_debug(
-				esc_html__( 'An email request was sent to the Brevo API.', 'wp-mail-smtp' )
-			);
+	/**
+	 * We might need to do something after the email was sent to the API.
+	 * In this method we preprocess the response from the API.
+	 *
+	 * @since 1.6.0
+	 * @since 3.9.0 Expect a generic class object instead of `CreateSmtpEmail`.
+	 *
+	 * @param mixed $response Response from the API.
+	 */
+	protected function process_response( $response ) {
 
-			$this->process_response( $response );
-		} catch ( ApiException $e ) {
-			$error = json_decode( $e->getResponseBody() );
+		parent::process_response( $response );
 
-			if ( json_last_error() === JSON_ERROR_NONE && ! empty( $error ) ) {
-				$message = Helpers::format_error_message( $error->message, $error->code );
-			} else {
-				$message = $e->getMessage();
-			}
-
-			$this->error_message = $message;
-		} catch ( \Exception $e ) {
-			$this->error_message = $e->getMessage();
+		if ( $this->has_message_id() ) {
+			$this->phpmailer->MessageID = $this->response['body']->messageId;
+			$this->verify_sent_status   = true;
 		}
 	}
 
 	/**
-	 * Save response from the API to use it later.
-	 * All the actually response processing is done in send() method,
-	 * because SendinBlue throws exception if any error occurs.
+	 * Get a Sendinblue-specific response with a helpful error.
 	 *
-	 * @since 1.6.0
+	 * @since 3.9.0
 	 *
-	 * @param CreateSmtpEmail $response The Sendinblue Email object.
+	 * @return string
 	 */
-	protected function process_response( $response ) {
+	public function get_response_error() {
 
-		$this->response = $response;
+		$error_text = [];
+
+		if ( ! empty( $this->error_message ) ) {
+			$error_text[] = $this->error_message;
+		}
+
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
+
+			if ( ! empty( $body->message ) ) {
+				$error_text[] = Helpers::format_error_message( $body->message, ! empty( $body->code ) ? $body->code : '' );
+			} else {
+				$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
+			}
+		}
+
+		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
+	}
+
+	/**
+	 * Check whether the response has `messageId` property.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return bool
+	 */
+	private function has_message_id() {
 
 		if (
-			is_a( $response, 'WPMailSMTP\Vendor\SendinBlue\Client\Model\CreateSmtpEmail' ) &&
-			method_exists( $response, 'getMessageId' )
+			! in_array(
+				wp_remote_retrieve_response_code( $this->response ),
+				[ $this->email_sent_code, $this->email_scheduled_code ],
+				true
+			) ||
+			empty( $this->response['body']->messageId )
 		) {
-			$this->phpmailer->MessageID = $response->getMessageId();
-			$this->verify_sent_status   = true;
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
 	 * Check whether the email was sent.
 	 *
 	 * @since 1.6.0
+	 * @since 3.9.0 Check if `$this->response` has `messageId` property to check if the email was sent.
 	 *
 	 * @return bool
 	 */
 	public function is_email_sent() {
 
-		$is_sent = false;
-
-		if ( $this->response instanceof CreateSmtpEmail ) {
-			$is_sent = $this->response->valid();
-		}
-
 		/** This filter is documented in src/Providers/MailerAbstract.php. */
-		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent, $this->mailer );
+		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $this->has_message_id(), $this->mailer ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 	}
 
 	/**

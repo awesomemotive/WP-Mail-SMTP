@@ -56,7 +56,7 @@ class Options extends OptionsAbstract {
 		<!-- API Key -->
 		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-api_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
 			<div class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'Private API Key', 'wp-mail-smtp' ); ?></label>
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"><?php esc_html_e( 'Mailgun API Key', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
 				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'api_key' ) ) : ?>
@@ -73,12 +73,18 @@ class Options extends OptionsAbstract {
 				<?php endif; ?>
 				<p class="desc">
 					<?php
-					printf(
-						/* translators: %s - API key link. */
-						esc_html__( 'Follow this link to get a Private API Key from Mailgun: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" rel="noopener noreferrer">' .
-						esc_html__( 'Get a Private API Key', 'wp-mail-smtp' ) .
-						'</a>'
+					echo wp_kses(
+						sprintf( /* translators: %s - API key URL. */
+							__( 'Follow this link to <a href="%s" target="_blank" rel="noopener noreferrer">get a Mailgun API Key</a>. Generate a key in the "Mailgun API Keys" section.', 'wp-mail-smtp' ),
+							'https://app.mailgun.com/settings/api_security'
+						),
+						[
+							'a' => [
+								'href'   => [],
+								'rel'    => [],
+								'target' => [],
+							],
+						]
 					);
 					?>
 				</p>
@@ -101,7 +107,7 @@ class Options extends OptionsAbstract {
 					printf(
 						/* translators: %s - Domain Name link. */
 						esc_html__( 'Follow this link to get a Domain Name from Mailgun: %s.', 'wp-mail-smtp' ),
-						'<a href="https://app.mailgun.com/app/domains" target="_blank" rel="noopener noreferrer">' .
+						'<a href="https://app.mailgun.com/app/sending/domains" target="_blank" rel="noopener noreferrer">' .
 						esc_html__( 'Get a Domain Name', 'wp-mail-smtp' ) .
 						'</a>'
 					);

@@ -28,16 +28,14 @@
     "composer-plugin-api": "^1.0",
     "composer/installers": "~1.0",
     "google/apiclient": "2.13.2",
-    "phpseclib/phpseclib": "^3.0.7",
     "paragonie/constant_time_encoding": "^1",
     "guzzlehttp/guzzle": "7.4.5",
     "monolog/monolog": "^1.0",
-    "sendinblue/api-v3-sdk": "8.4.2",
     "symfony/polyfill-intl-idn": "1.17.1",
     "symfony/polyfill-mbstring": "1.19.0",
     "symfony/polyfill-php72": "1.19.0",
     "wikimedia/composer-merge-plugin": "1.4.1",
-    "woocommerce/action-scheduler": "3.5.4"
+    "woocommerce/action-scheduler": "3.6.1"
   },
   "autoload": {
     "psr-4": {
@@ -54,8 +52,7 @@
       "vendor_prefixed/symfony/polyfill-php72/bootstrap.php",
       "vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php",
       "vendor_prefixed/symfony/deprecation-contracts/function.php",
-      "vendor_prefixed/guzzlehttp/guzzle/src/functions_include.php",
-      "vendor_prefixed/phpseclib/phpseclib/phpseclib/bootstrap.php"
+      "vendor_prefixed/guzzlehttp/guzzle/src/functions_include.php"
     ]
   },
   "require-dev": {

@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Options;
 use WPMailSMTP\Tasks\Tasks;
 use WPMailSMTP\WP;
@@ -120,7 +121,12 @@ class Notifications {
 	 */
 	protected function fetch_feed() {
 
-		$response = wp_remote_get( self::SOURCE_URL );
+		$response = wp_remote_get(
+			self::SOURCE_URL,
+			[
+				'user-agent' => Helpers::get_default_user_agent(),
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return [];
@@ -226,6 +232,7 @@ class Notifications {
 	 * Get notification data.
 	 *
 	 * @since 2.3.0
+	 * @since 3.9.0 Make the AS a recurring task.
 	 *
 	 * @return array
 	 */
@@ -237,22 +244,42 @@ class Notifications {
 
 		$option = $this->get_option();
 
-		// Update notifications using async task.
-		if ( empty( $option['update'] ) || time() > $option['update'] + DAY_IN_SECONDS ) {
-			if ( empty( Tasks::is_scheduled( 'wp_mail_smtp_admin_notifications_update' ) ) ) {
+		// Update notifications a recurring task.
+		if ( Tasks::is_scheduled( 'wp_mail_smtp_admin_notifications_update' ) === false ) {
 
-				wp_mail_smtp()->get_tasks()
-					->create( 'wp_mail_smtp_admin_notifications_update' )
-					->async()
-					->params()
-					->register();
-			}
+			wp_mail_smtp()->get_tasks()
+				->create( 'wp_mail_smtp_admin_notifications_update' )
+				->recurring(
+					strtotime( '+1 minute' ),
+					$this->get_notification_update_task_interval()
+				)
+				->params()
+				->register();
 		}
 
 		$events = ! empty( $option['events'] ) ? $this->verify_active( $option['events'] ) : [];
 		$feed   = ! empty( $option['feed'] ) ? $this->verify_active( $option['feed'] ) : [];
 
 		return array_merge( $events, $feed );
+	}
+
+	/**
+	 * Get the update notifications interval.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return int
+	 */
+	private function get_notification_update_task_interval() {
+
+		/**
+		 * Filters the interval for the notifications update task.
+		 *
+		 * @since 3.9.0
+		 *
+		 * @param int $interval The interval in seconds. Default to a day (in seconds).
+		 */
+		return (int) apply_filters( 'wp_mail_smtp_admin_notifications_get_notification_update_task_interval', DAY_IN_SECONDS );
 	}
 
 	/**

@@ -6,6 +6,7 @@ use WPMailSMTP\Admin\DomainChecker;
 use WPMailSMTP\Admin\SetupWizard;
 use WPMailSMTP\Conflicts;
 use WPMailSMTP\Debug;
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -91,7 +92,7 @@ class UsageTracking {
 	 */
 	public function get_user_agent() {
 
-		return 'WPMailSMTP/' . WPMS_PLUGIN_VER . '; ' . get_bloginfo( 'url' );
+		return Helpers::get_default_user_agent();
 	}
 
 	/**

@@ -95,6 +95,9 @@ class Area {
 		// Display notice instructing the user to complete plugin setup.
 		add_action( 'admin_init', [ $this, 'display_setup_notice' ] );
 
+		// Display notice explaining removal of "Email Test" tab.
+		add_action( 'admin_init', [ $this, 'display_email_test_tab_removal_notice' ] );
+
 		// Outputs the plugin admin header.
 		add_action( 'in_admin_header', [ $this, 'display_admin_header' ], 100 );
 
@@ -103,9 +106,6 @@ class Area {
 
 		// Process all AJAX requests.
 		add_action( 'wp_ajax_wp_mail_smtp_ajax', [ $this, 'process_ajax' ] );
-
-		// Maybe redirect to "Tools -> Email Test" page if old direct URL to "Settings -> Email Test" is accessed.
-		add_action( 'admin_init', [ $this, 'maybe_redirect_test_tab' ] );
 
 		// Init parent admin pages.
 		if ( WP::in_wp_admin() || WP::is_doing_self_ajax() ) {
@@ -218,6 +218,36 @@ class Area {
 				wp_mail_smtp()->get_admin()->get_admin_page_url( self::SLUG . '#wp-mail-smtp-setting-row-mailer' )
 			),
 			WP::ADMIN_NOTICE_INFO
+		);
+	}
+
+	/**
+	 * Display notice explaining removal of "Email Test" tab.
+	 *
+	 * @since 3.9.0
+	 */
+	public function display_email_test_tab_removal_notice() {
+
+		// Bail if we aren't on a "Settings" page.
+		if ( ! $this->is_admin_page( self::SLUG ) ) {
+			return;
+		}
+
+		// Bail if the notice has been dismissed.
+		if ( metadata_exists( 'user', get_current_user_id(), 'wp_mail_smtp_email_test_tab_removal_notice_dismissed' ) ) {
+			return;
+		}
+
+		WP::add_admin_notice(
+			sprintf(
+				wp_kses(
+					/* translators: %s: Tools page URL. */
+					__( 'The Email Test tab was moved to <a href="%s">WP Mail SMTP > Tools</a>.', 'wp-mail-smtp' ),
+					[ 'a' => [ 'href' => [] ] ]
+				),
+				$this->get_admin_page_url( self::SLUG . '-tools' )
+			),
+			implode( ' ', [ WP::ADMIN_NOTICE_INFO, 'email_test_tab_removal_notice' ] )
 		);
 	}
 
@@ -526,13 +556,13 @@ class Area {
 		 */
 		wp_enqueue_style(
 			'wp-mail-smtp-admin-jconfirm',
-			wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.css',
+			wp_mail_smtp()->assets_url . '/css/vendor/jquery-confirm.min.css',
 			[ 'wp-mail-smtp-admin' ],
 			'3.3.4'
 		);
 		wp_enqueue_script(
 			'wp-mail-smtp-admin-jconfirm',
-			wp_mail_smtp()->assets_url . '/libs/jquery-confirm.min.js',
+			wp_mail_smtp()->assets_url . '/js/vendor/jquery-confirm.min.js',
 			[ 'wp-mail-smtp-admin' ],
 			'3.3.4',
 			false
@@ -920,7 +950,6 @@ class Area {
 		if ( empty( $this->pages ) ) {
 			$this->pages = [
 				'settings'    => new Pages\SettingsTab(),
-				'test'        => new Pages\TestTab( new Pages\Tools() ),
 				'logs'        => new Pages\LogsTab(),
 				'alerts'      => new Pages\AlertsTab(),
 				'connections' => new Pages\AdditionalConnectionsTab(),
@@ -1131,6 +1160,14 @@ class Area {
 				$data['message'] = $dismissal_response;
 				break;
 
+			case 'email_test_tab_removal_notice_dismiss':
+				if ( ! check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) ) {
+					break;
+				}
+
+				update_user_meta( get_current_user_id(), 'wp_mail_smtp_email_test_tab_removal_notice_dismissed', true );
+				break;
+
 			default:
 				// Allow custom tasks data processing being added here.
 				$data = apply_filters( 'wp_mail_smtp_admin_process_ajax_' . $task . '_data', $data );
@@ -1189,7 +1226,7 @@ class Area {
 			return $links;
 		}
 
-		$custom['pro'] = sprintf(
+		$custom['wp-mail-smtp-pro'] = sprintf(
 			'<a href="%1$s" aria-label="%2$s" target="_blank" rel="noopener noreferrer" 
 				style="color: #00a32a; font-weight: 700;" 
 				onmouseover="this.style.color=\'#008a20\';" 
@@ -1201,14 +1238,14 @@ class Area {
 			esc_html__( 'Get WP Mail SMTP Pro', 'wp-mail-smtp' )
 		);
 
-		$custom['settings'] = sprintf(
+		$custom['wp-mail-smtp-settings'] = sprintf(
 			'<a href="%s" aria-label="%s">%s</a>',
 			esc_url( $this->get_admin_page_url() ),
 			esc_attr__( 'Go to WP Mail SMTP Settings page', 'wp-mail-smtp' ),
 			esc_html__( 'Settings', 'wp-mail-smtp' )
 		);
 
-		$custom['docs'] = sprintf(
+		$custom['wp-mail-smtp-docs'] = sprintf(
 			'<a href="%1$s" target="_blank" aria-label="%2$s" rel="noopener noreferrer">%3$s</a>',
 			// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 			esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/', [ 'medium' => 'all-plugins', 'content' => 'Documentation' ] ) ),
@@ -1300,9 +1337,13 @@ class Area {
 	/**
 	 * Maybe redirect to "Tools -> Email Test" page if old direct URL to "Settings -> Email Test" is accessed.
 	 *
+	 * @deprecated 3.9.0
+	 *
 	 * @since 2.8.0
 	 */
 	public function maybe_redirect_test_tab() {
+
+		_deprecated_function( __METHOD__, '3.9.0' );
 
 		if ( $this->is_admin_page( 'general' ) && $this->get_current_tab() === 'test' ) {
 			wp_safe_redirect( add_query_arg( 'tab', 'test', $this->get_admin_page_url( self::SLUG . '-tools' ) ) );

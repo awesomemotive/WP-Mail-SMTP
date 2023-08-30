@@ -17,12 +17,13 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 	 * @type {object}
 	 */
 	var el = {
-		$canvas                         : $( '#wp-mail-smtp-dash-widget-chart' ),
-		$settingsBtn                    : $( '#wp-mail-smtp-dash-widget-settings-button' ),
-		$dismissBtn                     : $( '.wp-mail-smtp-dash-widget-dismiss-chart-upgrade' ),
-		$summaryReportEmailBlock        : $( '.wp-mail-smtp-dash-widget-summary-report-email-block' ),
-		$summaryReportEmailDismissBtn   : $( '.wp-mail-smtp-dash-widget-summary-report-email-dismiss' ),
-		$summaryReportEmailEnableInput  : $( '#wp-mail-smtp-dash-widget-summary-report-email-enable' ),
+		$canvas                       : $( '#wp-mail-smtp-dash-widget-chart' ),
+		$settingsBtn                  : $( '#wp-mail-smtp-dash-widget-settings-button' ),
+		$dismissBtn                   : $( '.wp-mail-smtp-dash-widget-dismiss-chart-upgrade' ),
+		$summaryReportEmailBlock      : $( '.wp-mail-smtp-dash-widget-summary-report-email-block' ),
+		$summaryReportEmailDismissBtn : $( '.wp-mail-smtp-dash-widget-summary-report-email-dismiss' ),
+		$summaryReportEmailEnableInput: $( '#wp-mail-smtp-dash-widget-summary-report-email-enable' ),
+		$emailAlertsDismissBtn        : $( '#wp-mail-smtp-dash-widget-dismiss-email-alert-block' ),
 	};
 
 	/**
@@ -209,8 +210,9 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 		 */
 		ready: function() {
 
-			el.$settingsBtn.on( 'click', function() {
-				$( this ).siblings( '.wp-mail-smtp-dash-widget-settings-menu' ).toggle();
+			el.$settingsBtn.on( 'click', function( e ) {
+				$( this ).toggleClass( 'open' );
+				$( this ).siblings( '.wp-mail-smtp-dash-widget-settings-menu' ).fadeToggle( 200 );
 			} );
 
 			el.$dismissBtn.on( 'click', function( event ) {
@@ -255,6 +257,14 @@ var WPMailSMTPDashboardWidget = window.WPMailSMTPDashboardWidget || ( function( 
 						$self.show();
 						$loader.hide();
 					} );
+			} );
+
+			// Hide email alerts banner on dismiss icon click.
+			el.$emailAlertsDismissBtn.on( 'click', function( event ) {
+				event.preventDefault();
+
+				$( '#wp-mail-smtp-dash-widget-email-alerts-education' ).remove();
+				app.saveWidgetMeta( 'hide_email_alerts_banner', 1 );
 			} );
 
 			chart.init();

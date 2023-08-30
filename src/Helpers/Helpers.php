@@ -139,4 +139,18 @@ class Helpers {
 
 		return $error_text;
 	}
+
+	/**
+	 * Get the default user agent.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
+	public static function get_default_user_agent() {
+
+		$license_type = wp_mail_smtp()->get_license_type();
+
+		return 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) . '; WPMailSMTP/' . $license_type . '-' . WPMS_PLUGIN_VER;
+	}
 }

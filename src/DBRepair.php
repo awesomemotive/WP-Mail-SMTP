@@ -141,7 +141,7 @@ class DBRepair {
 
 		return sprintf(
 			wp_kses( /* translators: %1$s - missing table name; %2$s - error message. */
-				__( '<strong>Table</strong> %1$s: <strong>Reason</strong> %2$s', 'wp-mail-smtp' ),
+				__( '<strong>Table:</strong> %1$s. <strong>Reason:</strong> %2$s', 'wp-mail-smtp' ),
 				[
 					'strong' => [],
 				]
@@ -195,6 +195,16 @@ class DBRepair {
 						]
 					),
 					_n( 'Table is', 'Tables are', count( $missing_tables ), 'wp-mail-smtp' ),
+					implode( '<br/>', $reasons )
+				);
+
+				$msg = sprintf(
+					wp_kses(
+						_n( 'The following DB table is still missing.', 'The following DB tables are still missing.', count( $missing_tables ), 'wp-mail-smtp' ) . '<br />%s',
+						[
+							'br' => [],
+						]
+					),
 					implode( '<br/>', $reasons )
 				);
 			} else {

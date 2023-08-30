@@ -6,6 +6,7 @@ use WPMailSMTP\Admin\AdminBarMenu;
 use WPMailSMTP\Admin\DashboardWidget;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\Notifications;
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\Compatibility\Compatibility;
@@ -687,6 +688,8 @@ class Core {
 			update_option( 'wp_mail_smtp_activated', $activated );
 		}
 
+		set_transient( 'wp_mail_smtp_just_activated', true, 60 );
+
 		// Add transient to trigger redirect to the Setup Wizard.
 		set_transient( 'wp_mail_smtp_activation_redirect', true, 30 );
 	}
@@ -751,11 +754,7 @@ class Core {
 	 */
 	public function get_upgrade_link( $utm ) {
 
-		$url = add_query_arg(
-			'utm_locale',
-			sanitize_key( get_locale() ),
-			$this->get_utm_url( 'https://wpmailsmtp.com/lite-upgrade/', $utm )
-		);
+		$url = $this->get_utm_url( 'https://wpmailsmtp.com/lite-upgrade/', $utm );
 
 		/**
 		 * Filters upgrade link.
@@ -784,6 +783,7 @@ class Core {
 		$medium   = 'plugin-settings';
 		$campaign = $this->is_pro() ? 'plugin' : 'liteplugin';
 		$content  = 'general';
+		$locale   = get_user_locale();
 
 		if ( is_array( $utm ) ) {
 			if ( isset( $utm['source'] ) ) {
@@ -798,6 +798,9 @@ class Core {
 			if ( isset( $utm['content'] ) ) {
 				$content = $utm['content'];
 			}
+			if ( isset( $utm['locale'] ) ) {
+				$locale = $utm['locale'];
+			}
 		} elseif ( is_string( $utm ) ) {
 			$content = $utm;
 		}
@@ -806,6 +809,7 @@ class Core {
 			'utm_source'   => esc_attr( rawurlencode( $source ) ),
 			'utm_medium'   => esc_attr( rawurlencode( $medium ) ),
 			'utm_campaign' => esc_attr( rawurlencode( $campaign ) ),
+			'utm_locale'   => esc_attr( sanitize_key( $locale ) ),
 		];
 
 		if ( ! empty( $content ) ) {

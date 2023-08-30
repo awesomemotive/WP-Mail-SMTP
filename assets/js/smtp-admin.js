@@ -254,6 +254,24 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				$button.find( 'span' ).hide();
 				$button.find( '.wp-mail-smtp-loading' ).show();
 			} );
+
+			$( '.email_test_tab_removal_notice' ).on( 'click', '.notice-dismiss', function() {
+				var $button = $( this );
+
+				$.ajax( {
+					url: ajaxurl,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						action: 'wp_mail_smtp_ajax',
+						nonce: wp_mail_smtp.nonce,
+						task: 'email_test_tab_removal_notice_dismiss',
+					},
+					beforeSend: function() {
+						$button.prop( 'disabled', true );
+					},
+				} );
+			} );
 		},
 
 		education: {

@@ -1,9 +1,9 @@
 === WP Mail SMTP by WPForms - The Most Popular SMTP and Email Log Plugin ===
 Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
-Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, wp smtp
+Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, brevo, wp smtp
 Requires at least: 5.2
-Tested up to: 6.2
-Stable tag: 3.8.2
+Tested up to: 6.3
+Stable tag: 3.9.0
 Requires PHP: 7.2
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
@@ -50,7 +50,7 @@ WP Mail SMTP plugin includes many different SMTP setup options:
 
 1. SendLayer <strong>(#1 Recommended)</strong>
 2. SMTP.com <strong>(Recommended)</strong>
-3. Sendinblue SMTP <strong>(Recommended)</strong>
+3. Brevo (formerly Sendinblue) SMTP <strong>(Recommended)</strong>
 4. Mailgun SMTP
 5. SendGrid SMTP
 6. Postmark SMTP
@@ -84,15 +84,15 @@ Their easy integration process lets you start sending emails in minutes and bene
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-smtp-com-mailer-in-wp-mail-smtp" rel="friend">SMTP.com documentation</a> for more details.
 
-#### Sendinblue SMTP
+#### Brevo (formerly Sendinblue) SMTP
 
-Sendinblue is a recommended transactional email service.
+Brevo is a recommended transactional email service.
 
 They serve 80,000+ growing companies around the world and send over 30 million emails each day.
 
-Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Sendinblue provides users 300 free emails per day.
+Their email deliverability experts are constantly at work optimizing the reliability and speed of their SMTP infrastructure. Brevo provides users 300 free emails per day.
 
-Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/" rel="friend">Sendinblue documentation</a> for more details.
+Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-sendinblue-mailer-in-wp-mail-smtp/" rel="friend">Brevo documentation</a> for more details.
 
 #### Mailgun SMTP
 
@@ -272,9 +272,26 @@ You can sit back and relax while we set up everything for you. White glove setup
 
 The WP Mail SMTP team takes security very seriously. Not only does the plugin follow all security best practices, but we have several options available to ensure your site is safe and secure.
 
-- Direct SMTP mailer integrations (recommended), such as SMTP.com, Sendinblue, Mailgun, SendGrid, Postmark and SparkPost, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
+- Direct SMTP mailer integrations (recommended), such as SMTP.com, Brevo (formerly Sendinblue), Mailgun, SendGrid, Postmark and SparkPost, use the official provider APIs. This means you never enter your username or password in the plugin settings and these credentials are not stored in the database. Instead, we use tokens or API keys which are much more secure.
 
 - When using Other SMTP mailer, we provide the option to insert your password in your `wp-config.php` file, so it's not visible in your WordPress settings or saved in the database.
+
+### Languages
+
+We know that majority of people do not speak English, so we professionally translated WP Mail SMTP and WP Mail SMTP Pro into the following languages:
+
+- Spanish (Spain),
+- German,
+- Portuguese (Brazil),
+- Italian,
+- French,
+- Japanese,
+- Polish,
+- Dutch,
+- Russian,
+- Turkish
+
+If you have one of these languages configured in your WordPress admin area, then WP Mail SMTP's user interface will use that language as well.
 
 ### Credits
 
@@ -310,7 +327,7 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 1. Install WP Mail SMTP by WPForms either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
 2. Activate WP Mail SMTP by WPForms.
 3. Navigate to the Settings area of WP Mail SMTP in the WordPress admin.
-4. Choose your SMTP option (SMTP.com, Sendinblue, Mailgun SMTP, SendGrid SMTP, Postmark, SparkPost, Gmail SMTP, or Other SMTP) and follow the instructions to set it up.
+4. Choose your SMTP option (SMTP.com, Brevo (formerly Sendinblue), Mailgun SMTP, SendGrid SMTP, Postmark, SparkPost, Gmail SMTP, or Other SMTP) and follow the instructions to set it up.
 5. Need more help? Get support with <a href="https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme" rel="friend" title="WPForms">WP Mail SMTP PRO</a>.
 
 == Frequently Asked Questions ==
@@ -360,6 +377,13 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 3.9.0 - 2023-08-30 =
+- Changed: Moved the Email Test tab from the settings page to the tools page.
+- Changed: Removed Sendinblue SDK library because it was deprecated.
+- Changed: Mailgun API instructions.
+- Fixed: Debug Event details popup scrolling.
+- Fixed: Conflict with other plugins (Alt Manager) that made the WP Plugins install page unusable.
 
 = 3.8.2 - 2023-07-20 =
 - Changed: Improved notifications formatting and styles.
@@ -487,7 +511,7 @@ By all means please contact us to discuss features or options you'd like to see 
 * Fixed: The plugin settings pages not opening when WishList Member plugin was active.
 
 = 2.7.0 - 2021-03-25 =
-* IMPORTANT: Support for PHP 5.5 has been discontinued. If you are running one of those versions, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.7. Failure to do that will disable WP Mail SMTP functionality.
+* IMPORTANT: Support for PHP 5.5 has been discontinued. If you are running that version, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v2.7. Failure to do that will disable WP Mail SMTP functionality.
 * Changed: Updated About us plugin page.
 * Changed: Improved Domain Check Results section in Email Test tab.
 * Changed: Allow the use of different Gmail aliases as From Email address by disabling the Force From Email setting.

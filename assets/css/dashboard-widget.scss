@@ -3,7 +3,11 @@
 	.meta-box-sortables .postbox:last-child {
 		.wp-mail-smtp-dash-widget-settings-menu {
 			top: auto;
-			bottom: 40px;
+			bottom: 50px;
+
+			@media (min-width: 800px) {
+				bottom: 40px;
+			}
 		}
 	}
 }
@@ -138,24 +142,47 @@
 			background: #fafafa;
 			color: #787c82;
 			border-color: #787c82;
-			padding: 0 5px 0 6px;
+			padding: 1px 6px 0;
 			margin-bottom: 0;
+			line-height: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			&:hover,
 			&:active,
 			&:focus {
 				color: #2271b1;
 				border-color: #2271b1;
+
+				svg {
+					path {
+						fill: #2271b1;
+					}
+				}
 			}
 
-			.dashicons {
-				width: 20px;
-				height: 20px;
-				font-size: 20px;
-				margin-top: 4px;
+			&.open {
+				svg {
+					path {
+						transform: rotate(90deg);
+					}
+				}
+			}
+
+			svg {
+				display: inline-block;
+				width: 19px;
+				height: 19px;
 
 				@media (max-width: 782px) {
-					margin-top: 9px;
+					padding: 5px;
+				}
+
+				path {
+					fill: #787c82;
+					transition: transform 0.2s;
+					transform-origin: center center;
 				}
 			}
 		}
@@ -170,10 +197,10 @@
 			padding: 10px;
 			z-index: 9999;
 			right: 0;
-			top: 40px;
+			top: 50px;
 
-			@media (max-width: 380px) {
-				top: 50px;
+			@media (min-width: 800px) {
+				top: 40px;
 			}
 
 			&--style,
@@ -330,6 +357,63 @@
 			.dashicons {
 				font-size: 16px;
 				height: 16px;
+				width: 16px;
+			}
+		}
+	}
+
+	.wp-mail-smtp-dash-widget-email-alerts-education {
+		align-items: center;
+		border-left: 4px solid #D63638;
+		border-top: 1px solid #eee;
+		display: flex;
+		gap: 10px;
+		margin-top: 0;
+		padding: 10px;
+
+		&-error-icon {
+			display: flex;
+			height: 44px;
+			width: 40px;
+
+			img {
+				height: 35px;
+				width: 35px;
+				margin: auto;
+			}
+		}
+
+		&-content {
+			padding-right: 14px;
+
+			p {
+				color: #1D2327;
+				font-size: 14px;
+				line-height: 20px;
+
+				a {
+					color: #2271B1;
+					font-weight: 500;
+				}
+
+				strong {
+					font-weight: 500;
+				}
+			}
+		}
+
+		.wp-mail-smtp-dash-widget-dismiss-email-alert-block {
+			background: none;
+			border: 0;
+			cursor: pointer;
+			position: absolute;
+			right: 6px;
+			top: 10px;
+
+			.dashicons {
+				color: #A0A5AA;
+				font-size: 16px;
+				height: 17px;
 				width: 16px;
 			}
 		}

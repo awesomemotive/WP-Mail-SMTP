@@ -117,6 +117,7 @@ var plugin = {
 		'!vendor/wpforms/',
 		'!build.sh',
 		'!phpcs.xml',
+		'!crowdin.yml',
 		'!.env.example',
 		'!.env'
 	],

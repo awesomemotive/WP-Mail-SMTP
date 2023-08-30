@@ -82,13 +82,13 @@ class LogsTab extends PageAbstract {
 
 		wp_enqueue_style(
 			'wp-mail-smtp-admin-lity',
-			wp_mail_smtp()->assets_url . '/libs/lity/lity.min.css',
+			wp_mail_smtp()->assets_url . '/css/vendor/lity.min.css',
 			[],
 			'2.4.1'
 		);
 		wp_enqueue_script(
 			'wp-mail-smtp-admin-lity',
-			wp_mail_smtp()->assets_url . '/libs/lity/lity.min.js',
+			wp_mail_smtp()->assets_url . '/js/vendor/lity.min.js',
 			[],
 			'2.4.1',
 			false

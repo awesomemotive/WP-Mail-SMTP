@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\Admin\Pages\TestTab;
 use WPMailSMTP\Connect;
+use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Helpers\PluginImportDataRetriever;
 use WPMailSMTP\Options;
 use WPMailSMTP\UsageTracking\UsageTracking;
@@ -974,6 +975,7 @@ class SetupWizard {
 	 * AJAX callback for getting all partner's plugin information.
 	 *
 	 * @since 2.6.0
+	 * @since 3.9.0 Check if a SEO toolkit plugin is installed.
 	 */
 	public function get_partner_plugins_info() {
 
@@ -982,6 +984,7 @@ class SetupWizard {
 		$plugins = $this->get_partner_plugins();
 
 		$contact_form_plugin_already_installed = false;
+		$seo_toolkit_plugin_already_installed  = false;
 
 		$contact_form_basenames = [
 			'wpforms-lite/wpforms.php',
@@ -992,12 +995,22 @@ class SetupWizard {
 			'ninja-forms/ninja-forms.php',
 		];
 
+		$seo_toolkit_basenames = [
+			'all-in-one-seo-pack/all_in_one_seo_pack.php',
+			'all-in-one-seo-pack-pro/all_in_one_seo_pack.php',
+			'seo-by-rank-math/rank-math.php',
+			'seo-by-rank-math-pro/rank-math-pro.php',
+			'wordpress-seo/wp-seo.php',
+			'wordpress-seo-premium/wp-seo-premium.php',
+		];
+
 		$installed_plugins = get_plugins();
 
 		foreach ( $installed_plugins as $basename => $plugin_info ) {
 			if ( in_array( $basename, $contact_form_basenames, true ) ) {
 				$contact_form_plugin_already_installed = true;
-				break;
+			} elseif ( in_array( $basename, $seo_toolkit_basenames, true ) ) {
+				$seo_toolkit_plugin_already_installed = true;
 			}
 		}
 
@@ -1009,6 +1022,7 @@ class SetupWizard {
 		$data = [
 			'plugins'                               => $plugins,
 			'contact_form_plugin_already_installed' => $contact_form_plugin_already_installed,
+			'seo_toolkit_plugin_already_installed'  => $seo_toolkit_plugin_already_installed,
 		];
 
 		wp_send_json_success( $data );
@@ -1033,16 +1047,22 @@ class SetupWizard {
 				'is_installed' => array_key_exists( 'wpforms-lite/wpforms.php', $installed_plugins ),
 			],
 			[
+				'slug'         => 'all-in-one-seo-pack',
+				'name'         => esc_html__( 'All in One SEO', 'wp-mail-smtp' ),
+				'is_activated' => class_exists( 'AIOSEOP_Core' ),
+				'is_installed' => array_key_exists( 'all-in-one-seo-pack/all_in_one_seo_pack.php', $installed_plugins ),
+			],
+			[
 				'slug'         => 'google-analytics-for-wordpress',
 				'name'         => esc_html__( 'Google Analytics by MonsterInsights', 'wp-mail-smtp' ),
 				'is_activated' => function_exists( 'MonsterInsights' ),
 				'is_installed' => array_key_exists( 'google-analytics-for-wordpress/googleanalytics.php', $installed_plugins ),
 			],
 			[
-				'slug'         => 'all-in-one-seo-pack',
-				'name'         => esc_html__( 'All in One SEO', 'wp-mail-smtp' ),
-				'is_activated' => class_exists( 'AIOSEOP_Core' ),
-				'is_installed' => array_key_exists( 'all-in-one-seo-pack/all_in_one_seo_pack.php', $installed_plugins ),
+				'slug'         => 'insert-headers-and-footers',
+				'name'         => esc_html__( 'Code Snippets by WPCode', 'wp-mail-smtp' ),
+				'is_activated' => class_exists( 'InsertHeadersAndFooters' ),
+				'is_installed' => array_key_exists( 'insert-headers-and-footers/ihaf.php', $installed_plugins ),
 			],
 			[
 				'slug'         => 'rafflepress',
@@ -1099,6 +1119,7 @@ class SetupWizard {
 		wp_remote_post(
 			'https://connect.wpmailsmtp.com/subscribe/drip/',
 			[
+				'user-agent' => Helpers::get_default_user_agent(),
 				'body' => $body,
 			]
 		);
@@ -1109,7 +1130,7 @@ class SetupWizard {
 	/**
 	 * Get the WPForms version type if it's installed.
 	 *
-	 * @since {VERSION}
+	 * @since 3.9.0
 	 *
 	 * @return false|string Return `false` if WPForms is not installed, otherwise return either `lite` or `pro`.
 	 */
@@ -1237,6 +1258,7 @@ class SetupWizard {
 		wp_remote_post(
 			'https://wpmailsmtp.com/wizard-feedback/',
 			[
+				'user-agent' => Helpers::get_default_user_agent(),
 				'body' => [
 					'wpforms' => [
 						'id'     => 87892,

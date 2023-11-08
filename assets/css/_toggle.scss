@@ -1,0 +1,114 @@
+.wp-mail-smtp-toggle {
+	vertical-align: middle;
+	display: inline-flex;
+	align-items: center;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	&__switch {
+		position: relative;
+		width: 27px;
+		height: 17px;
+		flex-shrink: 0;
+		cursor: pointer;
+		background-color: #ccc;
+		border-radius: 10px;
+		-webkit-transition: all 0.2s ease-in-out;
+		-moz-transition: all 0.2s ease-in-out;
+		-ms-transition: all 0.2s ease-in-out;
+		transition: all 0.2s ease-in-out;
+
+		&:before {
+			position: absolute;
+			content: "";
+			height: 13px;
+			width: 13px;
+			left: 2px;
+			top: 2px;
+			background-color: #fff;
+			border-radius: 50%;
+			-webkit-transition: all 0.2s ease-in-out;
+			-moz-transition: all 0.2s ease-in-out;
+			-ms-transition: all 0.2s ease-in-out;
+			transition: all 0.2s ease-in-out;
+		}
+	}
+
+	&__label {
+		display: none;
+		margin-left: 10px;
+		font-weight: 400;
+		font-size: 13px;
+		line-height: 15px;
+		color: $secondary-text;
+		text-transform: uppercase;
+	}
+
+	&__label--static {
+		display: block;
+		text-transform: none;
+	}
+
+	input[type=checkbox] {
+		position: absolute;
+		top: auto;
+		overflow: hidden;
+		clip: rect(1px, 1px, 1px, 1px);
+		width: 1px;
+		height: 1px;
+		white-space: nowrap;
+
+		&:not(:checked) {
+			&:hover,
+			&:focus {
+				& + .wp-mail-smtp-toggle__switch {
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px #999;
+					background-color: #999;
+				}
+			}
+
+			& ~ .wp-mail-smtp-toggle__label--unchecked {
+				display: block;
+			}
+		}
+
+		&:checked {
+			& + .wp-mail-smtp-toggle__switch {
+				background-color: $positive;
+
+				&:before {
+					-webkit-transform: translateX(10px);
+					-ms-transform: translateX(10px);
+					transform: translateX(10px);
+				}
+			}
+
+			&:hover,
+			&:focus {
+				& + .wp-mail-smtp-toggle__switch {
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px $positive;
+				}
+			}
+
+			& ~ .wp-mail-smtp-toggle__label--checked {
+				display: block;
+			}
+		}
+
+		&:disabled {
+			&:hover,
+			&:focus {
+				& + .wp-mail-smtp-toggle__switch {
+					box-shadow: none;
+				}
+			}
+
+			& ~ * {
+				opacity: .5;
+				cursor: default;
+			}
+		}
+	}
+}

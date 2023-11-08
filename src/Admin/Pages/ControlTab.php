@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\WP;
 
 /**
@@ -210,16 +211,16 @@ class ControlTab extends PageAbstract {
 	 */
 	public function display() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$link_upgrade_link   = add_query_arg(
+		$top_upgrade_button_url    = add_query_arg(
 			[ 'discount' => 'LITEUPGRADE' ],
 			wp_mail_smtp()->get_upgrade_link(
 				[
 					'medium'  => 'Email Controls',
-					'content' => 'Upgrade to WP Mail SMTP Pro',
+					'content' => 'Upgrade to WP Mail SMTP Pro Button Top',
 				]
 			)
 		);
-		$button_upgrade_link = add_query_arg(
+		$bottom_upgrade_button_url = add_query_arg(
 			[ 'discount' => 'LITEUPGRADE' ],
 			wp_mail_smtp()->get_upgrade_link(
 				[
@@ -237,21 +238,13 @@ class ControlTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-							__( 'Email controls allow you to manage the automatic notifications you receive from your WordPress website. With the flick of a switch, you can reduce inbox clutter and focus on the alerts that matter the most. It\'s easy to disable emails about comments, email or password changes, WordPress updates, user registrations, and personal data requests. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url( $link_upgrade_link )
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Email controls allow you to manage the automatic notifications you receive from your WordPress website. With the flick of a switch, you can reduce inbox clutter and focus on the alerts that matter the most. It\'s easy to disable emails about comments, email or password changes, WordPress updates, user registrations, and personal data requests.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 
 			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive">
@@ -288,16 +281,9 @@ class ControlTab extends PageAbstract {
 								<label><?php echo esc_html( $email['label'] ); ?></label>
 							</div>
 							<div class="wp-mail-smtp-setting-field">
-								<label>
-									<input type="checkbox" checked/>
-									<span class="wp-mail-smtp-setting-toggle-switch"></span>
-									<span class="wp-mail-smtp-setting-toggle-checked-label">
-										<?php esc_html_e( 'On', 'wp-mail-smtp' ); ?>
-									</span>
-									<span class="wp-mail-smtp-setting-toggle-unchecked-label">
-										<?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?>
-									</span>
-								</label>
+								<?php
+								UI::toggle( [ 'checked' => true ] );
+								?>
 								<?php if ( ! empty( $email['desc'] ) ) : ?>
 									<p class="desc">
 										<?php echo $email['desc']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -309,7 +295,7 @@ class ControlTab extends PageAbstract {
 				<?php endforeach; ?>
 			</div>
 
-			<a href="<?php echo esc_url( $button_upgrade_link ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

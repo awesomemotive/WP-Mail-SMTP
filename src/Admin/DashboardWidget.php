@@ -120,17 +120,9 @@ class DashboardWidget {
 		);
 
 		wp_enqueue_script(
-			'wp-mail-smtp-moment',
-			wp_mail_smtp()->assets_url . '/js/vendor/moment.min.js',
-			[],
-			'2.29.4',
-			true
-		);
-
-		wp_enqueue_script(
 			'wp-mail-smtp-chart',
 			wp_mail_smtp()->assets_url . '/js/vendor/chart.min.js',
-			[ 'wp-mail-smtp-moment' ],
+			[ 'moment' ],
 			'2.9.4.1',
 			true
 		);
@@ -359,17 +351,18 @@ class DashboardWidget {
 			</div>
 			<div class="wp-mail-smtp-dash-widget-email-alerts-education-content">
 				<?php
-				if ( $error_count === 1 ) {
-					$error_title = __( 'We detected a failed email in the last 30 days.', 'wp-mail-smtp' );
-				} else {
-					$error_title = sprintf(
-						/* translators: %d - number of failed emails. */
-						__( 'We detected %d failed emails in the last 30 days.', 'wp-mail-smtp' ),
-						$error_count
-					);
-				}
+				$error_title = sprintf(
+					/* translators: %d - number of failed emails. */
+					_n(
+						'We detected %d failed email in the last 30 days.',
+						'We detected %d failed emails in the last 30 days.',
+						$error_count,
+						'wp-mail-smtp'
+					),
+					$error_count
+				);
 
-				$content = sprintf(
+				$error_content = sprintf(
 					/* translators: %s - URL to WPMailSMTP.com. */
 					__( '<a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to Pro</a> and get instant alert notifications when they fail.', 'wp-mail-smtp' ),
 					esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'dashboard-widget', 'content' => 'alerts-promo-upgrade-to-pro' ] ) ) // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
@@ -379,7 +372,7 @@ class DashboardWidget {
 					<strong><?php echo esc_html( $error_title ); ?></strong><br />
 					<?php
 					echo wp_kses(
-						$content,
+						$error_content,
 						[
 							'a' => [
 								'href'   => [],

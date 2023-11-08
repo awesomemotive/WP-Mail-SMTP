@@ -93,7 +93,13 @@ class EmailReportsTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$button_upgrade_link = wp_mail_smtp()->get_upgrade_link(
+		$top_upgrade_button_url    = wp_mail_smtp()->get_upgrade_link(
+			[
+				'medium'  => 'email-reports',
+				'content' => 'upgrade-to-wp-mail-smtp-pro-button-link-top',
+			]
+		);
+		$bottom_upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'email-reports',
 				'content' => 'upgrade-to-wp-mail-smtp-pro-button-link',
@@ -123,28 +129,13 @@ class EmailReportsTab extends PageAbstract {
 			<div class="wp-mail-smtp-product-education__row">
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com page URL. */
-							__( 'Email reports make it easy to track deliverability and engagement at-a-glance. Your open and click-through rates are grouped by subject line, making it easy to review the performance of campaigns or notifications. The report also displays Sent and Failed emails each week so you spot any issues quickly. When you upgrade, we\'ll also add an email report chart right in your WordPress dashboard. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url(
-								wp_mail_smtp()->get_upgrade_link(
-									[
-										'medium'  => 'email-reports',
-										'content' => 'upgrade-to-wp-mail-smtp-pro-text-link',
-									]
-								)
-							)
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Email reports make it easy to track deliverability and engagement at-a-glance. Your open and click-through rates are grouped by subject line, making it easy to review the performance of campaigns or notifications. The report also displays Sent and Failed emails each week so you spot any issues quickly. When you upgrade, we\'ll also add an email report chart right in your WordPress dashboard.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 
 			<div class="wp-mail-smtp-product-education__row">
@@ -180,7 +171,7 @@ class EmailReportsTab extends PageAbstract {
 				</div>
 			</div>
 
-			<a href="<?php echo esc_url( $button_upgrade_link ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

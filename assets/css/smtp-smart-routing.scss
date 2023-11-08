@@ -36,14 +36,11 @@
 		}
 	}
 
-	.wp-mail-smtp-smart-routing-enable-toggle {
-		display: flex;
-		align-items: center;
-
-		&__label {
-			margin-left: 10px;
-			color: $secondary-text;
+	.wp-mail-smtp-smart-routing-toggle {
+		& .wp-mail-smtp-toggle__label {
 			font-weight: 500;
+			font-size: 14px;
+			text-transform: capitalize;
 		}
 	}
 

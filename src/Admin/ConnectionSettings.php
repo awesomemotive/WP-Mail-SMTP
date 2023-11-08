@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Debug;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Gmail\Auth;
 
@@ -64,12 +65,12 @@ class ConnectionSettings {
 		$mailer_supported_settings = wp_mail_smtp()->get_providers()->get_options( $mailer )->get_supports();
 		?>
 		<!-- From Email -->
-		<div id="wp-mail-smtp-setting-row-from_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
-			<div class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
-			</div>
-			<div class="wp-mail-smtp-setting-field">
-				<div class="js-wp-mail-smtp-setting-from_email" style="display: <?php echo empty( $mailer_supported_settings['from_email'] ) ? 'none' : 'block'; ?>;">
+		<div class="wp-mail-smtp-setting-group js-wp-mail-smtp-setting-from_email" style="display: <?php echo empty( $mailer_supported_settings['from_email'] ) ? 'none' : 'block'; ?>;">
+			<div id="wp-mail-smtp-setting-row-from_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<?php if ( $mailer !== 'gmail' ) : ?>
 						<input name="wp-mail-smtp[mail][from_email]" type="email"
 									 value="<?php echo esc_attr( $connection_options->get( 'mail', 'from_email' ) ); ?>"
@@ -114,19 +115,23 @@ class ConnectionSettings {
 						</p>
 					<?php endif; ?>
 				</div>
-
-				<hr class="wp-mail-smtp-setting-mid-row-sep" style="display: <?php echo ( ! empty( $mailer_supported_settings['from_email'] ) && ! empty( $mailer_supported_settings['from_email_force'] ) ) ? 'block' : 'none'; ?>;">
-
-				<div class="js-wp-mail-smtp-setting-from_email_force" style="display: <?php echo empty( $mailer_supported_settings['from_email_force'] ) ? 'none' : 'block'; ?>;">
-					<input name="wp-mail-smtp[mail][from_email_force]" type="checkbox"
-								 value="true" id="wp-mail-smtp-setting-from_email_force"
-								 <?php checked( true, (bool) $connection_options->get( 'mail', 'from_email_force' ) ); ?>
-								 <?php disabled( $connection_options->is_const_defined( 'mail', 'from_email_force' ) || ! empty( $disabled_email ) ); ?>
-					/>
-
-					<label for="wp-mail-smtp-setting-from_email_force">
-						<?php esc_html_e( 'Force From Email', 'wp-mail-smtp' ); ?>
-					</label>
+			</div>
+			<div id="wp-mail-smtp-setting-row-from_email_force" class="wp-mail-smtp-setting-row wp-mail-smtp-clear js-wp-mail-smtp-setting-from_email_force" style="display: <?php echo empty( $mailer_supported_settings['from_email_force'] ) ? 'none' : 'block'; ?>;">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-from_email_force"><?php esc_html_e( 'Force From Email', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<?php
+					UI::toggle(
+						[
+							'name'     => 'wp-mail-smtp[mail][from_email_force]',
+							'id'       => 'wp-mail-smtp-setting-from_email_force',
+							'value'    => 'true',
+							'checked'  => (bool) $connection_options->get( 'mail', 'from_email_force' ),
+							'disabled' => $connection_options->is_const_defined( 'mail', 'from_email_force' ) || ! empty( $disabled_email ),
+						]
+					);
+					?>
 
 					<?php if ( ! empty( $disabled_email ) ) : ?>
 						<p class="desc">
@@ -142,12 +147,12 @@ class ConnectionSettings {
 		</div>
 
 		<!-- From Name -->
-		<div id="wp-mail-smtp-setting-row-from_name" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear">
-			<div class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-from_name"><?php esc_html_e( 'From Name', 'wp-mail-smtp' ); ?></label>
-			</div>
-			<div class="wp-mail-smtp-setting-field">
-				<div class="js-wp-mail-smtp-setting-from_name" style="display: <?php echo empty( $mailer_supported_settings['from_name'] ) ? 'none' : 'block'; ?>;">
+		<div class="wp-mail-smtp-setting-group js-wp-mail-smtp-setting-from_name"  style="display: <?php echo empty( $mailer_supported_settings['from_name'] ) ? 'none' : 'block'; ?>;">
+			<div id="wp-mail-smtp-setting-row-from_name" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear ">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-from_name"><?php esc_html_e( 'From Name', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][from_name]" type="text"
 								 value="<?php echo esc_attr( $connection_options->get( 'mail', 'from_name' ) ); ?>"
 								 id="wp-mail-smtp-setting-from_name" spellcheck="false"
@@ -161,19 +166,23 @@ class ConnectionSettings {
 						</p>
 					<?php endif; ?>
 				</div>
-
-				<hr class="wp-mail-smtp-setting-mid-row-sep" style="display: <?php echo ( ! empty( $mailer_supported_settings['from_name'] ) && ! empty( $mailer_supported_settings['from_name_force'] ) ) ? 'block' : 'none'; ?>;">
-
-				<div class="js-wp-mail-smtp-setting-from_name_force" style="display: <?php echo empty( $mailer_supported_settings['from_name_force'] ) ? 'none' : 'block'; ?>;">
-					<input name="wp-mail-smtp[mail][from_name_force]" type="checkbox"
-								 value="true" id="wp-mail-smtp-setting-from_name_force"
-								 <?php checked( true, (bool) $connection_options->get( 'mail', 'from_name_force' ) ); ?>
-								 <?php disabled( $connection_options->is_const_defined( 'mail', 'from_name_force' ) || ! empty( $disabled_name ) ); ?>
-					/>
-
-					<label for="wp-mail-smtp-setting-from_name_force">
-						<?php esc_html_e( 'Force From Name', 'wp-mail-smtp' ); ?>
-					</label>
+			</div>
+			<div id="wp-mail-smtp-setting-row-from_name_force" class="wp-mail-smtp-setting-row wp-mail-smtp-clear js-wp-mail-smtp-setting-from_name_force" style="display: <?php echo empty( $mailer_supported_settings['from_name_force'] ) ? 'none' : 'block'; ?>;">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-from_name_force"><?php esc_html_e( 'Force From Name', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<?php
+					UI::toggle(
+						[
+							'name'     => 'wp-mail-smtp[mail][from_name_force]',
+							'id'       => 'wp-mail-smtp-setting-from_name_force',
+							'value'    => 'true',
+							'checked'  => (bool) $connection_options->get( 'mail', 'from_name_force' ),
+							'disabled' => $connection_options->is_const_defined( 'mail', 'from_name_force' ) || ! empty( $disabled_name ),
+						]
+					);
+					?>
 
 					<?php if ( ! empty( $disabled_name ) ) : ?>
 						<p class="desc">
@@ -189,20 +198,22 @@ class ConnectionSettings {
 		</div>
 
 		<!-- Return Path -->
-		<div id="wp-mail-smtp-setting-row-return_path" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox wp-mail-smtp-clear js-wp-mail-smtp-setting-return_path" style="display: <?php echo empty( $mailer_supported_settings['return_path'] ) ? 'none' : 'block'; ?>;">
+		<div id="wp-mail-smtp-setting-row-return_path" class="wp-mail-smtp-setting-row wp-mail-smtp-clear js-wp-mail-smtp-setting-return_path" style="display: <?php echo empty( $mailer_supported_settings['return_path'] ) ? 'none' : 'block'; ?>;">
 			<div class="wp-mail-smtp-setting-label">
 				<label for="wp-mail-smtp-setting-return_path"><?php esc_html_e( 'Return Path', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<input name="wp-mail-smtp[mail][return_path]" type="checkbox"
-							 value="true" <?php checked( true, (bool) $connection_options->get( 'mail', 'return_path' ) ); ?>
-							 id="wp-mail-smtp-setting-return_path"
-							 <?php disabled( $connection_options->is_const_defined( 'mail', 'return_path' ) ); ?>
-				/>
-
-				<label for="wp-mail-smtp-setting-return_path">
-					<?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?>
-				</label>
+				<?php
+				UI::toggle(
+					[
+						'name'     => 'wp-mail-smtp[mail][return_path]',
+						'id'       => 'wp-mail-smtp-setting-return_path',
+						'value'    => 'true',
+						'checked'  => (bool) $connection_options->get( 'mail', 'return_path' ),
+						'disabled' => $connection_options->is_const_defined( 'mail', 'return_path' ),
+					]
+				);
+				?>
 
 				<p class="desc">
 					<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
@@ -272,14 +283,14 @@ class ConnectionSettings {
 		</div>
 
 		<!-- Mailer Options -->
-		<div class="wp-mail-smtp-mailer-options">
+		<div class="wp-mail-smtp-setting-group wp-mail-smtp-mailer-options">
 			<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all( $this->connection ) as $provider ) : ?>
 				<?php $provider_desc = $provider->get_description(); ?>
 				<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
 
 					<?php if ( ! $provider->is_disabled() ) : ?>
 						<!-- Mailer Title/Notice/Description -->
-						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php echo empty( $provider_desc ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php echo empty( $provider_desc ) ? 'no-desc' : ''; ?>">
 							<div class="wp-mail-smtp-setting-field">
 								<h2><?php echo esc_html( $provider->get_title() ); ?></h2>
 								<?php

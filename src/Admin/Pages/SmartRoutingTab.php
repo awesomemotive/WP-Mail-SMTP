@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\WP;
 
 /**
@@ -82,20 +83,18 @@ class SmartRoutingTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$upgrade_link_url = wp_mail_smtp()->get_upgrade_link(
+		$top_upgrade_button_url    = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Smart Routing Settings',
-				'content' => 'Upgrade to WP Mail SMTP Pro Link',
+				'content' => 'Upgrade to WP Mail SMTP Pro Button Top',
 			]
 		);
-
-		$upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
+		$bottom_upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Smart Routing Settings',
 				'content' => 'Upgrade to WP Mail SMTP Pro Button',
 			]
 		);
-
 		?>
 		<div id="wp-mail-smtp-smart-routing-product-education" class="wp-mail-smtp-product-education">
 			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--no-border">
@@ -104,33 +103,25 @@ class SmartRoutingTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-							__( 'Send emails from different additional connections based on your configured conditions. Emails that do not match any of the conditions below will be sent via your Primary Connection. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url( $upgrade_link_url )
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Send emails from different additional connections based on your configured conditions. Emails that do not match any of the conditions below will be sent via your Primary Connection.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive wp-mail-smtp-product-education__row--no-border wp-mail-smtp-product-education__row--no-padding wp-mail-smtp-product-education__row--full-width">
 				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-no-border">
-					<div class="wp-mail-smtp-smart-routing-enable-toggle">
-						<label class="wp-mail-smtp-setting-toggle">
-							<input type="checkbox" class="wp-mail-smtp-smart-routing-enabled" checked/>
-							<span class="wp-mail-smtp-setting-toggle__switch"></span>
-						</label>
-						<label class="wp-mail-smtp-smart-routing-enable-toggle__label">
-							<?php esc_html_e( 'Enable Smart Routing', 'wp-mail-smtp' ); ?>
-						</label>
-					</div>
+					<?php
+					UI::toggle(
+						[
+							'label'   => esc_html__( 'Enable Smart Routing', 'wp-mail-smtp' ),
+							'class'   => 'wp-mail-smtp-smart-routing-toggle',
+							'checked' => true,
+						]
+					);
+					?>
 				</div>
 				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-no-border wp-mail-smtp-setting-row-no-padding">
 					<div class="wp-mail-smtp-smart-routing-routes">
@@ -313,7 +304,7 @@ class SmartRoutingTab extends PageAbstract {
 				</div>
 			</div>
 
-			<a href="<?php echo esc_url( $upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

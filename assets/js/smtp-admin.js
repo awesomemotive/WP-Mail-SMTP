@@ -435,21 +435,15 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			// Special case: "from email" (group settings).
 			var $mainSettingInGroup = $( '.js-wp-mail-smtp-setting-from_email' );
 
-			$mainSettingInGroup.closest( '.wp-mail-smtp-setting-row' ).toggle(
+			$mainSettingInGroup.toggle(
 				mailerSupportedSettings['from_email'] || mailerSupportedSettings['from_email_force']
-			);
-			$mainSettingInGroup.siblings( '.wp-mail-smtp-setting-mid-row-sep' ).toggle(
-				mailerSupportedSettings['from_email'] && mailerSupportedSettings['from_email_force']
 			);
 
 			// Special case: "from name" (group settings).
 			$mainSettingInGroup = $( '.js-wp-mail-smtp-setting-from_name' );
 
-			$mainSettingInGroup.closest( '.wp-mail-smtp-setting-row' ).toggle(
+			$mainSettingInGroup.toggle(
 				mailerSupportedSettings['from_name'] || mailerSupportedSettings['from_name_force']
-			);
-			$mainSettingInGroup.siblings( '.wp-mail-smtp-setting-mid-row-sep' ).toggle(
-				mailerSupportedSettings['from_name'] && mailerSupportedSettings['from_name_force']
 			);
 		},
 

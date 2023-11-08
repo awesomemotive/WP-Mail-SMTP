@@ -689,6 +689,7 @@ class SetupWizard {
 	 * Prepare mailer options for all mailers.
 	 *
 	 * @since 2.6.0
+	 * @since 3.10.0 Supply WPMS_AMAZONSES_DISPLAY_IDENTITIES constant value to control display of Amazon SES identity list.
 	 *
 	 * @return array
 	 */
@@ -708,6 +709,10 @@ class SetupWizard {
 
 			if ( $provider->get_slug() === 'gmail' ) {
 				$data['gmail']['redirect_uri'] = \WPMailSMTP\Providers\Gmail\Auth::get_oauth_redirect_url();
+			}
+
+			if ( $provider->get_slug() === 'amazonses' ) {
+				$data['amazonses']['display_identities'] = ! defined( 'WPMS_AMAZONSES_DISPLAY_IDENTITIES' ) || WPMS_AMAZONSES_DISPLAY_IDENTITIES === true;
 			}
 		}
 
@@ -1002,6 +1007,8 @@ class SetupWizard {
 			'seo-by-rank-math-pro/rank-math-pro.php',
 			'wordpress-seo/wp-seo.php',
 			'wordpress-seo-premium/wp-seo-premium.php',
+			'wp-seopress/seopress.php',
+			'wp-seopress-pro/seopress-pro.php',
 		];
 
 		$installed_plugins = get_plugins();

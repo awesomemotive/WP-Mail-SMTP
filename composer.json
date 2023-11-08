@@ -8,7 +8,13 @@
   "prefer-stable": true,
   "config": {
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "wikimedia/composer-merge-plugin": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "platform-check": false
   },
   "repositories": [
     {
@@ -25,7 +31,6 @@
   ],
   "require": {
     "php": ">=7.2",
-    "composer-plugin-api": "^1.0",
     "composer/installers": "~1.0",
     "google/apiclient": "2.13.2",
     "paragonie/constant_time_encoding": "^1",
@@ -34,7 +39,7 @@
     "symfony/polyfill-intl-idn": "1.17.1",
     "symfony/polyfill-mbstring": "1.19.0",
     "symfony/polyfill-php72": "1.19.0",
-    "wikimedia/composer-merge-plugin": "1.4.1",
+    "wikimedia/composer-merge-plugin": "2.1.0",
     "woocommerce/action-scheduler": "3.6.1"
   },
   "autoload": {
@@ -121,12 +126,10 @@
       "@phpcs-install-standards"
     ],
     "build-lite": [
-      "npm run gulp composer:delete_lock_and_vendor",
       "composer update --root-reqs --no-dev --no-suggest --no-plugins -o -a",
       "@prefix-dependencies-lite"
     ],
     "build-pro": [
-      "npm run gulp composer:delete_lock_and_vendor",
       "composer update --root-reqs --no-dev --no-suggest -o -a",
       "@prefix-dependencies-optimize"
     ],
@@ -134,7 +137,6 @@
     "check-build-php-version": "@php php-scoper/check-build-php-version.php",
     "build-lite-step-1": [
       "@check-plugin-php-version",
-      "npm run gulp composer:delete_lock_and_vendor",
       "composer update --root-reqs --no-dev --no-suggest --no-plugins -o -a",
       "@composer dump-autoload --no-plugins -o -a"
     ],
@@ -143,7 +145,6 @@
     ],
     "build-pro-step-1": [
       "@check-plugin-php-version",
-      "npm run gulp composer:delete_lock_and_vendor",
       "composer update --root-reqs --no-dev --no-suggest -o -a"
     ],
     "build-pro-step-2": [

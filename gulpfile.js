@@ -312,10 +312,6 @@ gulp.task( 'composer:pro', function ( cb ) {
 		cb( err );
 	} );
 } );
-gulp.task( 'composer:delete_lock_and_vendor', function () {
-	return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
-		.pipe( clean() );
-} );
 gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 	return gulp.src(
 			[

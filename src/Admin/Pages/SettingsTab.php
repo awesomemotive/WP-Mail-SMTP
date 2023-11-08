@@ -81,7 +81,7 @@ class SettingsTab extends PageAbstract {
 			</div>
 
 			<!-- Mail Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc" id="wp-mail-smtp-setting-row-email-heading">
+			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc">
 				<div class="wp-mail-smtp-setting-field">
 					<h2><?php esc_html_e( 'Primary Connection', 'wp-mail-smtp' ); ?></h2>
 				</div>
@@ -256,21 +256,22 @@ class SettingsTab extends PageAbstract {
 
 			<div class="benefits">
 				<ul>
-					<li><?php esc_html_e( 'Manage Notifications - control which emails your site sends', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Email Logging - keep track of every email sent from your site', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Multisite Support - Network settings for easy management', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Office 365 - send emails using your Office 365 account', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Alerts - get notified when your emails fail (via email, slack or SMS)', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Backup Connection - send emails even if your primary connection fails', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Smart Routing - define conditions for your email sending', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Amazon SES - harness the power of AWS', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Outlook.com - send emails using your Outlook.com account', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Zoho Mail - use your Zoho Mail account', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Outlook - send emails using your Outlook or Microsoft 365 account', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Zoho Mail - use your Zoho Mail account to send emails', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Multisite Support - network settings for easy management', 'wp-mail-smtp' ); ?></li>
+					<li><?php esc_html_e( 'Manage Notifications - control which emails your site sends', 'wp-mail-smtp' ); ?></li>
 					<li><?php esc_html_e( 'Access to our world class support team', 'wp-mail-smtp' ); ?></li>
 				</ul>
 				<ul>
 					<li><?php esc_html_e( 'White Glove Setup - sit back and relax while we handle everything for you', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Install WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
+					<li class="arrow-right"><?php esc_html_e( 'Install & Setup WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
+					<li class="arrow-right"><?php esc_html_e( 'Configure SendLayer, SMTP.com or Brevo service', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Set up domain name verification (DNS)', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Configure SMTP.com or Mailgun service', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Set up WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
 					<li class="arrow-right"><?php esc_html_e( 'Test and verify email delivery', 'wp-mail-smtp' ); ?></li>
 				</ul>
 			</div>

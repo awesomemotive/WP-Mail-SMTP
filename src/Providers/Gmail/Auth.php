@@ -79,12 +79,7 @@ class Auth extends AuthAbstract {
 			)
 		);
 
-		$state = [
-			wp_create_nonce( 'wp_mail_smtp_provider_client_state' ),
-			$connection->get_id(),
-		];
-
-		return add_query_arg( 'state', implode( '-', $state ), $auth_url );
+		return add_query_arg( 'state', self::get_state_param( $connection ), $auth_url );
 	}
 
 	/**
@@ -122,7 +117,12 @@ class Auth extends AuthAbstract {
 		// We request only the sending capability, as it's what we only need to do.
 		$client->setScopes( array( Gmail::MAIL_GOOGLE_COM ) );
 		$client->setRedirectUri( self::get_oauth_redirect_url() );
-		$client->setState( self::get_plugin_auth_url( $this->connection ) );
+
+		if ( self::use_self_oauth_redirect_url() ) {
+			$client->setState( self::get_state_param( $this->connection ) );
+		} else {
+			$client->setState( self::get_plugin_auth_url( $this->connection ) );
+		}
 
 		// Apply custom options to the client.
 		$client = apply_filters( 'wp_mail_smtp_providers_gmail_auth_get_client_custom_options', $client );
@@ -297,15 +297,21 @@ class Auth extends AuthAbstract {
 			exit;
 		}
 
-		if ( isset( $_GET['code'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
+		if ( isset( $_GET['code'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$code = urldecode( $_GET['code'] );
 		}
-		if ( isset( $_GET['scope'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$scope = urldecode( base64_decode( $_GET['scope'] ) );
+		if ( isset( $_GET['scope'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$scope = $_GET['scope'];
+
+			if ( self::use_self_oauth_redirect_url() ) {
+				$scope = urldecode( $scope );
+			} else {
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+				$scope = urldecode( base64_decode( $scope ) );
+			}
 		}
 
 		// Let's try to get the access token.
@@ -459,6 +465,48 @@ class Auth extends AuthAbstract {
 	 */
 	public static function get_oauth_redirect_url() {
 
-		return 'https://connect.wpmailsmtp.com/google/';
+		if ( self::use_self_oauth_redirect_url() ) {
+			return remove_query_arg( 'state', self::get_plugin_auth_url() );
+		} else {
+			return 'https://connect.wpmailsmtp.com/google/';
+		}
+	}
+
+	/**
+	 * Get the state parameter for the Google oAuth redirect URL.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @param ConnectionInterface $connection The Connection object.
+	 *
+	 * @return string
+	 */
+	private static function get_state_param( $connection ) {
+
+		$state = [
+			wp_create_nonce( 'wp_mail_smtp_provider_client_state' ),
+			$connection->get_id(),
+		];
+
+		return implode( '-', $state );
+	}
+
+	/**
+	 * Whether to use self website redirect URL for the Google oAuth.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @return bool
+	 */
+	private static function use_self_oauth_redirect_url() {
+
+		/**
+		 * Filter whether to use self website redirect URL for the Google oAuth.
+		 *
+		 * @since 3.10.0
+		 *
+		 * @param bool $use Whether to use self website redirect URL for the Google oAuth.
+		 */
+		return apply_filters( 'wp_mail_smtp_providers_gmail_auth_use_self_oauth_redirect_url', false );
 	}
 }

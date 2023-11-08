@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Helpers\UI;
 
 /**
  * Class AlertsTab is a placeholder for Pro alerts feature.
@@ -61,20 +62,18 @@ class AlertsTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$upgrade_link_url = wp_mail_smtp()->get_upgrade_link(
+		$top_upgrade_button_url    = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Alerts Settings',
-				'content' => 'Upgrade to WP Mail SMTP Pro Link',
+				'content' => 'Upgrade to WP Mail SMTP Pro Button Top',
 			]
 		);
-
-		$upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
+		$bottom_upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Alerts Settings',
 				'content' => 'Upgrade to WP Mail SMTP Pro Button',
 			]
 		);
-
 		?>
 		<div class="wp-mail-smtp-product-education">
 			<div class="wp-mail-smtp-product-education__row">
@@ -83,21 +82,50 @@ class AlertsTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-							__( 'Configure at least one of these integrations to receive notifications when email fails to send from your site. Alert notifications will contain the following important data: email subject, email Send To address, the error message, and helpful links to help you fix the issue. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url( $upgrade_link_url )
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Configure at least one of these integrations to receive notifications when email fails to send from your site. Alert notifications will contain the following important data: email subject, email Send To address, the error message, and helpful links to help you fix the issue.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
+			</div>
+
+			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive">
+				<div id="wp-mail-smtp-setting-row-alert_event_types" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
+					<div class="wp-mail-smtp-setting-label">
+						<label for="wp-mail-smtp-setting-debug_event_types">
+							<?php esc_html_e( 'Notify when', 'wp-mail-smtp' ); ?>
+						</label>
+					</div>
+					<div class="wp-mail-smtp-setting-field">
+						<?php
+						UI::toggle(
+							[
+								'label'    => esc_html__( 'The initial email sending request fails', 'wp-mail-smtp' ),
+								'checked'  => true,
+								'disabled' => true,
+							]
+						);
+						?>
+						<p class="desc">
+							<?php esc_html_e( 'This option is always enabled and will notify you about instant email sending failures.', 'wp-mail-smtp' ); ?>
+						</p>
+						<hr class="wp-mail-smtp-setting-mid-row-sep">
+
+						<?php
+						UI::toggle(
+							[
+								'label'    => esc_html__( 'The deliverability verification process detects a hard bounce', 'wp-mail-smtp' ),
+								'disabled' => true,
+							]
+						);
+						?>
+						<p class="desc">
+							<?php esc_html_e( 'Get notified about emails that were successfully sent, but have hard bounced on delivery attempt. A hard bounce is an email that has failed to deliver for permanent reasons, such as the recipient\'s email address being invalid.', 'wp-mail-smtp' ); ?>
+						</p>
+					</div>
+				</div>
 			</div>
 
 			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive">
@@ -113,11 +141,9 @@ class AlertsTab extends PageAbstract {
 							<label><?php esc_html_e( 'Email Alerts', 'wp-mail-smtp' ); ?></label>
 						</div>
 						<div class="wp-mail-smtp-setting-field">
-							<label>
-								<span class="wp-mail-smtp-setting-toggle-switch"></span>
-								<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-								<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-							</label>
+							<?php
+							UI::toggle();
+							?>
 						</div>
 					</div>
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
@@ -144,11 +170,9 @@ class AlertsTab extends PageAbstract {
 							<label><?php esc_html_e( 'Slack Alerts', 'wp-mail-smtp' ); ?></label>
 						</div>
 						<div class="wp-mail-smtp-setting-field">
-							<label>
-								<span class="wp-mail-smtp-setting-toggle-switch"></span>
-								<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-								<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-							</label>
+							<?php
+							UI::toggle();
+							?>
 						</div>
 					</div>
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
@@ -175,11 +199,9 @@ class AlertsTab extends PageAbstract {
 							<label><?php esc_html_e( 'SMS via Twilio Alerts', 'wp-mail-smtp' ); ?></label>
 						</div>
 						<div class="wp-mail-smtp-setting-field">
-							<label>
-								<span class="wp-mail-smtp-setting-toggle-switch"></span>
-								<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-								<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-							</label>
+							<?php
+							UI::toggle();
+							?>
 						</div>
 					</div>
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
@@ -224,11 +246,9 @@ class AlertsTab extends PageAbstract {
 							<label><?php esc_html_e( 'Webhook Alerts', 'wp-mail-smtp' ); ?></label>
 						</div>
 						<div class="wp-mail-smtp-setting-field">
-							<label>
-								<span class="wp-mail-smtp-setting-toggle-switch"></span>
-								<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-								<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-							</label>
+							<?php
+							UI::toggle();
+							?>
 						</div>
 					</div>
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
@@ -244,7 +264,7 @@ class AlertsTab extends PageAbstract {
 				</div>
 			</div>
 
-			<a href="<?php echo esc_url( $upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

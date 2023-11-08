@@ -103,21 +103,21 @@ class LogsTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$button_upgrade_link = add_query_arg(
+		$top_upgrade_button_url    = add_query_arg(
+			[ 'discount' => 'LITEUPGRADE' ],
+			wp_mail_smtp()->get_upgrade_link(
+				[
+					'medium'  => 'logs',
+					'content' => 'Upgrade to Pro Button Top',
+				]
+			)
+		);
+		$bottom_upgrade_button_url = add_query_arg(
 			[ 'discount' => 'LITEUPGRADE' ],
 			wp_mail_smtp()->get_upgrade_link(
 				[
 					'medium'  => 'logs',
 					'content' => 'Upgrade to Pro Button',
-				]
-			)
-		);
-		$link_upgrade_link   = add_query_arg(
-			[ 'discount' => 'LITEUPGRADE' ],
-			wp_mail_smtp()->get_upgrade_link(
-				[
-					'medium'  => 'logs',
-					'content' => 'upgrade-to-wp-mail-smtp-pro-text-link',
 				]
 			)
 		);
@@ -144,21 +144,13 @@ class LogsTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com page URL. */
-							__( 'Email logging makes it easy to save details about all of the emails sent from your WordPress site. You can search and filter the email log to find specific messages and check the color-coded delivery status. Email logging also allows you to resend emails, save attachments, and export your logs in different formats. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url( $link_upgrade_link )
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Email logging makes it easy to save details about all of the emails sent from your WordPress site. You can search and filter the email log to find specific messages and check the color-coded delivery status. Email logging also allows you to resend emails, save attachments, and export your logs in different formats.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 
 			<div class="wp-mail-smtp-product-education__row">
@@ -194,7 +186,7 @@ class LogsTab extends PageAbstract {
 				</div>
 			</div>
 
-			<a href="<?php echo esc_url( $button_upgrade_link ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

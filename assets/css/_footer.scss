@@ -1,0 +1,98 @@
+.wp-mail-smtp-admin-page-body {
+
+	#wpbody-content {
+		padding-bottom: 200px;
+
+		@include media( "<=tablet" ) {
+			padding-bottom: 0 !important;
+		}
+	}
+
+	#wpfooter {
+
+		a {
+			color: $link !important;
+
+			&:hover,
+			&:active {
+				color: $link-hover !important;
+			}
+		}
+
+		.wp-mail-smtp-footer-promotion {
+			text-align: center;
+			font-weight: 400;
+			font-size: 13px;
+			line-height: normal;
+			color: #646970;
+			padding: 30px 0;
+			margin-bottom: 20px;
+
+			p {
+				font-weight: 600;
+			}
+		}
+
+		.wp-mail-smtp-footer-promotion-links,
+		.wp-mail-smtp-footer-promotion-social {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.wp-mail-smtp-footer-promotion-links {
+			margin: 10px 0;
+			color: #646970;
+
+			a {
+				color: #04558a;
+
+				&:hover {
+					color: #04558a;
+				}
+			}
+
+			span {
+				color: #c3c4c7;
+				padding: 0 7px;
+			}
+		}
+
+		.wp-mail-smtp-footer-promotion-social {
+			gap: 10px;
+			margin: 0;
+
+			li {
+				margin-bottom: 0;
+
+				path {
+					color: #646970;
+				}
+			}
+
+			li:hover {
+
+				path {
+					fill: #50575e;
+				}
+			}
+
+			a {
+				display: block;
+				height: 16px;
+			}
+		}
+
+		#footer-left {
+			color: #50575e;
+			font-size: 13px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;
+
+			strong {
+				font-weight: 600;
+			}
+		}
+	}
+}

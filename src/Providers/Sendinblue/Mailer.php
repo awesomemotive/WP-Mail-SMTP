@@ -321,8 +321,9 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @since 1.6.0
 	 * @since 3.9.0 Returns email body array instead of `SendSmtpEmail` object.
+	 * @since 3.10.0 Returns JSON encoded email body instead of array.
 	 *
-	 * @return array
+	 * @return string
 	 */
 	public function get_body() {
 
@@ -333,26 +334,9 @@ class Mailer extends MailerAbstract {
 		 *
 		 * @param array $body Email body.
 		 */
-		return apply_filters( 'wp_mail_smtp_providers_sendinblue_mailer_get_body', $this->body );
-	}
+		$body = apply_filters( 'wp_mail_smtp_providers_sendinblue_mailer_get_body', $this->body );
 
-	/**
-	 * Send email.
-	 *
-	 * @since 1.6.0
-	 * @since 3.9.0 Use API instead of SDK to send email.
-	 */
-	public function send() {
-
-		$response = wp_safe_remote_post(
-			$this->url,
-			[
-				'headers' => $this->get_headers(),
-				'body'    => wp_json_encode( $this->get_body() ),
-			]
-		);
-
-		$this->process_response( $response );
+		return wp_json_encode( $body );
 	}
 
 	/**

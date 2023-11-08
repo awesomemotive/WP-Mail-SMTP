@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
 
 /**
@@ -294,16 +295,16 @@ abstract class OptionsAbstract implements OptionsInterface {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-autotls"><?php esc_html_e( 'Auto TLS', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-autotls">
-					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-autotls"
-						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][autotls]" value="yes"
-						<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'autotls' ) ? 'disabled' : ''; ?>
-						<?php checked( true, (bool) $this->connection_options->get( $this->get_slug(), 'autotls' ) ); ?>
-					/>
-					<span class="wp-mail-smtp-setting-toggle-switch"></span>
-					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-					<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-				</label>
+				<?php
+				UI::toggle(
+					[
+						'name'     => 'wp-mail-smtp[' . $this->get_slug() . '][autotls]',
+						'id'       => 'wp-mail-smtp-setting-' . $this->get_slug() . '-autotls',
+						'checked'  => (bool) $this->connection_options->get( $this->get_slug(), 'autotls' ),
+						'disabled' => $this->connection_options->is_const_defined( $this->get_slug(), 'autotls' ),
+					]
+				);
+				?>
 				<p class="desc">
 					<?php esc_html_e( 'By default, TLS encryption is automatically used if the server supports it (recommended). In some cases, due to server misconfigurations, this can cause issues and may need to be disabled.', 'wp-mail-smtp' ); ?>
 				</p>
@@ -316,16 +317,16 @@ abstract class OptionsAbstract implements OptionsInterface {
 				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth"><?php esc_html_e( 'Authentication', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth">
-					<input type="checkbox" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-auth"
-						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][auth]" value="yes"
-						<?php echo $this->connection_options->is_const_defined( $this->get_slug(), 'auth' ) ? 'disabled' : ''; ?>
-						<?php checked( true, (bool) $this->connection_options->get( $this->get_slug(), 'auth' ) ); ?>
-					/>
-					<span class="wp-mail-smtp-setting-toggle-switch"></span>
-					<span class="wp-mail-smtp-setting-toggle-checked-label"><?php esc_html_e( 'On', 'wp-mail-smtp' ); ?></span>
-					<span class="wp-mail-smtp-setting-toggle-unchecked-label"><?php esc_html_e( 'Off', 'wp-mail-smtp' ); ?></span>
-				</label>
+				<?php
+				UI::toggle(
+					[
+						'name'     => 'wp-mail-smtp[' . $this->get_slug() . '][auth]',
+						'id'       => 'wp-mail-smtp-setting-' . $this->get_slug() . '-auth',
+						'checked'  => (bool) $this->connection_options->get( $this->get_slug(), 'auth' ),
+						'disabled' => $this->connection_options->is_const_defined( $this->get_slug(), 'auth' ),
+					]
+				);
+				?>
 			</div>
 		</div>
 

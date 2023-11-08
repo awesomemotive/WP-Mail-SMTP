@@ -87,14 +87,13 @@ class AdditionalConnectionsTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$upgrade_link_url = wp_mail_smtp()->get_upgrade_link(
+		$top_upgrade_button_url    = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Additional Connections Settings',
-				'content' => 'Upgrade to WP Mail SMTP Pro Link',
+				'content' => 'Upgrade to WP Mail SMTP Pro Button Top',
 			]
 		);
-
-		$upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
+		$bottom_upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'Additional Connections Settings',
 				'content' => 'Upgrade to WP Mail SMTP Pro Button',
@@ -108,21 +107,13 @@ class AdditionalConnectionsTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					echo wp_kses(
-						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-							__( 'Create additional connections to set a backup for your Primary Connection or to configure Smart Routing. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
-							esc_url( $upgrade_link_url )
-						),
-						[
-							'a' => [
-								'href'   => [],
-								'rel'    => [],
-								'target' => [],
-							],
-						]
-					);
+					esc_html_e( 'Create additional connections to set a backup for your Primary Connection or to configure Smart Routing.', 'wp-mail-smtp' );
 					?>
 				</p>
+
+				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 			</div>
 
 			<?php
@@ -130,7 +121,7 @@ class AdditionalConnectionsTab extends PageAbstract {
 			$this->display_education_features_list();
 			?>
 
-			<a href="<?php echo esc_url( $upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

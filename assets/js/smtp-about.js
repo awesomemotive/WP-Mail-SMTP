@@ -150,8 +150,7 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 						if (
 							res.hasOwnProperty( 'data' ) &&
 							res.data.hasOwnProperty( 0 ) &&
-							res.data[ 0 ].hasOwnProperty( 'code' ) &&
-							res.data[ 0 ].code === 'download_failed'
+							res.data[ 0 ].hasOwnProperty( 'code' )
 						) {
 
 							// Specific server-returned error.

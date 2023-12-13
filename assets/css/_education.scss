@@ -361,6 +361,19 @@
 			}
 		}
 	}
+
+	/* Gmail mailer one-click setup. */
+	#wp-mail-smtp-setting-row-gmail-one_click_setup_enabled-lite {
+			.wp-mail-smtp-toggle::after {
+				content: '';
+				margin-left: 10px;
+				background-image: url('../images/pro-badge-small.svg');
+				background-size: contain;
+				background-repeat: no-repeat;
+				width: 35px;
+				height: 16px;
+			}
+	}
 }
 
 

@@ -138,7 +138,7 @@ class Area {
 			return;
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			return;
 		}
 
@@ -174,6 +174,13 @@ class Area {
 			case 'google_no_clients':
 				WP::add_admin_notice(
 					esc_html__( 'There was an error while processing the authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.', 'wp-mail-smtp' ),
+					WP::ADMIN_NOTICE_ERROR
+				);
+				break;
+
+			case 'google_unsuccessful_oauth':
+				WP::add_admin_notice(
+					esc_html__( 'There was an error while processing the authentication request.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
@@ -244,6 +251,17 @@ class Area {
 			return;
 		}
 
+		/*
+		 * Don't display the notice if the user installed a plugin with a new "Email Test"
+		 * location (starting from v3.9.0) and is not aware of the old one. Also, don't display
+		 * the notice if the `wp_mail_smtp_initial_version` option is not set (it can happen if
+		 * the plugin was activated network wise in the multisite installation and plugin
+		 * activation hook was not performed on the subsite level).
+		 */
+		if ( version_compare( get_option( 'wp_mail_smtp_initial_version', '3.9.0' ), '3.9.0', '>=' ) ) {
+			return;
+		}
+
 		WP::add_admin_notice(
 			sprintf(
 				wp_kses(
@@ -285,7 +303,7 @@ class Area {
 	public function add_admin_options_page() {
 
 		// Options pages access capability.
-		$access_capability = 'manage_options';
+		$access_capability = wp_mail_smtp()->get_capability_manage_options();
 
 		$this->hook = add_menu_page(
 			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
@@ -348,7 +366,7 @@ class Area {
 		add_menu_page(
 			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
 			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
-			'manage_options',
+			wp_mail_smtp()->get_capability_manage_options(),
 			self::SLUG,
 			[ $this, 'display_network_product_education_page' ],
 			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM5ZWEzYTgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQzIDM0Ij48cGF0aCBkPSJNMC4wMDcsMy41ODVWMjAuNDIxcTAsMy41ODYsMy43NTEsMy41ODVMMjAsMjRWMTlIMzBWMTQuMDE0bDAuOTkxLTFMMzQsMTNWMy41ODVRMzQsMCwzMC4yNDksMEgzLjc1OFEwLjAwNywwLC4wMDcsMy41ODVoMFpNMy41MjQsNi4xNTdhMS40OSwxLjQ5LDAsMCwxLS41MDgtMC45MzUsMS41ODEsMS41ODEsMCwwLDEsLjI3NC0xLjIwOCwxLjQ0OSwxLjQ0OSwwLDAsMSwxLjA5NC0uNjYzLDEuNzU2LDEuNzU2LDAsMCwxLDEuMjUuMzEybDExLjQwOSw3LjcxNkwyOC4zNzQsMy42NjNhMS45NiwxLjk2LDAsMCwxLDEuMjg5LS4zMTIsMS41NDYsMS41NDYsMCwwLDEsMS4wOTQuNjYzLDEuNCwxLjQsMCwwLDEsLjI3MywxLjIwOCwxLjY3LDEuNjcsMCwwLDEtLjU0Ny45MzVMMTcuMDQzLDE3LjIyNVoiLz48cGF0aCBkPSJNMjIsMjhIMzJsLTAuMDA5LDQuNjI0YTEuMTI2LDEuMTI2LDAsMCwwLDEuOTIyLjhsOC4yNS04LjIzNmExLjEyNiwxLjEyNiwwLDAsMCwwLTEuNTk0bC04LjI1LTguMjQxYTEuMTI2LDEuMTI2LDAsMCwwLTEuOTIyLjh2NC44NjZMMjIsMjF2N1oiLz48L3N2Zz4=',
@@ -537,6 +555,10 @@ class Area {
 					esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/docs/how-to-upgrade-wp-mail-smtp-to-pro-version/', [ 'medium' => 'plugin-settings', 'content' => 'Pro Mailer Popup - Already purchased' ] ) ),
 					esc_html__( 'Already purchased?', 'wp-mail-smtp' )
 				),
+				'gmail'             => [
+					'one_click_setup_upgrade_title'   => wp_kses( __( 'One-Click Setup for Google Mailer <br> is a Pro Feature', 'wp-mail-smtp' ), [ 'br' => [] ] ),
+					'one_click_setup_upgrade_content' => esc_html__( 'We\'re sorry, One-Click Setup for Google Mailer is not available on your plan. Please upgrade to the Pro plan to unlock all these awesome features.', 'wp-mail-smtp' ),
+				],
 			],
 			'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),
 			'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
@@ -818,7 +840,10 @@ class Area {
 		 *
 		 * @param string $capability Email logs access capability.
 		 */
-		return apply_filters( 'wp_mail_smtp_admin_area_get_logs_access_capability', 'manage_options' );
+		return apply_filters(
+			'wp_mail_smtp_admin_area_get_logs_access_capability',
+			wp_mail_smtp()->get_capability_manage_options()
+		);
 	}
 
 	/**
@@ -1126,7 +1151,7 @@ class Area {
 		$data = [];
 
 		// Only admins can fire these ajax requests.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error( $data );
 		}
 

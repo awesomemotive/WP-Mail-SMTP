@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, brevo, wp smtp
 Requires at least: 5.2
 Tested up to: 6.4
-Stable tag: 3.10.0
+Stable tag: 3.11.0
 Requires PHP: 7.2
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
@@ -127,6 +127,8 @@ Often bloggers and small business owners don't want to use third-party SMTP serv
 This allows you to use your <a href="http://www.wpbeginner.com/beginners-guide/how-to-setup-a-professional-email-address-with-gmail-and-google-apps/" rel="friend">professional email address</a> and improve email deliverability.
 
 Unlike other Gmail SMTP plugins, our Gmail SMTP option uses OAuth to authenticate your Google account, keeping your login information 100% secure.
+
+Our plugin also offers the "One-Click Setup" option, which allows you to start sending emails from your Gmail account with just a few clicks. It eliminates the need to manually configure your own Google App, which is a technical and time-consuming process.
 
 Read our <a href="https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/" rel="friend">Gmail documentation</a> for more details.
 
@@ -377,6 +379,15 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 3.11.0 - 2023-12-13 =
+- Added: Filter to customize the capability required for managing the plugin.
+- Changed: Hide test tab movement notice for new users.
+- Changed: Improved keyboard navigation styles for the Setup Wizard.
+- Changed: Removed `WPMailSMTP\Admin\PluginsInstallUpgrader` class and switched to the WordPress Core `Plugin_Upgrader` class.
+- Changed: The "From email" dropdown to the input field in the Gmail mailer.
+- Fixed: PHP deprecation notices in the Setup Wizard on WordPress 6.4 and above.
+- Fixed: Compatibility issue with Action Scheduler lower than 3.3.0.
 
 = 3.10.0 - 2023-11-08 =
 - Added: Filter that allows to use self website Google OAuth redirect URL.

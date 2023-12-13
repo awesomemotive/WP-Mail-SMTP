@@ -58,7 +58,7 @@ class DashboardWidget {
 	public function init() {
 
 		// This widget should be displayed for certain high-level users only.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			return;
 		}
 
@@ -181,7 +181,7 @@ class DashboardWidget {
 
 		check_admin_referer( 'wp_mail_smtp_' . static::SLUG . '_nonce' );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error();
 		}
 
@@ -202,7 +202,7 @@ class DashboardWidget {
 
 		check_admin_referer( 'wp_mail_smtp_' . static::SLUG . '_nonce' );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error();
 		}
 

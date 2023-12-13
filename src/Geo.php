@@ -166,4 +166,60 @@ class Geo {
 
 		return $miles;
 	}
+
+	/**
+	 * Get the user IP address.
+	 *
+	 * @since 3.11.0
+	 *
+	 * Code based on the:
+	 *   - WordPress method \WP_Community_Events::get_unsafe_client_ip
+	 *   - Cloudflare documentation https://support.cloudflare.com/hc/en-us/articles/206776727
+	 *
+	 * @return string
+	 */
+	public static function get_ip() {
+
+		$ip = '127.0.0.1';
+
+		$address_headers = [
+			'HTTP_TRUE_CLIENT_IP',
+			'HTTP_CF_CONNECTING_IP',
+			'HTTP_X_REAL_IP',
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR',
+		];
+
+		foreach ( $address_headers as $header ) {
+			if ( empty( $_SERVER[ $header ] ) ) {
+				continue;
+			}
+
+			/*
+			 * HTTP_X_FORWARDED_FOR can contain a chain of comma-separated addresses, with or without spaces.
+			 * The first address is the original client. It can't be trusted for authenticity,
+			 * but we don't need to for this purpose.
+			 */
+
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$address_chain = explode( ',', wp_unslash( $_SERVER[ $header ] ) );
+			$ip            = filter_var( trim( $address_chain[0] ), FILTER_VALIDATE_IP );
+
+			break;
+		}
+
+		/**
+		 * Filter detected IP address.
+		 *
+		 * @since 3.11.0
+		 *
+		 * @param string $ip IP address.
+		 */
+		return filter_var( apply_filters( 'wp_mail_smtp_geo_get_ip', $ip ), FILTER_VALIDATE_IP );
+	}
 }

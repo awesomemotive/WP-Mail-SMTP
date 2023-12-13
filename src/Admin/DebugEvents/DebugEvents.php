@@ -100,7 +100,7 @@ class DebugEvents {
 			wp_send_json_error( esc_html__( 'Access rejected.', 'wp-mail-smtp' ) );
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 		}
 
@@ -139,7 +139,7 @@ class DebugEvents {
 			wp_send_json_error( esc_html__( 'Access rejected.', 'wp-mail-smtp' ) );
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 		}
 

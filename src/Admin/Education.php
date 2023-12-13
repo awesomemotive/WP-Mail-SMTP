@@ -92,7 +92,7 @@ class Education {
 		check_ajax_referer( 'wp-mail-smtp-admin', 'nonce' );
 
 		// Check for permissions.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_send_json_error();
 		}
 

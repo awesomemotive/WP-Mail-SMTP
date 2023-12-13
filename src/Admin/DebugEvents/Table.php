@@ -558,7 +558,7 @@ class Table extends \WP_List_Table {
 
 		</div>
 		<?php
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			wp_nonce_field( 'wp_mail_smtp_debug_events', 'wp-mail-smtp-debug-events-nonce', false );
 			printf(
 				'<button id="wp-mail-smtp-delete-all-debug-events-button" type="button" class="button">%s</button>',

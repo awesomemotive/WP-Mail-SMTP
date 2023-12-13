@@ -2,13 +2,16 @@
 
 namespace WPMailSMTP\Admin;
 
+use Automatic_Upgrader_Skin;
+
 /**
  * WordPress class extended for on-the-fly plugin installations.
  *
  * @since 1.5.0
  * @since 1.7.1 Removed feedback() method override to be compatible with PHP5.3+ and WP5.3.
+ * @since 3.11.0 Updated to extend Automatic_Upgrader_Skin.
  */
-class PluginsInstallSkin extends \WP_Upgrader_Skin {
+class PluginsInstallSkin extends Automatic_Upgrader_Skin {
 
 	/**
 	 * Empty out the header of its HTML content and only check to see if it has

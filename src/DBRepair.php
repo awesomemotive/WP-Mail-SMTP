@@ -37,7 +37,7 @@ class DBRepair {
 			isset( $_GET['create-missing-db-tables'] ) &&
 			$_GET['create-missing-db-tables'] === '1' &&
 			wp_mail_smtp()->get_admin()->is_admin_page() &&
-			current_user_can( 'manage_options' )
+			current_user_can( wp_mail_smtp()->get_capability_manage_options() )
 		) {
 			check_admin_referer( Area::SLUG . '-create-missing-db-tables' );
 
@@ -165,7 +165,7 @@ class DBRepair {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset( $_GET['check-db-tables'] ) && $_GET['check-db-tables'] === '1' &&
 			wp_mail_smtp()->get_admin()->is_admin_page() &&
-			current_user_can( 'manage_options' )
+			current_user_can( wp_mail_smtp()->get_capability_manage_options() )
 		) {
 			$missing_tables = $this->get_missing_tables();
 

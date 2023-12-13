@@ -6,7 +6,6 @@ use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Debug;
 use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
-use WPMailSMTP\Providers\Gmail\Auth;
 
 /**
  * Class ConnectionSettings.
@@ -71,39 +70,14 @@ class ConnectionSettings {
 					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
-					<?php if ( $mailer !== 'gmail' ) : ?>
-						<input name="wp-mail-smtp[mail][from_email]" type="email"
-									 value="<?php echo esc_attr( $connection_options->get( 'mail', 'from_email' ) ); ?>"
-									 id="wp-mail-smtp-setting-from_email" spellcheck="false"
-									 placeholder="<?php echo esc_attr( wp_mail_smtp()->get_processor()->get_default_email() ); ?>"
-									 <?php disabled( $connection_options->is_const_defined( 'mail', 'from_email' ) || ! empty( $disabled_email ) ); ?>
-						/>
-					<?php else : ?>
-						<?php
-						// Gmail mailer From Email selector.
-						$gmail_auth    = new Auth( $this->connection );
-						$gmail_aliases = $gmail_auth->is_clients_saved() ? $gmail_auth->get_user_possible_send_from_addresses() : [];
-						?>
+					<input name="wp-mail-smtp[mail][from_email]" type="email"
+								 value="<?php echo esc_attr( $connection_options->get( 'mail', 'from_email' ) ); ?>"
+								 id="wp-mail-smtp-setting-from_email" spellcheck="false"
+								 placeholder="<?php echo esc_attr( wp_mail_smtp()->get_processor()->get_default_email() ); ?>"
+								 <?php disabled( $connection_options->is_const_defined( 'mail', 'from_email' ) || ! empty( $disabled_email ) ); ?>
+					/>
 
-						<?php if ( empty( $gmail_aliases ) ) : ?>
-							<select name="wp-mail-smtp[mail][from_email]" id="wp-mail-smtp-setting-from_email" disabled>
-								<option value="">
-									<?php esc_html_e( 'Please first authorize the Gmail mailer below', 'wp-mail-smtp' ); ?>
-								</option>
-							</select>
-						<?php else : ?>
-							<select name="wp-mail-smtp[mail][from_email]" id="wp-mail-smtp-setting-from_email">
-								<?php foreach ( $gmail_aliases as $gmail_email_address ) : ?>
-									<option value="<?php echo esc_attr( $gmail_email_address ); ?>" <?php selected( $connection_options->get( 'mail', 'from_email' ), $gmail_email_address ); ?>>
-										<?php echo esc_html( $gmail_email_address ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						<?php endif; ?>
-
-					<?php endif; ?>
-
-					<?php if ( ! in_array( $mailer, [ 'gmail', 'zoho' ], true ) ) : ?>
+					<?php if ( ! in_array( $mailer, [ 'zoho' ], true ) ) : ?>
 						<p class="desc">
 							<?php esc_html_e( 'The email address that emails are sent from.', 'wp-mail-smtp' ); ?>
 						</p>
@@ -335,8 +309,6 @@ class ConnectionSettings {
 	 */
 	public function process( $data, $old_data ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$connection_options = $this->connection->get_options();
-
 		// When checkbox is unchecked - it's not submitted at all, so we need to define its default false value.
 		if ( ! isset( $data['mail']['from_email_force'] ) ) {
 			$data['mail']['from_email_force'] = false;
@@ -372,21 +344,6 @@ class ConnectionSettings {
 			}
 		}
 
-		// Old and new Gmail client id/secret values are different - we need to invalidate tokens and scroll to Auth button.
-		if (
-			$this->connection->get_mailer_slug() === 'gmail' &&
-			! empty( $data['gmail']['client_id'] ) &&
-			! empty( $data['gmail']['client_secret'] ) &&
-			(
-				$connection_options->get( 'gmail', 'client_id' ) !== $data['gmail']['client_id'] ||
-				$connection_options->get( 'gmail', 'client_secret' ) !== $data['gmail']['client_secret']
-			)
-		) {
-			unset( $old_data['gmail'] );
-
-			$this->scroll_to = '#wp-mail-smtp-setting-row-gmail-authorize';
-		}
-
 		// Prevent redirect to setup wizard from settings page after successful auth.
 		if (
 			! empty( $data['mail']['mailer'] ) &&
@@ -395,7 +352,15 @@ class ConnectionSettings {
 			$data[ $data['mail']['mailer'] ]['is_setup_wizard_auth'] = false;
 		}
 
-		return $data;
+		/**
+		 * Filters connection data.
+		 *
+		 * @since 3.11.0
+		 *
+		 * @param array $data     Connection data.
+		 * @param array $old_data Old connection data.
+		 */
+		return apply_filters( 'wp_mail_smtp_admin_connection_settings_process_data', $data, $old_data );
 	}
 
 	/**
@@ -416,24 +381,19 @@ class ConnectionSettings {
 		) {
 
 			// Save correct from email address if Gmail mailer is already configured.
-			if (
-				is_array( $data ) && in_array( $data['mail']['mailer'], [ 'gmail' ], true ) &&
-				! empty( $data['gmail']['client_id'] ) &&
-				! empty( $data['gmail']['client_secret'] )
-			) {
-				$gmail_auth    = new Auth( $this->connection );
-				$gmail_aliases = $gmail_auth->is_clients_saved() ? $gmail_auth->get_user_possible_send_from_addresses() : [];
+			if ( $data['mail']['mailer'] === 'gmail' ) {
+				$gmail_auth = wp_mail_smtp()->get_providers()->get_auth( 'gmail', $this->connection );
+				$user_info  = ! $gmail_auth->is_auth_required() ? $gmail_auth->get_user_info() : false;
 
 				if (
-					! empty( $gmail_aliases ) &&
-					isset( $gmail_aliases[0] ) &&
-					is_email( $gmail_aliases[0] ) !== false &&
+					! empty( $user_info['email'] ) &&
+					is_email( $user_info['email'] ) !== false &&
 					(
 						empty( $data['mail']['from_email'] ) ||
-						! in_array( $data['mail']['from_email'], $gmail_aliases, true )
+						$data['mail']['from_email'] !== $user_info['email']
 					)
 				) {
-					$data['mail']['from_email'] = $gmail_aliases[0];
+					$data['mail']['from_email'] = $user_info['email'];
 
 					$this->connection->get_options()->set( $data, false, false );
 				}

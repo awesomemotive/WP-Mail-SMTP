@@ -247,7 +247,8 @@ class Tasks {
 	 */
 	public static function is_scheduled( $hook ) {
 
-		if ( ! function_exists( 'as_has_scheduled_action' ) ) {
+		// If ActionScheduler wasn't loaded, then no tasks are scheduled.
+		if ( ! function_exists( 'as_next_scheduled_action' ) ) {
 			return null;
 		}
 
@@ -260,7 +261,12 @@ class Tasks {
 		}
 
 		// Action is not in the array, so it is not scheduled or belongs to another group.
-		return as_has_scheduled_action( $hook );
+		if ( function_exists( 'as_has_scheduled_action' ) ) {
+			// This function more performant than `as_next_scheduled_action`, but it is available only since AS 3.3.0.
+			return as_has_scheduled_action( $hook );
+		} else {
+			return as_next_scheduled_action( $hook ) !== false;
+		}
 	}
 
 	/**

@@ -6,7 +6,6 @@ use WPMailSMTP\Admin\ConnectionSettings;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Admin\SetupWizard;
 use WPMailSMTP\Options;
-use WPMailSMTP\Providers\Gmail\Auth;
 use WPMailSMTP\WP;
 
 /**

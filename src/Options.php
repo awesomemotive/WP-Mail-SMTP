@@ -46,6 +46,7 @@ class Options {
 			'pass',
 		],
 		'gmail'                => [
+			'one_click_setup_enabled',
 			'client_id',
 			'client_secret',
 		],
@@ -232,7 +233,7 @@ class Options {
 	 */
 	public static function get_defaults() {
 
-		return [
+		$defaults = [
 			'mail'    => [
 				'from_email'       => get_option( 'admin_email' ),
 				'from_name'        => get_bloginfo( 'name' ),
@@ -249,6 +250,15 @@ class Options {
 				SummaryReportEmail::SETTINGS_SLUG => ! is_multisite() ? false : true,
 			],
 		];
+
+		/**
+		 * Filters the default options.
+		 *
+		 * @since 3.11.0
+		 *
+		 * @param array $defaults Default options.
+		 */
+		return apply_filters( 'wp_mail_smtp_options_get_defaults', $defaults );
 	}
 
 	/**

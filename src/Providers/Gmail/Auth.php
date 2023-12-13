@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use Exception;
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\ConnectionSettings;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
@@ -133,7 +134,7 @@ class Auth extends AuthAbstract {
 		) {
 			try {
 				$creds = $client->fetchAccessTokenWithAuthCode( $this->options['auth_code'] );
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				$creds['error'] = $e->getMessage();
 			}
 
@@ -155,22 +156,19 @@ class Auth extends AuthAbstract {
 
 			$this->update_access_token( $client->getAccessToken() );
 			$this->update_refresh_token( $client->getRefreshToken() );
+			$this->update_user_details( $client );
 
-			/*
-			 * We need to set the correct `from_email` address, to avoid the SPF and DKIM issue.
-			 */
-			$gmail_aliases          = $this->is_clients_saved() ? $this->get_user_possible_send_from_addresses() : [];
-			$all_connection_options = $this->connection_options->get_all();
-
-			if (
-				! empty( $gmail_aliases ) &&
-				isset( $gmail_aliases[0] ) &&
-				is_email( $gmail_aliases[0] ) !== false &&
-				! in_array( $all_connection_options['mail']['from_email'], $gmail_aliases, true )
-			) {
-				$all_connection_options['mail']['from_email'] = $gmail_aliases[0];
-
-				$this->connection_options->set( $all_connection_options );
+			// Update the "from email" to the connected user's email.
+			if ( ! empty( $this->options['user_details']['email'] ) ) {
+				$this->connection_options->set(
+					[
+						'mail' => [
+							'from_email' => $this->options['user_details']['email'],
+						],
+					],
+					false,
+					false
+				);
 			}
 		}
 
@@ -188,7 +186,7 @@ class Auth extends AuthAbstract {
 			if ( ! empty( $refresh ) ) {
 				try {
 					$creds = $client->fetchAccessTokenWithRefreshToken( $refresh );
-				} catch ( \Exception $e ) {
+				} catch ( Exception $e ) {
 					$creds['error'] = $e->getMessage();
 					Debug::set(
 						'Mailer: Gmail' . "\r\n" .
@@ -341,23 +339,21 @@ class Auth extends AuthAbstract {
 			exit;
 		}
 
-		if ( $is_setup_wizard_auth ) {
-			Debug::clear();
+		Debug::clear();
 
-			$this->get_client( true );
+		$this->get_client( true );
 
-			$error = Debug::get_last();
+		$error = Debug::get_last();
 
-			if ( ! empty( $error ) ) {
-				wp_safe_redirect(
-					add_query_arg(
-						'error',
-						'google_unsuccessful_oauth',
-						$redirect_url
-					)
-				);
-				exit;
-			}
+		if ( ! empty( $error ) ) {
+			wp_safe_redirect(
+				add_query_arg(
+					'error',
+					'google_unsuccessful_oauth',
+					$redirect_url
+				)
+			);
+			exit;
 		}
 
 		wp_safe_redirect(
@@ -391,23 +387,62 @@ class Auth extends AuthAbstract {
 	}
 
 	/**
-	 * Get user information (like email etc) that is associated with the current OAuth connection.
+	 * Get and update user-related details (currently only email).
+	 *
+	 * @since 3.11.0
+	 *
+	 * @param Google_Client $client The Google Client object (optional).
+	 */
+	private function update_user_details( $client = false ) {
+
+		if ( $client === false ) {
+			$client = $this->get_client();
+		}
+
+		$gmail = new Gmail( $client );
+
+		try {
+			$email = $gmail->users->getProfile( 'me' )->getEmailAddress();
+
+			$user_details = [
+				'email' => $email,
+			];
+
+			// To save in DB.
+			$updated_settings = [
+				$this->mailer_slug => [
+					'user_details' => $user_details,
+				],
+			];
+
+			// To save in currently retrieved options array.
+			$this->options['user_details'] = $user_details;
+
+			$this->connection_options->set( $updated_settings, false, false );
+		} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			// Do nothing.
+		}
+	}
+
+	/**
+	 * Get user information (currently only email) that is associated with the current OAuth connection.
 	 *
 	 * @since 1.5.0
+	 * @since 3.11.0 Switched to DB stored value instead of API call.
 	 *
 	 * @return array
 	 */
 	public function get_user_info() {
 
-		$gmail = new Gmail( $this->get_client() );
-
-		try {
-			$email = $gmail->users->getProfile( 'me' )->getEmailAddress();
-		} catch ( \Exception $e ) {
-			$email = '';
+		/*
+		 * We need to populate user data on the fly for old users who already performed
+		 * authorization before we switched to DB stored value.
+		 */
+		if ( ! isset( $this->options['user_details'] ) && ! $this->is_auth_required() ) {
+			$this->update_user_details();
 		}
 
-		return array( 'email' => $email );
+		return $this->connection_options->get( $this->mailer_slug, 'user_details' );
 	}
 
 	/**
@@ -439,7 +474,7 @@ class Auth extends AuthAbstract {
 			);
 			// phpcs:enable
 
-		} catch ( \Exception $exception ) {
+		} catch ( Exception $exception ) {
 			DebugEvents::add_debug(
 				sprintf( /* Translators: %s the error message. */
 					esc_html__( 'An error occurred when trying to get Gmail aliases: %s' ),

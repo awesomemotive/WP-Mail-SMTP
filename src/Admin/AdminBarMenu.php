@@ -47,7 +47,7 @@ class AdminBarMenu {
 
 		if (
 			is_user_logged_in() &&
-			current_user_can( 'manage_options' )
+			current_user_can( wp_mail_smtp()->get_capability_manage_options() )
 		) {
 			$access = true;
 		}

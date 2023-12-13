@@ -458,6 +458,11 @@
 						margin-bottom: 5px;
 						padding: 10px;
 					}
+					&.inline-info {
+						border-color: #2171B1;
+						margin-bottom: 5px;
+						padding: 10px;
+					}
 					&.inline-edu-notice {
 						border-color: #809EB0;
 						line-height: 1.5em;
@@ -690,6 +695,37 @@
 					padding: 15px;
 					max-width: 1005px;
 					width: 100%;
+				}
+			}
+
+			.wp-mail-smtp-connected-row {
+				display: flex;
+				align-items: center;
+
+				@include media("<tablet") {
+					flex-direction: column;
+					align-items: flex-start;
+				}
+
+				&__info {
+					margin-left: 30px;
+
+					@include media("<tablet") {
+						margin-left: 0;
+						margin-top: 10px;
+					}
+				}
+			}
+
+			p.inline-notice {
+				margin-top: 10px;
+
+				&:first-child {
+					margin-top: 0;
+				}
+
+				&:last-child {
+					margin-bottom: 0;
 				}
 			}
 		}
@@ -974,6 +1010,58 @@
 		&__btn {
 			margin: 0;
 			vertical-align: top;
+		}
+	}
+
+	.wp-mail-smtp-google-sign-in-btn {
+		display: inline-flex;
+		align-items: center;
+		background-color: #4285F4;
+		border-radius: 2px;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+		transition: all 300ms ease-in-out;
+		text-decoration: none;
+		cursor: pointer;
+		color: #ffffff;
+
+		&:hover {
+			box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+		}
+
+		&:active {
+			background: #3367d6;
+		}
+
+		&--disabled {
+			pointer-events: none;
+			background-color: #D4D3D3;
+			box-shadow: none;
+			color: #7F7F7F;
+
+			.wp-mail-smtp-google-sign-in-icon__border,
+			.wp-mail-smtp-google-sign-in-icon__bg {
+				fill: #D4D3D3;
+			}
+
+			.wp-mail-smtp-google-sign-in-icon__symbol {
+				fill: #7F7F7F;
+			}
+		}
+
+		&__icon {
+			overflow: hidden;
+			border-radius: 2px;
+
+			svg {
+				display: block;
+				margin: -3px;
+			}
+		}
+
+		&__text {
+			font-size: 14px;
+			font-weight: 600;
+			margin: 0 10px;
 		}
 	}
 }

@@ -198,7 +198,7 @@ class Loader {
 			$entity = null;
 		}
 
-		return apply_filters( 'wp_mail_smtp_providers_loader_get_entity', $entity, $provider, $request );
+		return apply_filters( 'wp_mail_smtp_providers_loader_get_entity', $entity, $provider, $request, $args );
 	}
 
 	/**

@@ -76,7 +76,7 @@ class Notifications {
 		$access = false;
 
 		if (
-			current_user_can( 'manage_options' ) &&
+			current_user_can( wp_mail_smtp()->get_capability_manage_options() ) &&
 			! Options::init()->get( 'general', 'am_notifications_hidden' )
 		) {
 			$access = true;
@@ -512,7 +512,7 @@ class Notifications {
 		check_ajax_referer( 'wp-mail-smtp-admin', 'nonce' );
 
 		// Check for access and required param.
-		if ( ! current_user_can( 'manage_options' ) || empty( $_POST['id'] ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) || empty( $_POST['id'] ) ) {
 			wp_send_json_error();
 		}
 

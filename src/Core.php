@@ -175,7 +175,7 @@ class Core {
 		}
 
 		// Plugin admin area notices. Display to "admins" only.
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			add_action( 'admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
 			add_action( 'admin_notices', array( $this, 'display_general_notices' ) );
 
@@ -609,7 +609,7 @@ class Core {
 	public function detect_conflicts() {
 
 		// Display only for those who can actually deactivate plugins.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			return;
 		}
 
@@ -1345,5 +1345,24 @@ class Core {
 		} catch ( Exception $e ) {
 			return;
 		}
+	}
+
+	/**
+	 * Get the default capability to manage everything for WP Mail SMTP.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @return string
+	 */
+	public function get_capability_manage_options() {
+
+		/**
+		 * Filters the default capability to manage everything for WP Mail SMTP.
+		 *
+		 * @since 3.11.0
+		 *
+		 * @param string $capability The default capability to manage everything for WP Mail SMTP.
+		 */
+		return apply_filters( 'wp_mail_smtp_core_get_capability_manage_options', 'manage_options' );
 	}
 }

@@ -131,10 +131,7 @@ class Mailer extends MailerAbstract {
 		}
 
 		$headers = isset( $this->body['content']['headers'] ) ? (array) $this->body['content']['headers'] : [];
-
-		if ( ! in_array( $name, [ 'Message-ID', 'CC' ], true ) ) {
-			$value = WP::sanitize_value( $value );
-		}
+		$value   = $this->sanitize_header_value( $name, $value );
 
 		$headers[ $name ] = $value;
 
@@ -538,5 +535,31 @@ class Mailer extends MailerAbstract {
 		}
 
 		return $holder;
+	}
+
+	/**
+	 * Sanitize email header values.
+	 *
+	 * @param string $name  Name of the header.
+	 * @param string $value Value of the header.
+	 *
+	 * @since 3.11.1
+	 */
+	public function sanitize_header_value( $name, $value ) {
+
+		if (
+			in_array(
+				strtolower( $name ),
+				[
+					'message-id',
+					'cc',
+				],
+				true
+			)
+		) {
+			return $value;
+		}
+
+		return parent::sanitize_header_value( $name, $value );
 	}
 }

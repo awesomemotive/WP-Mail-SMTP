@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, wp mail smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, sendinblue, brevo, wp smtp
 Requires at least: 5.2
 Tested up to: 6.4
-Stable tag: 3.11.0
+Stable tag: 3.11.1
 Requires PHP: 7.2
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
@@ -379,6 +379,10 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 3.11.1 - 2024-01-22 =
+- Fixed: Setup Wizard texts.
+- Fixed: Compatibility for List-Unsubscribe header.
 
 = 3.11.0 - 2023-12-13 =
 - Added: Filter to customize the capability required for managing the plugin.

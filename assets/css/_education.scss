@@ -363,7 +363,8 @@
 	}
 
 	/* Gmail mailer one-click setup. */
-	#wp-mail-smtp-setting-row-gmail-one_click_setup_enabled-lite {
+	#wp-mail-smtp-setting-row-gmail-one_click_setup_enabled-lite,
+	#wp-mail-smtp-setting-row-misc-rate_limit-lite {
 			.wp-mail-smtp-toggle::after {
 				content: '';
 				margin-left: 10px;

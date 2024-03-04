@@ -250,6 +250,8 @@ var WPMailSmtpDebugEvents = window.WPMailSmtpDebugEvents || ( function( document
 					popup.setTitle( response.data.title );
 					popup.setContent( response.data.content );
 				} else {
+					popup.setIcon( app.getModalIcon( 'exclamation-circle-regular-red' ) );
+					popup.setType( 'red' );
 					popup.setContent( response.data );
 				}
 			} ).fail( function() {

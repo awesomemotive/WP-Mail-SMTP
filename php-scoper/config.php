@@ -368,57 +368,14 @@ if ( file_exists( 'vendor/league/oauth2-client' ) ) {
 		->name( [ '*.php', 'LICENSE', 'composer.json' ] );
 }
 
-if ( file_exists( 'vendor/aws/aws-sdk-php' ) ) {
+if ( file_exists( 'vendor/aws' ) ) {
 	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/aws/aws-sdk-php' )
-		->name( [ 'LICENSE.md', 'composer.json' ] );
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/aws/aws-sdk-php/src/Api' )
-		->in( 'vendor/aws/aws-sdk-php/src/ClientSideMonitoring' )
-		->in( 'vendor/aws/aws-sdk-php/src/Credentials' )
-		->in( 'vendor/aws/aws-sdk-php/src/Crypto' )
-		->in( 'vendor/aws/aws-sdk-php/src/DefaultsMode' )
-		->in( 'vendor/aws/aws-sdk-php/src/data/email' )
-		->in( 'vendor/aws/aws-sdk-php/src/data/sesv2' )
-		->in( 'vendor/aws/aws-sdk-php/src/Endpoint' )
-		->in( 'vendor/aws/aws-sdk-php/src/EndpointDiscovery' )
-		->in( 'vendor/aws/aws-sdk-php/src/EndpointV2' )
-		->in( 'vendor/aws/aws-sdk-php/src/Exception' )
-		->in( 'vendor/aws/aws-sdk-php/src/Handler' )
-		->in( 'vendor/aws/aws-sdk-php/src/Multipart' )
-		->in( 'vendor/aws/aws-sdk-php/src/Retry' )
-		->in( 'vendor/aws/aws-sdk-php/src/Ses' )
-		->in( 'vendor/aws/aws-sdk-php/src/SesV2' )
-		->in( 'vendor/aws/aws-sdk-php/src/Signature' )
-		->in( 'vendor/aws/aws-sdk-php/src/Token' )
-		->name( [ '*.php' ] );
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/aws/aws-sdk-php/src/data/' )
-		->name( [ 'aliases.json.php', 'endpoints.json.php', 'endpoints_prefix_history.json.php', 'manifest.json.php', 'partitions.json.php' ] );
-	$config['finders'][] = Finder::create()
-		->depth( '==0' )
-		->files()
-		->in( 'vendor/aws/aws-sdk-php/src' )
-		->name( [ '*.php' ] );
-
-	$config['files-whitelist'] = array_merge(
-		$config['files-whitelist'],
-		wms_php_scoper_get_list_of_files( '../vendor/aws/aws-sdk-php/src/data' )
-	);
-}
-
-if ( file_exists( 'vendor/aws/aws-crt-php' ) ) {
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/aws/aws-crt-php' )
-		->name( [ 'LICENSE.md', 'composer.json' ] );
-	$config['finders'][] = Finder::create()
-		->files()
-		->in( 'vendor/aws/aws-crt-php/src' )
-		->name( [ '*.php' ] );
+			->files()
+			->in( 'vendor/aws' )
+			->exclude( [
+				'aws-sdk-php/src/S3',
+				'aws-sdk-php/src/data/s3',
+			] );
 }
 
 if ( file_exists( 'vendor/mtdowling/jmespath.php' ) ) {

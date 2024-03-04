@@ -5,6 +5,9 @@ namespace WPMailSMTP\Tasks;
 use ActionScheduler_Action;
 use ActionScheduler_DataController;
 use ActionScheduler_DBStore;
+use WPMailSMTP\Tasks\Queue\CleanupQueueTask;
+use WPMailSMTP\Tasks\Queue\ProcessQueueTask;
+use WPMailSMTP\Tasks\Queue\SendEnqueuedEmailTask;
 use WPMailSMTP\Tasks\Reports\SummaryEmailTask;
 
 /**
@@ -77,6 +80,9 @@ class Tasks {
 		$tasks = [
 			SummaryEmailTask::class,
 			DebugEventsCleanupTask::class,
+			ProcessQueueTask::class,
+			CleanupQueueTask::class,
+			SendEnqueuedEmailTask::class,
 		];
 
 		/**

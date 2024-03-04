@@ -53,17 +53,15 @@ class Area {
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct() {
-
-		$this->hooks();
-	}
+	public function __construct() {}
 
 	/**
 	 * Assign all hooks to proper places.
 	 *
 	 * @since 1.0.0
+	 * @since 4.0.0 Changed visibility to public.
 	 */
-	protected function hooks() {
+	public function hooks() {
 
 		// Add the Settings link to a plugin on Plugins page.
 		add_filter( 'plugin_action_links_' . plugin_basename( WPMS_PLUGIN_FILE ), [ $this, 'add_plugin_action_link' ], 10, 1 );
@@ -558,6 +556,10 @@ class Area {
 				'gmail'             => [
 					'one_click_setup_upgrade_title'   => wp_kses( __( 'One-Click Setup for Google Mailer <br> is a Pro Feature', 'wp-mail-smtp' ), [ 'br' => [] ] ),
 					'one_click_setup_upgrade_content' => esc_html__( 'We\'re sorry, One-Click Setup for Google Mailer is not available on your plan. Please upgrade to the Pro plan to unlock all these awesome features.', 'wp-mail-smtp' ),
+				],
+				'rate_limit'        => [
+					'upgrade_title'   => wp_kses( __( 'Email Rate Limiting <br> is a Pro Feature', 'wp-mail-smtp' ), [ 'br' => [] ] ),
+					'upgrade_content' => esc_html__( 'We\'re sorry, Email Rate Limiting is not available on your plan. Please upgrade to the Pro plan to unlock all these awesome features.', 'wp-mail-smtp' ),
 				],
 			],
 			'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),

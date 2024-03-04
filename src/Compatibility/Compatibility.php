@@ -28,10 +28,7 @@ class Compatibility {
 	 */
 	public function init() {
 
-		// Setup compatibility only in admin area.
-		if ( WP::in_wp_admin() ) {
-			$this->setup_compatibility();
-		}
+		$this->setup_compatibility();
 	}
 
 	/**
@@ -42,7 +39,10 @@ class Compatibility {
 	public function setup_compatibility() {
 
 		$plugins = [
-			'admin-2020' => '\WPMailSMTP\Compatibility\Plugin\Admin2020',
+			'admin-2020'   => '\WPMailSMTP\Compatibility\Plugin\Admin2020',
+			'wpforms-lite' => '\WPMailSMTP\Compatibility\Plugin\WPFormsLite',
+			'wpforms'      => '\WPMailSMTP\Compatibility\Plugin\WPForms',
+			'woocommerce'  => '\WPMailSMTP\Compatibility\Plugin\WooCommerce',
 		];
 
 		foreach ( $plugins as $key => $classname ) {

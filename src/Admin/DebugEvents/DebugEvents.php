@@ -104,6 +104,10 @@ class DebugEvents {
 			wp_send_json_error( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 		}
 
+		if ( ! self::is_valid_db() ) {
+			wp_send_json_error( esc_html__( 'For some reason the database table was not installed correctly. Please contact plugin support team to diagnose and fix the issue.', 'wp-mail-smtp' ) );
+		}
+
 		global $wpdb;
 
 		$table = self::get_table_name();
@@ -143,6 +147,10 @@ class DebugEvents {
 			wp_send_json_error( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 		}
 
+		if ( ! self::is_valid_db() ) {
+			wp_send_json_error( esc_html__( 'For some reason the database table was not installed correctly. Please contact plugin support team to diagnose and fix the issue.', 'wp-mail-smtp' ) );
+		}
+
 		$event_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : false;
 
 		if ( empty( $event_id ) ) {
@@ -170,6 +178,10 @@ class DebugEvents {
 	 * @return bool|int
 	 */
 	public static function add( $message = '', $type = 0 ) {
+
+		if ( ! self::is_valid_db() ) {
+			return false;
+		}
 
 		if ( ! in_array( $type, array_keys( Event::get_types() ), true ) ) {
 			return false;
@@ -275,6 +287,10 @@ class DebugEvents {
 
 		if ( ! $timestamp || $timestamp > time() ) {
 			return new WP_Error( 'wp_mail_smtp_admin_debug_events_get_error_debug_events_count_invalid_time', 'Invalid time span.' );
+		}
+
+		if ( ! self::is_valid_db() ) {
+			return 0;
 		}
 
 		$transient_key             = self::ERROR_DEBUG_EVENTS_TRANSIENT . '_' . sanitize_title_with_dashes( $span_of_time );

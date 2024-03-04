@@ -374,12 +374,12 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0);
-  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, white));
-  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
-  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
-  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 0%, white 100%);
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%);
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, rgb(255, 255, 255)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%);
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%);
 }
 .wp-mail-smtp-dash-widget .wp-mail-smtp-dash-widget-chart-upgrade .wp-mail-smtp-dash-widget-modal,
 .wp-mail-smtp-dash-widget .wp-mail-smtp-error-no-data-chart .wp-mail-smtp-dash-widget-modal {

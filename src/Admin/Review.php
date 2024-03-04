@@ -136,8 +136,8 @@ class Review {
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-1">
 				<p><?php esc_html_e( 'Are you enjoying WP Mail SMTP?', 'wp-mail-smtp' ); ?></p>
 				<p>
-					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="3"><?php esc_html_e( 'Yes', 'wp-mail-smtp' ); ?></a><br />
-					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="2"><?php esc_html_e( 'Not Really', 'wp-mail-smtp' ); ?></a>
+					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="3"><?php esc_html_e( 'Yes', 'wp-mail-smtp' ); ?></a>&nbsp;&bull;&nbsp;
+					<a href="#" class="wp-mail-smtp-review-switch-step" data-step="2"><?php esc_html_e( 'No', 'wp-mail-smtp' ); ?></a>
 				</p>
 			</div>
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-2" style="display: none">
@@ -147,24 +147,23 @@ class Review {
 					printf(
 						'<a href="%1$s" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">%2$s</a>',
 						// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/plugin-feedback/', [ 'medium' => 'review-notice', 'content' => 'Give Feedback' ] ) ),
-						esc_html__( 'Give Feedback', 'wp-mail-smtp' )
+						esc_url( wp_mail_smtp()->get_utm_url( 'https://wpmailsmtp.com/plugin-feedback/', [ 'medium' => 'review-notice', 'content' => 'Provide Feedback' ] ) ),
+						esc_html__( 'Provide Feedback', 'wp-mail-smtp' )
 					);
 					?>
-					<br>
+					&nbsp;&bull;&nbsp;
 					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php esc_html_e( 'No thanks', 'wp-mail-smtp' ); ?>
 					</a>
 				</p>
 			</div>
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-3" style="display: none">
-				<p><?php esc_html_e( 'That’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'wp-mail-smtp' ); ?></p>
-				<p><strong><?php echo wp_kses( __( '~ Jared Atchison<br>Co-Founder, WP Mail SMTP', 'wp-mail-smtp' ), [ 'br' => [] ] ); ?></strong></p>
+				<p><?php esc_html_e( 'That\'s fantastic! Would you consider giving it a 5-star rating on WordPress.org? It will help other users with email issues and it will mean the world to us!', 'wp-mail-smtp' ); ?></p>
 				<p>
 					<a href="https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
-						<?php esc_html_e( 'Ok, you deserve it', 'wp-mail-smtp' ); ?>
-					</a><br>
-					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Nope, maybe later', 'wp-mail-smtp' ); ?></a><br>
+						<?php esc_html_e( 'Yes, I\'ll rate it with 5-stars', 'wp-mail-smtp' ); ?>
+					</a>&nbsp;&bull;&nbsp;
+					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'No, maybe later', 'wp-mail-smtp' ); ?></a>&nbsp;&bull;&nbsp;
 					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'I already did', 'wp-mail-smtp' ); ?></a>
 				</p>
 			</div>

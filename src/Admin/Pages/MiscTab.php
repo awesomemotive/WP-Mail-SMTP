@@ -5,6 +5,7 @@ namespace WPMailSMTP\Admin\Pages;
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Helpers\UI;
+use WPMailSMTP\OptimizedEmailSending;
 use WPMailSMTP\Options;
 use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
@@ -309,6 +310,55 @@ class MiscTab extends PageAbstract {
 				</div>
 			</div>
 
+			<!-- Optimize email sending -->
+			<div id="wp-mail-smtp-setting-row-optimize-email-sending" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-optimize-email-sending">
+						<?php esc_html_e( 'Optimize Email Sending', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<?php
+					UI::toggle(
+						[
+							'name'    => 'wp-mail-smtp[general][' . OptimizedEmailSending::SETTINGS_SLUG . ']',
+							'id'      => 'wp-mail-smtp-setting-optimize-email-sending',
+							'value'   => 'true',
+							'checked' => (bool) OptimizedEmailSending::is_enabled(),
+						]
+					);
+					?>
+					<p class="desc">
+						<?php
+						printf(
+							wp_kses( /* translators: %1$s - Documentation URL. */
+								__( 'Send emails asynchronously, which will make pages with email requests load faster, but may delay email delivery by a minute or two. <a href="%1$s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wp-mail-smtp' ),
+								[
+									'a' => [
+										'href'   => [],
+										'rel'    => [],
+										'target' => [],
+									],
+								]
+							),
+							esc_url(
+								wp_mail_smtp()->get_utm_url(
+									'https://wpmailsmtp.com/docs/a-complete-guide-to-miscellaneous-settings/#optimize-email-sending',
+									[
+										'medium'  => 'misc-settings',
+										'content' => 'Optimize Email Sending - support article',
+									]
+								)
+							)
+						);
+						?>
+					</p>
+				</div>
+			</div>
+
+			<!-- Rate limit -->
+			<?php $this->display_rate_limit_settings(); ?>
+
 			<!-- Uninstall -->
 			<div id="wp-mail-smtp-setting-row-uninstall" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
@@ -340,6 +390,57 @@ class MiscTab extends PageAbstract {
 
 		</form>
 
+		<?php
+	}
+
+	/**
+	 * Display rate limit settings.
+	 *
+	 * @since 4.0.0
+	 */
+	protected function display_rate_limit_settings() {
+		?>
+		<div  id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-rate_limit-lite" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="<?php echo 'wp-mail-smtp-setting-' . esc_attr( $this->get_slug() ) . '-rate_limit-lite'; ?>">
+					<?php esc_html_e( 'Email Rate Limiting', 'wp-mail-smtp' ); ?>
+				</label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<?php
+				UI::toggle(
+					[
+						'id' => 'wp-mail-smtp-setting-' . esc_attr( $this->get_slug() ) . '-rate_limit-lite',
+					]
+				);
+				?>
+				<p class="desc">
+					<?php
+					printf(
+						wp_kses( /* translators: %1$s - Documentation URL. */
+							__( 'Limit the number of emails this site will send in each time interval (per minute, hour, day, week and month). Emails that will cross those set limits will be queued and sent as soon as your limits allow. <a href="%1$s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wp-mail-smtp' ),
+							[
+								'a' => [
+									'href'   => [],
+									'rel'    => [],
+									'target' => [],
+								],
+							]
+						),
+						esc_url(
+							wp_mail_smtp()->get_utm_url(
+								'https://wpmailsmtp.com/docs/a-complete-guide-to-miscellaneous-settings/#email-rate-limiting',
+								[
+									'medium'  => 'misc-settings',
+									'content' => 'Email Rate Limiting - support article',
+								]
+							)
+						)
+					);
+					?>
+				</p>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -378,6 +479,9 @@ class MiscTab extends PageAbstract {
 		}
 		if ( empty( $data['general'][ SummaryReportEmail::SETTINGS_SLUG ] ) ) {
 			$data['general'][ SummaryReportEmail::SETTINGS_SLUG ] = false;
+		}
+		if ( empty( $data['general'][ OptimizedEmailSending::SETTINGS_SLUG ] ) ) {
+			$data['general'][ OptimizedEmailSending::SETTINGS_SLUG ] = false;
 		}
 
 		$is_summary_report_email_opt_changed = $options->is_option_changed(

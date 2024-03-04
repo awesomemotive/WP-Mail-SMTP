@@ -645,6 +645,10 @@ class AboutTab extends PageAbstract {
 
 			$plugin_basename = $installer->plugin_info();
 
+			if ( $plugin_basename === 'wpforms-lite/wpforms.php' ) {
+				add_option( 'wpforms_installation_source', 'wp-mail-smtp-about-us' );
+			}
+
 			// Activate the plugin silently.
 			$activated = activate_plugin( $plugin_basename );
 

@@ -2,7 +2,7 @@ vendor/
 node_modules/
 /.packages/
 /build/
-gulpfile.js
+gulpfile.mjs
 assets/js/vendor/
 assets/pro/js/vendor/
 assets/js/*.min.js

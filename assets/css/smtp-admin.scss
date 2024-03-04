@@ -969,6 +969,12 @@
 
 	// Settings -> Misc tab styles.
 	.wp-mail-smtp-tab-misc {
+		#wp-mail-smtp-setting-row-rate_limit_periods {
+			input[type=number] {
+				width: 100px;
+			}
+		}
+
 		#wp-mail-smtp-setting-row-uninstall .wp-mail-smtp-danger {
 			font-weight: 600;
 			color: $negative;

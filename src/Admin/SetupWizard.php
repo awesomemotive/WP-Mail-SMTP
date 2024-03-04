@@ -944,6 +944,7 @@ class SetupWizard {
 			// Disable the WPForms redirect after plugin activation.
 			if ( $slug === 'wpforms-lite' ) {
 				update_option( 'wpforms_activation_redirect', true );
+				add_option( 'wpforms_installation_source', 'wp-mail-smtp-setup-wizard' );
 			}
 
 			// Disable the AIOSEO redirect after plugin activation.

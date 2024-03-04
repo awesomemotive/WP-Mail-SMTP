@@ -28,13 +28,15 @@
 
 body.wp-admin {
 	#adminmenu #toplevel_page_wp-mail-smtp .wp-menu-image.svg {
-		background-position-x: 11px;
+		background-position-x: 10px;
+		background-position-y: 8px;
 	}
+}
 
-	&.folded {
+@media screen and (max-width: 782px) {
+	body.wp-admin {
 		#adminmenu #toplevel_page_wp-mail-smtp .wp-menu-image.svg {
 			background-position-x: 9px;
 		}
 	}
 }
-

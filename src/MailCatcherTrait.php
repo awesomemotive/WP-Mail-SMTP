@@ -79,10 +79,7 @@ trait MailCatcherTrait {
 	 *
 	 * @return bool
 	 */
-	public function send() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.NestingLevel.MaxExceeded
-
-		$connection  = wp_mail_smtp()->get_connections_manager()->get_mail_connection();
-		$mail_mailer = $connection->get_mailer_slug();
+	public function send() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
 		// Reset email related variables.
 		$this->debug_event_id             = false;
@@ -116,170 +113,256 @@ trait MailCatcherTrait {
 			return false;
 		}
 
+		// If it's not a test email,
+		// check if the email should be enqueued
+		// instead of being sent immediately.
+		if ( ! $this->is_test_email && ! $this->is_setup_wizard_test_email ) {
+
+			/**
+			 * Filters whether an email should be enqueued or sent immediately.
+			 *
+			 * @since 4.0.0
+			 *
+			 * @param bool  $should_enqueue Whether to enqueue an email, or send it.
+			 * @param array $wp_mail_args   Original arguments of the `wp_mail` call.
+			 */
+			$should_enqueue_email = apply_filters(
+				'wp_mail_smtp_mail_catcher_send_enqueue_email',
+				false,
+				wp_mail_smtp()->get_processor()->get_filtered_wp_mail_args()
+			);
+
+			$queue = wp_mail_smtp()->get_queue();
+
+			// If we should enqueue the email,
+			// and the email has been enqueued,
+			// bail.
+			if ( $should_enqueue_email && $queue->enqueue_email() ) {
+				return true;
+			}
+		}
+
+		$connection  = wp_mail_smtp()->get_connections_manager()->get_mail_connection();
+		$mailer_slug = $connection->get_mailer_slug();
+
 		// Define a custom header, that will be used to identify the plugin and the mailer.
-		$this->XMailer = 'WPMailSMTP/Mailer/' . $mail_mailer . ' ' . WPMS_PLUGIN_VER; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$this->XMailer = 'WPMailSMTP/Mailer/' . $mailer_slug . ' ' . WPMS_PLUGIN_VER;
 
 		// Use the default PHPMailer, as we inject our settings there for certain providers.
 		if (
-			$mail_mailer === 'mail' ||
-			$mail_mailer === 'smtp' ||
-			$mail_mailer === 'pepipost'
+			$mailer_slug === 'mail' ||
+			$mailer_slug === 'smtp' ||
+			$mailer_slug === 'pepipost'
 		) {
-			try {
-				if ( DebugEvents::is_debug_enabled() && ! $this->is_test_email ) {
-					$this->SMTPDebug   = 3; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$this->Debugoutput = [ $this, 'debug_output_callback' ]; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				}
+			return $this->smtp_send( $connection );
+		} else {
+			return $this->api_send( $connection );
+		}
+	}
 
-				/**
-				 * Fires before email pre send via SMTP.
-				 *
-				 * Allow to hook early to catch any early failed emails.
-				 *
-				 * @since 2.9.0
-				 *
-				 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
-				 */
-				do_action( 'wp_mail_smtp_mailcatcher_smtp_pre_send_before', $this );
+	/**
+	 * Send email via SMTP.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param ConnectionInterface $connection The connection object.
+	 *
+	 * @throws Exception When sending via PhpMailer fails for some reason.
+	 *
+	 * @return bool
+	 */
+	private function smtp_send( $connection ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-				// Prepare all the headers.
-				if ( ! $this->preSend() ) {
-					return false;
-				}
+		$mailer_slug = $connection->get_mailer_slug();
 
-				/**
-				 * Fires before email send via SMTP.
-				 *
-				 * Allow to hook after all the preparation before the actual sending.
-				 *
-				 * @since 2.9.0
-				 *
-				 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
-				 */
-				do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
-
-				$post_send = $this->postSend();
-
-				DebugEvents::add_debug(
-					esc_html__( 'An email request was sent.', 'wp-mail-smtp' )
-				);
-
-				return $post_send;
-			} catch ( Exception $e ) {
-
-				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				$this->mailHeader = '';
-
-				$this->setError( $e->getMessage() );
-
-				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mail_mailer )->get_title() ) . "\r\n" . $this->ErrorInfo;
-
-				// Set the debug error, but not for default PHP mailer.
-				if ( $mail_mailer !== 'mail' ) {
-					$this->debug_event_id = Debug::set( $error_message );
-					$this->latest_error   = $error_message;
-
-					if ( DebugEvents::is_debug_enabled() && ! empty( $this->debug_output_buffer ) ) {
-						$debug_message  = $error_message . "\r\n" . esc_html__( 'Debug Output:', 'wp-mail-smtp' ) . "\r\n";
-						$debug_message .= implode( "\r\n", $this->debug_output_buffer );
-
-						$this->debug_event_id = DebugEvents::add_debug( $debug_message );
-					}
-				}
-
-				/**
-				 * Fires after email sent failure via SMTP.
-				 *
-				 * @since 3.5.0
-				 *
-				 * @param string               $error_message Error message.
-				 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
-				 * @param string               $mail_mailer   Current mailer name.
-				 */
-				do_action( 'wp_mail_smtp_mailcatcher_send_failed', $error_message, $this, $mail_mailer );
-
-				if ( $this->exceptions ) {
-					throw $e;
-				}
-
-				return false;
-			} finally {
-
-				// Clear debug output buffer.
-				$this->debug_output_buffer = [];
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		try {
+			if ( DebugEvents::is_debug_enabled() && ! $this->is_test_email ) {
+				$this->SMTPDebug   = 3;
+				$this->Debugoutput = [ $this, 'debug_output_callback' ];
 			}
-		}
 
-		// We need this so that the \PHPMailer class will correctly prepare all the headers.
-		$this->Mailer = 'mail'; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			/**
+			 * Fires before email pre send via SMTP.
+			 *
+			 * Allow to hook early to catch any early failed emails.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_smtp_pre_send_before', $this );
 
-		/**
-		 * Fires before email pre send.
-		 *
-		 * Allow to hook early to catch any early failed emails.
-		 *
-		 * @since 2.9.0
-		 *
-		 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
-		 */
-		do_action( 'wp_mail_smtp_mailcatcher_pre_send_before', $this );
+			// Prepare all the headers.
+			if ( ! $this->preSend() ) {
+				$this->throw_exception( $this->ErrorInfo );
+			}
 
-		// Prepare everything (including the message) for sending.
-		if ( ! $this->preSend() ) {
-			return false;
-		}
+			/**
+			 * Fires before email send via SMTP.
+			 *
+			 * Allow to hook after all the preparation before the actual sending.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_smtp_send_before', $this );
 
-		$mailer = wp_mail_smtp()->get_providers()->get_mailer( $mail_mailer, $this, $connection );
+			if ( ! $this->postSend() ) {
+				$this->throw_exception( $this->ErrorInfo );
+			}
 
-		if ( ! $mailer ) {
-			return false;
-		}
+			DebugEvents::add_debug(
+				esc_html__( 'An email request was sent.', 'wp-mail-smtp' )
+			);
 
-		if ( ! $mailer->is_php_compatible() ) {
-			return false;
-		}
+			return true;
+		} catch ( Exception $e ) {
+			$this->mailHeader = '';
 
-		/**
-		 * Fires before email send.
-		 *
-		 * Allows to hook after all the preparation before the actual sending.
-		 *
-		 * @since 3.3.0
-		 *
-		 * @param MailerAbstract $mailer The Mailer object.
-		 */
-		do_action( 'wp_mail_smtp_mailcatcher_send_before', $mailer );
+			// We need this to append SMTP error to the `PHPMailer::ErrorInfo` property.
+			$this->setError( $e->getMessage() );
 
-		/*
-		 * Send the actual email.
-		 * We reuse everything, that was preprocessed for usage in \PHPMailer.
-		 */
-		$mailer->send();
-
-		$is_sent = $mailer->is_email_sent();
-
-		if ( ! $is_sent ) {
-			$error         = $mailer->get_response_error();
-			$error_message = '';
-
-			if ( ! empty( $error ) ) {
-				// Add mailer to the beginning and save to display later.
-				$message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer->get_mailer_name() )->get_title() ) . "\r\n";
-
-				$conflicts = new Conflicts();
-
-				if ( $conflicts->is_detected() ) {
-					$conflict_plugin_names = implode( ', ', $conflicts->get_all_conflict_names() );
-
-					$message .= 'Conflicts: ' . esc_html( $conflict_plugin_names ) . "\r\n";
-				}
-
-				$error_message = $message . $error;
+			// Set the debug error, but not for default PHP mailer.
+			if ( $mailer_slug !== 'mail' ) {
+				$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer_slug )->get_title() ) . "\r\n" . $this->ErrorInfo;
 
 				$this->debug_event_id = Debug::set( $error_message );
 				$this->latest_error   = $error_message;
+
+				if ( DebugEvents::is_debug_enabled() && ! empty( $this->debug_output_buffer ) ) {
+					$debug_message  = $error_message . "\r\n" . esc_html__( 'Debug Output:', 'wp-mail-smtp' ) . "\r\n";
+					$debug_message .= implode( "\r\n", $this->debug_output_buffer );
+
+					$this->debug_event_id = DebugEvents::add_debug( $debug_message );
+				}
 			}
+
+			/**
+			 * Fires after email sent failure via SMTP.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param string               $error_message Error message.
+			 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
+			 * @param string               $mailer_slug   Current mailer name.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $this->ErrorInfo, $this, $mailer_slug );
+
+			if ( $this->exceptions ) {
+				throw $e;
+			}
+
+			return false;
+		} finally {
+
+			// Clear debug output buffer.
+			$this->debug_output_buffer = [];
+		}
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+	}
+
+	/**
+	 * Send email via API integration.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param ConnectionInterface $connection The connection object.
+	 *
+	 * @throws Exception When sending fails for some reason.
+	 *
+	 * @return bool
+	 */
+	private function api_send( $connection ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+
+		$mailer_slug = $connection->get_mailer_slug();
+
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		try {
+			// We need this so that the \PHPMailer class will correctly prepare all the headers.
+			$this->Mailer = 'mail';
+
+			/**
+			 * Fires before email pre send.
+			 *
+			 * Allow to hook early to catch any early failed emails.
+			 *
+			 * @since 2.9.0
+			 *
+			 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_pre_send_before', $this );
+
+			// Prepare everything (including the message) for sending.
+			if ( ! $this->preSend() ) {
+				$this->throw_exception( $this->ErrorInfo );
+			}
+
+			$mailer = wp_mail_smtp()->get_providers()->get_mailer( $mailer_slug, $this, $connection );
+
+			if ( ! $mailer ) {
+				$this->throw_exception( esc_html__( 'The selected mailer not found.', 'wp-mail-smtp' ) );
+			}
+
+			if ( ! $mailer->is_php_compatible() ) {
+				$this->throw_exception( esc_html__( 'The selected mailer is not compatible with your PHP version.', 'wp-mail-smtp' ) );
+			}
+
+			/**
+			 * Fires before email send.
+			 *
+			 * Allows to hook after all the preparation before the actual sending.
+			 *
+			 * @since 3.3.0
+			 *
+			 * @param MailerAbstract $mailer The Mailer object.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_send_before', $mailer );
+
+			/*
+			 * Send the actual email.
+			 * We reuse everything, that was preprocessed for usage in \PHPMailer.
+			 */
+			$mailer->send();
+
+			$is_sent = $mailer->is_email_sent();
+
+			/**
+			 * Fires after email send.
+			 *
+			 * Allow to perform any actions with the data.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param MailerAbstract       $mailer      The Mailer object.
+			 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+			 */
+			do_action( 'wp_mail_smtp_mailcatcher_send_after', $mailer, $this );
+
+			if ( $is_sent !== true ) {
+				$this->throw_exception( $mailer->get_response_error() );
+			}
+
+			// Clear debug messages if email is successfully sent.
+			Debug::clear();
+
+			return true;
+		} catch ( Exception $e ) {
+			// Add mailer to the beginning and save to display later.
+			$message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer_slug )->get_title() ) . "\r\n";
+
+			$conflicts = new Conflicts();
+
+			if ( $conflicts->is_detected() ) {
+				$conflict_plugin_names = implode( ', ', $conflicts->get_all_conflict_names() );
+				$message              .= 'Conflicts: ' . esc_html( $conflict_plugin_names ) . "\r\n";
+			}
+
+			$error_message        = $message . $e->getMessage();
+			$this->debug_event_id = Debug::set( $error_message );
+			$this->latest_error   = $error_message;
 
 			/**
 			 * Fires after email sent failure.
@@ -288,28 +371,17 @@ trait MailCatcherTrait {
 			 *
 			 * @param string               $error_message Error message.
 			 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
-			 * @param string               $mail_mailer   Current mailer name.
+			 * @param string               $mailer_slug   Current mailer name.
 			 */
-			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $error_message, $this, $mail_mailer );
-		} else {
+			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $e->getMessage(), $this, $mailer_slug );
 
-			// Clear debug messages if email is successfully sent.
-			Debug::clear();
+			if ( $this->exceptions ) {
+				throw $e;
+			}
+
+			return false;
 		}
-
-		/**
-		 * Fires after email send.
-		 *
-		 * Allow to perform any actions with the data.
-		 *
-		 * @since 3.5.0
-		 *
-		 * @param MailerAbstract       $mailer      The Mailer object.
-		 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
-		 */
-		do_action( 'wp_mail_smtp_mailcatcher_send_after', $mailer, $this );
-
-		return $is_sent;
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 	}
 
 	/**
@@ -392,5 +464,85 @@ trait MailCatcherTrait {
 	public function is_emailing_blocked() {
 
 		return $this->is_emailing_blocked;
+	}
+
+	/**
+	 * Return the list of properties representing
+	 * this class' state.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return array State of this class.
+	 */
+	private function get_state_properties() {
+
+		return [
+			'CharSet',
+			'ContentType',
+			'Encoding',
+			'CustomHeader',
+			'Subject',
+			'Body',
+			'AltBody',
+			'ReplyTo',
+			'to',
+			'cc',
+			'bcc',
+			'attachment',
+		];
+	}
+
+	/**
+	 * Return an array of relevant properties.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return array State of this class.
+	 */
+	public function get_state() {
+
+		$state = [];
+
+		foreach ( $this->get_state_properties() as $property ) {
+			$state[ $property ] = $this->{$property};
+		}
+
+		return $state;
+	}
+
+	/**
+	 * Set properties from a provided array of data.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param array $state Array of properties to apply.
+	 */
+	public function set_state( $state ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
+
+		// Filter out non-allowed properties.
+		$state = array_intersect_key(
+			$state,
+			array_flip( $this->get_state_properties() )
+		);
+
+		foreach ( $state as $property => $value ) {
+			if ( $property !== 'attachment' ) {
+				$this->{$property} = $value;
+			} else {
+				// Handle potential I/O exceptions
+				// in PHPMailer when attaching files.
+				$this->clearAttachments();
+
+				foreach ( $state['attachment'] as $attachment ) {
+					[ $path, , $name ] = $attachment;
+
+					try {
+						$this->addAttachment( $path, $name );
+					} catch ( Exception $e ) {
+						continue;
+					}
+				}
+			}
+		}
 	}
 }

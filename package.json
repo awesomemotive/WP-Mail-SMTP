@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "3.11.1",
+  "version": "4.0.2",
   "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
@@ -21,11 +21,11 @@
     "gulp": "^4.0.2",
     "gulp-cached": "^1.1.1",
     "gulp-clean": "^0.4.0",
-    "gulp-debug": "^4.0.0",
-    "gulp-imagemin": "^7.1.0",
+    "gulp-debug": "^5.0.1",
+    "gulp-imagemin": "^9.0.0",
     "gulp-include": "^2.4.1",
     "gulp-rename": "^1.4.0",
-    "gulp-replace": "^1.0.0",
+    "gulp-replace": "^1.1.4",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify": "^3.0.2",
@@ -36,15 +36,15 @@
     "lodash": "^4.17.21",
     "merge-stream": "^2.0.0",
     "npm-run-all": "^4.1.5",
-    "sass": "^1.45.2",
-    "y18n": "^3.2.2",
-    "yargs": "^13.3.2",
+    "sass": "^1.69.6",
+    "y18n": "^5.0.8",
+    "yargs": "^17.7.2",
     "yargs-parser": "^13.1.2",
-    "trim-newlines": "^3.0.1"
+    "trim-newlines": "^5.0.0"
   },
   "engines": {
-    "node": ">=14.17.6",
-    "npm": ">=6.14.15"
+    "node": ">=18.19.0",
+    "npm": ">=10.2.3"
   },
   "scripts": {
     "gulp": "node ./node_modules/gulp/bin/gulp.js",

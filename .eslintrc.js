@@ -15,7 +15,7 @@ module.exports = {
 	env: {
 
 		/**
-		 * Mostly fix require() function recognition in gulpfile.js.
+		 * Mostly fix require() function recognition in gulpfile.mjs.
 		 *
 		 * @since 1.5
 		 */

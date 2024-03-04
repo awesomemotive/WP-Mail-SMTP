@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP;
 
+use phpmailerException;
+
 // Load PHPMailer class, so we can subclass it.
 if ( ! class_exists( 'PHPMailer', false ) ) {
 	require_once ABSPATH . WPINC . '/class-phpmailer.php';
@@ -53,5 +55,19 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	public function get_line_ending() {
 
 		return $this->LE; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+	}
+
+	/**
+	 * Throw PHPMailer exception.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param string $error Error message.
+	 *
+	 * @throws phpmailerException PHPMailer exception.
+	 */
+	protected function throw_exception( $error ) {
+
+		throw new phpmailerException( $error );
 	}
 }

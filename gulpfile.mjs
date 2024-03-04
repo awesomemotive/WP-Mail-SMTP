@@ -1,20 +1,25 @@
 /**
  * Load plugins.
  */
-var gulp = require( 'gulp' ),
-	cached = require( 'gulp-cached' ),
-	sass = require( 'gulp-sass' )(require( 'sass' )),
-	sourcemaps = require( 'gulp-sourcemaps' ),
-	rename = require( 'gulp-rename' ),
-	debug = require( 'gulp-debug' ),
-	uglify = require( 'gulp-uglify' ),
-	imagemin = require( 'gulp-imagemin' ),
-	zip = require( 'gulp-zip' ),
-	replace = require( 'gulp-replace' ),
-	packageJSON = require( './package.json' ),
-	exec = require( 'child_process' ).exec,
-	clean = require( 'gulp-clean' ),
-	merge = require('merge-stream');
+import gulp from 'gulp';
+import cached from 'gulp-cached';
+import _sass from 'sass';
+import gulpSass from 'gulp-sass';
+import sourcemaps from 'gulp-sourcemaps';
+import rename from 'gulp-rename';
+import debug from 'gulp-debug';
+import uglify from 'gulp-uglify';
+import imagemin from 'gulp-imagemin';
+import zip from 'gulp-zip';
+import replace from 'gulp-replace';
+import { createRequire } from 'module';
+import { exec } from 'child_process';
+import clean from 'gulp-clean';
+import merge from 'merge-stream';
+
+const sass = gulpSass( _sass );
+const packageJSONRequire = createRequire( import.meta.url );
+const packageJSON = packageJSONRequire( './package.json' );
 
 var plugin = {
 	name: 'WP Mail SMTP',
@@ -69,7 +74,7 @@ var plugin = {
 		'!**/*.dist',
 		'!**/*.json',
 		'!**/*.lock',
-		'!**/gulpfile.js',
+		'!**/gulpfile.mjs',
 		'!**/.eslintrc.js',
 		'!**/.eslintignore.js',
 		'!**/AUTHORS',
@@ -119,7 +124,8 @@ var plugin = {
 		'!phpcs.xml',
 		'!crowdin.yml',
 		'!.env.example',
-		'!.env'
+		'!.env',
+		'!.nvmrc',
 	],
 	lite_files: [
 		'!assets/pro/**',
@@ -158,7 +164,7 @@ var plugin = {
 		"**/*.php",
 		"**/*.js",
 		"!**/*.min.js",
-		"!gulpfile.js",
+		"!gulpfile.mjs",
 		"!assets/js/vendor/**",
 		"!assets/pro/js/vendor/**",
 		"!.codeception/**",

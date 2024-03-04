@@ -785,10 +785,18 @@ class Options {
 						/** @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ? WPMS_DO_NOT_SEND : $value;
 						break;
+
 					case SummaryReportEmail::SETTINGS_SLUG:
 						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ?
 							$this->parse_boolean( WPMS_SUMMARY_REPORT_EMAIL_DISABLED ) :
+							$value;
+						break;
+
+					case OptimizedEmailSending::SETTINGS_SLUG:
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ?
+							$this->parse_boolean( WPMS_OPTIMIZED_EMAIL_SENDING_ENABLED ) :
 							$value;
 						break;
 				}
@@ -1108,8 +1116,13 @@ class Options {
 						/** @noinspection PhpUndefinedConstantInspection */
 						$return = defined( 'WPMS_DO_NOT_SEND' ) && WPMS_DO_NOT_SEND;
 						break;
+
 					case SummaryReportEmail::SETTINGS_SLUG:
 						$return = defined( 'WPMS_SUMMARY_REPORT_EMAIL_DISABLED' );
+						break;
+
+					case OptimizedEmailSending::SETTINGS_SLUG:
+						$return = defined( 'WPMS_OPTIMIZED_EMAIL_SENDING_ENABLED' );
 						break;
 				}
 
@@ -1236,6 +1249,7 @@ class Options {
 							case 'uninstall':
 							case UsageTracking::SETTINGS_SLUG:
 							case SummaryReportEmail::SETTINGS_SLUG:
+							case OptimizedEmailSending::SETTINGS_SLUG:
 								$options[ $group ][ $option_name ] = (bool) $option_value;
 								break;
 						}

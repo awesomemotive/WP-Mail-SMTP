@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP;
 
+use PHPMailer\PHPMailer\Exception;
+
 /**
  * Class MailCatcher replaces the \PHPMailer\PHPMailer\PHPMailer introduced in WP 5.5 and
  * modifies the email sending logic. Thus, we can use other mailers API to do what we need, or stop emails completely.
@@ -46,5 +48,19 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	public function get_line_ending() {
 
 		return static::$LE; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+	}
+
+	/**
+	 * Throw PHPMailer exception.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param string $error Error message.
+	 *
+	 * @throws Exception PHPMailer exception.
+	 */
+	protected function throw_exception( $error ) {
+
+		throw new Exception( $error );
 	}
 }

@@ -79,15 +79,18 @@ class WPMailInitiator {
 	 */
 	public function hooks() {
 
-		// Initialize initiator data.
-		add_filter(
-			'wp_mail',
-			function ( $args ) {
-				$this->set_initiator();
+		// Capture `wp_mail` function call.
+		add_action( 'wp_mail_smtp_processor_capture_wp_mail_call', [ $this, 'capture_wp_mail_call' ], 0 );
+	}
 
-				return $args;
-			}
-		);
+	/**
+	 * Capture `wp_mail` function call.
+	 *
+	 * @since 4.0.0
+	 */
+	public function capture_wp_mail_call() {
+
+		$this->set_initiator();
 	}
 
 	/**
@@ -179,6 +182,15 @@ class WPMailInitiator {
 		$this->reset();
 
 		$backtrace = $this->get_wpmail_backtrace();
+
+		/**
+		 * Filter the `wp_mail` function initiator data.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param array $backtrace Backtrace data.
+		 */
+		$backtrace = apply_filters( 'wp_mail_smtp_wp_mail_initiator_set_initiator', $backtrace );
 
 		if ( empty( $backtrace['file'] ) ) {
 			return;

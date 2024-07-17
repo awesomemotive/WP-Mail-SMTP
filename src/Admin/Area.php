@@ -1401,7 +1401,7 @@ class Area {
 			array_filter(
 				$submenu[ self::SLUG ],
 				function ( $item ) {
-					return strpos( $item[2], 'https://wpmailsmtp.com/lite-upgrade' ) !== false;
+					return strpos( urldecode( $item[2] ), 'wpmailsmtp.com/lite-upgrade' ) !== false;
 				}
 			)
 		);
@@ -1418,6 +1418,15 @@ class Area {
 		} else {
 			$submenu[ self::SLUG ][ $upgrade_link_position ][] = 'wp-mail-smtp-sidebar-upgrade-pro';
 		}
+
+		$current_screen      = get_current_screen();
+		$upgrade_utm_content = $current_screen === null ? 'Upgrade to Pro' : 'Upgrade to Pro - ' . $current_screen->base;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$upgrade_utm_content = empty( $_GET['tab'] ) ? $upgrade_utm_content : $upgrade_utm_content . ' -- ' . sanitize_key( $_GET['tab'] );
+
+		// Add the correct utm_content to the menu item.
+		$submenu[ self::SLUG ][ $upgrade_link_position ][2] =
+			esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'admin-menu', 'content' => $upgrade_utm_content ] ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Output inline styles.

@@ -380,10 +380,21 @@ abstract class OptionsAbstract implements OptionsInterface {
 						<?php esc_html_e( 'All the defined constants will stop working and you will be able to change all the values on this page.', 'wp-mail-smtp' ); ?>
 					</p>
 				<?php else : ?>
-					<input name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][pass]" type="password"
-						value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'pass' ) ); ?>"
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-pass" spellcheck="false" autocomplete="new-password"
-					/>
+
+					<?php
+					$slug  = $this->get_slug();
+					$value = $this->connection_options->get( $slug, 'pass' );
+
+					UI::hidden_password_field(
+						[
+							'name'       => "wp-mail-smtp[{$slug}][pass]",
+							'id'         => "wp-mail-smtp-setting-{$slug}-pass",
+							'value'      => $value,
+							'clear_text' => esc_html__( 'Remove Password', 'wp-mail-smtp' ),
+						]
+					);
+					?>
+
 					<p class="desc">
 						<?php esc_html_e( 'The password is encrypted in the database, but for improved security we recommend using your site\'s WordPress configuration file to set your password.', 'wp-mail-smtp' ); ?>
 						<br>

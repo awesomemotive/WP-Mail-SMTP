@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 4.0.2
+ * Version: 4.1.0
  * Requires at least: 5.5
  * Requires PHP: 7.2
  * Plugin URI: https://wpmailsmtp.com/
@@ -253,7 +253,7 @@ if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
 	 *
 	 * @since 0.11.1
 	 */
-	define( 'WPMS_PLUGIN_VER', '4.0.2' );
+	define( 'WPMS_PLUGIN_VER', '4.1.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	/**

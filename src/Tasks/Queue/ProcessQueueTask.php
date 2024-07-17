@@ -39,6 +39,9 @@ class ProcessQueueTask extends Task {
 		// Register the action handler.
 		add_action( self::ACTION, [ $this, 'process' ] );
 
+		// Cleanup completed task occurrences.
+		add_action( 'action_scheduler_after_process_queue', [ $this, 'cleanup' ] );
+
 		// Exit if this task the queue is disabled, or it's already scheduled.
 		if (
 			! wp_mail_smtp()->get_queue()->is_enabled() ||
@@ -67,5 +70,15 @@ class ProcessQueueTask extends Task {
 		if ( ! $queue->is_enabled() ) {
 			$this->cancel_force();
 		}
+	}
+
+	/**
+	 * Cleanup completed tasks.
+	 *
+	 * @since 4.1.0
+	 */
+	public function cleanup() {
+
+		$this->remove_completed( 10 );
 	}
 }

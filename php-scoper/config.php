@@ -341,6 +341,46 @@ $config = [
 			return $content;
 		},
 
+		/**
+		 * Fix the prefixed global PHP classes added in PHP 8.1 and above.
+		 *
+		 * Most likely this issue is fixed in the latest PHP-Scoper version, and we can
+		 * remove this after update.
+		 *
+		 * @param string $filePath The path of the current file.
+		 * @param string $prefix   The prefix to be used.
+		 * @param string $content  The content of the specific file.
+		 *
+		 * @return string The modified content.
+		 */
+		function( $file_path, $prefix, $content ) {
+
+			return str_replace(
+				[
+					'WPMailSMTP\\Vendor\\Attribute',
+					'WPMailSMTP\\Vendor\\AllowDynamicProperties',
+					'WPMailSMTP\\Vendor\\Override',
+					'WPMailSMTP\\Vendor\\ReturnTypeWillChange',
+					'WPMailSMTP\\Vendor\\SensitiveParameter',
+					'WPMailSMTP\\Vendor\\Fiber',
+					'WPMailSMTP\\Vendor\\FiberError',
+					'WPMailSMTP\\Vendor\\UnitEnum',
+					'WPMailSMTP\\Vendor\\BackedEnum',
+				],
+				[
+					'Attribute',
+					'AllowDynamicProperties',
+					'Override',
+					'ReturnTypeWillChange',
+					'SensitiveParameter',
+					'Fiber',
+					'FiberError',
+					'UnitEnum',
+					'BackedEnum',
+				],
+				$content
+			);
+		},
 	],
 
 	/*
@@ -349,9 +389,11 @@ $config = [
 	 * Paths are relative to the configuration file unless if they are already absolute.
 	 */
 	'files-whitelist'            => [
+		'../vendor/symfony/deprecation-contracts/function.php',
 		'../vendor/symfony/polyfill-mbstring/bootstrap.php',
-		'../vendor/symfony/polyfill-mbstring/Resources/mb_convert_variables.php8',
+		'../vendor/symfony/polyfill-mbstring/bootstrap80.php',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap.php',
+		'../vendor/symfony/polyfill-intl-idn/bootstrap80.php',
 		'../vendor/symfony/polyfill-php72/bootstrap.php',
 	],
 ];

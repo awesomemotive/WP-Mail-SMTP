@@ -72,6 +72,13 @@ class Options extends OptionsAbstract {
 				'title'       => esc_html__( 'SendLayer', 'wp-mail-smtp' ),
 				'description' => $description,
 				'recommended' => true,
+				'supports'    => [
+					'from_email'       => true,
+					'from_name'        => true,
+					'return_path'      => false,
+					'from_email_force' => true,
+					'from_name_force'  => true,
+				],
 			],
 			$connection
 		);

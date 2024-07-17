@@ -284,6 +284,19 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 				app.education.rateLimitUpgrade();
 			} );
+
+			// Obfuscated fields
+			$( '.wp-mail-smtp-btn[data-clear-field]' ).on( 'click', function( e ) {
+				var $button = $( this );
+				var fieldId = $button.attr( 'data-clear-field' );
+				var $field = $( `#${fieldId}` );
+
+				$field.prop( 'disabled', false );
+				$field.attr( 'name', $field.attr( 'data-name' ) );
+				$field.removeAttr( 'value' );
+				$field.focus();
+				$button.remove();
+			} );
 		},
 
 		education: {

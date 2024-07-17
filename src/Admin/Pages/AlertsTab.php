@@ -187,6 +187,35 @@ class AlertsTab extends PageAbstract {
 					</div>
 				</div>
 
+                <div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content section-heading">
+						<div class="wp-mail-smtp-setting-field">
+							<h3><?php esc_html_e( 'Microsoft Teams', 'wp-mail-smtp' ); ?></h3>
+							<p class="desc"><?php esc_html_e( 'Paste in the Microsoft Teams webhook URL you’d like to use to receive alerts when email sending fails. Read our documentation on setting up Microsoft Teams alerts.', 'wp-mail-smtp' ); ?></p>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle">
+						<div class="wp-mail-smtp-setting-label">
+							<label><?php esc_html_e( 'Microsoft Teams Alerts', 'wp-mail-smtp' ); ?></label>
+						</div>
+						<div class="wp-mail-smtp-setting-field">
+							<?php
+							UI::toggle();
+							?>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-connection-options">
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'Webhook URL', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content section-heading">
 						<div class="wp-mail-smtp-setting-field">

@@ -31,6 +31,7 @@ class Helpers {
 				'mailgun',
 				'postmark',
 				'sparkpost',
+				'smtp2go',
 			],
 			true
 		);

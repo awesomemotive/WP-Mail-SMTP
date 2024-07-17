@@ -353,4 +353,27 @@ class Task {
 
 		add_action( 'shutdown', [ $this, 'cancel' ], PHP_INT_MAX );
 	}
+
+	/**
+	 * Remove completed occurrences of this task.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param int $limit The amount of rows to remove.
+	 */
+	protected function remove_completed( $limit = 0 ) {
+
+		global $wpdb;
+
+		$limit = max( 0, intval( $limit ) );
+		$query = 'DELETE FROM ' . $wpdb->prefix . 'actionscheduler_actions WHERE hook = "' . $this->action . '" AND status = "complete"';
+
+		if ( $limit > 0 ) {
+			$query .= " LIMIT {$limit}";
+		}
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query( $query );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+	}
 }

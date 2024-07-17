@@ -92,6 +92,9 @@ class Options {
 		'sendlayer'            => [
 			'api_key',
 		],
+		'smtp2go'              => [
+			'api_key',
+		],
 		'pepipostapi'          => [
 			'api_key',
 		],
@@ -146,6 +149,7 @@ class Options {
 		'sendgrid',
 		'sparkpost',
 		'zoho',
+		'smtp2go',
 		'smtp',
 		'pepipost',
 		'pepipostapi',
@@ -714,6 +718,16 @@ class Options {
 
 				break;
 
+			case 'smtp2go':
+				switch ( $key ) {
+					case 'api_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_SMTP2GO_API_KEY : $value;
+						break;
+				}
+
+				break;
+
 			case 'pepipostapi':
 				switch ( $key ) {
 					case 'api_key':
@@ -735,6 +749,15 @@ class Options {
 				switch ( $key ) {
 					case 'connections':
 						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => WPMS_ALERT_SLACK_WEBHOOK_URL ] ] : $value;
+						break;
+				}
+
+				break;
+
+			case 'alert_teams_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => WPMS_ALERT_TEAMS_WEBHOOK_URL ] ] : $value;
 						break;
 				}
 
@@ -1053,6 +1076,15 @@ class Options {
 
 				break;
 
+			case 'smtp2go':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_SMTP2GO_API_KEY' ) && WPMS_SMTP2GO_API_KEY;
+						break;
+				}
+
+				break;
+
 			case 'pepipostapi':
 				switch ( $key ) {
 					case 'api_key':
@@ -1075,6 +1107,15 @@ class Options {
 				switch ( $key ) {
 					case 'connections':
 						$return = defined( 'WPMS_ALERT_SLACK_WEBHOOK_URL' ) && WPMS_ALERT_SLACK_WEBHOOK_URL;
+						break;
+				}
+
+				break;
+
+			case 'alert_teams_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'WPMS_ALERT_TEAMS_WEBHOOK_URL' ) && WPMS_ALERT_TEAMS_WEBHOOK_URL;
 						break;
 				}
 
@@ -1319,7 +1360,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.
 					case 'client_secret': // gmail/outlook/amazonses/zoho.

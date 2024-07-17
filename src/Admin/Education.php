@@ -57,6 +57,10 @@ class Education {
 			return;
 		}
 
+		$current_screen      = get_current_screen();
+		$upgrade_utm_content = $current_screen === null ? 'Upgrade to Pro' : 'Upgrade to Pro - ' . $current_screen->base;
+		$upgrade_utm_content = empty( $_GET['tab'] ) ? $upgrade_utm_content : $upgrade_utm_content . ' -- ' . sanitize_key( $_GET['tab'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 		printf(
 			'<div id="wp-mail-smtp-notice-bar">
 				<div class="wp-mail-smtp-notice-bar-container">
@@ -67,7 +71,7 @@ class Education {
 			wp_kses(
 				sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
 					__( 'You’re using WP Mail SMTP Lite. To unlock more features, consider <a href="%s" target="_blank" rel="noopener noreferrer">upgrading to Pro</a>.', 'wp-mail-smtp' ),
-					wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'notice-bar' ] )
+					wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'notice-bar', 'content' => $upgrade_utm_content ] ) // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 				),
 				[
 					'a' => [

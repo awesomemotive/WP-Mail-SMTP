@@ -203,17 +203,6 @@ class DBRepair {
 
 			if ( ! empty( $reasons ) ) {
 				$msg = sprintf(
-					wp_kses( /* translators: %1$s: Singular/Plural string, %2$s - the error messages from the migrations for the missing tables. */
-						__( 'The following DB %1$s still missing. <br />%2$s', 'wp-mail-smtp' ),
-						[
-							'br' => [],
-						]
-					),
-					_n( 'Table is', 'Tables are', count( $missing_tables ), 'wp-mail-smtp' ),
-					implode( '<br/>', $reasons )
-				);
-
-				$msg = sprintf(
 					wp_kses(
 						_n( 'The following DB table is still missing.', 'The following DB tables are still missing.', count( $missing_tables ), 'wp-mail-smtp' ) . '<br />%s',
 						[

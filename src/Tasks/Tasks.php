@@ -64,6 +64,9 @@ class Tasks {
 
 		// Remove scheduled action meta after action execution.
 		add_action( 'action_scheduler_after_execute', [ $this, 'clear_action_meta' ], PHP_INT_MAX, 2 );
+
+		// Cancel tasks on plugin deactivation.
+		register_deactivation_hook( WPMS_PLUGIN_FILE, [ $this, 'cancel_all' ] );
 	}
 
 	/**

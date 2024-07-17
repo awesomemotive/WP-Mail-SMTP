@@ -459,7 +459,7 @@ gulp.task( 'prefix_outside_files', function () {
 			.pipe( replace( /use GuzzleHttp\\Psr7\\Uri as Psr7Uri;/gm, 'use WPMailSMTP\\Vendor\\GuzzleHttp\\Psr7\\Uri as Psr7Uri;' ) )
 			.pipe( gulp.dest( 'vendor/codeception/codeception/src/Codeception/Util/' ) ),
 
-		gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php' ], { allowEmpty: true } )
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php', 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap80.php' ], { allowEmpty: true } )
 			.pipe( replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/' ) ),
 
@@ -467,7 +467,7 @@ gulp.task( 'prefix_outside_files', function () {
 			.pipe( replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/Resources/' ) ),
 
-		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php' ], { allowEmpty: true } )
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php', 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap80.php' ], { allowEmpty: true } )
 			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Idn/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Idn' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-idn/' ) ),
 

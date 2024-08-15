@@ -3,6 +3,7 @@
 namespace WPMailSMTP;
 
 use WP_Error;
+use WP_Filesystem_Direct;
 
 /**
  * WPMailSMTP uploads.
@@ -10,6 +11,13 @@ use WP_Error;
  * @since 2.8.0
  */
 class Uploads {
+
+	/**
+	 * Uploads dir name.
+	 *
+	 * @since 4.1.1
+	 */
+	const ROOT_FOLDER_NAME = 'wp-mail-smtp';
 
 	/**
 	 * Get WPMailSMTP upload root path (e.g. /wp-content/uploads/wp-mail-smtp).
@@ -26,7 +34,7 @@ class Uploads {
 			return new WP_Error( 'wp_upload_dir_error', $upload_dir['error'] );
 		}
 
-		$dir = 'wp-mail-smtp';
+		$dir = self::ROOT_FOLDER_NAME;
 
 		$upload_root = trailingslashit( realpath( $upload_dir['basedir'] ) ) . $dir;
 
@@ -195,5 +203,35 @@ class Uploads {
 
 		// Create empty index.html.
 		return file_put_contents( $index_file, '' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	}
+
+	/**
+	 * Delete the WPMailSMTP uploads directory.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return void
+	 */
+	public static function delete_upload_dir() {
+
+		// Get the upload dir.
+		$upload_dir = self::upload_dir();
+
+		// If there is an error, return.
+		if ( is_wp_error( $upload_dir ) ) {
+			return;
+		}
+
+		$upload_root = $upload_dir['path'];
+
+		// Get WP Filesystembase files.
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+
+		// Initialize WP_Filesystem_Direct.
+		$wp_filesystem = new WP_Filesystem_Direct( false );
+
+		// Delete the directory.
+		$wp_filesystem->delete( $upload_root, true );
 	}
 }

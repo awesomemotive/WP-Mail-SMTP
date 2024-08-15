@@ -178,6 +178,8 @@ class Processor {
 			$phpmailer->Username   = $connection_options->get( $mailer, 'user' );
 			$phpmailer->Password   = $connection_options->get( $mailer, 'pass' );
 		}
+
+		$phpmailer->Timeout = 30;
 		// phpcs:enable
 
 		// Maybe set default reply-to header.

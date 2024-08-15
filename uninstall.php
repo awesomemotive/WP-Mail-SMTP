@@ -165,6 +165,9 @@ if ( is_multisite() ) {
 		$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
 		$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB
 
+		// Delete current sub-site wp-mail-smtp uploads folder.
+		\WPMailSMTP\Uploads::delete_upload_dir();
+
 		// Restore the current network site back to the original one.
 		restore_current_blog();
 	}
@@ -253,5 +256,8 @@ if ( is_multisite() ) {
 
 	$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
 	$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB
+
+	// Delete wp-mail-smtp uploads folder.
+	\WPMailSMTP\Uploads::delete_upload_dir();
 }
 //phpcs:enable WPForms.Formatting.EmptyLineAfterAssigmentVariables.AddEmptyLine, WPForms.PHP.BackSlash.UseShortSyntax

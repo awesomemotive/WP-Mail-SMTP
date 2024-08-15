@@ -3,8 +3,9 @@ Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
 Tested up to: 6.6
-Stable tag: 4.1.0
+Stable tag: 4.1.1
 Requires PHP: 7.2
+License: GNU General Public License v3.0 or later
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
 
@@ -391,6 +392,13 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.1.1 - 2024-08-15 =
+- Changed: Delete `wp-mail-smtp` uploads folder on plugin uninstall, if the "Misc > Uninstall" option is enabled.
+- Changed: Decreased `PHPMailer` timeout value to 30 seconds from 5 minutes.
+- Changed: Improved Weekly Summary Email sending.
+- Fixed: Missing Reply-To support in SMTP2GO mailer.
+- Fixed: Setup Wizard translations not working correctly.
 
 = 4.1.0 - 2024-07-17 =
 - Added: New transactional mailer: SMTP2GO.

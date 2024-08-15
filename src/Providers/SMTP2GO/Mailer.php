@@ -177,14 +177,35 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Doesn't support this.
-	 * So we do nothing.
+	 * Set the Reply To information for an email.
 	 *
-	 * @since 4.1.0
+	 * @since 4.1.1
 	 *
 	 * @param array $emails Reply To email addresses.
 	 */
-	public function set_reply_to( $emails ) {}
+	public function set_reply_to( $emails ) {
+
+		if ( empty( $emails ) ) {
+			return;
+		}
+
+		$data = [];
+
+		foreach ( $emails as $email ) {
+			if ( ! isset( $email[0] ) || ! filter_var( $email[0], FILTER_VALIDATE_EMAIL ) ) {
+				continue;
+			}
+
+			$data[] = $this->address_format( $email );
+		}
+
+		if ( ! empty( $data ) ) {
+			$this->set_body_header(
+				'Reply-To',
+				implode( ',', $data )
+			);
+		}
+	}
 
 	/**
 	 * Set email subject.
@@ -399,7 +420,9 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_response_error() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded, Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$error_text[] = $this->error_message;
+		$error_text = [
+			$this->error_message,
+		];
 
 		if ( ! empty( $this->response ) ) {
 			$body = wp_remote_retrieve_body( $this->response );
@@ -481,5 +504,22 @@ class Mailer extends MailerAbstract {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Sanitize email header values.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param string $name  Name of the header.
+	 * @param string $value Value of the header.
+	 */
+	public function sanitize_header_value( $name, $value ) {
+
+		if ( strtolower( $name ) === 'reply-to' ) {
+			return $value;
+		}
+
+		return parent::sanitize_header_value( $name, $value );
 	}
 }

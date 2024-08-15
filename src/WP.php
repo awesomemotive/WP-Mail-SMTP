@@ -345,8 +345,8 @@ class WP {
 			$locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
 		}
 
-		foreach ( $translations->entries as $msgid => $entry ) {
-			$locale[ $msgid ] = $entry->translations;
+		foreach ( $translations->entries as $entry ) {
+			$locale[ $entry->singular ] = $entry->translations;
 		}
 
 		return $locale;

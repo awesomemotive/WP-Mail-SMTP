@@ -248,7 +248,7 @@ class SettingsTab extends PageAbstract {
 			</p>
 
 			<p>
-				<?php esc_html_e( 'We know that you will truly love WP Mail SMTP. It\'s used by over 3,000,000 websites.', 'wp-mail-smtp' ); ?>
+				<?php esc_html_e( 'We know that you will truly love WP Mail SMTP. It\'s used by over 4,000,000 websites.', 'wp-mail-smtp' ); ?>
 			</p>
 
 			<p><strong><?php esc_html_e( 'Pro Features:', 'wp-mail-smtp' ); ?></strong></p>

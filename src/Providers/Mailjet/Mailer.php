@@ -1,6 +1,6 @@
 <?php
 
-namespace WPMailSMTP\Providers\SMTP2GO;
+namespace WPMailSMTP\Providers\Mailjet;
 
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Providers\MailerAbstract;
@@ -9,33 +9,32 @@ use WPMailSMTP\WP;
 /**
  * Class Mailer.
  *
- * @since 4.1.0
+ * @since 4.2.0
  */
 class Mailer extends MailerAbstract {
 
 	/**
 	 * Which response code from HTTP provider is considered to be successful?
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @var int
 	 */
 	protected $email_sent_code = 200;
 
-
 	/**
 	 * URL to make an API request to.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @var string
 	 */
-	protected $url = 'https://api.smtp2go.com/v3/email/send';
+	protected $url = 'https://api.mailjet.com/v3.1/send';
 
 	/**
 	 * Mailer constructor.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param MailCatcherInterface $phpmailer  The MailCatcher object.
 	 * @param ConnectionInterface  $connection The Connection object.
@@ -46,7 +45,11 @@ class Mailer extends MailerAbstract {
 		parent::__construct( $phpmailer, $connection );
 
 		// Set mailer specific headers.
-		$this->set_header( 'X-Smtp2go-Api-Key', $this->connection_options->get( $this->mailer, 'api_key' ) );
+		$user = $this->connection_options->get( $this->mailer, 'api_key' );
+		$pass = $this->connection_options->get( $this->mailer, 'secret_key' );
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$this->set_header( 'Authorization', 'Basic ' . base64_encode( "$user:$pass" ) );
 		$this->set_header( 'Accept', 'application/json' );
 		$this->set_header( 'Content-Type', 'application/json' );
 	}
@@ -54,7 +57,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Redefine the way custom headers are processed for this mailer - they should be in body.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param array $headers Headers array.
 	 */
@@ -66,15 +69,12 @@ class Mailer extends MailerAbstract {
 
 			$this->set_body_header( $name, $value );
 		}
-
-		// Add custom header.
-		$this->set_body_header( 'X-Mailer', 'WPMailSMTP/Mailer/' . $this->mailer . ' ' . WPMS_PLUGIN_VER );
 	}
 
 	/**
 	 * This mailer supports email-related custom headers inside a body of the message.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param string $name  Header name.
 	 * @param string $value Header value.
@@ -87,36 +87,21 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$headers = isset( $this->body['custom_headers'] ) ? (array) $this->body['custom_headers'] : [];
+		$headers = isset( $this->body['Headers'] ) ? (array) $this->body['Headers'] : [];
 
-		// Index by key to remove duplicates.
-		$headers = wp_list_pluck( $headers, 'value', 'header' );
-
-		// Sanitize headers.
 		$headers[ $name ] = $this->sanitize_header_value( $name, $value );
 
-		// Turn headers into a list of header => value entries.
-		$data = array_reduce(
-			array_keys( $headers ),
-			function ( $data, $header ) use ( $headers ) {
-
-				$data[] = [
-					'header' => $header,
-					'value'  => $headers[ $header ],
-				];
-
-				return $data;
-			},
-			[]
+		$this->set_body_param(
+			[
+				'Headers' => $headers,
+			]
 		);
-
-		$this->body['custom_headers'] = $data;
 	}
 
 	/**
 	 * Set the From information for an email.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param string $email The sender email address.
 	 * @param string $name  The sender name.
@@ -129,7 +114,7 @@ class Mailer extends MailerAbstract {
 
 		$this->set_body_param(
 			[
-				'sender' => $this->address_format( [ $email, $name ] ),
+				'From' => $this->address_format( [ $email, $name ] ),
 			]
 		);
 	}
@@ -137,7 +122,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set email recipients: to, cc, bcc.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param array $recipients Email recipients.
 	 */
@@ -160,6 +145,8 @@ class Mailer extends MailerAbstract {
 				continue;
 			}
 
+			$type = ucfirst( $type );
+
 			// Iterate over all emails for each type.
 			// There might be multiple cc/to/bcc emails.
 			foreach ( $emails as $email ) {
@@ -179,7 +166,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set the Reply To information for an email.
 	 *
-	 * @since 4.1.1
+	 * @since 4.2.0
 	 *
 	 * @param array $emails Reply To email addresses.
 	 */
@@ -189,28 +176,23 @@ class Mailer extends MailerAbstract {
 			return;
 		}
 
-		$data = [];
+		$email = array_shift( $emails );
 
-		foreach ( $emails as $email ) {
-			if ( ! isset( $email[0] ) || ! filter_var( $email[0], FILTER_VALIDATE_EMAIL ) ) {
-				continue;
-			}
-
-			$data[] = $this->address_format( $email );
+		if ( ! isset( $email[0] ) || ! filter_var( $email[0], FILTER_VALIDATE_EMAIL ) ) {
+			return;
 		}
 
-		if ( ! empty( $data ) ) {
-			$this->set_body_header(
-				'Reply-To',
-				implode( ',', $data )
-			);
-		}
+		$this->set_body_param(
+			[
+				'ReplyTo' => $this->address_format( $email ),
+			]
+		);
 	}
 
 	/**
 	 * Set email subject.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param string $subject Email subject.
 	 */
@@ -218,7 +200,7 @@ class Mailer extends MailerAbstract {
 
 		$this->set_body_param(
 			[
-				'subject' => $subject,
+				'Subject' => $subject,
 			]
 		);
 	}
@@ -226,7 +208,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set email content.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param string|array $content Email content.
 	 */
@@ -240,7 +222,7 @@ class Mailer extends MailerAbstract {
 			if ( ! empty( $content['text'] ) ) {
 				$this->set_body_param(
 					[
-						'text_body' => $content['text'],
+						'TextPart' => $content['text'],
 					]
 				);
 			}
@@ -248,7 +230,7 @@ class Mailer extends MailerAbstract {
 			if ( ! empty( $content['html'] ) ) {
 				$this->set_body_param(
 					[
-						'html_body' => $content['html'],
+						'HTMLPart' => $content['html'],
 					]
 				);
 			}
@@ -256,13 +238,13 @@ class Mailer extends MailerAbstract {
 			if ( $this->phpmailer->ContentType === 'text/plain' ) {
 				$this->set_body_param(
 					[
-						'text_body' => $content,
+						'TextPart' => $content,
 					]
 				);
 			} else {
 				$this->set_body_param(
 					[
-						'html_body' => $content,
+						'HTMLPart' => $content,
 					]
 				);
 			}
@@ -272,7 +254,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Set attachments for an email.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param array $attachments Attachments array.
 	 */
@@ -284,14 +266,14 @@ class Mailer extends MailerAbstract {
 
 		$data = [];
 
-		// Split attachments into "attachments" and "inlines" groups.
+		// Split attachments into "attachments" and "inline" groups.
 		foreach ( $attachments as $attachment ) {
 			$mode = in_array( $attachment[6], [ 'inline', 'attachment' ], true ) ? $attachment[6] : 'attachment';
 
 			if ( $mode === 'inline' ) {
-				$data['inlines'][] = $attachment;
+				$data['InlinedAttachments'][] = $attachment;
 			} else {
-				$data['attachments'][] = $attachment;
+				$data['Attachments'][] = $attachment;
 			}
 		}
 
@@ -306,33 +288,9 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Doesn't support this.
-	 * So we do nothing.
+	 * Prepare attachments data for SendLayer API.
 	 *
-	 * @since 4.1.0
-	 *
-	 * @param string $email Return Path email address.
-	 */
-	public function set_return_path( $email ) {}
-
-	/**
-	 * Redefine the way email body is returned.
-	 * By default, we are sending an array of data.
-	 * SMTP2GO requires a JSON, so we encode the body.
-	 *
-	 * @since 4.1.0
-	 */
-	public function get_body() {
-
-		$body = parent::get_body();
-
-		return wp_json_encode( $body );
-	}
-
-	/**
-	 * Prepare attachments data.
-	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param array $attachments Array of attachments.
 	 *
@@ -350,45 +308,56 @@ class Mailer extends MailerAbstract {
 			}
 
 			$filetype = str_replace( ';', '', trim( $attachment[4] ) );
-
-			$data[] = [
-				'filename' => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
+			$entry    = [
+				'Filename'      => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
 				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-				'fileblob' => base64_encode( $file ),
-				'mimetype' => $attachment[4],
+				'Base64Content' => base64_encode( $file ),
+				'ContentType'   => $attachment[4],
 			];
+
+			if ( $attachment[6] === 'inline' ) {
+				$entry['ContentID'] = $entry['Filename'];
+			}
+
+			$data[] = $entry;
 		}
 
 		return $data;
 	}
 
 	/**
-	 * We might need to do something after the email was sent to the API.
-	 * In this method we preprocess the response from the API.
+	 * Doesn't support this.
+	 * So we do nothing.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
-	 * @param mixed $response Response data.
+	 * @param string $email Return Path email address.
 	 */
-	protected function process_response( $response ) {
+	public function set_return_path( $email ) {}
 
-		parent::process_response( $response );
+	/**
+	 * Redefine the way email body is returned.
+	 * By default, we are sending an array of data.
+	 * This mailer requires a JSON, so we encode the body.
+	 *
+	 * @since 4.2.0
+	 */
+	public function get_body() {
 
-		if (
-			! is_wp_error( $response ) &&
-			! empty( $this->response['body']->data ) &&
-			! empty( $this->response['body']->data->email_id )
-		) {
-			$this->phpmailer->addCustomHeader( 'X-Msg-ID', $this->response['body']->data->email_id );
-			$this->verify_sent_status = true;
-		}
+		$body = [
+			'Messages' => [
+				parent::get_body(),
+			],
+		];
+
+		return wp_json_encode( $body );
 	}
 
 	/**
 	 * Whether the email is sent or not.
 	 * We check response code and a non-empty `email_id` field in the response body.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @return bool
 	 */
@@ -396,11 +365,7 @@ class Mailer extends MailerAbstract {
 
 		$is_sent = false;
 
-		if (
-			wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code &&
-			! empty( $this->response['body']->data ) &&
-			! empty( $this->response['body']->data->email_id )
-		) {
+		if ( wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code ) {
 			$is_sent = true;
 		}
 
@@ -412,53 +377,128 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
-	 * Get a SMTP2GO-specific response with a helpful error.
+	 * We might need to do something after the email was sent to the API.
+	 * In this method we preprocess the response from the API.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
+	 *
+	 * @param mixed $response Response data.
+	 */
+	protected function process_response( $response ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+
+		parent::process_response( $response );
+
+		// Bail if request failed, or has no message entries.
+		if (
+			is_wp_error( $response ) ||
+			empty( $this->response['body']->Messages ) ||
+			! is_array( $this->response['body']->Messages )
+		) {
+			return;
+		}
+
+		// Only pick successful messages.
+		$messages = array_filter(
+			$this->response['body']->Messages,
+			function( $message ) {
+				return strtolower( $message->Status ) === 'success';
+			}
+		);
+
+		// Bail if all messages failed.
+		if ( empty( $messages ) ) {
+			return;
+		}
+
+		// Bail if no primary TO is defined. Unlikely, but just in case.
+		if ( ! isset( $this->body['To'] ) ||
+		     ! is_array( $this->body['To'] ) ||
+		     ! isset( $this->body['To'][0]['Email'] ) ||
+		     empty( $this->body['To'][0]['Email'] )
+		) {
+			return;
+		}
+
+		$primary_to = $this->body['To'][0]['Email'];
+
+		foreach ( $messages as $message ) {
+			foreach ( $message->To as $to ) {
+				if ( strtolower( $to->Email ) === $primary_to ) {
+					$this->phpmailer->addCustomHeader( 'X-Msg-ID', $to->MessageID );
+					$this->verify_sent_status = true;
+
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gather errors from a nested array.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param array $data      Array of data.
+	 * @param int   $recursion Current recursion step.
+	 *
+	 * @return array
+	 */
+	private function gather_response_errors( $data, $recursion = 10 ) {
+
+		$errors = [];
+
+		// Bail if recursion exceeds the limit.
+		if ( $recursion <= 0 ) {
+			return $errors;
+		}
+
+		// Bail if provided data is not an array.
+		if ( ! is_array( $data ) ) {
+			return $errors;
+		}
+
+		if ( ! empty( $data['ErrorMessage'] ) ) {
+			$errors[] = $data;
+
+			return $errors;
+		}
+
+		foreach ( $data as $datum ) {
+			$errors = array_merge( $errors, $this->gather_response_errors( $datum, $recursion - 1 ) );
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Get a mailer-specific response with a helpful error.
+	 *
+	 * @since 4.2.0
 	 *
 	 * @return string
 	 */
-	public function get_response_error() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded, Generic.Metrics.CyclomaticComplexity.TooHigh
+	public function get_response_error() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 
-		$error_text = [
-			$this->error_message,
-		];
+		$error_text[] = $this->error_message;
 
 		if ( ! empty( $this->response ) ) {
-			$body = wp_remote_retrieve_body( $this->response );
+			$body   = wp_remote_retrieve_body( $this->response );
+			$body   = json_decode( wp_json_encode( $body ), true );
+			$errors = $this->gather_response_errors( $body );
 
-			if ( ! empty( $body->data ) ) {
-				if ( ! empty( $body->data->failures ) ) {
-					foreach ( $body->data->failures as $error ) {
-						$error_text[] = Helpers::format_error_message( $error );
-					}
+			foreach ( $errors as $error ) {
+				$message = $error['ErrorMessage'];
+				$code    = ! empty( $error['ErrorCode'] ) ? $error['ErrorCode'] : '';
+
+				if ( ! empty( $error['ErrorRelatedTo'] ) ) {
+					$related_to = implode( ', ', $error['ErrorRelatedTo'] );
+					$message    = "{$message} [{$related_to}]";
 				}
 
-				if ( ! empty( $body->data->error ) ) {
-					$error_code = ! empty( $body->data->error_code ) ? $body->data->error_code : '';
-
-					$error_text[] = Helpers::format_error_message( $body->data->error, $error_code );
-				}
-
-				if ( ! empty( $body->data->field_validation_errors ) ) {
-					$message = '';
-					$code    = '';
-
-					if ( ! empty( $body->data->field_validation_errors->message ) ) {
-						$message = $body->data->field_validation_errors->message;
-					}
-
-					if ( ! empty( $body->data->field_validation_errors->fieldname ) ) {
-						$code = $body->data->field_validation_errors->fieldname;
-					}
-
-					if ( ! empty( $message ) ) {
-						$error_text[] = Helpers::format_error_message( $message, $code );
-					}
-				}
-			} else {
-				$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
+				$error_text[] = Helpers::format_error_message( $message, $code );
 			}
+		} else {
+			$error_text[] = WP::wp_remote_get_response_error_message( $this->response );
 		}
 
 		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
@@ -467,7 +507,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Whether the mailer has all its settings correctly set up and saved.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @return bool
 	 */
@@ -476,7 +516,7 @@ class Mailer extends MailerAbstract {
 		$options = $this->connection_options->get_group( $this->mailer );
 
 		// API key is the only required option.
-		if ( ! empty( $options['api_key'] ) ) {
+		if ( ! empty( $options['api_key'] ) && ! empty( $options['secret_key'] ) ) {
 			return true;
 		}
 
@@ -486,7 +526,7 @@ class Mailer extends MailerAbstract {
 	/**
 	 * Prepare address param.
 	 *
-	 * @since 4.1.0
+	 * @since 4.2.0
 	 *
 	 * @param array $address Address array.
 	 *
@@ -494,32 +534,16 @@ class Mailer extends MailerAbstract {
 	 */
 	private function address_format( $address ) {
 
-		$email = isset( $address[0] ) ? $address[0] : false;
-		$name  = isset( $address[1] ) ? $address[1] : false;
+		$result = [];
+		$email  = isset( $address[0] ) ? $address[0] : false;
+		$name   = isset( $address[1] ) ? $address[1] : false;
 
-		$result = $email;
+		$result['Email'] = $email;
 
 		if ( ! empty( $name ) ) {
-			$result = "\"{$name}\" <{$email}>";
+			$result['Name'] = $name;
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Sanitize email header values.
-	 *
-	 * @since 4.1.1
-	 *
-	 * @param string $name  Name of the header.
-	 * @param string $value Value of the header.
-	 */
-	public function sanitize_header_value( $name, $value ) {
-
-		if ( strtolower( $name ) === 'reply-to' ) {
-			return $value;
-		}
-
-		return parent::sanitize_header_value( $name, $value );
 	}
 }

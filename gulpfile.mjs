@@ -336,7 +336,6 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/psr/log',
 				'vendor/sendinblue',
 				'vendor/symfony/polyfill-mbstring',
-				'vendor/symfony/polyfill-php72',
 				'vendor/symfony/polyfill-intl-idn',
 				'vendor/symfony/deprecation-contracts',
 				'vendor/mk-j',
@@ -470,10 +469,6 @@ gulp.task( 'prefix_outside_files', function () {
 		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php', 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap80.php' ], { allowEmpty: true } )
 			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Idn/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Idn' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-idn/' ) ),
-
-		gulp.src( [ 'vendor_prefixed/symfony/polyfill-php72/bootstrap.php' ], { allowEmpty: true } )
-			.pipe( replace( /use Symfony\\Polyfill\\Php72/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Php72' ) )
-			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-php72/' ) )
 	);
 } );
 

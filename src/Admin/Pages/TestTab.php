@@ -991,7 +991,7 @@ Co-Founder, WP Mail SMTP';
 								],
 							]
 						),
-						'https://app.mailgun.com/app/sending/domains'
+						'https://app.mailgun.com/mg/sending/domains'
 					),
 					esc_html__( 'Verify your domain Region is correct.', 'wp-mail-smtp' ),
 				],

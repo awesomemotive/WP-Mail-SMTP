@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers\Sendgrid;
 
 use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -73,11 +74,19 @@ class Options extends OptionsAbstract {
 					/>
 					<?php $this->display_const_set_message( 'WPMS_SENDGRID_API_KEY' ); ?>
 				<?php else : ?>
-					<input type="password" spellcheck="false"
-						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][api_key]"
-						value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'api_key' ) ); ?>"
-						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-api_key"
-					/>
+					<?php
+					$slug  = $this->get_slug();
+					$value = $this->connection_options->get( $this->get_slug(), 'api_key' );
+
+					UI::hidden_password_field(
+						[
+							'name'       => "wp-mail-smtp[{$slug}][api_key]",
+							'id'         => "wp-mail-smtp-setting-{$slug}-api_key",
+							'value'      => $value,
+							'clear_text' => esc_html__( 'Remove API Key', 'wp-mail-smtp' ),
+						]
+					);
+					?>
 				<?php endif; ?>
 				<p class="desc">
 					<?php

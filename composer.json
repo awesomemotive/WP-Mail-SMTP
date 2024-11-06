@@ -35,12 +35,12 @@
     "google/apiclient": "2.14.0",
     "paragonie/constant_time_encoding": "^2",
     "guzzlehttp/guzzle": "7.8.1",
-    "monolog/monolog": "^1.0",
-    "symfony/polyfill-intl-idn": "1.28.0",
-    "symfony/polyfill-mbstring": "1.28.0",
-    "symfony/polyfill-php72": "1.28.0",
+    "monolog/monolog": "^2.9",
+    "symfony/polyfill-intl-idn": "1.31.0",
+    "symfony/polyfill-mbstring": "1.31.0",
+    "symfony/polyfill-php72": "1.31.0",
     "wikimedia/composer-merge-plugin": "2.1.0",
-    "woocommerce/action-scheduler": "3.7.1"
+    "woocommerce/action-scheduler": "3.7.4"
   },
   "autoload": {
     "psr-4": {
@@ -53,7 +53,6 @@
       "vendor_prefixed/mtdowling/jmespath.php/src/JmesPath.php",
       "vendor_prefixed/aws/aws-sdk-php/src/functions.php",
       "vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
-      "vendor_prefixed/symfony/polyfill-php72/bootstrap.php",
       "vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php",
       "vendor_prefixed/symfony/deprecation-contracts/function.php",
       "vendor_prefixed/guzzlehttp/guzzle/src/functions_include.php"

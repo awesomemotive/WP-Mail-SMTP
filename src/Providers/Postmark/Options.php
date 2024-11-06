@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Providers\Postmark;
 
 use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -94,10 +95,19 @@ class Options extends OptionsAbstract {
 						   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-server_api_token"/>
 					<?php $this->display_const_set_message( 'WPMS_POSTMARK_SERVER_API_TOKEN' ); ?>
 				<?php else : ?>
-					<input type="password" spellcheck="false"
-						   name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][server_api_token]"
-						   value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'server_api_token' ) ); ?>"
-						   id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-server_api_token"/>
+					<?php
+					$slug  = $this->get_slug();
+					$value = $this->connection_options->get( $this->get_slug(), 'server_api_token' );
+
+					UI::hidden_password_field(
+						[
+							'name'       => "wp-mail-smtp[{$slug}][server_api_token]",
+							'id'         => "wp-mail-smtp-setting-{$slug}-server_api_token",
+							'value'      => $value,
+							'clear_text' => esc_html__( 'Remove Server API Token', 'wp-mail-smtp' ),
+						]
+					);
+					?>
 				<?php endif; ?>
 				<p class="desc">
 					<?php

@@ -55,11 +55,23 @@
 
 	.wp-mail-smtp-dash-widget-block-settings {
 		display: flex;
-		align-items: center;
+		align-items: start;
 		justify-content: space-between;
 		margin-top: 0;
 		padding: 13px;
 		background-color: #fafafa;
+
+		> div {
+			display: flex;
+
+			&:first-child {
+				flex-wrap: wrap;
+
+				a {
+					line-height: 30px;
+				}
+			}
+		}
 
 		@media (max-width: 980px) {
 			padding: 13px 4px;
@@ -80,10 +92,6 @@
 		@media (max-width: 436px) {
 			flex-direction: column;
 			align-items: normal;
-
-			> div {
-				display: flex;
-			}
 
 			select {
 				width: 100%;

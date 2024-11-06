@@ -21,6 +21,7 @@ class Loader {
 	 * @since 1.6.0 Added Sendinblue.
 	 * @since 1.7.0 Added AmazonSES/Outlook as indication of the Pro mailers.
 	 * @since 4.1.0 Added SMTP2GO.
+	 * @since 4.2.0 Added Mailjet.
 	 *
 	 * @var array
 	 */
@@ -32,6 +33,7 @@ class Loader {
 		'amazonses'   => 'WPMailSMTP\Providers\AmazonSES\\',
 		'gmail'       => 'WPMailSMTP\Providers\Gmail\\',
 		'mailgun'     => 'WPMailSMTP\Providers\Mailgun\\',
+		'mailjet'     => 'WPMailSMTP\Providers\Mailjet\\',
 		'outlook'     => 'WPMailSMTP\Providers\Outlook\\',
 		'pepipostapi' => 'WPMailSMTP\Providers\PepipostAPI\\',
 		'postmark'    => 'WPMailSMTP\Providers\Postmark\\',
@@ -111,7 +113,7 @@ class Loader {
 	 */
 	public function get_options_all( $connection = null ) {
 
-		$options = array();
+		$options = [];
 
 		foreach ( $this->get_providers() as $provider => $path ) {
 
@@ -166,17 +168,17 @@ class Loader {
 	/**
 	 * Get a generic entity based on the request.
 	 *
-	 * @uses  \ReflectionClass
-	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $provider
 	 * @param string $request
-	 * @param array  $args     Entity instantiation arguments.
+	 * @param array  $args Entity instantiation arguments.
 	 *
 	 * @return OptionsAbstract|MailerAbstract|AuthAbstract|null
+	 * @uses  \ReflectionClass
+	 *
 	 */
-	protected function get_entity( $provider, $request, $args = []  ) {
+	protected function get_entity( $provider, $request, $args = [] ) {
 
 		$provider = sanitize_key( $provider );
 		$request  = sanitize_text_field( $request );
@@ -194,8 +196,7 @@ class Loader {
 				$class  = $path . $request;
 				$entity = new $class( ...$args );
 			}
-		}
-		catch ( \Exception $e ) {
+		} catch ( \Exception $e ) {
 			Debug::set( "There was a problem while retrieving {$request} for {$provider}: {$e->getMessage()}" );
 			$entity = null;
 		}

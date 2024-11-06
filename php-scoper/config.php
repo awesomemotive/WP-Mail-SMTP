@@ -95,10 +95,6 @@ $config = [
 			->name( [ '*.php', '*.php8', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
-			->in( 'vendor/symfony/polyfill-php72' )
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
-		Finder::create()
-			->files()
 			->in( 'vendor/symfony/polyfill-intl-idn' )
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
@@ -394,7 +390,6 @@ $config = [
 		'../vendor/symfony/polyfill-mbstring/bootstrap80.php',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap.php',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap80.php',
-		'../vendor/symfony/polyfill-php72/bootstrap.php',
 	],
 ];
 

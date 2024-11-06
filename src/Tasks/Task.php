@@ -366,10 +366,17 @@ class Task {
 		global $wpdb;
 
 		$limit = max( 0, intval( $limit ) );
-		$query = 'DELETE FROM ' . $wpdb->prefix . 'actionscheduler_actions WHERE hook = "' . $this->action . '" AND status = "complete"';
+		$query = $wpdb->prepare(
+			"DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook = %s AND status = %s",
+			$this->action,
+			'complete'
+		);
 
 		if ( $limit > 0 ) {
-			$query .= " LIMIT {$limit}";
+			$query .= $wpdb->prepare(
+				' LIMIT %d',
+				$limit
+			);
 		}
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared

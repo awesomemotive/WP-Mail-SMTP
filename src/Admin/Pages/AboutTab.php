@@ -479,7 +479,7 @@ class AboutTab extends PageAbstract {
 			'wp-charitable'                 => [
 				'path' => 'charitable/charitable.php',
 				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-charitable.png',
-				'name' => esc_html__( 'WP Charitable', 'wp-mail-smtp' ),
+				'name' => esc_html__( 'Charitable', 'wp-mail-smtp' ),
 				'desc' => esc_html__( 'Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', 'wp-mail-smtp' ),
 				'url'  => 'https://downloads.wordpress.org/plugin/charitable.zip',
 			],

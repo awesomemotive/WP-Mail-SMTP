@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Tasks;
 
+use ActionScheduler;
+
 /**
  * Class Task.
  *
@@ -382,5 +384,47 @@ class Task {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$wpdb->query( $query );
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+	}
+
+	/**
+	 * Remove pending occurrences of this task.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int $limit The amount of rows to remove.
+	 */
+	protected function remove_pending( $limit = 0 ) {
+
+		// Make sure that all used functions, classes, and methods exist.
+		if (
+			! function_exists( 'as_get_scheduled_actions' ) ||
+			! class_exists( 'ActionScheduler' ) ||
+			! method_exists( 'ActionScheduler', 'store' ) ||
+			! class_exists( 'ActionScheduler_Store' ) ||
+			! method_exists( 'ActionScheduler_Store', 'delete_action' )
+		) {
+			return;
+		}
+
+		$per_page = max( 0, intval( $limit ) );
+
+		// Get all pending license check actions.
+		$action_ids = as_get_scheduled_actions(
+			[
+				'hook'     => $this->action,
+				'status'   => 'pending',
+				'per_page' => $per_page,
+			],
+			'ids'
+		);
+
+		if ( empty( $action_ids ) ) {
+			return;
+		}
+
+		// Delete all pending license check actions.
+		foreach ( $action_ids as $action_id ) {
+			ActionScheduler::store()->delete_action( $action_id );
+		}
 	}
 }

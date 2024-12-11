@@ -255,24 +255,6 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				$button.find( '.wp-mail-smtp-loading' ).show();
 			} );
 
-			$( '.email_test_tab_removal_notice' ).on( 'click', '.notice-dismiss', function() {
-				var $button = $( this );
-
-				$.ajax( {
-					url: ajaxurl,
-					dataType: 'json',
-					type: 'POST',
-					data: {
-						action: 'wp_mail_smtp_ajax',
-						nonce: wp_mail_smtp.nonce,
-						task: 'email_test_tab_removal_notice_dismiss',
-					},
-					beforeSend: function() {
-						$button.prop( 'disabled', true );
-					},
-				} );
-			} );
-
 			$( '#wp-mail-smtp-setting-gmail-one_click_setup_enabled-lite' ).on( 'click', function( e ) {
 				e.preventDefault();
 
@@ -296,6 +278,42 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				$field.removeAttr( 'value' );
 				$field.focus();
 				$button.remove();
+			} );
+
+			$( '.email_test_tab_removal_notice' ).on( 'click', '.notice-dismiss', function() {
+				var $button = $( this );
+
+				$.ajax( {
+					url: ajaxurl,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						action: 'wp_mail_smtp_ajax',
+						nonce: wp_mail_smtp.nonce,
+						task: 'email_test_tab_removal_notice_dismiss',
+					},
+					beforeSend: function() {
+						$button.prop( 'disabled', true );
+					},
+				} );
+			} );
+
+			// Microsoft SMTP deprecation notice dismiss
+			$( '.microsoft_basic_auth_deprecation_notice' ).on( 'click', '.notice-dismiss', function() {
+				var $button = $( this );
+
+				$.ajax( {
+					url: ajaxurl,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						action: 'wp_mail_smtp_microsoft_basic_auth_deprecation_notice_dismiss',
+						nonce: wp_mail_smtp.nonce,
+					},
+					beforeSend: function() {
+						$button.prop( 'disabled', true );
+					},
+				} );
 			} );
 		},
 
@@ -414,7 +432,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			} );
 
 			// Set settings changed attribute, if any input was changed.
-			$( ':input:not( #wp-mail-smtp-setting-license-key, .wp-mail-smtp-not-form-input, #wp-mail-smtp-setting-gmail-one_click_setup_enabled )', $settingPages ).on( 'change', function() {
+			$( ':input:not( #wp-mail-smtp-setting-license-key, .wp-mail-smtp-not-form-input, #wp-mail-smtp-setting-gmail-one_click_setup_enabled, #wp-mail-smtp-setting-outlook-one_click_setup_enabled )', $settingPages ).on( 'change', function() {
 				app.pluginSettingsChanged = true;
 			} );
 

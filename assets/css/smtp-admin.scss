@@ -1019,7 +1019,7 @@
 		}
 	}
 
-	.wp-mail-smtp-google-sign-in-btn {
+	.wp-mail-smtp-sign-in-btn {
 		display: inline-flex;
 		align-items: center;
 		background-color: #4285F4;
@@ -1044,12 +1044,12 @@
 			box-shadow: none;
 			color: #7F7F7F;
 
-			.wp-mail-smtp-google-sign-in-icon__border,
-			.wp-mail-smtp-google-sign-in-icon__bg {
+			.wp-mail-smtp-sign-in-icon__border,
+			.wp-mail-smtp-sign-in-icon__bg {
 				fill: #D4D3D3;
 			}
 
-			.wp-mail-smtp-google-sign-in-icon__symbol {
+			.wp-mail-smtp-sign-in-icon__symbol {
 				fill: #7F7F7F;
 			}
 		}
@@ -1097,9 +1097,14 @@
 		margin-left: 16px;
 	}
 
-	&:disabled {
+	&:disabled,
+	&-disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+
+	&-disabled {
+		pointer-events: none;
 	}
 
 	&.wp-mail-smtp-btn-md {

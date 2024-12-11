@@ -2,8 +2,8 @@
 
 namespace WPMailSMTP\Admin;
 
-use WPMailSMTP\WP;
 use WPMailSMTP\Options;
+use WPMailSMTP\WP;
 
 /**
  * Class Area registers and process all wp-admin display functionality.

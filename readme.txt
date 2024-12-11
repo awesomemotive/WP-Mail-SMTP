@@ -2,8 +2,8 @@
 Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
-Tested up to: 6.6
-Stable tag: 4.2.0
+Tested up to: 6.7
+Stable tag: 4.3.0
 Requires PHP: 7.2
 License: GNU General Public License v3.0 or later
 
@@ -53,16 +53,17 @@ WP Mail SMTP plugin includes many different SMTP mailers:
 2. SMTP.com <strong>(Recommended)</strong>
 3. Brevo (formerly Sendinblue) SMTP <strong>(Recommended)</strong>
 4. Gmail SMTP (Gmail, Google Workspace, G Suite)
-5. Mailgun SMTP
-6. Mailjet SMTP
-7. SendGrid SMTP
-8. Postmark SMTP
-9. SparkPost SMTP
-10. SMTP2GO
-11. Microsoft SMTP (Outlook.com and Office 365) [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
-12. Amazon SES SMTP [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
-13. Zoho Mail SMTP [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
-14. Other SMTP
+5. Elastic Email
+6. Mailgun SMTP
+7. Mailjet SMTP
+8. SendGrid SMTP
+9. Postmark SMTP
+10. SparkPost SMTP
+11. SMTP2GO
+12. Microsoft SMTP One-Click Setup (Outlook.com and Office 365) [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
+13. Amazon SES SMTP [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
+14. Zoho Mail SMTP [[Pro]](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme)
+15. Other SMTP
 
 For most options, you can specify the "from name" and "email address" for outgoing emails too.
 
@@ -199,7 +200,7 @@ You can try the [free version of WPForms plugin](https://wordpress.org/plugins/w
 1. Install WP Mail SMTP by WPForms either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on [how to install a WordPress plugin](http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/))
 2. Activate WP Mail SMTP by WPForms.
 3. Navigate to the Settings area of WP Mail SMTP in the WordPress admin.
-4. Choose your SMTP option (SendLayer, SMTP.com, Brevo (formerly Sendinblue), Gmail SMTP, Mailgun SMTP, Mailjet, SendGrid SMTP, Postmark, SparkPost, SMTP2GO, or Other SMTP) and follow the instructions to set it up.
+4. Choose your SMTP option (SendLayer, SMTP.com, Brevo (formerly Sendinblue), Gmail SMTP, Elastic Email, Mailgun SMTP, Mailjet, SendGrid SMTP, Postmark, SparkPost, SMTP2GO, or Other SMTP) and follow the instructions to set it up.
 5. Need more help? Get support with [WP Mail SMTP PRO](https://wpmailsmtp.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme).
 
 == Frequently Asked Questions ==
@@ -247,6 +248,12 @@ Our plugin also offers the "One-Click Setup" option, which allows you to start s
 
 Read our [Gmail documentation](https://wpmailsmtp.com/docs/how-to-set-up-the-gmail-mailer-in-wp-mail-smtp/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme) for more details.
 
+**Elastic Email**
+
+Elastic Email is a cloud-based email marketing platform offering tools for email campaigns, automation, transactional emails, and analytics, designed for businesses of all sizes. Elastic Email offers a limited free plan where you can send emails to your verified addresses.
+
+Read our [Elastic Email documentation](https://wpmailsmtp.com/docs/how-to-set-up-the-elastic-email-mailer-in-wp-mail-smtp/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme) for more details.
+
 **Mailgun SMTP**
 
 Mailgun SMTP is a popular SMTP service provider that allows you to send large quantities of emails. They provide 5,000 free emails per month for 3 months.
@@ -289,7 +296,7 @@ Read our [SMTP2GO documentation](https://wpmailsmtp.com/docs/how-to-set-up-the-s
 
 **Microsoft SMTP (Outlook.com and Office 365)**
 
-Many businesses use Outlook.com or Microsoft 365 to power their email. Our Microsoft mailer integration allows you to use your existing Outlook.com or Microsoft 365 account to send emails from WordPress for better deliverability.
+The Microsoft 365 / Outlook mailer is a great choice if you already use Microsoft's email services (Outlook, Office 365, Microsoft 365, or Hotmail). Due to the fairly complex manual Microsoft App configuration, we recommend the One-Click Setup, which will get you up and running in just a few seconds.
 
 Read our [Outlook and Microsoft 365 documentation](https://wpmailsmtp.com/docs/how-to-set-up-the-outlook-mailer-in-wp-mail-smtp/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin&utm_content=readme) for more details.
 
@@ -401,6 +408,11 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.3.0 - 2024-12-11 =
+- Added: New transactional mailer: Elastic Email integration.
+- Changed: The "Tools -> Scheduled Actions" menu is now always visible when WooCommerce or the Action Scheduler plugin is active.
+- Fixed: SMTP password and username fields ignored `WPMS_SMTP_AUTH` constant.
 
 = 4.2.0 - 2024-11-06 =
 - Added: New transactional mailer: Mailjet integration.

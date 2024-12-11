@@ -380,10 +380,10 @@ class ConnectionSettings {
 			$old_data['mail']['mailer'] !== $data['mail']['mailer']
 		) {
 
-			// Save correct from email address if Gmail mailer is already configured.
-			if ( $data['mail']['mailer'] === 'gmail' ) {
-				$gmail_auth = wp_mail_smtp()->get_providers()->get_auth( 'gmail', $this->connection );
-				$user_info  = ! $gmail_auth->is_auth_required() ? $gmail_auth->get_user_info() : false;
+			// Save correct from email address if Gmail or Outlook mailer is already configured.
+			if ( in_array( $data['mail']['mailer'], [ 'gmail', 'outlook' ], true ) ) {
+				$auth      = wp_mail_smtp()->get_providers()->get_auth( $data['mail']['mailer'], $this->connection );
+				$user_info = ! $auth->is_auth_required() ? $auth->get_user_info() : false;
 
 				if (
 					! empty( $user_info['email'] ) &&

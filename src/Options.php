@@ -51,6 +51,7 @@ class Options {
 			'client_secret',
 		],
 		'outlook'               => [
+			'one_click_setup_enabled',
 			'client_id',
 			'client_secret',
 		],
@@ -94,6 +95,9 @@ class Options {
 			'domain',
 		],
 		'sendlayer'             => [
+			'api_key',
+		],
+		'elasticemail'         => [
 			'api_key',
 		],
 		'smtp2go'               => [
@@ -158,6 +162,7 @@ class Options {
 		'sendgrid',
 		'sparkpost',
 		'zoho',
+		'elasticemail',
 		'smtp2go',
 		'smtp',
 		'pepipost',
@@ -741,6 +746,15 @@ class Options {
 
 				break;
 
+			case 'elasticemail':
+				switch ( $key ) {
+					case 'api_key':
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_ELASTICEMAIL_API_KEY : $value;
+						break;
+				}
+
+				break;
+
 			case 'smtp2go':
 				switch ( $key ) {
 					case 'api_key':
@@ -1120,6 +1134,15 @@ class Options {
 
 				break;
 
+			case 'elasticemail':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_ELASTICEMAIL_API_KEY' ) && WPMS_ELASTICEMAIL_API_KEY;
+						break;
+				}
+
+				break;
+
 			case 'smtp2go':
 				switch ( $key ) {
 					case 'api_key':
@@ -1414,7 +1437,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet/elasticemail.
 					case 'secret_key': // mailjet.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.

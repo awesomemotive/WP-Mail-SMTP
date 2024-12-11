@@ -2,17 +2,18 @@
 
 namespace WPMailSMTP;
 
+use Exception;
+use ReflectionFunction;
 use WPMailSMTP\Admin\AdminBarMenu;
 use WPMailSMTP\Admin\DashboardWidget;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\Notifications;
+use WPMailSMTP\Compatibility\Compatibility;
+use WPMailSMTP\Providers\Outlook\Provider as OutlookProvider;
+use WPMailSMTP\Queue\Queue;
+use WPMailSMTP\Reports\Reports;
 use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\UsageTracking\UsageTracking;
-use WPMailSMTP\Compatibility\Compatibility;
-use WPMailSMTP\Reports\Reports;
-use ReflectionFunction;
-use Exception;
-use WPMailSMTP\Queue\Queue;
 
 /**
  * Class Core to handle all plugin initialization.
@@ -147,6 +148,7 @@ class Core {
 			'plugins_loaded',
 			function() {
 				( new OptimizedEmailSending() )->hooks();
+				( new OutlookProvider() )->hooks();
 			}
 		);
 	}

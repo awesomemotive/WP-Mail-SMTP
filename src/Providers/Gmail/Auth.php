@@ -46,8 +46,11 @@ class Auth extends AuthAbstract {
 
 		$this->options = $this->connection_options->get_group( $this->mailer_slug );
 
-		if ( $this->is_clients_saved() ) {
+		if ( wp_mail_smtp()->is_pro() && ! empty( $this->options['one_click_setup_enabled'] ) ) {
+			return;
+		}
 
+		if ( $this->is_clients_saved() ) {
 			$this->include_vendor_lib();
 
 			$this->client = $this->get_client();

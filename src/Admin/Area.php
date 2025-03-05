@@ -1229,16 +1229,23 @@ class Area {
 			return false;
 		}
 
-		if ( empty( $_POST['notice'] ) || empty( $_POST['mailer'] ) ) {
+		if ( empty( $_POST['notice'] ) ) {
 			return false;
 		}
 
 		$notice = sanitize_key( $_POST['notice'] );
-		$mailer = sanitize_key( $_POST['mailer'] );
 
-		update_user_meta( get_current_user_id(), "wp_mail_smtp_notice_{$notice}_for_{$mailer}_dismissed", true );
+		if ( ! empty( $_POST['mailer'] ) ) {
+			$mailer = sanitize_key( $_POST['mailer'] );
 
-		return esc_html__( 'Educational notice for this mailer was successfully dismissed.', 'wp-mail-smtp' );
+			update_user_meta( get_current_user_id(), "wp_mail_smtp_notice_{$notice}_for_{$mailer}_dismissed", true );
+
+			return esc_html__( 'Educational notice for this mailer was successfully dismissed.', 'wp-mail-smtp' );
+		} else {
+			update_user_meta( get_current_user_id(), "wp_mail_smtp_notice_{$notice}_dismissed", true );
+
+			return esc_html__( 'Notice was successfully dismissed.', 'wp-mail-smtp' );
+		}
 	}
 
 	/**

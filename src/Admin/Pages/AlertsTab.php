@@ -216,7 +216,7 @@ class AlertsTab extends PageAbstract {
 					</div>
 				</div>
 
-                <div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
+				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content section-heading">
 						<div class="wp-mail-smtp-setting-field">
 							<h3><?php esc_html_e( 'Microsoft Teams', 'wp-mail-smtp' ); ?></h3>
@@ -314,6 +314,35 @@ class AlertsTab extends PageAbstract {
 							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
 								<div class="wp-mail-smtp-setting-label">
 									<label><?php esc_html_e( 'Webhook URL', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content section-heading">
+						<div class="wp-mail-smtp-setting-field">
+							<h3><?php esc_html_e( 'Push Notifications', 'wp-mail-smtp' ); ?></h3>
+							<p class="desc"><?php esc_html_e( 'To receive push notifications on this device, you\'ll need to allow our plugin to send notifications via this browser. Read our documentation on setting up Push Notification alerts.', 'wp-mail-smtp' ); ?></p>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle">
+						<div class="wp-mail-smtp-setting-label">
+							<label><?php esc_html_e( 'Push Notifications Alerts', 'wp-mail-smtp' ); ?></label>
+						</div>
+						<div class="wp-mail-smtp-setting-field">
+							<?php
+							UI::toggle();
+							?>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-connection-options">
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'Connection Name', 'wp-mail-smtp' ); ?></label>
 								</div>
 								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
 							</div>

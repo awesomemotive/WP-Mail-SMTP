@@ -158,7 +158,12 @@ class UsageTracking {
 		}
 
 		if ( is_multisite() ) {
-			$data['wp_mail_smtp_multisite_network_wide'] = WP::use_global_plugin_settings();
+			$use_global_settings                         = WP::use_global_plugin_settings();
+			$data['wp_mail_smtp_multisite_network_wide'] = $use_global_settings;
+
+			if ( ! $use_global_settings ) {
+				$data['wp_mail_smtp_multisite_is_subsite'] = ! is_main_site();
+			}
 		}
 
 		return apply_filters( 'wp_mail_smtp_usage_tracking_get_data', $data );

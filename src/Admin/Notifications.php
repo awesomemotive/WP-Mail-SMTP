@@ -20,7 +20,7 @@ class Notifications {
 	 *
 	 * @var string
 	 */
-	const SOURCE_URL = 'https://plugin.wpmailsmtp.com/wp-content/notifications.json';
+	const SOURCE_URL = 'https://wpmailsmtpapi.com/feeds/v1/notifications';
 
 	/**
 	 * The WP option key for storing the notification options.
@@ -131,8 +131,10 @@ class Notifications {
 	 */
 	protected function fetch_feed() {
 
+		$feed_url = self::SOURCE_URL . '/' . wp_mail_smtp()->get_license_type();
+
 		$response = wp_remote_get(
-			self::SOURCE_URL,
+			$feed_url,
 			[
 				'user-agent' => Helpers::get_default_user_agent(),
 			]

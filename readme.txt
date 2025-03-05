@@ -3,7 +3,7 @@ Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 4.3.0
+Stable tag: 4.4.0
 Requires PHP: 7.2
 License: GNU General Public License v3.0 or later
 
@@ -408,6 +408,10 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.4.0 - 2025-03-05 =
+- Fixed: Emails queue runner Action Scheduler task deadlock issue.
+- Fixed: Undefined array key "wp_mail_smtp_reports_widget_lite" warning in the dashboard widget.
 
 = 4.3.0 - 2024-12-11 =
 - Added: New transactional mailer: Elastic Email integration.

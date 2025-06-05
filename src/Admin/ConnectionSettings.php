@@ -325,6 +325,9 @@ class ConnectionSettings {
 		if ( ! isset( $data['smtp']['auth'] ) ) {
 			$data['smtp']['auth'] = false;
 		}
+		if ( ! isset( $data['mailersend']['has_pro_plan'] ) ) {
+			$data['mailersend']['has_pro_plan'] = false;
+		}
 
 		// When switching mailers.
 		if (

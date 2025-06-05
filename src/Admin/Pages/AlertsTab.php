@@ -330,7 +330,7 @@ class AlertsTab extends PageAbstract {
 					</div>
 					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle">
 						<div class="wp-mail-smtp-setting-label">
-							<label><?php esc_html_e( 'Push Notifications Alerts', 'wp-mail-smtp' ); ?></label>
+							<label><?php esc_html_e( 'Push Notification Alerts', 'wp-mail-smtp' ); ?></label>
 						</div>
 						<div class="wp-mail-smtp-setting-field">
 							<?php
@@ -343,6 +343,53 @@ class AlertsTab extends PageAbstract {
 							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
 								<div class="wp-mail-smtp-setting-label">
 									<label><?php esc_html_e( 'Connection Name', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert">
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content section-heading">
+						<div class="wp-mail-smtp-setting-field">
+							<h3><?php esc_html_e( 'WhatsApp', 'wp-mail-smtp' ); ?></h3>
+							<p class="desc"><?php esc_html_e( 'Enter your WhatsApp Cloud API credentials to receive alerts when email sending fails. You\'ll need to create a Meta developer account and set up WhatsApp Business Platform.', 'wp-mail-smtp' ); ?></p>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-checkbox-toggle">
+						<div class="wp-mail-smtp-setting-label">
+							<label><?php esc_html_e( 'WhatsApp Alerts', 'wp-mail-smtp' ); ?></label>
+						</div>
+						<div class="wp-mail-smtp-setting-field">
+							<?php
+							UI::toggle();
+							?>
+						</div>
+					</div>
+					<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-options">
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-alert-connection-options">
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'Access Token', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="password"></div>
+							</div>
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'WhatsApp Business Account ID', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
+							</div>
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'Phone Number ID', 'wp-mail-smtp' ); ?></label>
+								</div>
+								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
+							</div>
+							<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text">
+								<div class="wp-mail-smtp-setting-label">
+									<label><?php esc_html_e( 'To Phone Number', 'wp-mail-smtp' ); ?></label>
 								</div>
 								<div class="wp-mail-smtp-setting-field"><input type="text"></div>
 							</div>

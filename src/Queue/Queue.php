@@ -302,7 +302,7 @@ class Queue {
 	 *
 	 * @return int Email count.
 	 */
-	public function count_processed_emails( DateTime $since_datetime = null ) {
+	public function count_processed_emails( ?DateTime $since_datetime = null ) {
 
 		if ( ! $this->is_valid_db() ) {
 			return 0;

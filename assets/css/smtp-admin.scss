@@ -398,6 +398,32 @@
 				}
 			}
 
+			&#wp-mail-smtp-setting-row-alerts-whatsapp {
+
+				.wp-mail-smtp-setting-row-alert-connection-options {
+					position: relative;
+
+					& + .wp-mail-smtp-setting-row-alert-connection-options:before {
+						content: '';
+						display: block;
+						max-width: 605px;
+						height: 1px;
+						margin-bottom: 20px;
+						background-color: #DCDCDE;
+					}
+
+					.wp-mail-smtp-setting-row:first-child .wp-mail-smtp-setting-field {
+						position: relative;
+
+						.js-wp-mail-smtp-setting-alert-remove-connection {
+							position: absolute;
+							top: 8px;
+							left: 415px;
+						}
+					}
+				}
+			}
+
 			// General elements.
 			h2, h4 {
 				color: $primary-text;
@@ -633,6 +659,10 @@
 			width: 205px;
 			padding: 0 20px 0 0;
 
+			&-with-tooltip {
+				display: flex;
+			}
+
 			@include media("<tablet") {
 				float: none;
 				width: 100%;
@@ -665,6 +695,67 @@
 
 				& > .wp-mail-smtp-btn + .wp-mail-smtp-btn {
 					margin-left: 10px;
+				}
+			}
+
+
+			.wp-mail-smtp-setting-status-label {
+				display: inline-flex;
+				align-items: center;
+				font-size: 12px;
+				padding: 4px 8px;
+				border-radius: 4px;
+				background-color: #FFF4CD;
+				color: #BD8600;
+				
+				&.wp-mail-smtp-setting-status-label-approved {
+					background-color: #CEFAD4;
+					color: #008A20;
+				}
+
+				&.wp-mail-smtp-setting-status-label-not-found, 
+				&.wp-mail-smtp-setting-status-label-rejected {
+					background-color: #FFE2E4;
+					color: #D63638;
+				}
+
+				img {
+					margin-left: 4px;
+					height: 12px;
+					width: auto;
+				}
+			}
+
+			.wp-mail-smtp-whatsapp-recheck-status {
+				display: inline-flex;
+				align-items: center;
+				padding: 7px;
+				margin-left: 5px;
+				margin-right: 5px;
+				text-decoration: none;
+				color: #2271B1;
+				font-size: 12px;
+
+				img {
+					margin-left: 4px;
+					margin-right: 4px;
+					height: 12px;
+					width: auto;
+				}
+
+				&:hover {
+					color: #135E96;
+				}
+
+				&:focus {
+					outline: none;
+					box-shadow: none;
+				}
+
+				&.loading {
+					img {
+						animation: wp-mail-smtp-spin 2s linear infinite;
+					}
 				}
 			}
 		}
@@ -1562,4 +1653,13 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 
 .wp-mail-smtp-dashicons-pdf-gray {
 	background-image: url('../images/icons/dashicons/dashicons-pdf-grey.svg');
+}
+
+@keyframes wp-mail-smtp-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }

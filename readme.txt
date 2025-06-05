@@ -2,9 +2,9 @@
 Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
-Tested up to: 6.7
-Stable tag: 4.4.0
-Requires PHP: 7.2
+Tested up to: 6.8
+Stable tag: 4.5.0
+Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
 Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, SES, Zoho, + more. Rated #1 WordPress SMTP Email plugin.
@@ -408,6 +408,12 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.5.0 - 2025-06-05 =
+- IMPORTANT: Support for PHP 7.2 has been discontinued. If you are running this version, you MUST upgrade PHP before installing or upgrading to WP Mail SMTP v4.5. Failure to do that will disable WP Mail SMTP functionality.
+- Added: New transactional mailer: MailerSend integration.
+- Fixed: Microsoft Outlook basic auth deprecation notice dismissal.
+- Changed: Updated the list of conflicting plugins (added Site Mailer, SureMail, Gravity SMTP).
 
 = 4.4.0 - 2025-03-05 =
 - Fixed: Emails queue runner Action Scheduler task deadlock issue.

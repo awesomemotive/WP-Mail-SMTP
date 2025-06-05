@@ -30,17 +30,16 @@
     }
   ],
   "require": {
-    "php": ">=7.2",
-    "composer/installers": "~2.2",
-    "google/apiclient": "2.14.0",
+    "php": ">=7.4",
+    "composer/installers": "~2.3",
+    "google/apiclient": "2.16.1",
     "paragonie/constant_time_encoding": "^2",
-    "guzzlehttp/guzzle": "7.8.1",
-    "monolog/monolog": "^2.9",
+    "guzzlehttp/guzzle": "7.9.2",
+    "monolog/monolog": "^2.10",
     "symfony/polyfill-intl-idn": "1.31.0",
     "symfony/polyfill-mbstring": "1.31.0",
-    "symfony/polyfill-php72": "1.31.0",
     "wikimedia/composer-merge-plugin": "2.1.0",
-    "woocommerce/action-scheduler": "3.7.4"
+    "woocommerce/action-scheduler": "3.9.2"
   },
   "autoload": {
     "psr-4": {
@@ -68,10 +67,10 @@
   },
   "scripts": {
     "php-compatibility-lite" : [
-      "vendor/bin/phpcs -p ./*.php ./src/* --ignore='./src/Pro/' --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.2-"
+      "vendor/bin/phpcs -p ./*.php ./src/* --ignore='./src/Pro/' --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.4-"
     ],
     "php-compatibility-pro" : [
-      "vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.2-"
+      "vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.4-"
     ],
     "php-compatibility" : [
       "@php-compatibility-lite",

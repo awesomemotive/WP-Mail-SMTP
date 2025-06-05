@@ -127,10 +127,6 @@ if ( is_multisite() ) {
 		// Delete all queue attachments.
 		( new \WPMailSMTP\Queue\Attachments() )->delete_attachments();
 
-		// Delete Outlook notice dismissals.
-		delete_metadata( 'user', 0, 'wp_mail_smtp_microsoft_basic_auth_deprecation_notice_dismissed', '', true );
-		delete_metadata( 'user', 0, 'wp_mail_smtp_microsoft_basic_auth_deprecation_general_notice_dismissed', '', true );
-
 		/*
 		 * Cleanup network site data for Pro plugin only.
 		 */
@@ -222,10 +218,6 @@ if ( is_multisite() ) {
 
 	// Delete all queue attachments.
 	( new \WPMailSMTP\Queue\Attachments() )->delete_attachments();
-
-	// Delete Outlook notice dismissals.
-	delete_metadata( 'user', 0, 'wp_mail_smtp_microsoft_basic_auth_deprecation_notice_dismissed', '', true );
-	delete_metadata( 'user', 0, 'wp_mail_smtp_microsoft_basic_auth_deprecation_general_notice_dismissed', '', true );
 
 	/*
 	 * Cleanup data for Pro plugin only.

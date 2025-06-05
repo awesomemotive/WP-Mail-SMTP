@@ -7,6 +7,15 @@
 	color: $secondary-text;
 	margin-top: 15px !important;
 
+	&-with-icon {
+		margin-top: 2px !important;
+		margin-left: 10px;
+
+		.wp-mail-smtp-tooltip-text {
+			bottom: 130%;
+		}
+	}
+
 	&-text {
 		visibility: hidden;
 		position: absolute;
@@ -34,7 +43,42 @@
 		}
 	}
 
+	&-small-text {
+		font-size: 12px;
+		line-height: 140%;
+		text-align: left;
+
+		code, kbd {
+			font-size: 12px;
+		}
+	}
+
 	&:hover .wp-mail-smtp-tooltip-text {
 		visibility: visible;
+	}
+}
+
+.wp-mail-smtp-page {
+	label.wp-mail-smtp-setting-label-with-tooltip {
+		.wp-mail-smtp-tooltip-with-icon {
+			margin-left: 0;
+			position: relative;
+			left: 0;
+			top: 0;
+			vertical-align: top;
+		}
+	}
+
+	.wp-mail-smtp-tooltip {
+		&-text {
+			a {
+				color: #fff;
+
+				&:active,
+				&:hover {
+					color: #fff;
+				}
+			}
+		}
 	}
 }

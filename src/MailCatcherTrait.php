@@ -74,6 +74,7 @@ trait MailCatcherTrait {
 	 *
 	 * @since 1.0.0
 	 * @since 1.4.0 Process "Do Not Send" option, but always allow test email.
+	 * @since 4.5.0 Add support for logging blocked emails.
 	 *
 	 * @throws Exception When sending via PhpMailer fails for some reason.
 	 *
@@ -108,8 +109,17 @@ trait MailCatcherTrait {
 			}
 		}
 
-		// Do not send emails if admin desired that.
+		// Log blocked emails if the option is enabled.
 		if ( $this->is_emailing_blocked ) {
+			/**
+			 * Fires when an email is blocked from being sent.
+			 *
+			 * @since 4.5.0
+			 *
+			 * @param MailCatcherInterface $mailcatcher The MailCatcher object.
+			 */
+			do_action( 'wp_mail_smtp_mail_catcher_send_blocked', $this );
+
 			return false;
 		}
 

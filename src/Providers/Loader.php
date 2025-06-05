@@ -36,6 +36,7 @@ class Loader {
 		'gmail'        => 'WPMailSMTP\Providers\Gmail\\',
 		'mailgun'      => 'WPMailSMTP\Providers\Mailgun\\',
 		'mailjet'      => 'WPMailSMTP\Providers\Mailjet\\',
+		'mailersend'   => 'WPMailSMTP\Providers\MailerSend\\',
 		'outlook'      => 'WPMailSMTP\Providers\Outlook\\',
 		'pepipostapi'  => 'WPMailSMTP\Providers\PepipostAPI\\',
 		'postmark'     => 'WPMailSMTP\Providers\Postmark\\',

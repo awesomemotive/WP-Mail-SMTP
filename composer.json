@@ -20,13 +20,6 @@
     {
       "type": "vcs",
       "url": "https://github.com/awesomemotive/wpforms-phpcs.git"
-    },
-    {
-      "type": "path",
-      "url": ".packages/composer/phpcs-diff",
-      "options": {
-        "symlink": true
-      }
     }
   ],
   "require": {
@@ -49,8 +42,6 @@
         "vendor_prefixed"
     ],
     "files": [
-      "vendor_prefixed/mtdowling/jmespath.php/src/JmesPath.php",
-      "vendor_prefixed/aws/aws-sdk-php/src/functions.php",
       "vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
       "vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php",
       "vendor_prefixed/symfony/deprecation-contracts/function.php",
@@ -62,8 +53,7 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
-    "wp-coding-standards/wpcs": "^2.3",
-    "wpforms/phpcs-diff": "^1.2"
+    "wp-coding-standards/wpcs": "^2.3"
   },
   "scripts": {
     "php-compatibility-lite" : [

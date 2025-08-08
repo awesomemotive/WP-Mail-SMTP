@@ -29,6 +29,7 @@ class Loader {
 	protected $providers = [
 		'mail'         => 'WPMailSMTP\Providers\Mail\\',
 		'sendlayer'    => 'WPMailSMTP\Providers\Sendlayer\\',
+        'mailtrap'    => 'WPMailSMTP\Providers\Mailtrap\\',
 		'smtpcom'      => 'WPMailSMTP\Providers\SMTPcom\\',
 		'sendinblue'   => 'WPMailSMTP\Providers\Sendinblue\\',
 		'amazonses'    => 'WPMailSMTP\Providers\AmazonSES\\',

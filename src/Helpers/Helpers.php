@@ -26,6 +26,7 @@ class Helpers {
 			Options::init()->get( 'mail', 'mailer' ),
 			[
 				'sendlayer',
+				'mailtrap',
 				'smtpcom',
 				'sendinblue',
 				'mailgun',

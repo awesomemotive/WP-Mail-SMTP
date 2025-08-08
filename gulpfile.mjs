@@ -80,6 +80,7 @@ var plugin = {
 		'!**/AUTHORS',
 		'!**/Copying',
 		'!**/Dockerfile',
+		'!**/docker-compose.yml',
 		'!**/Makefile',
 		'!.packages/**',
 		'!.packages/',

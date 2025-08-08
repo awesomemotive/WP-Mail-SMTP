@@ -101,6 +101,9 @@ class Options {
 		'sendlayer'                => [
 			'api_key',
 		],
+		'mailtrap'                => [
+			'api_key',
+		],
 		'elasticemail'             => [
 			'api_key',
 		],
@@ -163,6 +166,7 @@ class Options {
 	 */
 	public static $mailers = [
 		'sendlayer',
+		'mailtrap',
 		'smtpcom',
 		'sendinblue',
 		'amazonses',
@@ -588,6 +592,16 @@ class Options {
 					case 'api_key':
 						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ? WPMS_SENDLAYER_API_KEY : $value;
+						break;
+				}
+
+				break;
+
+			case 'mailtrap':
+				switch ( $key ) {
+					case 'api_key':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_MAILTRAP_API_KEY : $value;
 						break;
 				}
 
@@ -1036,6 +1050,15 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						$return = defined( 'WPMS_SENDLAYER_API_KEY' ) && WPMS_SENDLAYER_API_KEY;
+						break;
+				}
+
+				break;
+
+			case 'mailtrap':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'WPMS_MAILTRAP_API_KEY' ) && WPMS_MAILTRAP_API_KEY;
 						break;
 				}
 
@@ -1510,7 +1533,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet/elasticemail.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet/elasticemail/mailtrap.
 					case 'secret_key': // mailjet.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.

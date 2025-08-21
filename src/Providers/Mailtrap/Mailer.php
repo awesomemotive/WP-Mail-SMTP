@@ -18,7 +18,7 @@ class Mailer extends MailerAbstract {
 	 *
 	 * @var string
 	 */
-	protected $url = 'https://send.api.mailtrap.io/api/send';
+    protected $url = 'https://send.api.mailtrap.io/api/send';
 
 	/**
 	 * Mailer constructor.
@@ -31,10 +31,30 @@ class Mailer extends MailerAbstract {
 		// We want to prefill everything from MailCatcher class, which extends PHPMailer.
 		parent::__construct( $phpmailer, $connection );
 
+		// Set the API URL based on environment.
+		$this->override_api_url($this->connection_options->get( $this->mailer, 'environment' ));
+
 		// Set mailer specific headers.
 		$this->set_header( 'Api-Token', $this->connection_options->get( $this->mailer, 'api_key' ) );
 		$this->set_header( 'Accept', 'application/json' );
 		$this->set_header( 'Content-Type', 'application/json' );
+	}
+
+	/**
+	 * Set the API URL based on environment setting.
+	 */
+	protected function override_api_url($environment) {
+		// Default to prod if no environment is set
+		if ( empty( $environment ) ) {
+			$environment = 'prod';
+		}
+		
+		if ( $environment === 'sandbox' ) {
+			$inboxId = $this->connection_options->get( $this->mailer, 'inbox_id' );
+			if ( ! empty( $inboxId ) ) {
+				$this->url = 'https://sandbox.api.mailtrap.io/api/send/' . sanitize_text_field( $inboxId );
+			}
+		}
 	}
 
 	/**
@@ -352,7 +372,7 @@ class Mailer extends MailerAbstract {
 		return implode( WP::EOL, array_map( 'esc_textarea', array_filter( $error_text ) ) );
 	}
 
-	public static function getErrorMsg(array|string $errors): string
+	public static function getErrorMsg($errors): string
 	{
 		$errorMsg = '';
 		if (is_array($errors)) {
@@ -383,13 +403,24 @@ class Mailer extends MailerAbstract {
 		$text[] = '<strong>' . esc_html__( 'API Key:', 'wp-mail-smtp' ) . '</strong> ' .
 							( ! empty( $options['api_key'] ) ? 'Yes' : 'No' );
 
+		$environment = ! empty( $options['environment'] ) ? $options['environment'] : 'prod';
+		$text[] = '<strong>' . esc_html__( 'Environment:', 'wp-mail-smtp' ) . '</strong> ' . esc_html( ucfirst( $environment ) );
+
+		if ( $environment === 'sandbox' ) {
+			$text[] = '<strong>' . esc_html__( 'Inbox ID:', 'wp-mail-smtp' ) . '</strong> ' .
+								( ! empty( $options['inbox_id'] ) ? 'Yes' : 'No' );
+		}
+
+		$text[] = '<strong>' . esc_html__( 'API URL:', 'wp-mail-smtp' ) . '</strong> ' . esc_html( $this->url );
+
 		return implode( '<br>', $text );
 	}
 
 	/**
 	 * Whether the mailer has all its settings correctly set up and saved.
 	 *
-	 * This mailer is configured when `server_api_token` setting is defined.
+	 * This mailer is configured when `api_key` setting is defined.
+	 * For sandbox environment, `inbox_id` is also required.
 	 *
 	 * @return bool
 	 */
@@ -397,11 +428,19 @@ class Mailer extends MailerAbstract {
 
 		$options = $this->connection_options->get_group( $this->mailer );
 
-		if ( ! empty( $options['api_key'] ) ) {
-			return true;
+		if ( empty( $options['api_key'] ) ) {
+			return false;
 		}
 
-		return false;
+		// Get environment setting, default to prod
+		$environment = ! empty( $options['environment'] ) ? $options['environment'] : 'prod';
+
+		// If sandbox environment, inbox_id is required
+		if ( $environment === 'sandbox' && empty( $options['inbox_id'] ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

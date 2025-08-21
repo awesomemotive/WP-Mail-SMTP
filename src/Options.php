@@ -103,6 +103,8 @@ class Options {
 		],
 		'mailtrap'                => [
 			'api_key',
+			'environment',
+			'inbox_id',
 		],
 		'elasticemail'             => [
 			'api_key',
@@ -603,6 +605,14 @@ class Options {
 						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
 						$return = $this->is_const_defined( $group, $key ) ? WPMS_MAILTRAP_API_KEY : $value;
 						break;
+					case 'environment':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_MAILTRAP_ENVIRONMENT : $value;
+						break;
+					case 'inbox_id':
+						/** No inspection comment @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_MAILTRAP_INBOX_ID : $value;
+						break;
 				}
 
 				break;
@@ -1059,6 +1069,12 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						$return = defined( 'WPMS_MAILTRAP_API_KEY' ) && WPMS_MAILTRAP_API_KEY;
+						break;
+					case 'environment':
+						$return = defined( 'WPMS_MAILTRAP_ENVIRONMENT' ) && WPMS_MAILTRAP_ENVIRONMENT;
+						break;
+					case 'inbox_id':
+						$return = defined( 'WPMS_MAILTRAP_INBOX_ID' ) && WPMS_MAILTRAP_INBOX_ID;
 						break;
 				}
 
@@ -1542,7 +1558,17 @@ class Options {
 					case 'channel': // smtpcom.
 					case 'server_api_token': // postmark.
 					case 'message_stream': // postmark.
+					case 'inbox_id': // mailtrap.
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : sanitize_text_field( $option_value );
+						break;
+
+					case 'environment': // mailtrap.
+						if ( $this->is_const_defined( $mailer, $option_name ) ) {
+							$options[ $mailer ][ $option_name ] = '';
+						} else {
+							$environment = sanitize_text_field( $option_value );
+							$options[ $mailer ][ $option_name ] = in_array( $environment, [ 'prod', 'sandbox' ], true ) ? $environment : 'prod';
+						}
 						break;
 
 					case 'has_pro_plan': // mailersend.

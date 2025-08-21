@@ -67,7 +67,7 @@ class Options extends OptionsAbstract {
 				'slug'        => self::SLUG,
 				'title'       => esc_html__( 'Mailtrap', 'wp-mail-smtp' ),
 				'description' => $description,
-				'recommended' => true,
+				'recommended' => false,
 				'supports'    => [
 					'from_email'       => true,
 					'from_name'        => true,
@@ -129,6 +129,105 @@ class Options extends OptionsAbstract {
 				</p>
 			</div>
 		</div>
+
+		<!-- Environment -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-environment" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-radio wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label><?php esc_html_e( 'Environment', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'environment' ) ) : ?>
+					<?php $environment = $this->connection_options->get( $this->get_slug(), 'environment' ); ?>
+					<label>
+						<input type="radio" disabled <?php checked( 'prod', $environment ); ?> />
+						<?php esc_html_e( 'Prod', 'wp-mail-smtp' ); ?>
+					</label>
+					<label>
+						<input type="radio" disabled <?php checked( 'sandbox', $environment ); ?> />
+						<?php esc_html_e( 'Sandbox', 'wp-mail-smtp' ); ?>
+					</label>
+					<?php $this->display_const_set_message( 'WPMS_MAILTRAP_ENVIRONMENT' ); ?>
+				<?php else : ?>
+					<?php
+					$environment = $this->connection_options->get( $this->get_slug(), 'environment' );
+					if ( empty( $environment ) ) {
+						$environment = 'prod'; // Default to Prod
+					}
+					?>
+					<label>
+						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-environment-prod"
+							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][environment]"
+							value="prod"
+							<?php checked( 'prod', $environment ); ?>
+							onchange="wp_mail_smtp_mailtrap_toggle_inbox_id()"
+						/>
+						<?php esc_html_e( 'Prod', 'wp-mail-smtp' ); ?>
+					</label>
+					<label>
+						<input type="radio" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-environment-sandbox"
+							name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][environment]"
+							value="sandbox"
+							<?php checked( 'sandbox', $environment ); ?>
+							onchange="wp_mail_smtp_mailtrap_toggle_inbox_id()"
+						/>
+						<?php esc_html_e( 'Sandbox', 'wp-mail-smtp' ); ?>
+					</label>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<!-- Inbox ID -->
+		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-text wp-mail-smtp-clear" style="<?php echo ( 'sandbox' !== $environment ) ? 'display: none;' : ''; ?>">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id"><?php esc_html_e( 'Inbox ID', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<?php if ( $this->connection_options->is_const_defined( $this->get_slug(), 'inbox_id' ) ) : ?>
+					<input type="text" disabled value="****************************************"
+						id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id"
+					/>
+					<?php $this->display_const_set_message( 'WPMS_MAILTRAP_INBOX_ID' ); ?>
+				<?php else : ?>
+					<input type="text" id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id"
+						name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][inbox_id]"
+						value="<?php echo esc_attr( $this->connection_options->get( $this->get_slug(), 'inbox_id' ) ); ?>"
+						placeholder="<?php esc_attr_e( 'Enter your Inbox ID', 'wp-mail-smtp' ); ?>"
+						<?php echo ( 'sandbox' === $environment ) ? 'required' : ''; ?>
+					/>
+				<?php endif; ?>
+				<p class="desc">
+					<?php
+					printf(
+						/* translators: %s - inbox ID link. */
+						esc_html__( 'You can find Inbox ID in your %s page.', 'wp-mail-smtp' ),
+						'<a href="' . esc_url( 'https://mailtrap.io/inboxes' ) . '" target="_blank" rel="noopener noreferrer">' .
+						esc_html__( 'Sandboxes', 'wp-mail-smtp' ) .
+						'</a>'
+					);
+					?>
+				</p>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			function wp_mail_smtp_mailtrap_toggle_inbox_id() {
+				let environment = document.querySelector('input[name="wp-mail-smtp[<?php echo esc_attr( $this->get_slug() ); ?>][environment]"]:checked');
+                let inboxIdRow = document.getElementById('wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id');
+                let inboxIdInput = document.getElementById('wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-inbox_id');
+				
+				if (environment && environment.value === 'sandbox') {
+					inboxIdRow.style.display = '';
+					if (inboxIdInput) {
+						inboxIdInput.setAttribute('required', 'required');
+					}
+				} else {
+					inboxIdRow.style.display = 'none';
+					if (inboxIdInput) {
+						inboxIdInput.removeAttribute('required');
+					}
+				}
+			}
+		</script>
 		<?php
 	}
 }

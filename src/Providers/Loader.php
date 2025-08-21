@@ -29,7 +29,6 @@ class Loader {
 	protected $providers = [
 		'mail'         => 'WPMailSMTP\Providers\Mail\\',
 		'sendlayer'    => 'WPMailSMTP\Providers\Sendlayer\\',
-        'mailtrap'    => 'WPMailSMTP\Providers\Mailtrap\\',
 		'smtpcom'      => 'WPMailSMTP\Providers\SMTPcom\\',
 		'sendinblue'   => 'WPMailSMTP\Providers\Sendinblue\\',
 		'amazonses'    => 'WPMailSMTP\Providers\AmazonSES\\',
@@ -37,6 +36,7 @@ class Loader {
 		'gmail'        => 'WPMailSMTP\Providers\Gmail\\',
 		'mailgun'      => 'WPMailSMTP\Providers\Mailgun\\',
 		'mailjet'      => 'WPMailSMTP\Providers\Mailjet\\',
+        'mailtrap'     => 'WPMailSMTP\Providers\Mailtrap\\',
 		'mailersend'   => 'WPMailSMTP\Providers\MailerSend\\',
 		'outlook'      => 'WPMailSMTP\Providers\Outlook\\',
 		'pepipostapi'  => 'WPMailSMTP\Providers\PepipostAPI\\',

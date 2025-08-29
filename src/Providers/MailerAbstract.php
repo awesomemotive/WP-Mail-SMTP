@@ -680,7 +680,21 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function sanitize_header_value( $name, $value ) {
 
-		if ( strtolower( $name ) === 'list-unsubscribe' ) {
+		if (
+			in_array(
+				strtolower( $name ),
+				[
+					'cc',
+					'bcc',
+					'reply-to',
+					'message-id',
+					'list-unsubscribe',
+					'references',
+					'in-reply-to'
+				],
+				true
+			)
+		) {
 			return $value;
 		}
 

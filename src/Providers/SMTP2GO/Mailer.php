@@ -505,21 +505,4 @@ class Mailer extends MailerAbstract {
 
 		return $result;
 	}
-
-	/**
-	 * Sanitize email header values.
-	 *
-	 * @since 4.1.1
-	 *
-	 * @param string $name  Name of the header.
-	 * @param string $value Value of the header.
-	 */
-	public function sanitize_header_value( $name, $value ) {
-
-		if ( strtolower( $name ) === 'reply-to' ) {
-			return $value;
-		}
-
-		return parent::sanitize_header_value( $name, $value );
-	}
 }

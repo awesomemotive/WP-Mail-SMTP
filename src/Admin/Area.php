@@ -496,6 +496,19 @@ class Area {
 			}
 		);
 
+		wp_register_style(
+			'wp-mail-smtp-admin-lity',
+			wp_mail_smtp()->assets_url . '/css/vendor/lity.min.css',
+			[],
+			'2.4.1'
+		);
+		wp_register_script(
+			'wp-mail-smtp-admin-lity',
+			wp_mail_smtp()->assets_url . '/js/vendor/lity.min.js',
+			[],
+			'2.4.1'
+		);
+
 		// General styles and js.
 		wp_enqueue_style(
 			'wp-mail-smtp-admin',
@@ -667,6 +680,24 @@ class Area {
 				'0.7.2',
 				false
 			);
+		}
+
+		if ( $this->is_admin_page( 'general' ) ) {
+			wp_enqueue_style(
+				'wp-mail-smtp-admin-general',
+				wp_mail_smtp()->assets_url . '/css/smtp-admin-general.min.css',
+				[ 'wp-mail-smtp-admin' ],
+				WPMS_PLUGIN_VER
+			);
+		}
+
+		if (
+			$this->is_admin_page( 'general' ) &&
+			! wp_mail_smtp()->is_pro() &&
+			! get_user_meta( get_current_user_id(), 'wp_mail_smtp_pro_banner_dismissed', true )
+		) {
+			wp_enqueue_style( 'wp-mail-smtp-admin-lity' );
+			wp_enqueue_script( 'wp-mail-smtp-admin-lity' );
 		}
 
 		/**

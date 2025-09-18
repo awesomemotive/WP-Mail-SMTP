@@ -283,7 +283,7 @@ class Auth extends AuthAbstract {
 		if ( ! empty( $error ) ) {
 			DebugEvents::add_debug(
 				sprintf( /* Translators: %s the error code passed from Google. */
-					esc_html__( 'There was an error while processing Google authorization: %s' ),
+					esc_html__( 'There was an error while processing Google authorization: %s', 'wp-mail-smtp' ),
 					esc_html( $error )
 				)
 			);
@@ -329,7 +329,7 @@ class Auth extends AuthAbstract {
 			$this->update_auth_code( $code );
 		} else {
 			DebugEvents::add_debug(
-				esc_html__( 'There was an error while processing Google authorization: missing code or scope parameter.' )
+				esc_html__( 'There was an error while processing Google authorization: missing code or scope parameter.', 'wp-mail-smtp' )
 			);
 
 			wp_safe_redirect(
@@ -480,7 +480,7 @@ class Auth extends AuthAbstract {
 		} catch ( Exception $exception ) {
 			DebugEvents::add_debug(
 				sprintf( /* Translators: %s the error message. */
-					esc_html__( 'An error occurred when trying to get Gmail aliases: %s' ),
+					esc_html__( 'An error occurred when trying to get Gmail aliases: %s', 'wp-mail-smtp' ),
 					esc_html( $exception->getMessage() )
 				)
 			);

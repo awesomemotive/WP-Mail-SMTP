@@ -555,7 +555,7 @@ class Core {
 						if ( ! wp_mail_smtp()->get_admin()->is_admin_page() ) {
 							printf(
 								wp_kses( /* translators: %s - plugin admin page URL. */
-									__( 'Please review your WP Mail SMTP settings in <a href="%s">plugin admin area</a>.' ) . ' ',
+									__( 'Please review your WP Mail SMTP settings in <a href="%s">plugin admin area</a>.', 'wp-mail-smtp' ) . ' ',
 									array(
 										'a' => array(
 											'href' => array(),
@@ -568,7 +568,7 @@ class Core {
 
 						printf(
 							wp_kses( /* translators: %s - URL to the debug events page. */
-								__( 'For more details please try running an Email Test or reading the latest <a href="%s">error event</a>.' ),
+								__( 'For more details please try running an Email Test or reading the latest <a href="%s">error event</a>.', 'wp-mail-smtp' ),
 								[
 									'a' => [
 										'href' => [],

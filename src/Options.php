@@ -1365,14 +1365,14 @@ class Options {
 
 				// phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore
 				break;
-       case 'mailtrap':
-        switch ( $key ) {
-            case 'api_key':
-                $return = defined( 'WPMS_MAILTRAP_API_KEY' ) && WPMS_MAILTRAP_API_KEY;
-                break;
-        }
+           case 'mailtrap':
+            switch ( $key ) {
+                case 'api_key':
+                    $return = defined( 'WPMS_MAILTRAP_API_KEY' ) && WPMS_MAILTRAP_API_KEY;
+                    break;
+            }
 
-        break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore
+            break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore
 		}
 
 		return apply_filters( 'wp_mail_smtp_options_is_const_defined', $return, $group, $key );

@@ -36,7 +36,7 @@ class Helpers {
 				'mailjet',
 				'mailersend',
 				'mandrill',
-        'mailtrap',
+                'mailtrap',
 			],
 			true
 		);

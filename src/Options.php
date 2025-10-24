@@ -152,6 +152,9 @@ class Options {
 		'alert_events'             => [
 			'email_hard_bounced',
 		],
+        'mailtrap'                 => [
+            'api_key',
+        ],
 	];
 
 	/**
@@ -180,6 +183,7 @@ class Options {
 		'smtp',
 		'pepipost',
 		'pepipostapi',
+		'mailtrap',
 	];
 
 	/**
@@ -930,6 +934,16 @@ class Options {
 
 				break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore,WPForms.Formatting.Switch.RemoveEmptyLineBefore
 
+            case 'mailtrap':
+                switch ( $key ) {
+                    case 'api_key':
+                        /** No inspection comment @noinspection PhpUndefinedConstantInspection */
+                        $return = $this->is_const_defined( $group, $key ) ? WPMS_MAILTRAP_API_KEY : $value;
+                        break;
+                }
+
+                break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore,WPForms.Formatting.Switch.RemoveEmptyLineBefore
+
 			default:
 				// Always return the default value if nothing from above matches the request.
 				$return = $value;
@@ -1326,6 +1340,15 @@ class Options {
 						break;
 				}
 				break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore
+
+            case 'mailtrap':
+                switch ( $key ) {
+                    case 'api_key':
+                        $return = defined( 'WPMS_MAILTRAP_API_KEY' ) && WPMS_MAILTRAP_API_KEY;
+                        break;
+                }
+
+                break; // phpcs:ignore WPForms.Formatting.Switch.AddEmptyLineBefore
 		}
 
 		return apply_filters( 'wp_mail_smtp_options_is_const_defined', $return, $group, $key );
@@ -1510,7 +1533,7 @@ class Options {
 						}
 						break;
 
-					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet/elasticemail.
+					case 'api_key': // mailgun/sendgrid/sendinblue/pepipostapi/smtpcom/sparkpost/sendlayer/smtp2go/mailjet/elasticemail/mailtrap.
 					case 'secret_key': // mailjet.
 					case 'domain': // mailgun/zoho/sendgrid/sendinblue.
 					case 'client_id': // gmail/outlook/amazonses/zoho.

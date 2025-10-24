@@ -250,6 +250,16 @@
 				padding: 0;
 			}
 
+			&.wp-mail-smtp-setting-row-license_key {
+
+				.wp-mail-smtp-setting-field {
+
+					p:first-child {
+						margin-top: 0;
+					}
+				}
+			}
+
 			// Mailer image radio settings field.
 			&.wp-mail-smtp-setting-row-mailer {
 				padding-bottom: 20px;
@@ -707,13 +717,13 @@
 				border-radius: 4px;
 				background-color: #FFF4CD;
 				color: #BD8600;
-				
+
 				&.wp-mail-smtp-setting-status-label-approved {
 					background-color: #CEFAD4;
 					color: #008A20;
 				}
 
-				&.wp-mail-smtp-setting-status-label-not-found, 
+				&.wp-mail-smtp-setting-status-label-not-found,
 				&.wp-mail-smtp-setting-status-label-rejected {
 					background-color: #FFE2E4;
 					color: #D63638;
@@ -874,107 +884,6 @@
 				display: block;
 				margin-left: 0;
 				margin-top: 8px;
-			}
-		}
-
-		#wp-mail-smtp-pro-banner {
-			background-color: #fff;
-			padding: 25px 20px;
-			border: 1px solid #dadada;
-			margin: 10px 0 0 0;
-			position: relative;
-
-			.wp-mail-smtp-pro-banner-dismiss {
-				position: absolute;
-				right: 10px;
-				top: 10px;
-
-				button {
-					background: none;
-					border: none;
-					color: $grey;
-					cursor: pointer;
-					margin: 0;
-					padding: 0;
-				}
-			}
-
-			h2 {
-				color: $primary-text;
-				margin-top: 0;
-				font-size: 16px;
-				font-weight: 600;
-			}
-
-			p {
-				font-size: 14px;
-				color: $secondary-text;
-				margin-bottom: 1.1em;
-
-				&:last-of-type {
-					margin: 0;
-				}
-			}
-
-			.benefits {
-				margin: 0 0 16px 0;
-				overflow: auto;
-				max-width: 1000px;
-
-				ul {
-					margin: 0;
-					padding: 0;
-					width: 50%;
-					float: left;
-
-					@include media("<=phone") {
-						width: 100%;
-						float: none;
-					}
-
-					li {
-						margin: 0;
-						padding: 0 0 2px 16px;
-						color: $secondary-text;
-						font-size: 14px;
-						position: relative;
-
-						&:before {
-							content: '+';
-							position: absolute;
-							top: -1px;
-							left: 0;
-						}
-
-						&.arrow-right:before {
-							content: '→';
-						}
-					}
-				}
-			}
-
-			a {
-				color: $orange;
-
-				&:hover, &:active, &:focus {
-					color: $orange-dark;
-				}
-			}
-
-			.stars {
-				text-decoration: none;
-
-				.dashicons {
-					width: 16px;
-					height: 16px;
-					font-size: 16px;
-					vertical-align: text-top;
-				}
-			}
-
-			.price-off {
-				color: $positive;
-				font-weight: 600;
 			}
 		}
 	}
@@ -1237,6 +1146,24 @@
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $orange-dark;
+		}
+	}
+
+	&.wp-mail-smtp-btn-secondary {
+		background-color: #056AAB;
+		border-color: #056AAB;
+		color: #fff;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background-color: darken(#056AAB, 5%);
+			border-color: darken(#056AAB, 5%);
+			color: #fff;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px darken(#056AAB, 5%);
 		}
 	}
 

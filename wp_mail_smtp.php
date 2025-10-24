@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 4.5.0
+ * Version: 4.6.0
  * Requires at least: 5.5
  * Requires PHP: 7.4
  * Plugin URI: https://wpmailsmtp.com/
- * Description: Reconfigures the <code>wp_mail()</code> function to use Gmail/Mailgun/SendGrid/SMTP instead of the default <code>mail()</code> and creates an options page to manage the settings.
+ * Description: Send WordPress emails reliably via SMTP or API using SendLayer, Brevo, SMTP.com, Gmail, Outlook, or another email service of your choice.
  * Author: WP Mail SMTP
  * Author URI: https://wpmailsmtp.com/
  * Network: false
@@ -253,7 +253,7 @@ if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
 	 *
 	 * @since 0.11.1
 	 */
-	define( 'WPMS_PLUGIN_VER', '4.5.0' );
+	define( 'WPMS_PLUGIN_VER', '4.6.0' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	/**

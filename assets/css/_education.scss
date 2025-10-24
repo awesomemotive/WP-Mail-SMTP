@@ -19,19 +19,25 @@
 	}
 
 	.wp-mail-smtp-notice-bar-container {
-		background-color: #DDDDDD;
+		background-color: #FCF9E8;
 		border-top: 3px solid $orange;
-		color: $secondary-text;
+		color: #3A3A56;
 		text-align: center;
 		padding: 7px;
 	}
 
 	a {
 		color: $orange;
+		font-weight: 700;
+
+		&:hover {
+			color: $orange-dark;
+		}
 	}
 
-	a:hover {
-		color: $orange-dark;
+	strong {
+		color: #008A20;
+		font-weight: 700;
 	}
 
 	.dismiss {
@@ -337,6 +343,179 @@
 
 		.wp-mail-smtp-setting-row-no-setting {
 			margin-top: 30px;
+		}
+	}
+
+	.wp-mail-smtp-upgrade-license-banner {
+		border-radius: 4px;
+		border: 1px solid #C3C4C7;
+		background: #FFF;
+		padding: 20px;
+		max-width: 796px;
+		margin-top: 20px;
+
+		p {
+			font-size: 14px;
+			margin: 0 0 10px 0;
+		}
+
+		strong {
+			font-weight: 500;
+		}
+
+		&__discount-line {
+
+			strong {
+				font-weight: 700;
+				color: #008A20;
+			}
+		}
+
+		&__upgrade-btn {
+			border-radius: 4px;
+			font-weight: 400;
+		}
+	}
+
+	.wp-mail-smtp-upgrade-banner {
+		position: relative;
+		padding: 30px;
+		border: 1px solid #DADADF;
+		background: #FFF;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+
+		p {
+			margin: 0;
+		}
+
+		.wp-mail-smtp-pro-banner-dismiss {
+			position: absolute;
+			right: 20px;
+			top: 20px;
+
+			button {
+				background: none;
+				border: none;
+				color: $grey;
+				cursor: pointer;
+				margin: 0;
+				padding: 0;
+			}
+		}
+
+		&__row {
+
+			& + .wp-mail-smtp-upgrade-banner__row {
+				margin-top: 25px;
+			}
+		}
+
+		&__heading {
+			color: #2C3338;
+			font-size: 17px;
+			font-weight: 500;
+			line-height: 1.5;
+			margin: 0 0 10px 0;
+		}
+
+		&__subheading {
+			margin: 0;
+			color: #646970;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.4;
+
+			strong {
+				color: #2C3338;
+				font-weight: 700;
+			}
+		}
+
+		&__features {
+			display: grid;
+			grid-template-columns: fit-content(480px) fit-content(480px);
+			grid-column-gap: 60px;
+			grid-row-gap: 12px;
+			margin: 16px 0 0;
+
+			@include media("<phone") {
+				grid-template-columns: 1fr;
+			}
+
+			li {
+				position: relative;
+				margin: 0;
+				padding-left: 16px;
+				font-size: 13px;
+				line-height: 1.5;
+
+				&:before {
+					position: absolute;
+					content: '';
+					top: 3px;
+					left: 0;
+					background-image: url('../../assets/images/icons/check.svg');
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: center;
+					width: 10px;
+					height: 10px;
+				}
+
+				h5 {
+					font-size: 13px;
+					margin: 0 0 4px 0;
+					color: #2C3338;
+					font-weight: 700;
+				}
+
+				p {
+					margin: 0;
+					color: #50575E;
+					font-weight: 400;
+				}
+			}
+		}
+
+		&__upgrade-btn {
+			font-size: 16px;
+			font-weight: 500;
+			padding: 13px 19px;
+			border-radius: 4px;
+		}
+
+		&__discount-line {
+			display: flex;
+			align-items: center;
+			color: #646970;
+			line-height: 1.4;
+			margin-top: 8px;
+
+			img {
+				margin-right: 7px;
+			}
+
+			strong {
+				color: #008A20;
+				font-weight: 600;
+			}
+		}
+
+		.wp-mail-smtp-product-education__screenshots {
+			gap: 25px;
+
+			> div {
+				margin: 0;
+				max-width: 365px;
+
+				a {
+					border-color: #DCDCDE
+				}
+
+				span {
+					color: #646970;
+				}
+			}
 		}
 	}
 }

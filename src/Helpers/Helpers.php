@@ -35,7 +35,8 @@ class Helpers {
 				'smtp2go',
 				'mailjet',
 				'mailersend',
-                'mailtrap',
+				'mandrill',
+        'mailtrap',
 			],
 			true
 		);

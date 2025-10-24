@@ -70,8 +70,9 @@ class Education {
 			</div>',
 			wp_kses(
 				sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
-					__( 'You’re using WP Mail SMTP Lite. To unlock more features, consider <a href="%s" target="_blank" rel="noopener noreferrer">upgrading to Pro</a>.', 'wp-mail-smtp' ),
-					wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'notice-bar', 'content' => $upgrade_utm_content ] ) // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+					__( 'You’re using WP Mail SMTP Lite. To unlock more features, consider <a href="%1$s" target="_blank" rel="noopener noreferrer">upgrading to Pro</a> for <strong>%2$s OFF</strong>.', 'wp-mail-smtp' ),
+					wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'notice-bar', 'content' => $upgrade_utm_content ] ), // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound,
+					'$50'
 				),
 				[
 					'a' => [
@@ -79,9 +80,10 @@ class Education {
 						'rel'    => [],
 						'target' => [],
 					],
+					'strong' => [],
 				]
 			),
-			esc_attr__( 'Dismiss this message.', 'wp-mail-smtp' )
+			esc_attr__( 'Dismiss this message.', 'wp-mail-smtp' ),
 		);
 	}
 

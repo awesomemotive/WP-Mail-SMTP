@@ -2,7 +2,14 @@
 
 namespace WPMailSMTP\Compatibility;
 
-use WPMailSMTP\WP;
+use WPMailSMTP\Compatibility\Plugin\WPML;
+use WPMailSMTP\Compatibility\Plugin\WPForms;
+use WPMailSMTP\Compatibility\Plugin\Polylang;
+use WPMailSMTP\Compatibility\Plugin\Admin2020;
+use WPMailSMTP\Compatibility\Plugin\PolylangPro;
+use WPMailSMTP\Compatibility\Plugin\WooCommerce;
+use WPMailSMTP\Compatibility\Plugin\WPFormsLite;
+use WPMailSMTP\Compatibility\Plugin\PluginAbstract;
 
 /**
  * Compatibility.
@@ -39,10 +46,13 @@ class Compatibility {
 	public function setup_compatibility() {
 
 		$plugins = [
-			'admin-2020'   => '\WPMailSMTP\Compatibility\Plugin\Admin2020',
-			'wpforms-lite' => '\WPMailSMTP\Compatibility\Plugin\WPFormsLite',
-			'wpforms'      => '\WPMailSMTP\Compatibility\Plugin\WPForms',
-			'woocommerce'  => '\WPMailSMTP\Compatibility\Plugin\WooCommerce',
+			'admin-2020'   => Admin2020::class,
+			'wpforms-lite' => WPFormsLite::class,
+			'wpforms'      => WPForms::class,
+			'woocommerce'  => WooCommerce::class,
+			'wpml'         => WPML::class,
+			'polylang'     => Polylang::class,
+			'polylang-pro' => PolylangPro::class,
 		];
 
 		foreach ( $plugins as $key => $classname ) {
@@ -61,7 +71,7 @@ class Compatibility {
 	 *
 	 * @param string $key Plugin key.
 	 *
-	 * @return \WPMailSMTP\Compatibility\Plugin\PluginAbstract | false
+	 * @return PluginAbstract|false
 	 */
 	public function get_plugin( $key ) {
 

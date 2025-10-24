@@ -69,6 +69,29 @@ class SettingsTab extends PageAbstract {
 				</div>
 			</div>
 
+			<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
+				<div class="wp-mail-smtp-upgrade-license-banner">
+					<p><?php echo wp_kses( __( 'You\'re using <strong>WP Mail SMTP Lite</strong> - no license needed. Enjoy!', 'wp-mail-smtp' ), [ 'strong' => [] ] ); ?> 🙂</p>
+
+					<p class="wp-mail-smtp-upgrade-license-banner__discount-line">
+						<?php
+						printf(
+							wp_kses( /* Translators: %s - discount value $50 */
+								__( 'As a valued WP Mail SMTP Lite user, you can enjoy an exclusive <strong>%s discount</strong>, automatically applied at checkout to unlock even more features!', 'wp-mail-smtp' ),
+								[
+									'strong' => [],
+									'br'     => [],
+								]
+							),
+							'$50'
+						);
+						?>
+					</p>
+
+					<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( 'general-license-key' ) ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-secondary wp-mail-smtp-upgrade-license-banner__upgrade-btn"><?php esc_html_e( 'Upgrade to Pro', 'wp-mail-smtp' ); ?></a>
+				</div>
+			<?php endif; ?>
+
 			<!-- License Key -->
 			<div id="wp-mail-smtp-setting-row-license_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-license_key wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
@@ -137,46 +160,6 @@ class SettingsTab extends PageAbstract {
 	 */
 	public static function display_license_key_field_content( $options ) {
 		?>
-
-		<p><?php esc_html_e( 'You\'re using WP Mail SMTP Lite - no license needed. Enjoy!', 'wp-mail-smtp' ); ?> 🙂</p>
-
-		<p>
-			<?php
-			printf(
-				wp_kses( /* translators: %s - WPMailSMTP.com upgrade URL. */
-					__( 'To unlock more features, consider <strong><a href="%s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-upgrade-modal">upgrading to PRO</a></strong>.', 'wp-mail-smtp' ),
-					array(
-						'a'      => array(
-							'href'   => array(),
-							'class'  => array(),
-							'target' => array(),
-							'rel'    => array(),
-						),
-						'strong' => array(),
-					)
-				),
-				esc_url( wp_mail_smtp()->get_upgrade_link( 'general-license-key' ) )
-			);
-			?>
-		</p>
-
-		<p class="desc">
-			<?php
-			printf(
-				wp_kses( /* Translators: %s - discount value $50 */
-					__( 'As a valued WP Mail SMTP Lite user you receive <strong>%s off</strong>, automatically applied at checkout!', 'wp-mail-smtp' ),
-					array(
-						'strong' => array(),
-						'br'     => array(),
-					)
-				),
-				'$50'
-			);
-			?>
-		</p>
-
-		<hr>
-
 		<p>
 			<?php esc_html_e( 'Already purchased? Simply enter your license key below to connect with WP Mail SMTP Pro!', 'wp-mail-smtp' ); ?>
 		</p>
@@ -229,90 +212,104 @@ class SettingsTab extends PageAbstract {
 		if ( (bool) $is_dismissed === true ) {
 			return;
 		}
+
+		$assets_url  = wp_mail_smtp()->assets_url;
+		$screenshots = [
+			[
+				'url'           => $assets_url . '/images/logs/archive.png',
+				'url_thumbnail' => $assets_url . '/images/logs/archive-thumbnail.png',
+				'title'         => __( 'Email Logs', 'wp-mail-smtp' ),
+			],
+			[
+				'url'           => $assets_url . '/images/logs/single.png',
+				'url_thumbnail' => $assets_url . '/images/logs/single-thumbnail.png',
+				'title'         => __( 'Individual Email Log', 'wp-mail-smtp' ),
+			],
+			[
+				'url'           => $assets_url . '/images/email-reports/screenshot-01.png',
+				'url_thumbnail' => $assets_url . '/images/email-reports/thumbnail-01.png',
+				'title'         => __( 'Email Reports', 'wp-mail-smtp' ),
+			],
+		];
 		?>
 
-		<div id="wp-mail-smtp-pro-banner">
-
+		<div id="wp-mail-smtp-pro-banner" class="wp-mail-smtp-upgrade-banner">
 			<span class="wp-mail-smtp-pro-banner-dismiss">
 				<button id="wp-mail-smtp-pro-banner-dismiss">
-					<span class="dashicons dashicons-dismiss"></span>
+					<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/icons/close.svg' ); ?>" alt="<?php esc_attr_e( 'Close', 'wp-mail-smtp' ); ?>">
 				</button>
 			</span>
 
-			<h2>
-				<?php esc_html_e( 'Get WP Mail SMTP Pro and Unlock all the Powerful Features', 'wp-mail-smtp' ); ?>
-			</h2>
+			<div class="wp-mail-smtp-upgrade-banner__row">
+				<h3 class="wp-mail-smtp-upgrade-banner__heading">
+					<?php esc_html_e( 'Level Up Your Email Game - Get Pro Features Now', 'wp-mail-smtp' ); ?>
+				</h3>
+				<p class="wp-mail-smtp-upgrade-banner__subheading">
+					<?php echo wp_kses( __( 'Upgrade and join over <strong>4,000,000</strong> websites!', 'wp-mail-smtp' ), [ 'strong' => [] ] ); ?>
+				</p>
+			</div>
 
-			<p>
-				<?php esc_html_e( 'Thanks for being a loyal WP Mail SMTP user. Upgrade to WP Mail SMTP Pro to unlock more awesome features and experience why WP Mail SMTP is the most popular SMTP plugin.', 'wp-mail-smtp' ); ?>
-			</p>
+			<div class="wp-mail-smtp-upgrade-banner__row">
+				<h3 class="wp-mail-smtp-upgrade-banner__heading">
+					<?php esc_html_e( 'Key Features You’ll Unlock:', 'wp-mail-smtp' ); ?>
+				</h3>
 
-			<p>
-				<?php esc_html_e( 'We know that you will truly love WP Mail SMTP. It\'s used by over 4,000,000 websites.', 'wp-mail-smtp' ); ?>
-			</p>
-
-			<p><strong><?php esc_html_e( 'Pro Features:', 'wp-mail-smtp' ); ?></strong></p>
-
-			<div class="benefits">
-				<ul>
-					<li><?php esc_html_e( 'Email Logging - keep track of every email sent from your site', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Alerts - get notified when your emails fail (via email, slack or SMS)', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Backup Connection - send emails even if your primary connection fails', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Smart Routing - define conditions for your email sending', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Amazon SES - harness the power of AWS', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Outlook - send emails using your Outlook or Microsoft 365 account', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Zoho Mail - use your Zoho Mail account to send emails', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Multisite Support - network settings for easy management', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Manage Notifications - control which emails your site sends', 'wp-mail-smtp' ); ?></li>
-					<li><?php esc_html_e( 'Access to our world class support team', 'wp-mail-smtp' ); ?></li>
-				</ul>
-				<ul>
-					<li><?php esc_html_e( 'White Glove Setup - sit back and relax while we handle everything for you', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Install & Setup WP Mail SMTP Pro plugin', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Configure SendLayer, SMTP.com or Brevo service', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Set up domain name verification (DNS)', 'wp-mail-smtp' ); ?></li>
-					<li class="arrow-right"><?php esc_html_e( 'Test and verify email delivery', 'wp-mail-smtp' ); ?></li>
+				<ul class="wp-mail-smtp-upgrade-banner__features">
+					<li>
+						<h5><?php esc_html_e( 'Peace of Mind - Never wonder about your email status', 'wp-mail-smtp' ); ?></h5>
+						<p><?php esc_html_e( 'Email Logging, Alerts, and Backup Connection', 'wp-mail-smtp' ); ?></p>
+					</li>
+					<li>
+						<h5><?php esc_html_e( 'Professional Email Services - Access enterprise-grade email providers', 'wp-mail-smtp' ); ?></h5>
+						<p><?php esc_html_e( 'Gmail one-click setup, Microsoft 365 / Outlook, Amazon SES, and Zoho Mail', 'wp-mail-smtp' ); ?></p>
+					</li>
+					<li>
+						<h5><?php esc_html_e( 'Effortless Management - Control your email experience', 'wp-mail-smtp' ); ?></h5>
+						<p><?php esc_html_e( 'Smart Routing, Multisite Support, and Manage Notifications', 'wp-mail-smtp' ); ?></p>
+					</li>
+					<li>
+						<h5><?php esc_html_e( 'White Glove Setup - Sit back while we handle everything', 'wp-mail-smtp' ); ?></h5>
+						<p><?php esc_html_e( 'Professional Setup and World-Class Support', 'wp-mail-smtp' ); ?></p>
+					</li>
 				</ul>
 			</div>
 
-			<p>
-				<?php
-				printf(
-					wp_kses( /* translators: %s - WPMailSMTP.com URL. */
-						__( '<a href="%s" target="_blank" rel="noopener noreferrer">Get WP Mail SMTP Pro Today and Unlock all the Powerful Features &raquo;</a>', 'wp-mail-smtp' ),
-						array(
-							'a'      => array(
-								'href'   => array(),
-								'target' => array(),
-								'rel'    => array(),
-							),
-							'strong' => array(),
-						)
-					),
-					esc_url( wp_mail_smtp()->get_upgrade_link( 'general-cta' ) )
-				);
-				?>
-			</p>
+			<div class="wp-mail-smtp-upgrade-banner__row">
+				<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( 'general-cta' ) ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-secondary wp-mail-smtp-upgrade-banner__upgrade-btn">
+					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
+				</a>
 
-			<p>
-				<?php
-				printf(
-					wp_kses( /* Translators: %s - discount value $50. */
-						__( '<strong>Bonus:</strong> WP Mail SMTP users get <span class="price-off">%s off regular price</span>, automatically applied at checkout.', 'wp-mail-smtp' ),
-						array(
-							'strong' => array(),
-							'span'   => array(
-								'class' => array(),
+				<div class="wp-mail-smtp-upgrade-banner__discount-line">
+					<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/icons/badge-percent.svg' ); ?>" alt="<?php esc_attr_e( 'Discount', 'wp-mail-smtp' ); ?>">
+					<p>
+						<?php
+						printf(
+							wp_kses( /* Translators: %s - discount value $50. */
+								__( '<strong>%s OFF</strong> for WP Mail SMTP users, applied at checkout.', 'wp-mail-smtp' ),
+								[
+									'strong' => [],
+								]
 							),
-						)
-					),
-					'$50'
-				);
-				?>
-			</p>
+							'$50'
+						);
+						?>
+					</p>
+				</div>
+			</div>
 
+			<div class="wp-mail-smtp-upgrade-banner__row">
+				<div class="wp-mail-smtp-product-education__screenshots wp-mail-smtp-product-education__screenshots--three">
+					<?php foreach ( $screenshots as $screenshot ) : ?>
+						<div>
+							<a href="<?php echo esc_url( $screenshot['url'] ); ?>" data-lity data-lity-desc="<?php echo esc_attr( $screenshot['title'] ); ?>">
+								<img src="<?php echo esc_url( $screenshot['url_thumbnail'] ); ?>" alt="<?php esc_attr( $screenshot['title'] ); ?>">
+							</a>
+							<span><?php echo esc_html( $screenshot['title'] ); ?></span>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
 		</div>
-
 		<?php
 	}
 

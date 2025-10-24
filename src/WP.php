@@ -850,6 +850,45 @@ class WP {
 			$site_id = get_main_site_id();
 		}
 
+		/**
+		 * Whether to return the unfiltered site URL.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param bool $unfiltered Whether to return the unfiltered site URL.
+		 *
+		 * @return bool
+		 */
+		if ( apply_filters( 'wp_mail_smtp_wp_get_site_url_unfiltered', false ) ) {
+			return self::get_raw_site_url( $site_id );
+		}
+
 		return get_site_url( $site_id );
+	}
+
+	/**
+	 * Get the raw/unfiltered site URL.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param int $site_id The site ID.
+	 *
+	 * @return string
+	 */
+	private static function get_raw_site_url( $site_id ) {
+
+		if ( empty( $site_id ) || ! is_multisite() ) {
+			$url = get_option( 'siteurl' );
+		} else {
+			switch_to_blog( $site_id );
+
+			$url = get_option( 'siteurl' );
+
+			restore_current_blog();
+		}
+
+		$url = set_url_scheme( $url );
+
+		return $url;
 	}
 }

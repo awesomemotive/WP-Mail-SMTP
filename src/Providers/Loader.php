@@ -38,6 +38,7 @@ class Loader {
 		'gmail'        => 'WPMailSMTP\Providers\Gmail\\',
 		'mailgun'      => 'WPMailSMTP\Providers\Mailgun\\',
 		'mailjet'      => 'WPMailSMTP\Providers\Mailjet\\',
+        'mailtrap'     => 'WPMailSMTP\Providers\Mailtrap\\',
 		'mailersend'   => 'WPMailSMTP\Providers\MailerSend\\',
 		'mandrill'     => 'WPMailSMTP\Providers\Mandrill\\',
 		'outlook'      => 'WPMailSMTP\Providers\Outlook\\',

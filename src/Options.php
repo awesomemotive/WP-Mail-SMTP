@@ -277,7 +277,7 @@ class Options {
 				'from_email'       => get_option( 'admin_email' ),
 				'from_name'        => get_bloginfo( 'name' ),
 				'mailer'           => 'mail',
-				'return_path'      => false,
+				'return_path'      => true,
 				'from_email_force' => true,
 				'from_name_force'  => false,
 			],

@@ -737,7 +737,7 @@ class Area {
 	public function get_admin_footer( $text ) {
 
 		if ( $this->is_admin_page() ) {
-			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post';
+			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/#new-post';
 
 			$text = sprintf(
 				wp_kses(

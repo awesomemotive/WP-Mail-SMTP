@@ -555,4 +555,21 @@ trait MailCatcherTrait {
 			}
 		}
 	}
+
+	/**
+	 * Set the From and FromName properties.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @param string $address Email address.
+	 * @param string $name    Name.
+	 * @param bool   $auto    Whether to also set the Sender address, defaults to true.
+	 *
+	 * @return bool Returns true on success and false on failure.
+	 */
+	public function setFrom( $address, $name = '', $auto = true ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+
+		// Set `$auto` param as false, to control return-path via plugin settings.
+		return parent::setFrom( $address, $name, false );
+	}
 }

@@ -160,7 +160,7 @@ class Review {
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-3" style="display: none">
 				<p><?php esc_html_e( 'That\'s fantastic! Would you consider giving it a 5-star rating on WordPress.org? It will help other users with email issues and it will mean the world to us!', 'wp-mail-smtp' ); ?></p>
 				<p>
-					<a href="https://wordpress.org/support/plugin/wp-mail-smtp/reviews/?filter=5#new-post" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
+					<a href="https://wordpress.org/support/plugin/wp-mail-smtp/reviews/#new-post" class="wp-mail-smtp-dismiss-review-notice wp-mail-smtp-review-out" target="_blank" rel="noopener noreferrer">
 						<?php esc_html_e( 'Yes, I\'ll rate it with 5-stars', 'wp-mail-smtp' ); ?>
 					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="wp-mail-smtp-dismiss-review-notice" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'No, maybe later', 'wp-mail-smtp' ); ?></a>&nbsp;&bull;&nbsp;

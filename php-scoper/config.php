@@ -33,9 +33,9 @@ function wms_php_scoper_get_list_of_files( $path ) {
 
 $config = [
 	'prefix'                     => 'WPMailSMTP\Vendor',
-	'whitelist-global-constants' => false,
-	'whitelist-global-classes'   => false,
-	'whitelist-global-functions' => false,
+	'expose-global-constants'    => false,
+	'expose-global-classes'      => false,
+	'expose-global-functions'    => false,
 
 	/*
 	By default when running php-scoper add-prefix, it will prefix all relevant code found in the current working
@@ -63,10 +63,6 @@ $config = [
 		Finder::create()
 			->files()
 			->in( 'vendor/guzzlehttp' )
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
-		Finder::create()
-			->files()
-			->in( 'vendor/monolog' )
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
@@ -172,35 +168,6 @@ $config = [
 				return str_replace(
 					'$class = \'League\\\\OAuth2\\\\Client\\\\Grant\\\\\' . $class;',
 					sprintf( '$class = \'%s\\\\League\\\\OAuth2\\\\Client\\\\Grant\\\\\' . $class;', addslashes( $prefix ) ),
-					$content
-				);
-			}
-
-			return $content;
-		},
-
-		/**
-		 * Prefix the Monolog namespace in strings.
-		 *
-		 * @param string $filePath The path of the current file.
-		 * @param string $prefix   The prefix to be used.
-		 * @param string $content  The content of the specific file.
-		 *
-		 * @return string The modified content.
-		 */
-		function( $file_path, $prefix, $content ) {
-			if (
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/PHPConsoleHandler.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Processor/IntrospectionProcessor.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/BrowserConsoleHandler.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/FilterHandler.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/FingersCrossed/ChannelLevelActivationStrategy.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Utils.php' ) !== false ||
-				strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/TestHandler.php' ) !== false
-			) {
-				return str_replace(
-					'Monolog\\\\',
-					sprintf( '%s\\\\Monolog\\\\', addslashes( $prefix ) ),
 					$content
 				);
 			}
@@ -336,55 +303,14 @@ $config = [
 
 			return $content;
 		},
-
-		/**
-		 * Fix the prefixed global PHP classes added in PHP 8.1 and above.
-		 *
-		 * Most likely this issue is fixed in the latest PHP-Scoper version, and we can
-		 * remove this after update.
-		 *
-		 * @param string $filePath The path of the current file.
-		 * @param string $prefix   The prefix to be used.
-		 * @param string $content  The content of the specific file.
-		 *
-		 * @return string The modified content.
-		 */
-		function( $file_path, $prefix, $content ) {
-
-			return str_replace(
-				[
-					'WPMailSMTP\\Vendor\\Attribute',
-					'WPMailSMTP\\Vendor\\AllowDynamicProperties',
-					'WPMailSMTP\\Vendor\\Override',
-					'WPMailSMTP\\Vendor\\ReturnTypeWillChange',
-					'WPMailSMTP\\Vendor\\SensitiveParameter',
-					'WPMailSMTP\\Vendor\\Fiber',
-					'WPMailSMTP\\Vendor\\FiberError',
-					'WPMailSMTP\\Vendor\\UnitEnum',
-					'WPMailSMTP\\Vendor\\BackedEnum',
-				],
-				[
-					'Attribute',
-					'AllowDynamicProperties',
-					'Override',
-					'ReturnTypeWillChange',
-					'SensitiveParameter',
-					'Fiber',
-					'FiberError',
-					'UnitEnum',
-					'BackedEnum',
-				],
-				$content
-			);
-		},
 	],
 
 	/*
-	 * Whitelists a list of files. Unlike the other whitelist related features, this one is about completely leaving
+	 * Excludes a list of files. Unlike the other exclude related features, this one is about completely leaving
 	 * a file untouched.
 	 * Paths are relative to the configuration file unless if they are already absolute.
 	 */
-	'files-whitelist'            => [
+	'exclude-files'              => [
 		'../vendor/symfony/deprecation-contracts/function.php',
 		'../vendor/symfony/polyfill-mbstring/bootstrap.php',
 		'../vendor/symfony/polyfill-mbstring/bootstrap80.php',

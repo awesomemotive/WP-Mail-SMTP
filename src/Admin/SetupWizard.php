@@ -1204,27 +1204,9 @@ class SetupWizard {
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
 
-		$options    = Options::init();
-		$mailer     = $options->get( 'mail', 'mailer' );
-		$from_email = $options->get( 'mail', 'from_email' );
-		$domain     = '';
-
-		/*
-		 * Some mailers in a test mode allows to send emails only to the registered
-		 * From email address, so we need to cover this case.
-		 */
-		$to_email = $from_email;
-
-		if (
-			defined( 'WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT' ) &&
-			is_email( WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT )
-		) {
-			$to_email = WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT;
-		}
-
 		// Send the test mail.
 		$result = wp_mail(
-			$to_email,
+			$this->get_test_email_recipient(),
 			'WP Mail SMTP Automatic Email Test',
 			TestTab::get_email_message_text(),
 			[
@@ -1239,6 +1221,11 @@ class SetupWizard {
 
 			wp_send_json_error();
 		}
+
+		$options    = Options::init();
+		$mailer     = $options->get( 'mail', 'mailer' );
+		$from_email = $options->get( 'mail', 'from_email' );
+		$domain     = '';
 
 		// Add the optional sending domain parameter.
 		if ( in_array( $mailer, [ 'mailgun', 'sendinblue', 'sendgrid' ], true ) ) {
@@ -1259,6 +1246,42 @@ class SetupWizard {
 		$this->update_completed_stat( true );
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Get the test email recipient.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @return string
+	 */
+	private function get_test_email_recipient() {
+
+		$options    = Options::init();
+		$mailer     = $options->get( 'mail', 'mailer' );
+		$from_email = $options->get( 'mail', 'from_email' );
+
+		/*
+		 * Some mailers in a test mode allows to send emails only to the registered
+		 * From email address, so we need to cover this case.
+		 */
+		$to_email = $from_email;
+
+		$mailer_specific_constant_name = 'WPMS_SETUP_WIZARD_TEST_' . strtoupper( $mailer ) . '_EMAIL_RECIPIENT';
+
+		if (
+			defined( $mailer_specific_constant_name ) &&
+			is_email( constant( $mailer_specific_constant_name ) )
+		) {
+			$to_email = constant( $mailer_specific_constant_name );
+		} elseif (
+			defined( 'WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT' ) &&
+			is_email( WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT )
+		) {
+			$to_email = WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT;
+		}
+
+		return $to_email;
 	}
 
 	/**
@@ -1444,6 +1467,7 @@ class SetupWizard {
 			'WPMS_ZOHO_DOMAIN'                   => [ 'zoho', 'domain' ],
 			'WPMS_ZOHO_CLIENT_ID'                => [ 'zoho', 'client_id' ],
 			'WPMS_ZOHO_CLIENT_SECRET'            => [ 'zoho', 'client_secret' ],
+			'WPMS_RESEND_API_KEY'                => [ 'resend', 'api_key' ],
 			'WPMS_SMTP_HOST'                     => [ 'smtp', 'host' ],
 			'WPMS_SMTP_PORT'                     => [ 'smtp', 'port' ],
 			'WPMS_SSL'                           => [ 'smtp', 'encryption' ],

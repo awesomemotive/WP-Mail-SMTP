@@ -34,12 +34,12 @@
     "composer/installers": "~2.3",
     "google/apiclient": "2.16.1",
     "paragonie/constant_time_encoding": "^2",
-    "guzzlehttp/guzzle": "7.9.2",
+    "guzzlehttp/guzzle": "7.10.0",
     "monolog/monolog": "^2.10",
     "symfony/polyfill-intl-idn": "1.31.0",
     "symfony/polyfill-mbstring": "1.31.0",
     "wikimedia/composer-merge-plugin": "2.1.0",
-    "woocommerce/action-scheduler": "3.9.2"
+    "woocommerce/action-scheduler": "3.9.3"
   },
   "autoload": {
     "psr-4": {
@@ -114,7 +114,7 @@
       "@composer --no-scripts --dev --prefer-dist require codeception/util-universalframework:^1.0",
       "@composer --no-scripts --dev --prefer-dist require brain/monkey:^2.4",
       "@composer --no-scripts --dev --prefer-dist require mockery/mockery:^1.4",
-      "@composer --no-scripts --dev --prefer-dist require wp-cli/extension-command"
+      "@composer --no-scripts --dev --prefer-dist require wp-cli/extension-command:^2.1"
     ],
     "dev-composer-install": [
       "@create-vendor-prefix-folder",

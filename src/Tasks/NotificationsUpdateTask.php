@@ -52,9 +52,8 @@ class NotificationsUpdateTask extends Task {
 			strtotime( '+1 minute' ),
 			wp_mail_smtp()->get_notifications()->get_notification_update_task_interval()
 		)
-			->unique()
-			->params()
-			->register();
+		     ->unique()
+		     ->register();
 	}
 
 	/**

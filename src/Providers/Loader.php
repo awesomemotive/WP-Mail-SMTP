@@ -43,6 +43,7 @@ class Loader {
 		'outlook'      => 'WPMailSMTP\Providers\Outlook\\',
 		'pepipostapi'  => 'WPMailSMTP\Providers\PepipostAPI\\',
 		'postmark'     => 'WPMailSMTP\Providers\Postmark\\',
+		'resend'       => 'WPMailSMTP\Providers\Resend\\',
 		'sendgrid'     => 'WPMailSMTP\Providers\Sendgrid\\',
 		'smtp2go'      => 'WPMailSMTP\Providers\SMTP2GO\\',
 		'sparkpost'    => 'WPMailSMTP\Providers\SparkPost\\',

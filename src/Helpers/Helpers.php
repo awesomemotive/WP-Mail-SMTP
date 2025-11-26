@@ -36,6 +36,7 @@ class Helpers {
 				'mailjet',
 				'mailersend',
 				'mandrill',
+				'resend',
 			],
 			true
 		);

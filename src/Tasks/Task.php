@@ -193,7 +193,11 @@ class Task {
 	 */
 	public function params() {
 
-		$this->params = func_get_args();
+		$args = func_get_args();
+
+		if ( ! empty( $args ) ) {
+			$this->params = $args;
+		}
 
 		return $this;
 	}

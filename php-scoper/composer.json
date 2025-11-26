@@ -1,6 +1,6 @@
 {
   "require": {
-    "humbug/php-scoper": "^0.14.1"
+    "humbug/php-scoper": "^0.17.5"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

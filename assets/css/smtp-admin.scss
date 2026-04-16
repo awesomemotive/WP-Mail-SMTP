@@ -1,6 +1,7 @@
 @import "include-media";
 @import "variables";
 @import "general";
+@import "helpers";
 @import "confirm";
 @import "education";
 @import "loader";
@@ -434,6 +435,30 @@
 				}
 			}
 
+			&.wp-mail-smtp-setting-row-sendlayer-quick-connect-from-email {
+
+				.wp-mail-smtp-sendlayer-from-email-wrap {
+					display: flex;
+					align-items: center;
+					flex-wrap: wrap;
+					gap: 10px;
+
+					input[type=text] {
+						max-width: 165px;
+						margin-right: 0;
+					}
+				}
+
+				.wp-mail-smtp-sendlayer-from-email-domain {
+					font-size: 15px;
+					color: #3A3A56;
+				}
+
+				.desc {
+					max-width: 462px;
+				}
+			}
+
 			// General elements.
 			h2, h4 {
 				color: $primary-text;
@@ -787,6 +812,56 @@
 					padding: 20px 0 !important;
 				}
 
+				&.wp-mail-smtp-mailer-option-sendlayer {
+
+					.wp-mail-smtp-setting-row.section-heading {
+						padding-bottom: 0 !important;
+					}
+
+					.wp-mail-smtp-sendlayer-connect-btn {
+						display: inline-flex;
+						align-items: center;
+						gap: 10px;
+					}
+
+					.wp-mail-smtp-sendlayer-connect-badge {
+						display: inline-flex;
+						align-items: center;
+						gap: 6px;
+						padding: 2px 8px;
+						background-color: #fff;
+						border-radius: 53px;
+						white-space: nowrap;
+						font-size: 12px;
+						line-height: 1.4;
+						color: $secondary-text;
+						opacity: 0.9;
+
+						svg {
+							flex-shrink: 0;
+						}
+					}
+
+					.wp-mail-smtp-sendlayer-domain-value {
+						display: flex;
+						align-items: center;
+						gap: 10px;
+						min-height: 36px;
+						margin-top: 0 !important;
+					}
+
+					.wp-mail-smtp-sendlayer-change-domain {
+						text-decoration: underline;
+					}
+
+					.wp-mail-smtp-setting-row-sendlayer-domain {
+
+						.desc {
+							max-width: 510px;
+						}
+					}
+				}
+
 				blockquote {
 					background: #E5E5E5;
 					border-radius: $border-radius;
@@ -1105,6 +1180,35 @@
 
 	&-disabled {
 		pointer-events: none;
+	}
+
+	&-loading {
+		color: transparent !important;
+		pointer-events: none;
+		user-select: none;
+		position: relative;
+
+		svg {
+			visibility: hidden;
+		}
+
+		&::after {
+			content: "";
+			box-sizing: border-box;
+			animation: wp-mail-smtp-spin 500ms infinite linear;
+			border: 2px solid #fff;
+			border-radius: 32px;
+			border-right-color: transparent !important;
+			border-top-color: transparent !important;
+			display: block;
+			height: 16px;
+			width: 16px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-top: -8px;
+			margin-left: -8px;
+		}
 	}
 
 	&.wp-mail-smtp-btn-md {
@@ -1590,3 +1694,82 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 		transform: rotate(360deg);
 	}
 }
+
+// Shared error code box base styles.
+%error-code-box-base {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: rgba($modal-red, 0.06);
+	border: 1px solid rgba($modal-red, 0.2);
+	border-radius: 4px;
+	padding: 8px 12px;
+	margin-top: 10px;
+	max-width: fit-content;
+	font-size: 13px;
+	color: $modal-red;
+	line-height: 1.5;
+
+	code {
+		font-family: monospace;
+		font-size: 13px;
+		padding: 0;
+		background: none;
+		color: inherit;
+		border: none;
+		box-shadow: none;
+		overflow-x: auto;
+		white-space: nowrap;
+		min-width: 0;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+}
+
+%error-code-copy-btn-base {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: $modal-red;
+	opacity: 0.6;
+	transition: opacity 0.15s;
+	flex-shrink: 0;
+	line-height: 1;
+
+	&:hover {
+		opacity: 1;
+	}
+
+	svg {
+		display: block;
+		width: 14px;
+		height: 14px;
+	}
+}
+
+// Error code box — used in jquery-confirm modals for Quick Connect error codes.
+.jconfirm .wp-mail-smtp-error-code-box {
+	@extend %error-code-box-base;
+	justify-content: center;
+
+	&__copy {
+		@extend %error-code-copy-btn-base;
+	}
+}
+
+// Error code display inside admin notices (WP.php).
+.wp-mail-smtp-notice {
+	&__error-code {
+		@extend %error-code-box-base;
+		margin-bottom: 10px;
+	}
+
+	&__copy-btn {
+		@extend %error-code-copy-btn-base;
+	}
+}
+

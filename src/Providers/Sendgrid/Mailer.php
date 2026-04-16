@@ -368,6 +368,26 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Get the error code from the SendGrid API response.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public function get_response_error_code() {
+
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
+
+			if ( ! empty( $body->errors ) && is_array( $body->errors ) && ! empty( $body->errors[0]->field ) ) {
+				return $body->errors[0]->field;
+			}
+		}
+
+		return parent::get_response_error_code();
+	}
+
+	/**
 	 * Get mailer debug information, that is helpful during support.
 	 *
 	 * @since 1.2.0

@@ -488,8 +488,6 @@ class MiscTab extends PageAbstract {
 	 */
 	public function process_post( $data ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$this->check_admin_referer();
-
 		$options = Options::init();
 
 		// Unchecked checkboxes doesn't exist in $_POST, so we need to ensure we actually have them in data to save.

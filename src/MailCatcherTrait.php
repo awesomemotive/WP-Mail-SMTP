@@ -68,6 +68,17 @@ trait MailCatcherTrait {
 	protected $latest_error = '';
 
 	/**
+	 * Last error code captured before PHPMailer clears it.
+	 *
+	 * Populated via setError() override with first-write-wins semantics.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @var string
+	 */
+	private $last_error_code = '';
+
+	/**
 	 * Modify the default send() behaviour.
 	 * For those mailers, that relies on PHPMailer class - call it directly.
 	 * For others - init the correct provider and process it.
@@ -184,6 +195,9 @@ trait MailCatcherTrait {
 	 */
 	private function smtp_send( $connection ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
+		// Reset captured SMTP error code from previous send attempts.
+		$this->last_error_code = '';
+
 		$mailer_slug = $connection->get_mailer_slug();
 
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -235,10 +249,11 @@ trait MailCatcherTrait {
 			// We need this to append SMTP error to the `PHPMailer::ErrorInfo` property.
 			$this->setError( $e->getMessage() );
 
+			$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer_slug )->get_title() ) . "\r\n" . $this->ErrorInfo;
+			$error_code    = $this->get_smtp_error_code();
+
 			// Set the debug error, but not for default PHP mailer.
 			if ( $mailer_slug !== 'mail' ) {
-				$error_message = 'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( $mailer_slug )->get_title() ) . "\r\n" . $this->ErrorInfo;
-
 				$this->debug_event_id = Debug::set( $error_message );
 				$this->latest_error   = $error_message;
 
@@ -258,8 +273,10 @@ trait MailCatcherTrait {
 			 * @param string               $error_message Error message.
 			 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
 			 * @param string               $mailer_slug   Current mailer name.
+			 * @param string               $error_code    Error code/slug.
+			 * @param int                  $response_code HTTP/SMTP response code (0 for non-API mailers).
 			 */
-			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $this->ErrorInfo, $this, $mailer_slug );
+			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $this->ErrorInfo, $this, $mailer_slug, $error_code, 0 );
 
 			if ( $this->exceptions ) {
 				throw $e;
@@ -313,11 +330,11 @@ trait MailCatcherTrait {
 			$mailer = wp_mail_smtp()->get_providers()->get_mailer( $mailer_slug, $this, $connection );
 
 			if ( ! $mailer ) {
-				$this->throw_exception( esc_html__( 'The selected mailer not found.', 'wp-mail-smtp' ) );
+				$this->throw_exception( 'The selected mailer not found.' );
 			}
 
 			if ( ! $mailer->is_php_compatible() ) {
-				$this->throw_exception( esc_html__( 'The selected mailer is not compatible with your PHP version.', 'wp-mail-smtp' ) );
+				$this->throw_exception( 'The selected mailer is not compatible with your PHP version.' );
 			}
 
 			/**
@@ -370,6 +387,8 @@ trait MailCatcherTrait {
 				$message              .= 'Conflicts: ' . esc_html( $conflict_plugin_names ) . "\r\n";
 			}
 
+			$error_code           = ! empty( $mailer ) ? $mailer->get_response_error_code() : '';
+			$response_code        = ! empty( $mailer ) ? $mailer->get_response_code() : 0;
 			$error_message        = $message . $e->getMessage();
 			$this->debug_event_id = Debug::set( $error_message );
 			$this->latest_error   = $error_message;
@@ -382,8 +401,10 @@ trait MailCatcherTrait {
 			 * @param string               $error_message Error message.
 			 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
 			 * @param string               $mailer_slug   Current mailer name.
+			 * @param string               $error_code    Error code/slug.
+			 * @param int                  $response_code HTTP response code.
 			 */
-			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $e->getMessage(), $this, $mailer_slug );
+			do_action( 'wp_mail_smtp_mailcatcher_send_failed', $e->getMessage(), $this, $mailer_slug, $error_code, $response_code );
 
 			if ( $this->exceptions ) {
 				throw $e;
@@ -404,6 +425,68 @@ trait MailCatcherTrait {
 	public function generate_id() {
 
 		return $this->generateId();
+	}
+
+	/**
+	 * Get SMTP error code combining error category and numeric SMTP code.
+	 *
+	 * Reverse-lookups PHPMailer language key from ErrorInfo via static::$language,
+	 * making the category language-independent even if PHPMailer is translated (WP 6.8+).
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string Error code like "authenticate_535", "connect_host", or empty.
+	 */
+	private function get_smtp_error_code() {
+
+		$smtp_code = $this->last_error_code;
+		$category  = '';
+
+		// Reverse-lookup PHPMailer language key from ErrorInfo.
+		// Use getTranslations() which works in both old (instance $language) and new (static $language) PHPMailer.
+		$language = method_exists( $this, 'getTranslations' ) ? $this->getTranslations() : [];
+
+		foreach ( $language as $key => $translated ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $translated ) && strpos( $this->ErrorInfo, $translated ) === 0 ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$category = $key;
+
+				break;
+			}
+		}
+
+		$parts = array_filter( [ $category, $smtp_code ] );
+
+		return ! empty( $parts ) ? implode( '_', $parts ) : '';
+	}
+
+	/**
+	 * Override setError to capture SMTP error codes before PHPMailer clears them.
+	 *
+	 * PHPMailer's SMTP quit() clears the error via sendCommand success.
+	 * By the time we catch the exception, the SMTP error code is gone.
+	 * Uses first-write-wins so subsequent setError calls (RSET, connect_host fallback)
+	 * cannot overwrite the original meaningful code.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param string $msg Error message.
+	 */
+	protected function setError( $msg ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+
+		// Capture SMTP error code with first-write-wins before quit() wipes it.
+		if (
+			empty( $this->last_error_code ) &&
+			isset( $this->smtp ) &&
+			$this->smtp instanceof \PHPMailer\PHPMailer\SMTP
+		) {
+			$error = $this->smtp->getError();
+
+			if ( ! empty( $error['smtp_code'] ) ) {
+				$this->last_error_code = (string) $error['smtp_code'];
+			}
+		}
+
+		parent::setError( $msg );
 	}
 
 	/**

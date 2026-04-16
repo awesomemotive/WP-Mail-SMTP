@@ -2,8 +2,8 @@
 Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
-Tested up to: 6.9
-Stable tag: 4.7.1
+Tested up to: 7.0
+Stable tag: 4.8.0
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -13,7 +13,7 @@ Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendG
 
 ### WordPress Mail SMTP Plugin
 
-Is your WordPress site not sending emails? You're not alone. 3+ million websites use WP Mail SMTP to send emails reliably.
+Is your WordPress site not sending emails? You're not alone. 4+ million websites use WP Mail SMTP to send emails reliably.
 
 Our goal is to make email deliverability easy so that your emails always reach the inbox.
 
@@ -408,6 +408,10 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.8.0 - 2026-04-16 =
+- Added: SendLayer Quick Connect - allows connecting to SendLayer without DNS setup in 2 minutes.
+- Changed: Improved plugin security.
 
 = 4.7.1 - 2025-11-26 =
 Added: WordPress playground blueprint file.

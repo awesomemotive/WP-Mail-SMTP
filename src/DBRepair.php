@@ -54,6 +54,7 @@ class DBRepair {
 				$redirect_tab  = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
 				$query_args    = [
 					'check-db-tables' => 1,
+					'nonce'           => wp_create_nonce( 'wp-mail-smtp-check-db-tables' ),
 				];
 
 				if ( ! empty( $redirect_tab ) ) {
@@ -177,11 +178,12 @@ class DBRepair {
 
 		// Display success or error message based on if there is any missing table available or not.
 		if (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset( $_GET['check-db-tables'] ) && $_GET['check-db-tables'] === '1' &&
 			wp_mail_smtp()->get_admin()->is_admin_page() &&
 			current_user_can( wp_mail_smtp()->get_capability_manage_options() )
 		) {
+			check_admin_referer( 'wp-mail-smtp-check-db-tables', 'nonce' );
+			
 			$missing_tables = $this->get_missing_tables();
 
 			if ( empty( $missing_tables ) ) {

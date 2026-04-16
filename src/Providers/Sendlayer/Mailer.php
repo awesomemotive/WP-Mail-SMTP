@@ -391,6 +391,27 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Get the error code from the SendLayer API response.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public function get_response_error_code() {
+
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
+
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! empty( $body->Errors ) && is_array( $body->Errors ) && ! empty( $body->Errors[0]->Code ) ) {
+				return $body->Errors[0]->Code; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			}
+		}
+
+		return parent::get_response_error_code();
+	}
+
+	/**
 	 * Get mailer debug information, that is helpful during support.
 	 *
 	 * @since 3.4.0

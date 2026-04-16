@@ -523,9 +523,6 @@ class AboutTab extends PageAbstract {
 	 */
 	public static function ajax_plugin_activate() {
 
-		// Run a security check.
-		check_ajax_referer( 'wp-mail-smtp-about', 'nonce' );
-
 		$error = esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' );
 
 		// Check for permissions.
@@ -570,9 +567,6 @@ class AboutTab extends PageAbstract {
 	 * @since 2.9.0
 	 */
 	public static function ajax_plugin_install() { // phpcs:ignore:Generic.Metrics.CyclomaticComplexity.TooHigh
-
-		// Run a security check.
-		check_ajax_referer( 'wp-mail-smtp-about', 'nonce' );
 
 		$error = esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' );
 

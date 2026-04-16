@@ -1577,6 +1577,15 @@ class Options {
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? false : (bool) $option_value;
 						break;
 
+					case 'quick_connect': // sendlayer.
+					case 'is_shared_domain': // sendlayer.
+						$options[ $mailer ][ $option_name ] = (bool) $option_value;
+						break;
+
+					case 'sender_domain': // sendlayer.
+						$options[ $mailer ][ $option_name ] = sanitize_text_field( $option_value );
+						break;
+
 					case 'access_token': // gmail/outlook/zoho, is an array.
 					case 'user_details': // outlook/zoho, is an array.
 						// These options don't support constants.

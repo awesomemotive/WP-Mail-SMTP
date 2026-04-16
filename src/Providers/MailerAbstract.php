@@ -87,6 +87,15 @@ abstract class MailerAbstract implements MailerInterface {
 	protected $error_message = '';
 
 	/**
+	 * The error code recorded when email sending failed.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @var string
+	 */
+	protected $error_code = '';
+
+	/**
 	 * Should the email sent by this mailer have its "sent status" verified via its API?
 	 *
 	 * @since 2.5.0
@@ -330,6 +339,10 @@ abstract class MailerAbstract implements MailerInterface {
 			return;
 		}
 
+		if ( wp_remote_retrieve_response_code( $response ) !== $this->email_sent_code ) {
+			$this->error_code = wp_remote_retrieve_response_code( $response );
+		}
+
 		if ( isset( $response['body'] ) && WP::is_json( $response['body'] ) ) {
 			$response['body'] = json_decode( $response['body'] );
 		}
@@ -397,6 +410,35 @@ abstract class MailerAbstract implements MailerInterface {
 	public function get_response_error() {
 
 		return ! empty( $this->error_message ) ? $this->error_message : '';
+	}
+
+	/**
+	 * The error code when email sending failed.
+	 * Should be overwritten when appropriate.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public function get_response_error_code() {
+
+		return ! empty( $this->error_code ) ? $this->error_code : '';
+	}
+
+	/**
+	 * Get the HTTP response code.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return int
+	 */
+	public function get_response_code() {
+
+		if ( empty( $this->response ) || ! is_array( $this->response ) ) {
+			return 0;
+		}
+
+		return (int) wp_remote_retrieve_response_code( $this->response );
 	}
 
 	/**

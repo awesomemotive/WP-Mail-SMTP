@@ -54,17 +54,27 @@ class ConnectionSettings {
 		$mailer             = $this->connection->get_mailer_slug();
 		$connection_options = $this->connection->get_options();
 
-		$disabled_email = in_array( $mailer, [ 'zoho' ], true ) ? 'disabled' : '';
-		$disabled_name  = in_array( $mailer, [ 'outlook' ], true ) ? 'disabled' : '';
+		$hide_from_email = false;
+		$disabled_email  = in_array( $mailer, [ 'zoho' ], true ) ? 'disabled' : '';
+		$disabled_name   = in_array( $mailer, [ 'outlook' ], true ) ? 'disabled' : '';
 
 		if ( empty( $mailer ) || ! in_array( $mailer, Options::$mailers, true ) ) {
 			$mailer = 'mail';
 		}
 
+		if (
+			$mailer === 'sendlayer' &&
+			$connection_options->get( 'sendlayer', 'quick_connect' ) &&
+			$connection_options->get( 'sendlayer', 'is_shared_domain' )
+		) {
+			// For SendLayer, hide the From Email setting since it's managed from the SendLayer dashboard.
+			$hide_from_email = true;
+		}
+
 		$mailer_supported_settings = wp_mail_smtp()->get_providers()->get_options( $mailer )->get_supports();
 		?>
 		<!-- From Email -->
-		<div class="wp-mail-smtp-setting-group js-wp-mail-smtp-setting-from_email" style="display: <?php echo empty( $mailer_supported_settings['from_email'] ) ? 'none' : 'block'; ?>;">
+		<div class="wp-mail-smtp-setting-group js-wp-mail-smtp-setting-from_email" style="display: <?php echo ( empty( $mailer_supported_settings['from_email'] ) || $hide_from_email ) ? 'none' : 'block'; ?>;">
 			<div id="wp-mail-smtp-setting-row-from_email" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
 					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
@@ -119,6 +129,19 @@ class ConnectionSettings {
 				</div>
 			</div>
 		</div>
+
+		<?php
+		/**
+		 * Fires after the From Email Address setting row.
+		 *
+		 * @since 4.8.0
+		 *
+		 * @param ConnectionInterface $connection         The Connection object.
+		 * @param Options             $connection_options The connection options instance.
+		 * @param string              $mailer             The current mailer slug.
+		 */
+		do_action( 'wp_mail_smtp_admin_connection_settings_display_after_from_email_setting_row', $this->connection, $connection_options, $mailer );
+		?>
 
 		<!-- From Name -->
 		<div class="wp-mail-smtp-setting-group js-wp-mail-smtp-setting-from_name"  style="display: <?php echo empty( $mailer_supported_settings['from_name'] ) ? 'none' : 'block'; ?>;">

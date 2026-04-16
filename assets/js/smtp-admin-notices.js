@@ -48,6 +48,31 @@ var WPMailSMTPAdminNotices = window.WPMailSMTPAdminNotices || ( function( docume
 
 			$( '.wp-mail-smtp-notice.is-dismissible' )
 				.on( 'click', '.notice-dismiss', app.dismiss );
+
+			$( '.wp-mail-smtp-notice__copy-btn' ).on( 'click', app.copyErrorCode );
+		},
+
+		/**
+		 * Copy error code to clipboard.
+		 *
+		 * @since 4.8.0
+		 */
+		copyErrorCode: function() {
+
+			var $btn = $( this );
+			var code = $btn.siblings( 'code' ).text();
+
+			if ( navigator.clipboard ) {
+				navigator.clipboard.writeText( code );
+			}
+
+			$btn.find( '.wp-mail-smtp-notice__icon-copy' ).hide();
+			$btn.find( '.wp-mail-smtp-notice__icon-check' ).show();
+
+			setTimeout( function() {
+				$btn.find( '.wp-mail-smtp-notice__icon-check' ).hide();
+				$btn.find( '.wp-mail-smtp-notice__icon-copy' ).show();
+			}, 2000 );
 		},
 
 		/**

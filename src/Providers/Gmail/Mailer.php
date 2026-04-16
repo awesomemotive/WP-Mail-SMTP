@@ -101,6 +101,15 @@ class Mailer extends MailerAbstract {
 			$this->process_response( $response );
 		} catch ( \Exception $e ) {
 			$this->error_message = $this->process_exception_message( $e->getMessage() );
+
+			// Extract error code from Google API JSON response or exception code.
+			$error_data = json_decode( $e->getMessage() );
+
+			if ( ! empty( $error_data->error ) && is_string( $error_data->error ) ) {
+				$this->error_code = $error_data->error;
+			} elseif ( $e->getCode() ) {
+				$this->error_code = $e->getCode();
+			}
 		}
 	}
 

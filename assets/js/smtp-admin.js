@@ -56,6 +56,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '#screen-meta-links, #screen-meta' ).prependTo( '#wp-mail-smtp-header-temp' ).show();
 
 			app.bindActions();
+			app.cleanQueryParams( [ 'sendlayer_quick_connect_result', 'sendlayer_quick_connect_disconnect_result' ] );
 
 			app.setJQueryConfirmDefaults();
 
@@ -99,6 +100,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				$( '.wp-mail-smtp-mailer-option-' + $( this ).val(), app.settingsForm ).addClass( 'active' ).removeClass( 'hidden' );
 			} );
 
+			app.mailers.sendlayer.bindActions();
 			app.mailers.smtp.bindActions();
 
 			// Dismiss Pro banner at the bottom of the page.
@@ -368,6 +370,182 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		 * @since 1.6.0
 		 */
 		mailers: {
+			sendlayer: {
+
+				/**
+				 * Show a SendLayer connect error modal with message and optional error code.
+				 *
+				 * @since 4.8.0
+				 *
+				 * @param {string} message   The error message to display.
+				 * @param {string} errorCode The dot-notation error code (optional).
+				 */
+				showConnectError: function( message, errorCode ) {
+
+					var content = '<p>' + $( '<span>' ).text( message ).html() + '</p>';
+
+					if ( errorCode ) {
+						content += '<div class="wp-mail-smtp-error-code-box">' +
+							'<code>' + $( '<span>' ).text( errorCode ).html() + '</code>' +
+							'<button type="button" class="wp-mail-smtp-error-code-box__copy" title="Copy">' +
+								'<svg class="wp-mail-smtp-error-code-box__icon-copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg>' +
+								'<svg class="wp-mail-smtp-error-code-box__icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="display:none;"><path fill="#0f8a56" d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>' +
+							'</button>' +
+						'</div>';
+					}
+
+					$.alert( {
+						backgroundDismiss: true,
+						escapeKey: true,
+						animationBounce: 1,
+						type: 'red',
+						closeIcon: true,
+						icon: app.getModalIcon( 'times-circle-red' ),
+						title: wp_mail_smtp.sendlayer.error_title,
+						content: content,
+						boxWidth: '450px',
+						buttons: {
+							confirm: {
+								text: wp_mail_smtp.ok_text,
+								btnClass: 'wp-mail-smtp-btn wp-mail-smtp-btn-md',
+								keys: [ 'enter' ]
+							}
+						},
+						onOpenBefore: function() {
+							this.$body.on( 'click', '.wp-mail-smtp-error-code-box__copy', function() {
+								var $btn   = $( this );
+								var code   = $btn.siblings( 'code' ).text();
+
+								if ( navigator.clipboard ) {
+									navigator.clipboard.writeText( code );
+								}
+
+								$btn.find( '.wp-mail-smtp-error-code-box__icon-copy' ).hide();
+								$btn.find( '.wp-mail-smtp-error-code-box__icon-check' ).show();
+
+								setTimeout( function() {
+									$btn.find( '.wp-mail-smtp-error-code-box__icon-check' ).hide();
+									$btn.find( '.wp-mail-smtp-error-code-box__icon-copy' ).show();
+								}, 2000 );
+							} );
+						}
+					} );
+				},
+
+				/**
+				 * Start the connect flow via AJAX and handle errors with the modal.
+				 *
+				 * @since 4.8.0
+				 *
+				 * @param {object}   connectArgs Extra arguments to pass to the connect endpoint (e.g. { utm_content: '...' }).
+				 * @param {Function} onDone      Callback when the request completes (success or error).
+				 */
+				doConnect: function( connectArgs, onDone ) {
+
+					var self = this;
+					var returnUrl    = $( '#wp-mail-smtp-sendlayer-quick-connect-return-url' ).val() || wp_mail_smtp.sendlayer.return_url;
+					var connectionId = $( '#wp-mail-smtp-sendlayer-quick-connect-connection-id' ).val() || '';
+
+					$.post( ajaxurl, { // eslint-disable-line camelcase
+						action: 'wp_mail_smtp_sendlayer_connect',
+						nonce: wp_mail_smtp.sendlayer.connect_nonce,
+						return_url: returnUrl, // eslint-disable-line camelcase
+						connection_id: connectionId, // eslint-disable-line camelcase
+						connect_args: connectArgs || {}, // eslint-disable-line camelcase
+					}, function( response ) { // eslint-disable-line complexity
+						if ( response.success && response.data.redirect_url ) {
+							window.location.href = response.data.redirect_url;
+						} else {
+							var message   = response.data && response.data.message ? response.data.message : wp_mail_smtp.sendlayer.error_text;
+							var errorCode = response.data && response.data.error_code ? response.data.error_code : '';
+							self.showConnectError( message, errorCode );
+							if ( onDone ) {
+								onDone();
+							}
+						}
+					} ).fail( function() {
+						self.showConnectError( wp_mail_smtp.sendlayer.server_error, 'plugin.init_connect.ajax_failed' );
+						if ( onDone ) {
+							onDone();
+						}
+					} );
+				},
+
+				/**
+				 * Bind SendLayer-specific UI actions.
+				 *
+				 * @since 4.8.0
+				 */
+				bindActions: function() {
+
+					var self = this;
+
+					// Quick Connect button.
+					$( '#wp-mail-smtp-sendlayer-connect-btn' ).on( 'click', function( e ) {
+						e.preventDefault();
+
+						var $btn = $( this );
+						$btn.addClass( 'wp-mail-smtp-btn-loading' );
+
+						self.doConnect( { utm_content: 'Plugin Settings - Quick Connect' }, function() { // eslint-disable-line camelcase
+							$btn.removeClass( 'wp-mail-smtp-btn-loading' );
+						} );
+					} );
+
+					// Change domain link (same flow as Quick Connect).
+					$( '#wp-mail-smtp-sendlayer-change-domain' ).on( 'click', function( e ) {
+						e.preventDefault();
+
+						var $link = $( this );
+						var originalText = $link.text();
+						$link.text( wp_mail_smtp.sendlayer.connecting_text );
+
+						self.doConnect( { utm_content: 'Plugin Settings - Quick Connect Change Domain' }, function() { // eslint-disable-line camelcase
+							$link.text( originalText );
+						} );
+					} );
+
+					// Show Quick Connect when API key is removed.
+					$( '.wp-mail-smtp-btn[data-clear-field="wp-mail-smtp-setting-sendlayer-api_key"]' ).on( 'click', function() {
+						$( '#wp-mail-smtp-setting-row-sendlayer-connect' ).show();
+					} );
+
+					// Show API key field and remove the toggle link.
+					$( '#wp-mail-smtp-sendlayer-show-api-key' ).on( 'click', function( e ) {
+						e.preventDefault();
+						$( this ).closest( '.wp-mail-smtp-setting-row' ).remove();
+						$( '#wp-mail-smtp-setting-row-sendlayer-api_key' ).show();
+					} );
+
+					// SendLayer education banner: Setup button (same flow as Quick Connect).
+					$( '#wp-mail-smtp-sendlayer-education-connect-btn' ).on( 'click', function( e ) {
+						e.preventDefault();
+
+						var $btn = $( this );
+						$btn.addClass( 'wp-mail-smtp-btn-loading' );
+
+						self.doConnect( { utm_content: 'Plugin Settings - Quick Connect Education' }, function() { // eslint-disable-line camelcase
+							$btn.removeClass( 'wp-mail-smtp-btn-loading' );
+						} );
+					} );
+
+					// SendLayer education banner: Dismiss.
+					$( '.js-wp-mail-smtp-sendlayer-education-dismiss' ).on( 'click', function( e ) {
+						e.preventDefault();
+
+						var $banner = $( this ).closest( '.wp-mail-smtp-sendlayer-education' );
+
+						$banner.fadeOut( 200 );
+
+						$.post( ajaxurl, {
+							action: 'wp_mail_smtp_ajax',
+							task: 'notice_dismiss',
+							notice: 'sendlayer_education',
+							nonce: wp_mail_smtp.nonce,
+						} );
+					} );
+				}
+			},
 			smtp: {
 				bindActions: function() {
 
@@ -475,7 +653,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		 */
 		processMailerSettingsOnChange: function() {
 
-			var mailerSupportedSettings = wp_mail_smtp.all_mailers_supports[ $( this ).val() ];
+			var selectedMailer = $( this ).val();
+			var mailerSupportedSettings = wp_mail_smtp.all_mailers_supports[ selectedMailer ];
 
 			for ( var setting in mailerSupportedSettings ) {
 				// eslint-disable-next-line no-prototype-builtins
@@ -486,10 +665,17 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 			// Special case: "from email" (group settings).
 			var $mainSettingInGroup = $( '.js-wp-mail-smtp-setting-from_email' );
+			var $quickConnectFromEmail = $( '#wp-mail-smtp-setting-row-sendlayer-quick-connect-from_email' );
+			var isQuickConnectActive = selectedMailer === 'sendlayer' && $quickConnectFromEmail.length > 0;
 
 			$mainSettingInGroup.toggle(
-				mailerSupportedSettings['from_email'] || mailerSupportedSettings['from_email_force']
+				! isQuickConnectActive && ( mailerSupportedSettings[ 'from_email' ] || mailerSupportedSettings[ 'from_email_force' ] )
 			);
+
+			// Toggle quick connect From Email field and disable inputs when hidden
+			// to prevent split fields from being submitted for other mailers.
+			$quickConnectFromEmail.toggle( isQuickConnectActive );
+			$quickConnectFromEmail.find( 'input' ).prop( 'disabled', ! isQuickConnectActive );
 
 			// Special case: "from name" (group settings).
 			$mainSettingInGroup = $( '.js-wp-mail-smtp-setting-from_name' );
@@ -497,6 +683,35 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$mainSettingInGroup.toggle(
 				mailerSupportedSettings['from_name'] || mailerSupportedSettings['from_name_force']
 			);
+		},
+
+		/**
+		 * Remove transient query params from the URL without a page reload.
+		 *
+		 * Useful for cleaning up one-time result params after they have been
+		 * read and rendered on the current page load.
+		 *
+		 * @since 4.8.0
+		 *
+		 * @param {string[]} params List of query parameter names to remove.
+		 */
+		cleanQueryParams: function( params ) {
+
+			try {
+				var url   = new URL( window.location.href );
+				var dirty = false;
+
+				params.forEach( function( param ) {
+					if ( url.searchParams.has( param ) ) {
+						url.searchParams.delete( param );
+						dirty = true;
+					}
+				} );
+
+				if ( dirty ) {
+					window.history.replaceState( {}, document.title, url.toString() );
+				}
+			} catch ( e ) {} // eslint-disable-line no-empty
 		},
 
 		/**

@@ -505,6 +505,28 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Get the mailer-specific error code from the API response.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public function get_response_error_code() {
+
+		if ( ! empty( $this->response ) ) {
+			$body   = wp_remote_retrieve_body( $this->response );
+			$body   = json_decode( wp_json_encode( $body ), true );
+			$errors = $this->gather_response_errors( $body );
+
+			if ( ! empty( $errors[0]['ErrorCode'] ) ) {
+				return $errors[0]['ErrorCode'];
+			}
+		}
+
+		return parent::get_response_error_code();
+	}
+
+	/**
 	 * Whether the mailer has all its settings correctly set up and saved.
 	 *
 	 * @since 4.2.0

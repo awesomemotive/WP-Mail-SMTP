@@ -438,6 +438,31 @@ class Mailer extends MailerAbstract {
 	}
 
 	/**
+	 * Get the error code from the SMTP.com API response.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public function get_response_error_code() {
+
+		if ( ! empty( $this->response ) ) {
+			$body = wp_remote_retrieve_body( $this->response );
+
+			// Only extract error keys when the API reports failure.
+			if ( ! empty( $body->status ) && $body->status === 'fail' && ! empty( $body->data ) ) {
+				$keys = array_keys( (array) $body->data );
+
+				if ( ! empty( $keys[0] ) ) {
+					return $keys[0];
+				}
+			}
+		}
+
+		return parent::get_response_error_code();
+	}
+
+	/**
 	 * Get mailer debug information, that is helpful during support.
 	 *
 	 * @since 2.0.0

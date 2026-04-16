@@ -139,6 +139,8 @@ class Migrations {
 			return;
 		}
 
+		$secret = wp_hash( 'wp_mail_smtp_init_migrations' . wp_salt() );
+
 		$url = add_query_arg(
 			[
 				'action' => 'wp_mail_smtp_init_migrations',
@@ -151,6 +153,9 @@ class Migrations {
 		$args = [
 			'sslverify' => false,
 			'timeout'   => $timeout ? $timeout : 30,
+			'body'      => [
+				'secret' => $secret,
+			],
 		];
 
 		wp_remote_post( $url, $args );
@@ -162,6 +167,14 @@ class Migrations {
 	 * @since 4.0.0
 	 */
 	public function init_migrations_ajax_handler() {
+
+		// Verify the secret hash since this is a nopriv endpoint.
+		$secret   = ! empty( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
+		$expected = wp_hash( 'wp_mail_smtp_init_migrations' . wp_salt() );
+
+		if ( ! hash_equals( $expected, $secret ) ) {
+			wp_send_json_error();
+		}
 
 		$this->init_migrations();
 

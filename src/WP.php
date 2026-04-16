@@ -104,13 +104,14 @@ class WP {
 	 * @param bool   $is_dismissible Whether the message should be dismissible.
 	 * @param string $key            Unique key for the notice. If defined, dismissible notice will be dismissed permanently.
 	 */
-	public static function add_admin_notice( $message, $class = self::ADMIN_NOTICE_INFO, $is_dismissible = true, $key = '' ) {
+	public static function add_admin_notice( $message, $class = self::ADMIN_NOTICE_INFO, $is_dismissible = true, $key = '', $error_code = '' ) {
 
 		self::$admin_notices[] = [
 			'message'        => $message,
 			'class'          => $class,
 			'is_dismissible' => (bool) $is_dismissible,
 			'key'            => sanitize_key( $key ),
+			'error_code'     => $error_code,
 		];
 	}
 
@@ -143,6 +144,15 @@ class WP {
 				<p>
 					<?php echo wp_kses_post( $notice['message'] ); ?>
 				</p>
+				<?php if ( ! empty( $notice['error_code'] ) ) : ?>
+					<div class="wp-mail-smtp-notice__error-code">
+						<code><?php echo esc_html( $notice['error_code'] ); ?></code>
+						<button type="button" class="wp-mail-smtp-notice__copy-btn" title="<?php esc_attr_e( 'Copy error code', 'wp-mail-smtp' ); ?>">
+							<svg class="wp-mail-smtp-notice__icon-copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg>
+							<svg class="wp-mail-smtp-notice__icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="display:none;"><path fill="#00A32A" d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
+						</button>
+					</div>
+				<?php endif; ?>
 			</div>
 
 			<?php

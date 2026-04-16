@@ -116,6 +116,11 @@ class SetupWizard {
 			return;
 		}
 
+		// Only users who can activate plugins should be redirected.
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
 		// Check if we should consider redirection.
 		if ( ! get_transient( 'wp_mail_smtp_activation_redirect' ) ) {
 			return;
@@ -234,10 +239,14 @@ class SetupWizard {
 				'public_url'         => wp_mail_smtp()->assets_url . '/vue/',
 				'current_user_email' => wp_get_current_user()->user_email,
 				'completed_time'     => self::get_stats()['completed_time'],
+				'sendlayer'          => [
+					'connect_nonce' => wp_create_nonce( 'wp-mail-smtp-sendlayer-connect' ),
+					'return_url'    => self::get_site_url() . '#/step/configure_mailer/sendlayer',
+				],
 				'education'          => [
 					'upgrade_text'   => esc_html__( 'We\'re sorry, the %mailer% mailer is not available on your plan. Please upgrade to the PRO plan to unlock all these awesome features.', 'wp-mail-smtp' ),
 					'upgrade_button' => esc_html__( 'Upgrade to Pro', 'wp-mail-smtp' ),
-					'upgrade_url'    => add_query_arg( 'discount', 'SMTPLITEUPGRADE', wp_mail_smtp()->get_upgrade_link( '' ) ),
+					'upgrade_url'    => add_query_arg( 'discount', 'SMTPLITEUPGRADE', wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'setup-wizard' ] ) ),
 					'upgrade_bonus'  => sprintf(
 						wp_kses( /* Translators: %s - discount value $50 */
 							__( '<strong>Bonus:</strong> WP Mail SMTP users get <span class="highlight">%s off</span> regular price,<br>applied at checkout.', 'wp-mail-smtp' ),
@@ -1292,6 +1301,10 @@ class SetupWizard {
 	public function send_feedback() {
 
 		check_ajax_referer( 'wpms-admin-nonce', 'nonce' );
+
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+			wp_send_json_error();
+		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$data = ! empty( $_POST['data'] ) ? json_decode( wp_unslash( $_POST['data'] ), true ) : [];

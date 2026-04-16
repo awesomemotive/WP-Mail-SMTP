@@ -73,6 +73,18 @@
 				}
 			}
 		}
+		
+		select {
+			line-height: 2;
+			min-height: 30px;
+			height: 30px;
+		}
+		
+		button {
+            min-height: 30px;
+    		height: 30px;
+		}
+		
 
 		@media (max-width: 980px) {
 			padding: 13px 4px;

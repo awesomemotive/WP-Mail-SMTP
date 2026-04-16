@@ -580,6 +580,14 @@ class Area {
 			'is_network_admin'        => is_network_admin(),
 			'ajax_url'                => admin_url( 'admin-ajax.php' ),
 			'lang_code'               => sanitize_key( WP::get_language_code() ),
+			'sendlayer'               => [
+				'connect_nonce'   => wp_create_nonce( 'wp-mail-smtp-sendlayer-connect' ),
+				'return_url'      => $this->get_admin_page_url(),
+				'error_title'     => esc_html__( 'Error', 'wp-mail-smtp' ),
+				'error_text'      => esc_html__( 'An error occurred. Please try again.', 'wp-mail-smtp' ),
+				'server_error'    => esc_html__( 'A server error occurred. Please try again.', 'wp-mail-smtp' ),
+				'connecting_text' => esc_html__( 'Connecting...', 'wp-mail-smtp' ),
+			],
 		];
 
 		/**
@@ -653,7 +661,7 @@ class Area {
 
 			$settings = [
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
-				'nonce'                       => wp_create_nonce( 'wp-mail-smtp-about' ),
+				'nonce'                       => wp_create_nonce( 'wp-mail-smtp-admin' ),
 				// Strings.
 				'plugin_activate'             => esc_html__( 'Activate', 'wp-mail-smtp' ),
 				'plugin_activated'            => esc_html__( 'Activated', 'wp-mail-smtp' ),
@@ -1133,8 +1141,18 @@ class Area {
 		}
 
 		// Process POST only if it exists.
-		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! empty( $_POST ) && isset( $_POST['wp-mail-smtp-post'] ) ) {
+			$current_tab = $pages[ $this->get_current_tab() ];
+
+			// Verify nonce.
+			$current_tab->check_admin_referer();
+
+			// Verify capability.
+			if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+				wp_die( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
+			}
+
 			if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
 				$post = $_POST['wp-mail-smtp'];
 			} else {
@@ -1152,10 +1170,10 @@ class Area {
 			do_action(
 				'wp_mail_smtp_admin_area_process_actions_process_post_before',
 				$post,
-				$pages[ $this->get_current_tab() ]->get_slug()
+				$current_tab->get_slug()
 			);
 
-			$pages[ $this->get_current_tab() ]->process_post( $post );
+			$current_tab->process_post( $post );
 		}
 		// phpcs:enable
 
@@ -1179,20 +1197,17 @@ class Area {
 			wp_send_json_error( $data );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// Verify nonce for all AJAX requests.
+		check_ajax_referer( 'wp-mail-smtp-admin', 'nonce' );
+
 		if ( empty( $_POST['task'] ) ) {
 			wp_send_json_error( $data );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$task = sanitize_key( $_POST['task'] );
 
 		switch ( $task ) {
 			case 'pro_banner_dismiss':
-				if ( ! check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) ) {
-					break;
-				}
-
 				update_user_meta( get_current_user_id(), 'wp_mail_smtp_pro_banner_dismissed', true );
 				$data['message'] = esc_html__( 'WP Mail SMTP Pro related message was successfully dismissed.', 'wp-mail-smtp' );
 				break;
@@ -1216,10 +1231,6 @@ class Area {
 				break;
 
 			case 'email_test_tab_removal_notice_dismiss':
-				if ( ! check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) ) {
-					break;
-				}
-
 				update_user_meta( get_current_user_id(), 'wp_mail_smtp_email_test_tab_removal_notice_dismissed', true );
 				break;
 
@@ -1247,9 +1258,7 @@ class Area {
 	 */
 	private function dismiss_notice_via_ajax() {
 
-		if ( ! check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) ) {
-			return false;
-		}
+		// Nonce already verified in process_ajax().
 
 		if ( empty( $_POST['notice'] ) ) {
 			return false;

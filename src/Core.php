@@ -10,6 +10,7 @@ use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\Notifications;
 use WPMailSMTP\Compatibility\Compatibility;
 use WPMailSMTP\Providers\Outlook\Provider as OutlookProvider;
+use WPMailSMTP\Providers\Sendlayer\QuickConnect as SendlayerQuickConnect;
 use WPMailSMTP\Queue\Queue;
 use WPMailSMTP\Reports\Reports;
 use WPMailSMTP\Tasks\Meta;
@@ -149,6 +150,7 @@ class Core {
 			function() {
 				( new OptimizedEmailSending() )->hooks();
 				( new OutlookProvider() )->hooks();
+				( new SendlayerQuickConnect() )->hooks();
 			}
 		);
 	}
@@ -1427,4 +1429,5 @@ class Core {
 
 		return $queue;
 	}
+
 }

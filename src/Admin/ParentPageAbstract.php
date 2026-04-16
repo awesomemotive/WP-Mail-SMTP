@@ -254,15 +254,25 @@ abstract class ParentPageAbstract implements PageInterface {
 		}
 
 		// Process POST only if it exists.
-		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! empty( $_POST ) && isset( $_POST['wp-mail-smtp-post'] ) ) {
+			$current_tab = $this->tabs[ $this->get_current_tab() ];
+
+			// Verify nonce.
+			$current_tab->check_admin_referer();
+
+			// Verify capability.
+			if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+				wp_die( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
+			}
+
 			if ( ! empty( $_POST['wp-mail-smtp'] ) ) {
 				$post = $_POST['wp-mail-smtp'];
 			} else {
 				$post = [];
 			}
 
-			$this->tabs[ $this->get_current_tab() ]->process_post( $post );
+			$current_tab->process_post( $post );
 		}
 		// phpcs:enable
 

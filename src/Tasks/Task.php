@@ -369,25 +369,40 @@ class Task {
 	 */
 	protected function remove_completed( $limit = 0 ) {
 
-		global $wpdb;
-
-		$limit = max( 0, intval( $limit ) );
-		$query = $wpdb->prepare(
-			"DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook = %s AND status = %s",
-			$this->action,
-			'complete'
-		);
-
-		if ( $limit > 0 ) {
-			$query .= $wpdb->prepare(
-				' LIMIT %d',
-				$limit
-			);
+		// Make sure that all used functions, classes, and methods exist.
+		if (
+			! function_exists( 'as_get_scheduled_actions' ) ||
+			! class_exists( 'ActionScheduler' ) ||
+			! method_exists( 'ActionScheduler', 'store' ) ||
+			! class_exists( 'ActionScheduler_Store' ) ||
+			! method_exists( 'ActionScheduler_Store', 'delete_action' )
+		) {
+			return;
 		}
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$wpdb->query( $query );
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		// Cap the query result to prevent performing a large number of individual delete actions at once.
+		$per_page = min( 10, max( 0, intval( $limit ) ) );
+
+		// Get completed occurrences of this task.
+		$action_ids = as_get_scheduled_actions(
+			[
+				'hook'     => $this->action,
+				'status'   => 'complete',
+				'per_page' => $per_page,
+			],
+			'ids'
+		);
+
+		if ( empty( $action_ids ) ) {
+			return;
+		}
+
+		// Delete actions through the Action Scheduler API so that associated
+		// `actionscheduler_logs` rows are cleaned up via the
+		// `action_scheduler_deleted_action` hook.
+		foreach ( $action_ids as $action_id ) {
+			ActionScheduler::store()->delete_action( $action_id );
+		}
 	}
 
 	/**

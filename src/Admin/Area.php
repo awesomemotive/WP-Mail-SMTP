@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\Admin\Recommendations\RecommendedPlugins;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -38,6 +39,15 @@ class Area {
 	 * @var PageAbstract[]
 	 */
 	private $pages;
+
+	/**
+	 * Recommended-plugins feature controller.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @var RecommendedPlugins
+	 */
+	private $recommended_plugins;
 
 	/**
 	 * List of official registered pages.
@@ -111,15 +121,24 @@ class Area {
 		// Process all AJAX requests.
 		add_action( 'wp_ajax_wp_mail_smtp_ajax', [ $this, 'process_ajax' ] );
 
-		// Init parent admin pages.
 		if ( WP::in_wp_admin() || WP::is_doing_self_ajax() ) {
-			add_action( 'init', [ $this, 'get_parent_pages' ] );
+			if ( did_action( 'init' ) ) {
+				$this->get_parent_pages();
+			} else {
+				add_action( 'init', [ $this, 'get_parent_pages' ] );
+			}
 		}
 
 		( new Review() )->hooks();
 		( new Education() )->hooks();
 		( new SetupWizard() )->hooks();
 		( new FlyoutMenu() )->hooks();
+
+		$this->recommended_plugins = new RecommendedPlugins();
+
+		$this->recommended_plugins->hooks();
+
+		( new WooCommerceActiveLayerEducation() )->hooks();
 	}
 
 	/**
@@ -142,42 +161,42 @@ class Area {
 
 		switch ( $error ) {
 			case 'oauth_invalid_state':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'There was an error while processing the authentication request. The state key is invalid. Please try again.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
 
 			case 'google_invalid_nonce':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'There was an error while processing the authentication request. The nonce is invalid. Please try again.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
 
 			case 'google_access_denied':
-				WP::add_admin_notice( /* translators: %s - error code, returned by Google API. */
+				WP::add_admin_notice_with_debug( /* translators: %s - error code, returned by Google API. */
 					sprintf( esc_html__( 'There was an error while processing the authentication request: %s. Please try again.', 'wp-mail-smtp' ), '<code>' . $error . '</code>' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
 
 			case 'google_no_code_scope':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'There was an error while processing the authentication request. Please try again.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
 
 			case 'google_no_clients':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'There was an error while processing the authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
 				break;
 
 			case 'google_unsuccessful_oauth':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'There was an error while processing the authentication request.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_ERROR
 				);
@@ -186,7 +205,7 @@ class Area {
 
 		switch ( $success ) {
 			case 'google_site_linked':
-				WP::add_admin_notice(
+				WP::add_admin_notice_with_debug(
 					esc_html__( 'You have successfully linked the current site with your Google API project. Now you can start sending emails through Gmail.', 'wp-mail-smtp' ),
 					WP::ADMIN_NOTICE_SUCCESS
 				);
@@ -331,7 +350,13 @@ class Area {
 			[ $this, 'display' ]
 		);
 
-		foreach ( $this->get_parent_pages() as $page ) {
+		foreach ( $this->get_parent_pages() as $slug => $page ) {
+
+			// Surface the rotating recommended-plugins item just before "About Us".
+			if ( $slug === 'about' ) {
+				$this->recommended_plugins->add_submenu_item( $access_capability );
+			}
+
 			add_submenu_page(
 				self::SLUG,
 				esc_html( $page->get_title() ),
@@ -364,7 +389,7 @@ class Area {
 		add_menu_page(
 			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
 			esc_html__( 'WP Mail SMTP', 'wp-mail-smtp' ),
-			wp_mail_smtp()->get_capability_manage_options(),
+			wp_mail_smtp()->get_capability_manage_global_options(),
 			self::SLUG,
 			[ $this, 'display_network_product_education_page' ],
 			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM5ZWEzYTgiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQzIDM0Ij48cGF0aCBkPSJNMC4wMDcsMy41ODVWMjAuNDIxcTAsMy41ODYsMy43NTEsMy41ODVMMjAsMjRWMTlIMzBWMTQuMDE0bDAuOTkxLTFMMzQsMTNWMy41ODVRMzQsMCwzMC4yNDksMEgzLjc1OFEwLjAwNywwLC4wMDcsMy41ODVoMFpNMy41MjQsNi4xNTdhMS40OSwxLjQ5LDAsMCwxLS41MDgtMC45MzUsMS41ODEsMS41ODEsMCwwLDEsLjI3NC0xLjIwOCwxLjQ0OSwxLjQ0OSwwLDAsMSwxLjA5NC0uNjYzLDEuNzU2LDEuNzU2LDAsMCwxLDEuMjUuMzEybDExLjQwOSw3LjcxNkwyOC4zNzQsMy42NjNhMS45NiwxLjk2LDAsMCwxLDEuMjg5LS4zMTIsMS41NDYsMS41NDYsMCwwLDEsMS4wOTQuNjYzLDEuNCwxLjQsMCwwLDEsLjI3MywxLjIwOCwxLjY3LDEuNjcsMCwwLDEtLjU0Ny45MzVMMTcuMDQzLDE3LjIyNVoiLz48cGF0aCBkPSJNMjIsMjhIMzJsLTAuMDA5LDQuNjI0YTEuMTI2LDEuMTI2LDAsMCwwLDEuOTIyLjhsOC4yNS04LjIzNmExLjEyNiwxLjEyNiwwLDAsMCwwLTEuNTk0bC04LjI1LTguMjQxYTEuMTI2LDEuMTI2LDAsMCwwLTEuOTIyLjh2NC44NjZMMjIsMjF2N1oiLz48L3N2Zz4=',
@@ -588,6 +613,29 @@ class Area {
 				'server_error'    => esc_html__( 'A server error occurred. Please try again.', 'wp-mail-smtp' ),
 				'connecting_text' => esc_html__( 'Connecting...', 'wp-mail-smtp' ),
 			],
+			'plugin_install'          => [
+				'processing'         => esc_html__( 'Processing...', 'wp-mail-smtp' ),
+				'installed'          => esc_html__( 'Installed', 'wp-mail-smtp' ),
+				'activate'           => esc_html__( 'Activate', 'wp-mail-smtp' ),
+				/* translators: %s - plugin name (e.g. WPConsent). */
+				'activate_with_name' => esc_html__( 'Activate %s', 'wp-mail-smtp' ),
+				'setup_now'          => esc_html__( 'Setup Now', 'wp-mail-smtp' ),
+				'error'              => esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
+				'error_title'        => esc_html__( 'Error', 'wp-mail-smtp' ),
+				'btn_ok'             => esc_html__( 'OK', 'wp-mail-smtp' ),
+			],
+			'dismiss_error'           => esc_html__( 'Could not dismiss the notice. Please try again.', 'wp-mail-smtp' ),
+			'hide_delivery_errors'    => [
+				'title'         => esc_html__( 'Are you sure?', 'wp-mail-smtp' ),
+				'content'       => wp_kses(
+					__( '<p>Hiding email delivery errors means you will no longer be warned when emails fail to send. This is not recommended and should only be used on staging or development sites.</p>', 'wp-mail-smtp' ),
+					[
+						'p' => [],
+					]
+				),
+				'confirm_button' => esc_html__( 'Yes', 'wp-mail-smtp' ),
+				'cancel_button'  => esc_html__( 'Cancel', 'wp-mail-smtp' ),
+			],
 		];
 
 		/**
@@ -745,7 +793,7 @@ class Area {
 	public function get_admin_footer( $text ) {
 
 		if ( $this->is_admin_page() ) {
-			$url = 'https://wordpress.org/support/plugin/wp-mail-smtp/reviews/#new-post';
+			$url = 'https://wpmailsmtp.com/wpmailsmtp-wordpress-review/';
 
 			$text = sprintf(
 				wp_kses(
@@ -893,7 +941,9 @@ class Area {
 				if ( empty( $label ) ) {
 					continue;
 				}
-				$class = $page_slug === $this->get_current_tab() ? 'active' : '';
+				$class     = $page_slug === $this->get_current_tab() ? 'active' : '';
+				$tab_class = self::SLUG . '-tab-' . str_replace( '_', '-', sanitize_title( $page_slug ) );
+				$class     = trim( $class . ' ' . $tab_class );
 				?>
 
 				<a href="<?php echo esc_url( $page->get_link() ); ?>" class="tab <?php echo esc_attr( $class ); ?>">
@@ -969,12 +1019,7 @@ class Area {
 					]
 				),
 				'tools'   => new Pages\Tools(
-					[
-						'test'             => Pages\TestTab::class,
-						'export'           => Pages\ExportTab::class,
-						'action-scheduler' => Pages\ActionSchedulerTab::class,
-						'debug-events'     => Pages\DebugEventsTab::class,
-					]
+					$this->get_tools_tabs()
 				),
 			];
 
@@ -982,10 +1027,6 @@ class Area {
 				$about_tabs = [
 					'about' => Pages\AboutTab::class,
 				];
-
-				if ( wp_mail_smtp()->get_license_type() === 'lite' ) {
-					$about_tabs['versus'] = Pages\VersusTab::class;
-				}
 
 				$pages['about'] = new Pages\About( $about_tabs );
 			}
@@ -999,6 +1040,33 @@ class Area {
 		 * @param ParentPageAbstract[] $pages Parent pages.
 		 */
 		return apply_filters( 'wp_mail_smtp_admin_area_get_parent_pages', $pages );
+	}
+
+	/**
+	 * Tabs registered under the Tools parent page.
+	 *
+	 * The AI MCP tab registers only on WP 6.9+, where the Abilities API exists
+	 * and the plugin's read-only abilities are available for AI clients to use.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return array
+	 */
+	private function get_tools_tabs() {
+
+		$tabs = [
+			'test'             => Pages\TestTab::class,
+			'export'           => Pages\ExportTab::class,
+			'action-scheduler' => Pages\ActionSchedulerTab::class,
+			'debug-events'     => Pages\DebugEventsTab::class,
+			'code-snippets'    => Pages\CodeSnippetsTab::class,
+		];
+
+		if ( function_exists( 'wp_register_ability' ) ) {
+			$tabs['ai-mcp'] = Pages\AiMcpTab::class;
+		}
+
+		return $tabs;
 	}
 
 	/**
@@ -1021,6 +1089,11 @@ class Area {
 				'misc'        => new Pages\MiscTab(),
 				'auth'        => new Pages\AuthTab(),
 			];
+
+			// Product-education upsell tab, shown to non-Pro users.
+			if ( ! wp_mail_smtp()->is_pro() ) {
+				$this->pages['get-pro'] = new Pages\GetProTab();
+			}
 		}
 
 		return apply_filters( 'wp_mail_smtp_admin_get_pages', $this->pages );
@@ -1149,7 +1222,7 @@ class Area {
 			$current_tab->check_admin_referer();
 
 			// Verify capability.
-			if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+			if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_global_options() ) ) {
 				wp_die( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 			}
 

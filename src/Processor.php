@@ -89,11 +89,11 @@ class Processor {
 	 */
 	public function hooks() {
 
-		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
+		add_action( 'phpmailer_init', [ $this, 'phpmailer_init' ] );
 
 		// High priority number tries to ensure our plugin code executes last and respects previous hooks, if not forced.
-		add_filter( 'wp_mail_from', array( $this, 'filter_mail_from_email' ), PHP_INT_MAX );
-		add_filter( 'wp_mail_from_name', array( $this, 'filter_mail_from_name' ), PHP_INT_MAX );
+		add_filter( 'wp_mail_from', [ $this, 'filter_mail_from_email' ], PHP_INT_MAX );
+		add_filter( 'wp_mail_from_name', [ $this, 'filter_mail_from_name' ], PHP_INT_MAX );
 
 		add_action( 'wp_mail', [ $this, 'capture_early_wp_mail_filter_call' ], - PHP_INT_MAX );
 		add_action( 'wp_mail', [ $this, 'capture_late_wp_mail_filter_call' ], PHP_INT_MAX );
@@ -229,10 +229,22 @@ class Processor {
 	}
 
 	/**
-	 * This method will be called every time 'smtp' and 'mail' mailers will be used to send emails.
+	 * Deprecated stub kept for backwards compatibility.
 	 *
-	 * @since 1.3.0
-	 * @since 1.5.0 Added a do_action() to be able to hook into.
+	 * Previously registered as PHPMailer's $action_function and dispatched per recipient
+	 * via PHPMailer's doCallback(). The fan-out caused duplicate `wp_mail_smtp_mailcatcher_smtp_send_after`
+	 * invocations and racing EmailSendingDebug writes on partial-recipient failures.
+	 *
+	 * Logic moved to MailCatcherTrait: doCallback() collects failed recipients, and
+	 * smtp_send() fires the after-send action exactly once per email in its success
+	 * and failure paths.
+	 *
+	 * No replacement. Kept for third-party code that may still reference the
+	 * callable directly. Behavior is now a no-op.
+	 *
+	 * @since      1.3.0
+	 * @since      1.5.0 Added a do_action() to be able to hook into.
+	 * @deprecated {VERSION}
 	 *
 	 * @param bool   $is_sent If the email was sent.
 	 * @param array  $to      To email address.
@@ -242,20 +254,7 @@ class Processor {
 	 * @param string $body    The email body.
 	 * @param string $from    The from email address.
 	 */
-	public static function send_callback( $is_sent, $to, $cc, $bcc, $subject, $body, $from ) {
-
-		if ( ! $is_sent ) {
-			// Add mailer to the beginning and save to display later.
-			Debug::set(
-				'Mailer: ' . esc_html( wp_mail_smtp()->get_providers()->get_options( wp_mail_smtp()->get_connections_manager()->get_mail_connection()->get_mailer_slug() )->get_title() ) . "\r\n" .
-				'PHPMailer was able to connect to SMTP server but failed while trying to send an email.'
-			);
-		} else {
-			Debug::clear();
-		}
-
-		do_action( 'wp_mail_smtp_mailcatcher_smtp_send_after', $is_sent, $to, $cc, $bcc, $subject, $body, $from );
-	}
+	public static function send_callback( $is_sent, $to, $cc, $bcc, $subject, $body, $from ) { }
 
 	/**
 	 * Validate the email address.

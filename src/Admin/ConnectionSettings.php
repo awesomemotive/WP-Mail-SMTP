@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\ConnectionInterface;
-use WPMailSMTP\Debug;
+use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
 
@@ -358,9 +358,6 @@ class ConnectionSettings {
 			! empty( $data['mail']['mailer'] ) &&
 			$old_data['mail']['mailer'] !== $data['mail']['mailer']
 		) {
-			// Remove all debug messages when switching mailers.
-			Debug::clear();
-
 			// Save correct from email address if Zoho mailer is already configured.
 			if (
 				in_array( $data['mail']['mailer'], [ 'zoho' ], true ) &&
@@ -368,6 +365,9 @@ class ConnectionSettings {
 			) {
 				$data['mail']['from_email'] = $old_data[ $data['mail']['mailer'] ]['user_details']['email'];
 			}
+
+			// Clear any cached send failure for this connection — it belongs to the old mailer.
+			EmailSendingDebug::clear( $this->connection->get_id() );
 		}
 
 		// Prevent redirect to setup wizard from settings page after successful auth.

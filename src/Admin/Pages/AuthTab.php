@@ -24,6 +24,10 @@ class AuthTab {
 	 */
 	public function process_auth() {
 
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_global_options() ) ) {
+			return;
+		}
+
 		$connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
 
 		/**

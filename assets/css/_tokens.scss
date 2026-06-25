@@ -1,0 +1,49 @@
+// Single source of truth for design tokens — prefixed --wpms-* CSS custom
+// properties consumed by BOTH Tailwind (via @theme inline in tailwind-theme.css)
+// and BEM/hand-written CSS (via var(--wpms-*) directly).
+//
+// The --wpms-* prefix avoids collisions with WordPress core and other plugins
+// that emit their own :root custom properties.
+
+:root {
+	// Text colors.
+	--wpms-color-primary: #2c3338;
+	--wpms-color-secondary: #50575e;
+	--wpms-color-tertiary: #646970;
+	--wpms-color-gray-900: #111827;
+	--wpms-color-gray-700: #374151;
+	--wpms-color-link: #056aab;
+	--wpms-color-success: #008a20;
+	--wpms-color-error: #d63638;
+
+	// Surface colors.
+	--wpms-color-surface-background-white: #ffffff;
+	--wpms-color-surface-background-light: #f6f6f6;
+	--wpms-color-surface-divider: #dcdcde;
+	--wpms-color-surface-border: #c3c4c7;
+
+	// Utility colors.
+	--wpms-color-utility-yellow-50: #dba617;
+
+	// Spacing.
+	--wpms-spacing-sm: 10px;
+	--wpms-spacing-md: 20px;
+	--wpms-spacing-lg: 30px;
+
+	// Radius — button and table both use 4px; keeping one entry per the
+	// de-duplication rule.
+	--wpms-radius-table: 4px;
+
+	// Shadows.
+	--wpms-shadow-subtle: 0 2px 4px 0 rgba(0, 0, 0, 0.07);
+	--wpms-shadow-soft: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+
+	// Line height. The design's auto/"normal" line height is 1.2; Tailwind's
+	// stock `leading-normal` is 1.5, so this redefines it to the design value.
+	--wpms-leading-normal: 1.2;
+
+	// Breakpoints are intentionally NOT defined here — they're build-time
+	// SCSS-only (used by include-media mixins) and media queries can't resolve
+	// runtime custom properties. Breakpoint values live in _variables.scss and
+	// (literal) in tailwind-theme.css.
+}

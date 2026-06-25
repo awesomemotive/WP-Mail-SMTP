@@ -4,7 +4,6 @@ namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\ConnectionInterface;
-use WPMailSMTP\Debug;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
@@ -426,6 +425,20 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
+	 * Get a header from the retained send response.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $name Header name (case-insensitive).
+	 *
+	 * @return string
+	 */
+	public function get_response_header( $name ) {
+
+		return wp_remote_retrieve_header( $this->response, $name );
+	}
+
+	/**
 	 * Get the HTTP response code.
 	 *
 	 * @since 4.8.0
@@ -472,12 +485,11 @@ abstract class MailerAbstract implements MailerInterface {
 		// Mail mailer has nothing to return.
 		if ( $this->connection_options->is_mailer_smtp() ) {
 			// phpcs:disable
-			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( wp_strip_all_tags( $phpmailer->ErrorInfo ) );
 			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
 			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
-			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Debug::pvar( $phpmailer->SMTPSecure );
-			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Debug::pvar( $phpmailer->SMTPAutoTLS );
-			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Debug::pvar( $phpmailer->SMTPAuth );
+			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Helpers::pvar( $phpmailer->SMTPSecure );
+			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Helpers::pvar( $phpmailer->SMTPAutoTLS );
+			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Helpers::pvar( $phpmailer->SMTPAuth );
 			if ( ! empty( $phpmailer->SMTPOptions ) ) {
 				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . wp_json_encode( $phpmailer->SMTPOptions ) . '</code>';
 			}

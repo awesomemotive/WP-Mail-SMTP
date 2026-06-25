@@ -219,6 +219,41 @@ class DebugEvents {
 	}
 
 	/**
+	 * Add a debug event subject to a throttle window — only logs if no other event
+	 * with the same throttle key has been logged within the TTL.
+	 *
+	 * Useful for background errors that can fire on every page load (e.g. expired
+	 * OAuth token refresh failures) to avoid flooding the events table.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $message      The event's message.
+	 * @param string $throttle_key Unique key identifying this event's throttle bucket.
+	 *                             Automatically prefixed with `wp_mail_smtp_` before
+	 *                             being used as a transient key.
+	 * @param int    $ttl          Throttle window in seconds. Default 5 minutes.
+	 * @param int    $type         The event's type. Default Event::TYPE_ERROR (0).
+	 *
+	 * @return bool|int Event ID on success, false if throttled or save failed.
+	 */
+	public static function add_throttled( $message, $throttle_key, $ttl = 5 * MINUTE_IN_SECONDS, $type = 0 ) {
+
+		$transient_key = 'wp_mail_smtp_' . $throttle_key;
+
+		if ( get_transient( $transient_key ) ) {
+			return false;
+		}
+
+		$event_id = self::add( $message, $type );
+
+		if ( $event_id !== false ) {
+			set_transient( $transient_key, time(), $ttl );
+		}
+
+		return $event_id;
+	}
+
+	/**
 	 * Get the debug message from the provided debug event IDs.
 	 *
 	 * @since 3.0.0

@@ -20,18 +20,6 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	use MailCatcherTrait;
 
 	/**
-	 * Callback Action function name.
-	 *
-	 * The function that handles the result of the send email action.
-	 * It is called out by send() for each email sent.
-	 *
-	 * @since 1.3.0
-	 *
-	 * @var string
-	 */
-	public $action_function = '\WPMailSMTP\Processor::send_callback';
-
-	/**
 	 * Returns all custom headers.
 	 * In older versions of \PHPMailer class this method didn't exist.
 	 * As we support WordPress 3.6+ - we need to make sure this method is always present.

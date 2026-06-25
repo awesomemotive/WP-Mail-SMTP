@@ -4,6 +4,7 @@ namespace WPMailSMTP;
 
 use WP_Upgrader;
 use WPMailSMTP\Admin\DebugEvents\Migration as DebugEventsMigration;
+use WPMailSMTP\Admin\Recommendations\Migration as RecommendationsMigration;
 use WPMailSMTP\Queue\Migration as QueueMigration;
 
 /**
@@ -75,6 +76,7 @@ class Migrations {
 			Migration::class,
 			DebugEventsMigration::class,
 			QueueMigration::class,
+			RecommendationsMigration::class,
 		];
 
 		/**

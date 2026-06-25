@@ -56,7 +56,13 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '#screen-meta-links, #screen-meta' ).prependTo( '#wp-mail-smtp-header-temp' ).show();
 
 			app.bindActions();
-			app.cleanQueryParams( [ 'sendlayer_quick_connect_result', 'sendlayer_quick_connect_disconnect_result' ] );
+			var removableQueryParams = [ 'sendlayer_quick_connect_result', 'sendlayer_quick_connect_disconnect_result' ];
+
+			if ( ! $( '.wp-mail-smtp-tab-tools-debug-events' ).length ) {
+				removableQueryParams.push( 'debug_event_id' );
+			}
+
+			app.cleanQueryParams( removableQueryParams );
 
 			app.setJQueryConfirmDefaults();
 
@@ -269,6 +275,9 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				app.education.rateLimitUpgrade();
 			} );
 
+			// Confirm before enabling the "Hide Email Delivery Errors" option.
+			$( '#wp-mail-smtp-setting-email_delivery_errors_hidden' ).on( 'change', app.confirmHideDeliveryErrors );
+
 			// Obfuscated fields
 			$( '.wp-mail-smtp-btn[data-clear-field]' ).on( 'click', function( e ) {
 				var $button = $( this );
@@ -298,6 +307,392 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						$button.prop( 'disabled', true );
 					},
 				} );
+			} );
+
+			// Banner: toggle the inline error-log panel.
+			$( document ).on(
+				'click',
+				'.wpms-email-sending-errors-banner__error-log-toggle',
+				function( e ) {
+					e.preventDefault();
+
+					var $btn   = $( this );
+					var $panel = $btn.closest( '.wpms-email-sending-errors-banner' )
+						.find( '.wpms-email-sending-errors-banner__error-log' );
+
+					if ( ! $panel.length ) {
+						return;
+					}
+
+					var showLabel = $btn.data( 'show-label' );
+					var hideLabel = $btn.data( 'hide-label' );
+					var isHidden  = $panel.prop( 'hidden' ) || ! $panel.is( ':visible' );
+
+					if ( isHidden ) {
+						$panel.prop( 'hidden', false ).hide().slideDown( 200 );
+						$btn.text( hideLabel );
+					} else {
+						$panel.slideUp( 200, function() {
+							$panel.prop( 'hidden', true );
+						} );
+						$btn.text( showLabel );
+					}
+				}
+			);
+
+			// Banner: copy the inline error-log panel contents to clipboard.
+			$( document ).on(
+				'click',
+				'.wpms-email-sending-errors-error-log__copy-icon',
+				function( e ) {
+					e.preventDefault();
+
+					var $btn     = $( this );
+					var $panel   = $btn.closest( '.wpms-email-sending-errors-banner__error-log' );
+					var $default = $btn.find( '.wpms-email-sending-errors-error-log__copy-icon-default' );
+					var $done    = $btn.find( '.wpms-email-sending-errors-error-log__copy-icon-done' );
+					var $tooltip = $panel.find( '.wpms-email-sending-errors-error-log__copy-tooltip' );
+
+					if ( ! $panel.length ) {
+						return;
+					}
+
+					var $content = $panel.clone();
+					$content.find( '.wpms-email-sending-errors-error-log__copy-icon, .wpms-email-sending-errors-error-log__copy-tooltip' ).remove();
+					$content.find( 'br' ).replaceWith( '\n' );
+					var text = $content.text().trim();
+
+					var afterCopy = function() {
+						$default.prop( 'hidden', true );
+						$done.prop( 'hidden', false );
+						$tooltip.prop( 'hidden', false );
+
+						setTimeout(
+							function() {
+								$default.prop( 'hidden', false );
+								$done.prop( 'hidden', true );
+								$tooltip.prop( 'hidden', true );
+							},
+							2000
+						);
+					};
+
+					var copyViaExecCommand = function() {
+						var $tmp = $( '<textarea>' )
+							.val( text )
+							.css( { position: 'fixed', left: '-9999px', top: 0 } )
+							.appendTo( 'body' );
+						$tmp[ 0 ].select();
+						try {
+							document.execCommand( 'copy' );
+						} catch ( err ) {
+
+							// Best-effort fallback; failure leaves the clipboard untouched.
+						}
+						$tmp.remove();
+					};
+
+					if ( navigator.clipboard && navigator.clipboard.writeText ) {
+						navigator.clipboard.writeText( text ).then( afterCopy, function() {
+							copyViaExecCommand();
+							afterCopy();
+						} );
+					} else {
+						copyViaExecCommand();
+						afterCopy();
+					}
+				}
+			);
+
+			// Dismiss email-sending-errors banner.
+			$( document ).on(
+				'click',
+				'.wpms-email-sending-errors-banner__dismiss',
+				function( e ) {
+					e.preventDefault();
+
+					var $el          = $( this ).closest( '[data-connection-id]' );
+					var connectionId = $el.data( 'connection-id' );
+
+					if ( ! connectionId ) {
+						return;
+					}
+
+					$.post( wp_mail_smtp.ajax_url, {
+						action:        'wp_mail_smtp_email_sending_errors_dismiss',
+						nonce:         wp_mail_smtp.nonce,
+						connection_id: connectionId
+					} ).done( function( res ) {
+						if ( res && res.success ) {
+							$el.slideUp( 200, function() {
+								$el.remove();
+							} );
+							return;
+						}
+						app.pluginInstall.showErrorModal( app.extractAjaxError( res, wp_mail_smtp.dismiss_error ) );
+					} ).fail( function( xhr ) {
+						var res = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+						app.pluginInstall.showErrorModal( app.extractAjaxError( res, wp_mail_smtp.dismiss_error ) );
+					} );
+				}
+			);
+
+			// Dismiss one-liner: WP's is-dismissible handles slideUp; we fire the AJAX clear.
+			$( document ).on(
+				'click',
+				'.wpms-email-sending-errors-one-liner .notice-dismiss',
+				function() {
+					var $el          = $( this ).closest( '[data-connection-id]' );
+					var connectionId = $el.data( 'connection-id' );
+
+					if ( ! connectionId ) {
+						return;
+					}
+
+					$.post( wp_mail_smtp.ajax_url, {
+						action:        'wp_mail_smtp_email_sending_errors_dismiss',
+						nonce:         wp_mail_smtp.nonce,
+						connection_id: connectionId
+					} ).done( function( res ) {
+						if ( res && res.success ) {
+							return;
+						}
+						app.pluginInstall.showErrorModal( app.extractAjaxError( res, wp_mail_smtp.dismiss_error ) );
+					} ).fail( function( xhr ) {
+						var res = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+						app.pluginInstall.showErrorModal( app.extractAjaxError( res, wp_mail_smtp.dismiss_error ) );
+					} );
+				}
+			);
+
+			// Per-session dismiss for the test-success banner. DOM removal
+			// only, no AJAX; banner is regenerated on each successful test send.
+			$( document ).on(
+				'click',
+				'.wpms-test-email-success-banner__dismiss',
+				function( e ) {
+					e.preventDefault();
+
+					$( this ).closest( '.wpms-test-email-success-banner' ).slideUp( 200, function() {
+						$( this ).remove();
+					} );
+				}
+			);
+
+			// Generic plugin install/activate for any opt-in button. Mirrors
+			// the About Us page's AJAX flow but works on any markup that
+			// carries .js-wp-mail-smtp-plugin-install-btn + status-* class +
+			// data-plugin (zip URL initially, swapped to basename after
+			// install so a follow-up activate click reuses the same attribute).
+			$( document ).on( 'click', '.js-wp-mail-smtp-plugin-install-btn', app.handlePluginInstallBtnClick );
+
+			// Text-link variant of the install/activate flow used by the Pro Tip
+			// strip. Same backend as the button handler; different DOM mutations
+			// (inline loader + full strip-content swap on success).
+			$( document ).on( 'click', '.js-wp-mail-smtp-plugin-install-link', app.handlePluginInstallLinkClick );
+		},
+
+		/**
+		 * Handle a click on a generic plugin install/activate button.
+		 *
+		 * @since 4.9.0
+		 *
+		 * @param {object} e jQuery click event.
+		 */
+		handlePluginInstallBtnClick: function( e ) {
+
+			e.preventDefault();
+
+			var $btn = $( this );
+
+			// After install+activate the same button doubles as a Setup Now CTA:
+			// clicking navigates to the plugin's settings page (status-active +
+			// data-settings-url). Keeps a single element and one event hook.
+			if ( $btn.hasClass( 'status-active' ) ) {
+				var settingsUrl = $btn.attr( 'data-settings-url' );
+
+				if ( settingsUrl ) {
+					window.location.href = settingsUrl;
+				}
+
+				return;
+			}
+
+			if ( $btn.hasClass( 'wp-mail-smtp-btn-loading' ) || $btn.prop( 'disabled' ) ) {
+				return;
+			}
+
+			var task;
+			if ( $btn.hasClass( 'status-download' ) ) {
+				task = 'about_plugin_install';
+			} else if ( $btn.hasClass( 'status-inactive' ) ) {
+				task = 'about_plugin_activate';
+			} else {
+				return;
+			}
+
+			var originalLabel = $btn.html();
+			var strings       = wp_mail_smtp.plugin_install;
+
+			$btn.addClass( 'wp-mail-smtp-btn-loading' );
+			$btn.prop( 'disabled', true );
+			$btn.text( strings.processing );
+
+			app.pluginInstall.installPlugin( {
+				plugin: $btn.attr( 'data-plugin' ),
+				task:   task,
+				onSuccess: function( res ) {
+
+					if ( task === 'about_plugin_install' && res.data && res.data.basename ) {
+						$btn.attr( 'data-plugin', res.data.basename );
+					}
+
+					// Flash a transient confirmation beside the button (About Us
+					// pattern). Backend returns a localized msg for both
+					// install-only and install+activate outcomes. .html()
+					// (matches About Us) so HTML entities from esc_html__ —
+					// `&amp;` for the `&` in "installed & activated" — decode
+					// instead of rendering as literal `&amp;`.
+					if ( res.data && res.data.msg ) {
+						var $actions = $btn.closest( '.wpms-test-email-success-banner__card-actions' );
+						var $msg     = $( '<p class="wpms-test-email-success-banner__card-msg" />' ).html( res.data.msg );
+
+						$actions.find( '.wpms-test-email-success-banner__card-msg' ).remove();
+						$actions.append( $msg );
+
+						setTimeout( function() {
+							$msg.fadeOut( 200, function() {
+								$( this ).remove();
+							} );
+						}, 3000 );
+					}
+
+					// Install succeeded but silent activation failed (host may
+					// allow install_plugins without activate_plugins).
+					if ( task === 'about_plugin_install' && res.data && res.data.is_activated === false ) {
+						$btn
+							.removeClass( 'wp-mail-smtp-btn-loading status-download' )
+							.addClass( 'status-inactive' )
+							.prop( 'disabled', false )
+							.text( strings.activate );
+
+						return;
+					}
+
+					// Activate task lands here too — install-with-activation and
+					// standalone activate transition the same way: the button
+					// becomes a Setup Now CTA. status-active here means
+					// "installed + click navigates to settings" — the click
+					// handler reads data-settings-url and changes location.
+					var settingsUrl = $btn.attr( 'data-settings-url' );
+
+					$btn
+						.removeClass( 'wp-mail-smtp-btn-loading status-download status-inactive' )
+						.addClass( 'status-active' );
+
+					if ( settingsUrl ) {
+						$btn
+							.prop( 'disabled', false )
+							.text( strings.setup_now );
+
+						return;
+					}
+
+					// Fallback: catalog entry without a settings page URL — leave
+					// the button in a disabled "Installed" state.
+					$btn
+						.prop( 'disabled', true )
+						.text( strings.installed );
+				},
+				onError: function( message ) {
+					$btn.removeClass( 'wp-mail-smtp-btn-loading' );
+					$btn.prop( 'disabled', false );
+					$btn.html( originalLabel );
+					app.pluginInstall.showErrorModal( message );
+				},
+			} );
+		},
+
+		/**
+		 * Handle a click on a Pro-Tip-strip install/activate text-link. Same
+		 * backend as the button handler; different DOM mutations — inline
+		 * loader beside the link during install, and on success the initial
+		 * strip content is swapped for the pre-rendered success span.
+		 *
+		 * @since 4.9.0
+		 *
+		 * @param {object} e jQuery click event.
+		 */
+		handlePluginInstallLinkClick: function( e ) {
+
+			e.preventDefault();
+
+			var $link = $( this );
+
+			if ( $link.hasClass( 'wp-mail-smtp-link-loading' ) || $link.hasClass( 'status-active' ) ) {
+				return;
+			}
+
+			var task;
+			if ( $link.hasClass( 'status-download' ) ) {
+				task = 'about_plugin_install';
+			} else if ( $link.hasClass( 'status-inactive' ) ) {
+				task = 'about_plugin_activate';
+			} else {
+				return;
+			}
+
+			var $strip        = $link.closest( '.wpms-test-email-pro-tip-strip' );
+			var originalLabel = $link.html();
+			var strings       = wp_mail_smtp.plugin_install;
+			var $loader       = $( '<span class="wpms-test-email-pro-tip-strip__loader wp-mail-smtp-loading-spin wp-mail-smtp-loading-sm" aria-hidden="true"></span>' );
+
+			$link.addClass( 'wp-mail-smtp-link-loading' );
+			$link.css( 'pointer-events', 'none' );
+			$link.after( $loader );
+
+			app.pluginInstall.installPlugin( {
+				plugin: $link.attr( 'data-plugin' ),
+				task:   task,
+				onSuccess: function( res ) {
+
+					if ( task === 'about_plugin_install' && res.data && res.data.basename ) {
+						$link.attr( 'data-plugin', res.data.basename );
+					}
+
+					// Install succeeded but activation didn't — transition the
+					// link to status-inactive so the user can retry activate.
+					if ( task === 'about_plugin_install' && res.data && res.data.is_activated === false ) {
+						$loader.remove();
+
+						var activateLabel = strings.activate_with_name.replace( '%s', $link.data( 'plugin-name' ) || '' );
+
+						$link
+							.removeClass( 'wp-mail-smtp-link-loading status-download' )
+							.addClass( 'status-inactive' )
+							.css( 'pointer-events', '' )
+							.text( activateLabel );
+
+						return;
+					}
+
+					// Activate task lands here too — caller's onSuccess treats
+					// install-with-activation and standalone activate the same:
+					// hide the initial span, reveal the pre-rendered success span.
+					$loader.remove();
+					$link.removeClass( 'wp-mail-smtp-link-loading' );
+					$link.css( 'pointer-events', '' );
+
+					$strip.find( '.wpms-test-email-pro-tip-strip__initial' ).attr( 'hidden', true );
+					$strip.find( '.wpms-test-email-pro-tip-strip__success' ).removeAttr( 'hidden' );
+				},
+				onError: function( message ) {
+					$loader.remove();
+					$link.removeClass( 'wp-mail-smtp-link-loading' );
+					$link.css( 'pointer-events', '' );
+					$link.html( originalLabel );
+					app.pluginInstall.showErrorModal( message );
+				},
 			} );
 		},
 
@@ -529,6 +924,52 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						} );
 					} );
 
+					// SendLayer Quick Connect button — supports per-button data-mode
+					// (e.g. backup-mailer mode from the test email success banner).
+					$( document ).on( 'click', '.js-wp-mail-smtp-sendlayer-quick-connect-btn', function( e ) {
+						e.preventDefault();
+
+						var $btn = $( this );
+
+						if ( $btn.hasClass( 'wp-mail-smtp-btn-loading' ) ) {
+							return;
+						}
+
+						$btn.addClass( 'wp-mail-smtp-btn-loading' );
+
+						var connectArgs = {
+							utm_content: $btn.data( 'utm-content' ), // eslint-disable-line camelcase
+						};
+
+						var btnMode = $btn.data( 'mode' );
+
+						if ( btnMode ) {
+							connectArgs.mode = btnMode;
+						}
+
+						self.doConnect( connectArgs, function() {
+							$btn.removeClass( 'wp-mail-smtp-btn-loading' );
+						} );
+					} );
+
+					// Inline SendLayer Quick Connect link (same flow as Quick Connect).
+					$( document ).on( 'click', '.js-wp-mail-smtp-sendlayer-quick-connect-link', function( e ) {
+						e.preventDefault();
+
+						var $link = $( this );
+
+						if ( $link.next( '.wp-mail-smtp-inline-loader' ).length ) {
+							return;
+						}
+
+						var $loader = $( '<span class="wp-mail-smtp-inline-loader" aria-hidden="true"></span>' );
+						$link.after( $loader );
+
+						self.doConnect( { utm_content: 'Email Sending Errors Banner - Quick Connect' }, function() { // eslint-disable-line camelcase
+							$loader.remove();
+						} );
+					} );
+
 					// SendLayer education banner: Dismiss.
 					$( '.js-wp-mail-smtp-sendlayer-education-dismiss' ).on( 'click', function( e ) {
 						e.preventDefault();
@@ -573,6 +1014,165 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					} );
 				}
 			}
+		},
+
+		/**
+		 * Plugin install/activate utilities. Shared by the tile-button and
+		 * Pro-Tip-strip handlers; the handlers own DOM mutation, these
+		 * helpers only normalize the AJAX roundtrip and error UI.
+		 *
+		 * @since 4.9.0
+		 */
+		pluginInstall: {
+
+			/**
+			 * POST to the shared About-tab plugin install/activate AJAX
+			 * endpoint and dispatch to caller-supplied success/error
+			 * callbacks.
+			 *
+			 * @since 4.9.0
+			 *
+			 * @param {object}   options          Options.
+			 * @param {string}   options.plugin   data-plugin value to send.
+			 * @param {string}   options.task     'about_plugin_install' or 'about_plugin_activate'.
+			 * @param {Function} options.onSuccess Receives the parsed response.
+			 * @param {Function} options.onError   Receives (message, rawResponse|null).
+			 */
+			installPlugin: function( options ) {
+
+				$.post( wp_mail_smtp.ajax_url, {
+					action: 'wp_mail_smtp_ajax',
+					task:   options.task,
+					nonce:  wp_mail_smtp.nonce,
+					plugin: options.plugin,
+				} ).done( function( res ) {
+					if ( res && res.success ) {
+						options.onSuccess( res );
+						return;
+					}
+					options.onError( app.extractAjaxError( res, wp_mail_smtp.plugin_install.error ), res );
+				} ).fail( function( xhr ) {
+					var res = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+					options.onError( app.extractAjaxError( res, wp_mail_smtp.plugin_install.error ), res );
+				} );
+			},
+
+			/**
+			 * Show a jconfirm error modal for a plugin install/activate
+			 * failure.
+			 *
+			 * @since 4.9.0
+			 *
+			 * @param {string} message The localized error message body.
+			 */
+			showErrorModal: function( message ) {
+
+				var strings = wp_mail_smtp.plugin_install;
+
+				$.confirm( {
+					backgroundDismiss: false,
+					escapeKey:         true,
+					animationBounce:   1,
+					closeIcon:         true,
+					type:              'red',
+					title:             strings.error_title,
+					content:           message,
+					buttons: {
+						confirm: {
+							text:     strings.btn_ok,
+							btnClass: 'btn-confirm',
+							keys:     [ 'enter' ],
+						},
+					},
+				} );
+			},
+		},
+
+		/**
+		 * Extract a user-facing message from a wp_send_json_error() response.
+		 *
+		 * Covers the standard shape `{ success: false, data: 'message' }`
+		 * (plain string from `wp_send_json_error( $message )`). Empty or
+		 * non-string payloads (network failures, WP_Error arrays whose codes
+		 * are usually cryptic) fall back to the caller-supplied default.
+		 *
+		 * @since 4.9.0
+		 *
+		 * @param {object|null} response       Parsed AJAX response, or null on network failure.
+		 * @param {string}      defaultMessage Fallback when the response has no usable message.
+		 *
+		 * @returns {string} The extracted message, or the default when none is usable.
+		 */
+		extractAjaxError: function( response, defaultMessage ) {
+
+			if ( response && typeof response.data === 'string' && response.data.length ) {
+				return response.data;
+			}
+
+			return defaultMessage;
+		},
+
+		/**
+		 * Returns prepared modal icon HTML for a jQuery Confirm dialog.
+		 *
+		 * @since 4.9.0
+		 *
+		 * @param {string} icon The icon name from /assets/images/font-awesome/ to use in the modal.
+		 *
+		 * @returns {string} Modal icon HTML.
+		 */
+		getModalIcon: function( icon ) {
+
+			return '"></i><img src="' + wp_mail_smtp.plugin_url + '/assets/images/font-awesome/' + icon + '.svg" style="width: 40px; height: 40px;" alt=""><i class="';
+		},
+
+		/**
+		 * Confirm before enabling the "Hide Email Delivery Errors" option.
+		 *
+		 * Enabling this suppresses the warnings that surface failed email
+		 * delivery, so it requires explicit confirmation. Cancelling reverts
+		 * the toggle to its previous (unchecked) state. Turning the option
+		 * off is never prompted.
+		 *
+		 * @since 4.9.0
+		 *
+		 * @param {Event} e The change event.
+		 */
+		confirmHideDeliveryErrors: function( e ) {
+
+			var $toggle = $( e.target );
+
+			// Only confirm when the option is being enabled.
+			if ( ! $toggle.prop( 'checked' ) ) {
+				return;
+			}
+
+			var strings = wp_mail_smtp.hide_delivery_errors;
+
+			$.confirm( {
+				backgroundDismiss: false,
+				escapeKey:         true,
+				animationBounce:   1,
+				type:              'orange',
+				icon:              app.getModalIcon( 'exclamation-circle-solid-orange' ),
+				title:             strings.title,
+				content:           strings.content,
+				boxWidth:          '550px',
+				buttons: {
+					confirm: {
+						text:     strings.confirm_button,
+						btnClass: 'btn-confirm',
+						keys:     [ 'enter' ],
+					},
+					cancel: {
+						text:     strings.cancel_button,
+						btnClass: 'btn-cancel',
+						action: function() {
+							$toggle.prop( 'checked', false );
+						},
+					},
+				},
+			} );
 		},
 
 		/**

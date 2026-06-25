@@ -1,0 +1,263 @@
+// AI MCP page — Tools → AI MCP tab.
+
+// Local tokens — values without a matching project variable.
+$ai-mcp-hero-bg: #1d2327;
+$ai-mcp-card-icon-bg: #fdf2eb;
+$ai-mcp-card-icon-color: #e27730;
+$ai-mcp-divider: #dcdcde;
+$ai-mcp-panel-border: #c3c4c7;
+$ai-mcp-card-title-color: #2c3338;
+$ai-mcp-eyebrow-color: rgba(255, 255, 255, 0.5);      // White @ 50%, no project token.
+$ai-mcp-text-on-dark: rgba(255, 255, 255, 0.75);      // White @ 75%, no project token.
+$ai-mcp-panel-shadow: 0 2px 2px rgba(0, 0, 0, 0.07);
+
+#wp-mail-smtp {
+
+	.wp-mail-smtp-ai-mcp {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+
+		.wp-mail-smtp-ai-mcp-hero {
+			display: flex;
+			gap: 12px;
+			align-items: flex-start;
+			background: $ai-mcp-hero-bg;
+			border-radius: 9px;
+			overflow: hidden;
+
+			@include media('<ipad') {
+				flex-direction: column;
+				gap: 0;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-hero-copy {
+			flex: 1 0 0;
+			min-width: 0;
+			padding: 25px;
+		}
+
+		.wp-mail-smtp-ai-mcp-hero-illustration {
+			width: 338px;
+			height: 259px;
+			flex-shrink: 0;
+			align-self: stretch;
+			object-fit: contain;
+			object-position: bottom right;
+
+			@include media('<ipad') {
+				width: 100%;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-eyebrow {
+			font-size: 13px;
+			font-weight: 700;
+			line-height: 1.5;
+			letter-spacing: 0.65px;
+			text-transform: uppercase;
+			color: $ai-mcp-eyebrow-color;
+			margin: 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-title {
+			font-size: 24px;
+			font-weight: 700;
+			line-height: 1.5;
+			color: #ffffff;
+			margin: 0;
+			padding: 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-lede {
+			font-size: 15px;
+			line-height: 1.5;
+			color: $ai-mcp-text-on-dark;
+			margin: 5px 0 0;
+
+			a {
+				color: inherit;
+				text-decoration: underline;
+
+				&:hover {
+					color: #ffffff;
+				}
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-cta-row {
+			display: flex;
+			align-items: center;
+			gap: 30px;
+			margin-top: 30px;
+		}
+
+		.wp-mail-smtp-ai-mcp-install-note {
+			font-size: 13px;
+			line-height: 1.5;
+			color: $ai-mcp-eyebrow-color;
+			margin: 10px 0 0;
+		}
+
+		// Inline error shown under the CTA row when install/activate fails.
+		.wp-mail-smtp-ai-mcp-install-error {
+			font-size: 13px;
+			line-height: 1.5;
+			color: $negative;
+			margin: 10px 0 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-capabilities {
+			background: #ffffff;
+			border: 1px solid $ai-mcp-panel-border;
+			border-radius: 9px;
+			padding: 25px;
+			box-shadow: $ai-mcp-panel-shadow;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		.wp-mail-smtp-ai-mcp-capabilities-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			@include media('<ipad') {
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-capabilities-title {
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 20px;
+			color: $ai-mcp-card-title-color;
+			margin: 0;
+			padding: 0;
+
+			@include media('<ipad') {
+				text-align: center;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-docs-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.5;
+			color: $ai-mcp-card-icon-color;
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-docs-arrow {
+			font-size: 12px;
+		}
+
+		.wp-mail-smtp-ai-mcp-cards {
+			display: flex;
+			gap: 15px;
+
+			@include media('<ipad') {
+				flex-direction: column;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-card {
+			position: relative;
+			flex: 0 1 326px;
+			max-width: 326px;
+			background: #ffffff;
+			border: 1px solid $ai-mcp-divider;
+			border-radius: 6px;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+
+			// Column layout on small screens: cards span full width.
+			@include media('<ipad') {
+				flex: 1 1 auto;
+				max-width: none;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-card-head {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.wp-mail-smtp-ai-mcp-card-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			background: $ai-mcp-card-icon-bg;
+			color: $ai-mcp-card-icon-color;
+			border-radius: 4px;
+			font-size: 20px;
+			flex-shrink: 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-card-title {
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 1.5;
+			color: $ai-mcp-card-title-color;
+			margin: 0;
+			padding: 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-card-bullets {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+
+			li {
+				display: flex;
+				align-items: flex-start;
+				gap: 10px;
+				margin: 0;
+			}
+		}
+
+		.wp-mail-smtp-ai-mcp-card-dot {
+			display: inline-block;
+			width: 6px;
+			height: 6px;
+			margin-top: 8px;
+			border-radius: 50%;
+			background: $ai-mcp-card-icon-color;
+			flex-shrink: 0;
+		}
+
+		.wp-mail-smtp-ai-mcp-card-bullet-text {
+			font-size: 13px;
+			line-height: 1.5;
+			color: $secondary-text;
+		}
+
+		.wp-mail-smtp-ai-mcp-pro-badge {
+			position: absolute;
+			top: 19px;
+			inset-inline-end: 19px;
+			width: 35px;
+			height: 16px;
+		}
+	}
+}

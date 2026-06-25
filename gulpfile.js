@@ -1,25 +1,24 @@
 /**
  * Load plugins.
  */
-import gulp from 'gulp';
-import cached from 'gulp-cached';
-import _sass from 'sass';
-import gulpSass from 'gulp-sass';
-import sourcemaps from 'gulp-sourcemaps';
-import rename from 'gulp-rename';
-import debug from 'gulp-debug';
-import uglify from 'gulp-uglify';
-import imagemin from 'gulp-imagemin';
-import zip from 'gulp-zip';
-import replace from 'gulp-replace';
-import { createRequire } from 'module';
-import { exec } from 'child_process';
-import clean from 'gulp-clean';
-import merge from 'merge-stream';
+const gulp = require('gulp');
+const cached = require('gulp-cached');
+const _sass = require('sass');
+const gulpSass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
+const rename = require('gulp-rename');
+const debug = require('gulp-debug');
+const uglify = require('gulp-uglify');
+const zip = require('gulp-zip');
+const replace = require('gulp-replace');
+const { exec } = require('child_process');
+const clean = require('gulp-clean');
+const merge = require('merge-stream');
+const insert = require('gulp-insert');
+const { readFileSync } = require('fs');
 
 const sass = gulpSass( _sass );
-const packageJSONRequire = createRequire( import.meta.url );
-const packageJSON = packageJSONRequire( './package.json' );
+const packageJSON = require( './package.json' );
 
 var plugin = {
 	name: 'WP Mail SMTP',
@@ -44,7 +43,6 @@ var plugin = {
 		'!**/bin/**',
 		'!**/bin',
 		'!**/tests/**',
-		'!.codeception',
 		'!php-scoper/**',
 		'!php-scoper',
 		'!**/tests',
@@ -74,7 +72,7 @@ var plugin = {
 		'!**/*.dist',
 		'!**/*.json',
 		'!**/*.lock',
-		'!**/gulpfile.mjs',
+		'!**/gulpfile.js',
 		'!**/.eslintrc.js',
 		'!**/.eslintignore.js',
 		'!**/AUTHORS',
@@ -126,6 +124,7 @@ var plugin = {
 		'!.env.example',
 		'!.env',
 		'!.nvmrc',
+		'!Dockerfile-Build',
 	],
 	lite_files: [
 		'!assets/pro/**',
@@ -155,19 +154,13 @@ var plugin = {
 		'!assets/js/*.min.js',
 		'!assets/pro/js/*.min.js'
 	],
-	images: [
-		'assets/images/**/*',
-		'assets/pro/images/**/*',
-		'assets/wporg/**/*'
-	],
 	files_replace_ver: [
 		"**/*.php",
 		"**/*.js",
 		"!**/*.min.js",
-		"!gulpfile.mjs",
+		"!gulpfile.js",
 		"!assets/js/vendor/**",
 		"!assets/pro/js/vendor/**",
-		"!.codeception/**",
 		"!.github/**",
 		"!.packages/**",
 		"!build/**",
@@ -183,7 +176,7 @@ var plugin = {
 /**
  * Compile SCSS to CSS, compress.
  */
-gulp.task( 'css', function () {
+gulp.task( 'css:sass', function () {
 	return gulp.src( plugin.scss )
 			// UnMinified file.
 			.pipe( cached( 'processCSS' ) )
@@ -216,6 +209,71 @@ gulp.task( 'css', function () {
 } );
 
 /**
+ * Run Tailwind v4 over the compiled admin bundle.
+ *
+ * Tailwind utilities are injected only into the main admin bundle
+ * (smtp-admin.css and smtp-admin.min.css). All other compiled stylesheets
+ * are left untouched. Preflight is intentionally NOT imported - the global
+ * element reset would clobber WP admin styles.
+ *
+ * Class scanning targets `src/**\/*.php` and `assets/js/**\/*.js` via the
+ * `@source` directive so utilities referenced in PHP/JS are emitted.
+ *
+ * The `@import` and `@source` directives are prepended in-memory before
+ * PostCSS runs, so the SCSS source on disk stays free of Tailwind directives.
+ */
+
+// Project-specific Tailwind @theme tokens — kept in a separate CSS file so the
+// design system is discoverable + editable independently of the gulp config.
+const tailwindThemeBlock = readFileSync( './assets/css/tailwind-theme.css', 'utf8' );
+
+const tailwindDirectives =
+	'@import "tailwindcss/theme.css" layer(theme) prefix(wpms);\n' +
+	'@import "tailwindcss/utilities.css" layer(utilities) source(none) prefix(wpms);\n' +
+	'@source "../../src/**/*.php";\n' +
+	'@source "../../assets/js/**/*.js";\n' +
+	tailwindThemeBlock + '\n';
+
+// Scope every generated .wpms:* utility selector under `#wp-mail-smtp`. Bumps
+// specificity above many plugin global rules without resorting to !important.
+// Per-utility `!` modifier (e.g. `wpms:m-0!`) is used surgically in markup for
+// the cases where deeper plugin rules outrank the scope — identified via the
+// Playwright style-audit script (see `scripts/check-tailwind-styles.mjs`).
+const scopeTailwindUtilities = () => ( {
+	postcssPlugin: 'scope-tailwind-utilities',
+	Rule( rule ) {
+		if ( rule.selector.includes( '#wp-mail-smtp' ) ) return;
+		if ( ! /\.wpms\\:/.test( rule.selector ) ) return;
+		rule.selector = rule.selector
+			.split( ',' )
+			.map( s => `#wp-mail-smtp ${ s.trim() }` )
+			.join( ',\n' );
+	},
+} );
+scopeTailwindUtilities.postcss = true;
+
+gulp.task( 'css:tailwind', function () {
+	const postcss = require('gulp-postcss');
+	const tailwindcss = require('@tailwindcss/postcss');
+
+	const expanded = gulp.src( 'assets/css/smtp-admin.css' )
+		.pipe( insert.prepend( tailwindDirectives ) )
+		.pipe( postcss( [ tailwindcss( { optimize: false } ), scopeTailwindUtilities() ] ) )
+		.pipe( gulp.dest( 'assets/css/' ) )
+		.pipe( debug( { title: '[css:tailwind]' } ) );
+
+	const minified = gulp.src( 'assets/css/smtp-admin.min.css' )
+		.pipe( insert.prepend( tailwindDirectives ) )
+		.pipe( postcss( [ tailwindcss( { optimize: { minify: true } } ), scopeTailwindUtilities() ] ) )
+		.pipe( gulp.dest( 'assets/css/' ) )
+		.pipe( debug( { title: '[css:tailwind]' } ) );
+
+	return merge( expanded, minified );
+} );
+
+gulp.task( 'css', gulp.series( 'css:sass', 'css:tailwind' ) );
+
+/**
  * Compress js.
  */
 gulp.task( 'js', function () {
@@ -236,23 +294,11 @@ gulp.task( 'js', function () {
 } );
 
 /**
- * Optimize image files.
- */
-gulp.task( 'img', function () {
-	return gulp.src( plugin.images )
-			   .pipe( imagemin() )
-			   .pipe( gulp.dest( function ( file ) {
-				   return file.base;
-			   } ) )
-			   .pipe( debug( { title: '[img]' } ) );
-} );
-
-/**
  * Generate .pot files for Lite and Pro.
  */
 gulp.task( 'pot:lite', function ( cb ) {
 	exec(
-		'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
+		'wp i18n make-pot ./ ./assets/languages/wp-mail-smtp.pot --slug="wp-mail-smtp" --domain="wp-mail-smtp" --package-name="WP Mail SMTP" --file-comment="" --exclude="tests,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -262,7 +308,7 @@ gulp.task( 'pot:lite', function ( cb ) {
 } );
 gulp.task( 'pot:pro', function ( cb ) {
 	exec(
-		'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment="" --exclude=".codeception,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
+		'wp i18n make-pot ./ ./assets/pro/languages/wp-mail-smtp-pro.pot --slug="wp-mail-smtp-pro" --domain="wp-mail-smtp-pro" --package-name="WP Mail SMTP" --file-comment="" --exclude="tests,.github,.packages,build,node_modules,php-scoper,vendor,vendor-prefixed,assets/vue,vue-app"',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -491,7 +537,7 @@ gulp.task( 'php:check-build-version', function ( cb ) {
  */
 gulp.task( 'vue:install', function ( cb ) {
 	exec(
-		'cd vue-app && npm install',
+		'cd vue-app && npm ci',
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
@@ -524,16 +570,16 @@ gulp.task( 'vue', gulp.series( 'vue:install', 'vue:build', 'vue:translations' ) 
 /**
  * Task: build.
  */
-gulp.task( 'build:assets', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot' ) );
-gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
-gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build:assets', gulp.series( gulp.parallel( 'css', 'js', 'vue' ), 'replace_ver', 'pot' ) );
+gulp.task( 'build:lite', gulp.series( gulp.parallel( 'css', 'js', 'vue' ), 'replace_ver', 'pot:lite', 'rename:lite', 'composer:lite', 'zip:lite' ) );
+gulp.task( 'build:pro', gulp.series( gulp.parallel( 'css', 'js', 'vue' ), 'replace_ver', 'pot', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 gulp.task( 'build:test', gulp.series( 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
-gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
+gulp.task( 'build', gulp.series( gulp.parallel( 'css', 'js', 'vue' ), 'replace_ver', 'pot', 'rename:lite', 'composer:lite', 'zip:lite', 'rename:pro', 'composer:pro', 'zip:pro' ) );
 
 // Build tasks without PHP composer install step
 // The composer install should be done on PHP 5.6 before running below commands:
 // `composer build-lite-step-1` or `composer build-pro-step-1`.
-gulp.task( 'build:lite_no_composer', gulp.series( 'php:check-build-version', gulp.parallel( 'css', 'js', 'img', 'vue' ), 'replace_ver', 'rename:lite', 'pot:lite', 'composer:prefix_lite', 'zip:lite' ) );
+gulp.task( 'build:lite_no_composer', gulp.series( 'php:check-build-version', gulp.parallel( 'css', 'js', 'vue' ), 'replace_ver', 'rename:lite', 'pot:lite', 'composer:prefix_lite', 'zip:lite' ) );
 gulp.task( 'build:pro_no_composer', gulp.series( 'php:check-build-version', 'rename:pro', 'build:assets', 'composer:prefix', 'zip:pro' ) );
 
 /**

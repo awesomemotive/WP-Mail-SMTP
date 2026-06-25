@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require_once __DIR__ . '/polyfills.php';
+
 /**
  * Autoloader. We need it being separate and not using Composer autoloader because of the Gmail libs,
  * which are huge and not needed for most users.

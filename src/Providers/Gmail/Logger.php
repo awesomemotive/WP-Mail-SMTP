@@ -2,9 +2,9 @@
 
 namespace WPMailSMTP\Providers\Gmail;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Vendor\Psr\Log\LoggerInterface;
 use WPMailSMTP\Vendor\Psr\Log\LogLevel;
-use WPMailSMTP\Debug;
 
 /**
  * Custom logger for Gmail provider to replace Monolog dependency.
@@ -144,8 +144,7 @@ class Logger implements LoggerInterface {
 			$message
 		);
 
-		// Use WP Mail SMTP's Debug class to log the message.
-		Debug::set( $formatted_message );
+		DebugEvents::add( $formatted_message );
 	}
 
 	/**

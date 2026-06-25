@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Helpers\Helpers;
 
 /**
@@ -113,6 +114,75 @@ class WP {
 			'key'            => sanitize_key( $key ),
 			'error_code'     => $error_code,
 		];
+	}
+
+	/**
+	 * Add an admin notice and append the DebugEvent referenced by `?debug_event_id=` in
+	 * the current request URL (if any) on a new line below the notice copy.
+	 *
+	 * Use this from redirect-based flows where the upstream request constructed a URL
+	 * like `?error=foo&debug_event_id=42` to carry the underlying technical detail to
+	 * the landing page. The opt-in form (rather than auto-detection in add_admin_notice)
+	 * prevents the detail from attaching to unrelated notices that happen to render on
+	 * the same page.
+	 *
+	 * Signature mirrors add_admin_notice.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $message        Message text (HTML is OK).
+	 * @param string $class          Display class (severity).
+	 * @param bool   $is_dismissible Whether the message should be dismissible.
+	 * @param string $key            Unique key for the notice.
+	 * @param string $error_code     Optional error code displayed next to the notice.
+	 */
+	public static function add_admin_notice_with_debug( $message, $class = self::ADMIN_NOTICE_INFO, $is_dismissible = true, $key = '', $error_code = '' ) {
+
+		self::add_admin_notice(
+			$message . self::get_debug_event_detail_html(),
+			$class,
+			$is_dismissible,
+			$key,
+			$error_code
+		);
+	}
+
+	/**
+	 * Render the inline HTML for a debug event referenced by the current request URL.
+	 *
+	 * Cached per request — the DebugEvents lookup runs at most once. Returns an empty
+	 * string when no `debug_event_id` is present in the URL or the event cannot be
+	 * resolved.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return string
+	 */
+	private static function get_debug_event_detail_html() {
+
+		static $cache = [];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$event_id = isset( $_GET['debug_event_id'] ) ? absint( wp_unslash( $_GET['debug_event_id'] ) ) : 0;
+
+		if ( isset( $cache[ $event_id ] ) ) {
+			return $cache[ $event_id ];
+		}
+
+		$cache[ $event_id ] = '';
+
+		if ( $event_id <= 0 ) {
+			return $cache[ $event_id ];
+		}
+
+		$details = DebugEvents::get_debug_messages( $event_id );
+		$detail  = is_array( $details ) ? reset( $details ) : '';
+
+		if ( ! empty( $detail ) ) {
+			$cache[ $event_id ] = '<code class="wp-mail-smtp-notice__debug-detail">' . esc_html( $detail ) . '</code>';
+		}
+
+		return $cache[ $event_id ];
 	}
 
 	/**

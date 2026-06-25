@@ -67,7 +67,7 @@ class ErrorStats {
 	public function hooks() {
 
 		// Track email sending errors.
-		add_action( 'wp_mail_smtp_mailcatcher_send_failed', [ $this, 'track_send_failed' ], 10, 5 );
+		add_action( 'wp_mail_smtp_mailcatcher_send_failed', [ $this, 'track_send_failed' ], 10, 7 );
 		// Track email delivery failures (webhooks, delivery verification).
 		add_action( 'wp_mail_smtp_email_delivery_failed', [ $this, 'track_delivery_failed' ], 10, 3 );
 		// Add data to usage tracking.
@@ -78,18 +78,19 @@ class ErrorStats {
 	 * Track email sending error from MailCatcher.
 	 *
 	 * @since 4.8.0
+	 * @since 4.9.0 Added $response_code, $connection, and $error_key params.
 	 *
 	 * @param string               $error_message Error message.
 	 * @param MailCatcherInterface $mailcatcher   The MailCatcher object.
 	 * @param string               $mailer_slug   Current mailer name.
 	 * @param string               $error_code    Error code.
 	 * @param int                  $response_code HTTP response code.
+	 * @param ConnectionInterface  $connection    Connection object or null.
+	 * @param string               $error_key     Pre-built composite error key.
 	 */
-	public function track_send_failed( $error_message, $mailcatcher, $mailer_slug, $error_code = '', $response_code = 0 ) {
+	public function track_send_failed( $error_message, $mailcatcher, $mailer_slug, $error_code = '', $response_code = 0, $connection = null, $error_key = '' ) {
 
 		$mailer_slug = $this->resolve_mailer_slug( $mailer_slug );
-		$prefix      = $response_code > 0 ? (string) $response_code : '';
-		$error_key   = $this->build_error_key( $prefix, (string) $error_code, (string) $error_message );
 
 		$this->track_error( $mailer_slug, $error_key );
 	}

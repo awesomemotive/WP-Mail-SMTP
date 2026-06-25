@@ -150,9 +150,16 @@ class Reports {
 	/**
 	 * Get the number of total emails sent by week.
 	 *
-	 * @since 3.0.0
+	 * When `$week` is `'previous'` or `'two_weeks_ago'` and the calculated ISO week drops
+	 * below 1 (year-boundary case), the target week number is derived from the dated
+	 * offset (7 or 14 days ago) so it correctly resolves to the prior year's last weeks
+	 * (52 or 53) regardless of whether intervening weeks have entries in the stats array.
 	 *
-	 * @param int|string $week Week number or "now", "previous" identifiers.
+	 * @since 3.0.0
+	 * @since 4.9.0 Added 'two_weeks_ago' identifier and year-boundary handling.
+	 *
+	 * @param int|string|null $week One of: null (full array), 'now', 'previous',
+	 *                              'two_weeks_ago', or an integer ISO week number.
 	 *
 	 * @return array|int
 	 */
@@ -160,17 +167,38 @@ class Reports {
 
 		$stats = get_option( self::WEEKLY_SENT_EMAILS_COUNTER_OPTION_KEY, [] );
 
-		if ( ! is_null( $week ) ) {
-			if ( $week === 'now' ) {
-				$week = $this->get_current_week();
-			} elseif ( $week === 'previous' ) {
-				$week = $this->get_current_week() - 1;
-			}
-
-			return isset( $stats[ $week ] ) ? $stats[ $week ] : 0;
+		if ( is_null( $week ) ) {
+			return $stats;
 		}
 
-		return $stats;
+		$current_week = $this->get_current_week();
+
+		if ( $week === 'now' ) {
+			return isset( $stats[ $current_week ] ) ? $stats[ $current_week ] : 0;
+		}
+
+		if ( $week === 'previous' ) {
+			$target = $current_week - 1;
+
+			if ( $target < 1 ) {
+				$target = (int) wp_date( 'W', strtotime( '-7 days' ) );
+			}
+
+			return isset( $stats[ $target ] ) ? $stats[ $target ] : 0;
+		}
+
+		if ( $week === 'two_weeks_ago' ) {
+			$target = $current_week - 2;
+
+			if ( $target < 1 ) {
+				$target = (int) wp_date( 'W', strtotime( '-14 days' ) );
+			}
+
+			return isset( $stats[ $target ] ) ? $stats[ $target ] : 0;
+		}
+
+		// Explicit integer ISO week number.
+		return isset( $stats[ $week ] ) ? $stats[ $week ] : 0;
 	}
 
 	/**

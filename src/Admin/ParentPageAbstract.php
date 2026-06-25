@@ -262,6 +262,7 @@ abstract class ParentPageAbstract implements PageInterface {
 			$current_tab->check_admin_referer();
 
 			// Verify capability.
+			// Per-site cap is intentional: the only tab routed here that writes to the global option store (Debug Events) gates itself with manage_network_options.
 			if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 				wp_die( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
 			}

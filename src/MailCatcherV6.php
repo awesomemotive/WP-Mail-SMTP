@@ -15,18 +15,6 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	use MailCatcherTrait;
 
 	/**
-	 * Callback Action function name.
-	 *
-	 * The function that handles the result of the send email action.
-	 * It is called out by send() for each email sent.
-	 *
-	 * @since 2.2.0
-	 *
-	 * @var string
-	 */
-	public $action_function = '\WPMailSMTP\Processor::send_callback';
-
-	/**
 	 * Which validator to use by default when validating email addresses.
 	 * We are using built-in WordPress function `is_email` to validate the email address.
 	 *

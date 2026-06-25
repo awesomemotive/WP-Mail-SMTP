@@ -2,7 +2,7 @@
 
 namespace WPMailSMTP\Admin;
 
-use WPMailSMTP\Debug;
+use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Options;
 
 /**
@@ -103,7 +103,7 @@ class AdminBarMenu {
 			! $this->has_access() ||
 			(
 				(
-					empty( Debug::get_last() ) ||
+					! $this->has_email_sending_errors() ||
 					(bool) Options::init()->get( 'general', 'email_delivery_errors_hidden' )
 				) &&
 				empty( $this->has_notifications() )
@@ -137,7 +137,7 @@ class AdminBarMenu {
 	public function main_menu( \WP_Admin_Bar $wp_admin_bar ) {
 
 		if (
-			! empty( Debug::get_last() ) &&
+			$this->has_email_sending_errors() &&
 			! (bool) Options::init()->get( 'general', 'email_delivery_errors_hidden' )
 		) {
 			$indicator = ' <span class="wp-mail-smtp-admin-bar-menu-error">!</span>';
@@ -160,5 +160,37 @@ class AdminBarMenu {
 				),
 			]
 		);
+	}
+
+	/**
+	 * Whether any active connection has a live (failed, regular-context) email
+	 * sending error recorded.
+	 *
+	 * Matches the filter used by EmailSendingErrors so the admin bar indicator
+	 * fires for the same set of failures shown by the inline error banner.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return bool
+	 */
+	private function has_email_sending_errors() {
+
+		$all = EmailSendingDebug::get();
+
+		if ( empty( $all ) ) {
+			return false;
+		}
+
+		$live = array_filter(
+			$all,
+			static function ( $record ) {
+
+				return isset( $record['status'], $record['context'] )
+							 && $record['status'] === 'failed'
+							 && $record['context'] === 'regular';
+			}
+		);
+
+		return ! empty( $live );
 	}
 }

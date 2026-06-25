@@ -146,20 +146,29 @@ class MiscTab extends PageAbstract {
 					</p>
 					<?php
 					if ( wp_mail_smtp()->is_pro() ) {
+						$is_log_blocked_emails_const_defined = $options->is_const_defined( 'logs', 'log_blocked_emails' );
 						?>
 						<div style="margin-top: 10px; display: <?php echo (bool) $options->get( 'general', 'do_not_send' ) ? 'block' : 'none'; ?>;">
-							<label for="wp-mail-smtp-setting-log_blocked_emails">
-								<input type="checkbox"
-											 id="wp-mail-smtp-setting-log_blocked_emails"
-											 name="wp-mail-smtp[logs][log_blocked_emails]"
-											 value="true"
-									<?php checked( (bool) $options->get( 'logs', 'log_blocked_emails' ) ); ?>
-								/>
-								<?php esc_html_e( 'Log Blocked Emails', 'wp-mail-smtp' ); ?>
-							</label>
+							<?php
+							UI::toggle(
+								[
+									'name'     => 'wp-mail-smtp[logs][log_blocked_emails]',
+									'id'       => 'wp-mail-smtp-setting-log_blocked_emails',
+									'value'    => 'true',
+									'label'    => esc_html__( 'Log Blocked Emails', 'wp-mail-smtp' ),
+									'checked'  => (bool) $options->get( 'logs', 'log_blocked_emails' ),
+									'disabled' => $is_log_blocked_emails_const_defined,
+								]
+							);
+							?>
 							<p class="desc">
 								<?php esc_html_e( 'When selected, emails blocked by the "Do Not Send" option will be logged in the Email Log.', 'wp-mail-smtp' ); ?>
 							</p>
+							<?php if ( $is_log_blocked_emails_const_defined ) : ?>
+								<p class="desc">
+									<?php echo $options->get_const_set_message( 'WPMS_LOG_BLOCKED_EMAILS' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</p>
+							<?php endif; ?>
 						</div>
 						<?php
 					}

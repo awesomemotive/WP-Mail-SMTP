@@ -123,7 +123,7 @@ class SiteHealth {
 	 */
 	public function register_debug_information( $debug_info ) {
 
-		$debug_notices = Debug::get();
+		$debug_notices = EmailSendingDebug::get_messages();
 		$db_tables     = $this->get_db_tables( 'existing' );
 
 		$debug_info[ self::DEBUG_INFO_SLUG ] = [
@@ -139,7 +139,7 @@ class SiteHealth {
 				],
 				'debug'            => [
 					'label' => esc_html__( 'Debug', 'wp-mail-smtp' ),
-					'value' => ! empty( $debug_notices ) ? implode( '; ', $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
+					'value' => ! empty( $debug_notices ) ? implode( WP::EOL . WP::EOL, $debug_notices ) : esc_html__( 'No debug notices found.', 'wp-mail-smtp' ),
 				],
 				'db_tables'        => [
 					'label'   => esc_html__( 'DB tables', 'wp-mail-smtp' ),

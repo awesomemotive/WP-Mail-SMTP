@@ -1,0 +1,379 @@
+%wp-mail-smtp-wpcode-install-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+%wp-mail-smtp-wpcode-install-icon {
+	height: 50px;
+	width: auto;
+	margin-bottom: 25px;
+}
+
+%wp-mail-smtp-wpcode-install-title {
+	max-width: 380px;
+	margin-bottom: 15px;
+	color: #2c3338;
+	font-size: 24px;
+	font-weight: 500;
+	line-height: 30px;
+}
+
+%wp-mail-smtp-wpcode-install-description {
+	max-width: 380px;
+	margin-bottom: 25px;
+	color: $secondary-text;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 26px;
+}
+
+%wp-mail-smtp-wpcode-install-link {
+	color: $secondary-text;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	text-decoration-line: underline;
+
+	&:hover {
+		color: #2c3338;
+	}
+}
+
+// Scope the whole file under #wp-mail-smtp so every rule out-ranks WP-admin
+// core and the unlayered jQuery-Confirm vendor CSS without per-rule overrides.
+#wp-mail-smtp {
+
+	.wp-mail-smtp-wpcode {
+		display: grid;
+		grid-template-columns: 1fr;
+
+		.wp-mail-smtp-wpcode-container {
+			position: relative;
+		}
+
+		.wp-mail-smtp-wpcode-blur {
+			width: 100%;
+			filter: blur(6px);
+			pointer-events: none;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		@media (max-width: 782px) and (min-width: 651px) {
+			.wp-mail-smtp-wpcode-blur #wp-mail-smtp-wpcode-snippets-list .list .wp-mail-smtp-wpcode-snippet {
+				display: none;
+
+				&:nth-child(-n+4) {
+					display: flex;
+				}
+			}
+		}
+
+		@media (max-width: 650px) {
+			.wp-mail-smtp-wpcode-blur #wp-mail-smtp-wpcode-snippets-list .list .wp-mail-smtp-wpcode-snippet {
+				display: none;
+
+				&:nth-child(-n+2) {
+					display: flex;
+				}
+			}
+		}
+
+		.wp-mail-smtp-wpcode-fallback {
+			z-index: 100;
+			justify-self: center;
+			align-self: start;
+			width: 90%;
+			max-width: 730px;
+			height: fit-content;
+			margin: 80px 0 0 0;
+			padding: 40px;
+			background: #ffffff;
+			border-radius: 6px;
+			box-shadow: 0 5px 60px 0 rgba(0, 0, 0, 0.2);
+
+			@extend %wp-mail-smtp-wpcode-install-content;
+
+			.wp-mail-smtp-wpcode-fallback-icons {
+				@extend %wp-mail-smtp-wpcode-install-icon;
+			}
+
+			.wp-mail-smtp-wpcode-fallback-title {
+				@extend %wp-mail-smtp-wpcode-install-title;
+			}
+
+			.wp-mail-smtp-wpcode-fallback-description {
+				@extend %wp-mail-smtp-wpcode-install-description;
+			}
+
+			.wp-mail-smtp-wpcode-fallback-install-plugin {
+				margin-bottom: 15px;
+			}
+
+			.wp-mail-smtp-wpcode-fallback-link {
+				@extend %wp-mail-smtp-wpcode-install-link;
+			}
+		}
+
+		.wp-mail-smtp-wpcode-blur,
+		.wp-mail-smtp-wpcode-fallback {
+			grid-row: 1;
+			grid-column: 1;
+		}
+
+		.wp-mail-smtp-wpcode-header.section-heading {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+
+			.wp-mail-smtp-setting-field {
+				margin: 0;
+			}
+
+			@media (max-width: 599px) {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+
+		.wp-mail-smtp-wpcode-header-search {
+			position: relative;
+			margin-left: 30px;
+
+			.wp-mail-smtp-wpcode-search-icon {
+				position: absolute;
+				top: 50%;
+				left: 10px;
+				width: 16px;
+				height: 16px;
+				color: #a7aaad;
+				transform: translateY(-50%);
+				pointer-events: none;
+			}
+
+			@media (max-width: 599px) {
+				width: 100%;
+				margin-top: 20px;
+				margin-left: 0;
+			}
+		}
+
+		#wp-mail-smtp-wpcode-snippet-search {
+			width: 250px;
+			height: 36px;
+			padding-left: 30px;
+
+			@media (max-width: 599px) {
+				width: 100%;
+			}
+		}
+
+		#wp-mail-smtp-wpcode-snippets-list {
+			margin-top: 30px;
+
+			.list {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+				grid-gap: 20px;
+
+				@media (max-width: 599px) {
+					grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				}
+
+				.wp-mail-smtp-wpcode-snippet {
+					display: flex;
+					flex-direction: column;
+					justify-content: space-between;
+					align-items: flex-start;
+					height: 100%;
+					margin: 0;
+					overflow: hidden;
+					background: #ffffff;
+					border: 1px solid #c3c4c7;
+					border-radius: 4px;
+					box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.07);
+
+					.wp-mail-smtp-wpcode-snippet-header {
+						display: flex;
+						flex-direction: column;
+						gap: 10px;
+						width: 100%;
+						padding: 20px;
+					}
+
+					.wp-mail-smtp-wpcode-snippet-title {
+						margin: 0;
+						color: #2c3338;
+						font-size: 14px;
+						font-style: normal;
+						font-weight: 500;
+						line-height: 20px;
+					}
+
+					.wp-mail-smtp-wpcode-snippet-note {
+						margin: 0;
+						color: $secondary-text;
+						font-size: 14px;
+						font-weight: 400;
+						line-height: 20px;
+					}
+
+					.wp-mail-smtp-wpcode-snippet-footer {
+						display: flex;
+						justify-content: flex-start;
+						align-items: center;
+						gap: 15px;
+						width: 100%;
+						padding: 20px;
+						background: #f6f6f6;
+
+						.wp-mail-smtp-btn + .wp-mail-smtp-btn {
+							margin-left: 0;
+						}
+					}
+
+					.wp-mail-smtp-wpcode-snippet-badge {
+						margin-left: auto;
+						color: #008a20;
+						font-size: 11px;
+						font-weight: 700;
+						line-height: 14px;
+						letter-spacing: 0.5px;
+						text-transform: uppercase;
+
+						&.wp-mail-smtp-wpcode-installing-in-progress {
+							color: #a7aaad;
+						}
+					}
+				}
+			}
+		}
+
+		#wp-mail-smtp-wpcode-no-results {
+			display: none;
+			font-size: 14px;
+		}
+	}
+
+	.wp-mail-smtp-wpcode-modal-code {
+
+		.CodeMirror {
+			height: auto;
+			border: 1px solid #dcdcde;
+			border-radius: 4px;
+			font-size: 13px;
+		}
+
+		.CodeMirror-scroll {
+			max-height: 60vh;
+		}
+
+		textarea {
+			width: 100%;
+			min-height: 200px;
+			font-family: Consolas, Monaco, monospace;
+			font-size: 13px;
+		}
+	}
+
+	.wp-mail-smtp-wpcode-modal {
+		padding: 0 2px 4px;
+	}
+
+	.jconfirm.wp-mail-smtp-wpcode-install-dialog {
+
+		div.jconfirm-title-c {
+			display: none;
+		}
+
+		div.jconfirm-content-pane {
+			margin-bottom: 0;
+		}
+
+		.wp-mail-smtp-wpcode-install-modal {
+			@extend %wp-mail-smtp-wpcode-install-content;
+
+			.wp-mail-smtp-wpcode-install-modal-icons {
+				@extend %wp-mail-smtp-wpcode-install-icon;
+			}
+
+			.wp-mail-smtp-wpcode-install-modal-title {
+				@extend %wp-mail-smtp-wpcode-install-title;
+			}
+
+			.wp-mail-smtp-wpcode-install-modal-description {
+				@extend %wp-mail-smtp-wpcode-install-description;
+			}
+
+			.wp-mail-smtp-wpcode-modal-error {
+				margin: 15px 0 0;
+			}
+
+			// Re-assert -lg sizing; the _confirm.scss content bridge out-specifies it.
+			.wp-mail-smtp-wpcode-install-modal-btn {
+				margin-bottom: 15px;
+				padding: 16px 28px;
+				font-size: 16px;
+				font-weight: 600;
+				text-transform: none;
+			}
+
+			.wp-mail-smtp-wpcode-install-modal-link {
+				@extend %wp-mail-smtp-wpcode-install-link;
+			}
+		}
+	}
+
+	.jconfirm.wp-mail-smtp-wpcode-dialog {
+
+		.jconfirm-box div.jconfirm-content-pane {
+			margin-bottom: 0 !important;
+		}
+
+		// Re-assert -md secondary sizing; the _confirm.scss content bridge out-specifies it.
+		.jconfirm-box div.jconfirm-content .wp-mail-smtp-btn-secondary {
+			padding: 9px 15px;
+			font-weight: 500;
+			text-transform: none;
+		}
+	}
+
+	.jconfirm-content-pane:has(.wp-mail-smtp-wpcode-modal) {
+		margin-bottom: 0 !important;
+	}
+
+	.wp-mail-smtp-wpcode-modal-error {
+		margin: 15px 0 0;
+		color: #d63638;
+		font-size: 14px;
+		line-height: 20px;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	.wp-mail-smtp-wpcode-modal-note {
+		margin-bottom: 16px;
+		color: $description-text;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.wp-mail-smtp-wpcode-modal-footer {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 12px;
+		margin-top: 30px;
+
+		.wp-mail-smtp-wpcode-modal-installing {
+			color: #a7aaad;
+			font-size: 14px;
+			line-height: 20px;
+		}
+	}
+}

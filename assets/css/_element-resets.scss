@@ -1,0 +1,42 @@
+// Per-component element resets — UNLAYERED on purpose.
+//
+// Re-establishes a component's common-case element defaults (typography, plus margin /
+// padding / list-style reset to zero) so its bare elements stop inheriting WP admin's wrong
+// values, and the markup carries only layout + per-element `wpms:…!` exceptions.
+//
+// Must stay OUTSIDE any `@layer`: a layered rule loses to WP admin's unlayered element rules
+// regardless of specificity. Unlayered + scoped one notch above those selectors wins on its
+// own, without `!important`. Keep imported near the top of `smtp-admin.scss`.
+
+#wp-mail-smtp .wp-mail-smtp-page-content {
+
+	// --- Get Pro product-education page ---
+	.wpms-get-pro-tab {
+		h1,
+		h2 {
+			margin: 0;
+			padding: 0;
+			font-size: 24px;
+			font-weight: 700;
+			line-height: var(--wpms-leading-normal);
+			color: #222;
+		}
+
+		h3 {
+			margin: 0;
+			padding: 0;
+			font-size: 18px;
+			font-weight: 500;
+			line-height: var(--wpms-leading-normal);
+			color: var(--wpms-color-gray-900);
+		}
+
+		p {
+			margin: 0;
+			font-size: 16px;
+			font-weight: 400;
+			line-height: 20px;
+			color: var(--wpms-color-gray-700);
+		}
+	}
+}

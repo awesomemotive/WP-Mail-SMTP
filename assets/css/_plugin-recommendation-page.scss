@@ -1,0 +1,319 @@
+// Plugin recommendation page: 3-step Install -> Setup -> Result.
+
+.wp-mail-smtp-plugin-recommendation-page {
+	width: 700px;
+	margin: 0 auto;
+	padding: 0;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	section {
+		margin: 50px 0;
+	}
+
+	p {
+		font-size: 15px;
+	}
+
+	.top {
+		text-align: center;
+
+		img {
+			margin-bottom: 50px;
+		}
+
+		h1 {
+			font-size: 26px;
+			font-weight: 500;
+			margin-bottom: 25px;
+			padding: 0;
+		}
+
+		p {
+			font-size: 16px;
+			line-height: 22px;
+			color: #2c3338;
+			margin: 0;
+		}
+
+		.updated {
+			display: none;
+		}
+	}
+
+	.notice {
+		display: none !important;
+	}
+
+	.loader {
+		margin: 0 auto;
+		position: relative;
+		text-indent: -9999em;
+		border-top: 4px solid #969696;
+		border-right: 4px solid #969696;
+		border-bottom: 4px solid #969696;
+		border-left: 4px solid #404040;
+		transform: translateZ(0);
+		animation: wp-mail-smtp-plugin-recommendation-page-load 1.1s infinite linear;
+		background-color: transparent;
+
+		&,
+		&:after {
+			display: block;
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+		}
+	}
+
+	.screenshot {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 25px;
+
+		.cont {
+			display: inline-block;
+			position: relative;
+			min-width: 315px;
+			margin-top: 0;
+			padding: 5px;
+			background-color: #fff;
+			border-radius: 4px;
+			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.07);
+
+			img {
+				display: block;
+				max-width: 100%;
+			}
+
+			.hover {
+				position: absolute;
+				opacity: 0;
+				height: 100%;
+				width: 100%;
+				top: 0;
+				left: 0;
+				border: 5px solid #fff;
+				background-color: rgba(0, 0, 0, 0.15);
+				background-image: url('../images/icons/zoom.svg');
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 50px;
+				transition: all 0.3s;
+			}
+
+			&:hover .hover {
+				opacity: 1;
+				transition: all 0.3s;
+			}
+		}
+
+		ul {
+			margin: 0;
+
+			li {
+				display: flex;
+				align-items: flex-start;
+				gap: 10px;
+				margin-bottom: 20px;
+				padding: 0;
+				font-size: 15px;
+				line-height: 18px;
+				color: #50575e;
+				text-align: start;
+				list-style: none;
+
+				span {
+					margin-top: 2px;
+				}
+
+				&:first-child {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	.step {
+		display: flex;
+		align-items: center;
+		overflow: hidden;
+		margin: 0 0 50px 0;
+		border-radius: 6px;
+		border: 1px solid #dcdcde;
+		background-color: #f6f6f6;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.07);
+
+		&:last-child {
+			margin-bottom: 36px;
+		}
+
+		& > * {
+			vertical-align: middle;
+		}
+
+		.num {
+			display: inline-block;
+			position: relative;
+			width: 100px;
+			height: 50px;
+			text-align: center;
+		}
+
+		.loader {
+			margin-top: -54px;
+			transition: all 0.3s;
+			opacity: 1;
+		}
+
+		div {
+			display: inline-block;
+			width: calc(100% - 100px);
+			background-color: #fff;
+			padding: 25px;
+			border-left: 1px solid #dcdcde;
+			text-align: start;
+		}
+
+		h2 {
+			color: #2c3338;
+			font-size: 24px;
+			font-weight: 500;
+			line-height: normal;
+			margin: 0 0 10px 0;
+		}
+
+		p {
+			font-size: 16px;
+			line-height: 22px;
+			color: #50575e;
+			margin: 0 0 15px 0;
+		}
+
+		.error {
+			font-size: 14px;
+			color: #d63638;
+			margin-bottom: 0;
+		}
+
+		.button {
+			padding: 11px 17px;
+			min-width: 180px;
+			height: auto;
+			line-height: 1.2;
+			text-align: center;
+			font-size: 16px;
+			font-weight: 500;
+			transition: all 0.3s;
+			border-radius: 4px;
+
+			&.button-primary {
+				background-color: var(--wpms-color-link);
+				border-color: var(--wpms-color-link);
+				color: #ffffff;
+
+				&:hover,
+				&:focus {
+					background-color: #04558a;
+					border-color: #04558a;
+					color: #ffffff;
+				}
+
+				// Replace WP core's default blue focus ring so the
+				// outline matches the button instead of clashing with it.
+				&:focus {
+					border-color: #ffffff;
+					box-shadow: 0 0 0 2px #04558a;
+				}
+			}
+
+			&.grey {
+				background: #f6f6f6;
+				border: 1px solid #8c8f94;
+				box-shadow: none;
+				text-shadow: none;
+				color: #50575e;
+			}
+
+			&.disabled {
+				cursor: default;
+			}
+		}
+
+		.link {
+			text-decoration: none;
+		}
+
+		.hidden {
+			opacity: 0;
+			transition: all 0.3s;
+		}
+	}
+
+	.grey {
+		opacity: 0.5;
+	}
+}
+
+@media (max-width: 767px) {
+	.wp-mail-smtp-plugin-recommendation-page {
+		width: auto;
+
+		.top {
+			img {
+				max-width: 245px;
+			}
+		}
+
+		.screenshot {
+			flex-direction: column;
+
+			.cont {
+				min-width: auto;
+				margin: auto;
+			}
+
+			ul {
+				display: block;
+				margin-left: 0;
+				max-width: none;
+			}
+		}
+
+		.step {
+			flex-direction: column;
+
+			.num {
+				display: block;
+				width: 100%;
+				height: auto;
+				margin: 15px 0;
+			}
+
+			div {
+				display: block;
+				width: 100%;
+				border-left: none;
+				border-top: 1px solid #dcdcde;
+
+				.button {
+					text-wrap: auto;
+				}
+			}
+		}
+	}
+}
+
+@keyframes wp-mail-smtp-plugin-recommendation-page-load {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

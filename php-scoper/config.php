@@ -37,6 +37,11 @@ $config = [
 	'expose-global-classes'      => false,
 	'expose-global-functions'    => false,
 
+	// Keep trigger_deprecation() calls unqualified; its definition stays global via exclude-files below.
+	'exclude-functions'          => [
+		'trigger_deprecation',
+	],
+
 	/*
 	By default when running php-scoper add-prefix, it will prefix all relevant code found in the current working
 	directory. You can however define which files should be scoped by defining a collection of Finders in the

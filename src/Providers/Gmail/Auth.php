@@ -3,16 +3,17 @@
 namespace WPMailSMTP\Providers\Gmail;
 
 use Exception;
+use WP_Error;
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\ConnectionSettings;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\SetupWizard;
 use WPMailSMTP\ConnectionInterface;
-use WPMailSMTP\Debug;
 use WPMailSMTP\Providers\AuthAbstract;
 use WPMailSMTP\Providers\Gmail\Logger;
 use WPMailSMTP\Vendor\Google_Client;
 use WPMailSMTP\Vendor\Google\Service\Gmail;
+use WPMailSMTP\WP;
 
 /**
  * Class Auth to request access and refresh tokens.
@@ -97,7 +98,7 @@ class Auth extends AuthAbstract {
 	 *
 	 * @return Google_Client
 	 */
-	public function get_client( $force = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
+	public function get_client( $force = false ) {
 
 		// Doesn't load client twice + gives ability to overwrite.
 		if ( ! empty( $this->client ) && ! $force ) {
@@ -107,20 +108,20 @@ class Auth extends AuthAbstract {
 		$this->include_vendor_lib();
 
 		$client = new Google_Client(
-			array(
+			[
 				'client_id'     => $this->options['client_id'],
 				'client_secret' => $this->options['client_secret'],
-				'redirect_uris' => array(
+				'redirect_uris' => [
 					self::get_oauth_redirect_url(),
-				),
-			)
+				],
+			]
 		);
 		$client->setApplicationName( 'WP Mail SMTP v' . WPMS_PLUGIN_VER );
 		$client->setAccessType( 'offline' );
 		$client->setPrompt( 'consent' );
 		$client->setIncludeGrantedScopes( false );
 		// We request only the sending capability, as it's what we only need to do.
-		$client->setScopes( array( Gmail::MAIL_GOOGLE_COM ) );
+		$client->setScopes( [ Gmail::MAIL_GOOGLE_COM ] );
 		$client->setRedirectUri( self::get_oauth_redirect_url() );
 
 		// Set our custom logger to replace Monolog dependency.
@@ -135,83 +136,109 @@ class Auth extends AuthAbstract {
 		// Apply custom options to the client.
 		$client = apply_filters( 'wp_mail_smtp_providers_gmail_auth_get_client_custom_options', $client );
 
-		if (
-			$this->is_auth_required() &&
-			! empty( $this->options['auth_code'] )
-		) {
-			try {
-				$creds = $client->fetchAccessTokenWithAuthCode( $this->options['auth_code'] );
-			} catch ( Exception $e ) {
-				$creds['error'] = $e->getMessage();
-			}
-
-			// Bail if we have an error.
-			if ( ! empty( $creds['error'] ) ) {
-				if ( $creds['error'] === 'invalid_client' ) {
-					$creds['error'] .= PHP_EOL . esc_html__( 'Please make sure your Google Client ID and Secret in the plugin settings are valid. Save the settings and try the Authorization again.' , 'wp-mail-smtp' );
-				}
-
-				Debug::set(
-					'Mailer: Gmail' . "\r\n" .
-					$creds['error']
-				);
-
-				return $client;
-			} else {
-				Debug::clear();
-			}
-
-			$this->update_access_token( $client->getAccessToken() );
-			$this->update_refresh_token( $client->getRefreshToken() );
-			$this->update_user_details( $client );
-
-			// Update the "from email" to the connected user's email.
-			if ( ! empty( $this->options['user_details']['email'] ) ) {
-				$this->connection_options->set(
-					[
-						'mail' => [
-							'from_email' => $this->options['user_details']['email'],
-						],
-					],
-					false,
-					false
-				);
-			}
-		}
+		$this->client = $client;
 
 		if ( ! empty( $this->options['access_token'] ) ) {
-			$client->setAccessToken( $this->options['access_token'] );
-		}
+			$this->client->setAccessToken( $this->options['access_token'] );
 
-		// Refresh the token if it's expired.
-		if ( $client->isAccessTokenExpired() ) {
-			$refresh = $client->getRefreshToken();
-			if ( empty( $refresh ) && isset( $this->options['refresh_token'] ) ) {
-				$refresh = $this->options['refresh_token'];
-			}
-
-			if ( ! empty( $refresh ) ) {
-				try {
-					$creds = $client->fetchAccessTokenWithRefreshToken( $refresh );
-				} catch ( Exception $e ) {
-					$creds['error'] = $e->getMessage();
-					Debug::set(
-						'Mailer: Gmail' . "\r\n" .
-						$e->getMessage()
-					);
-				}
-
-				// Bail if we have an error.
-				if ( ! empty( $creds['error'] ) ) {
-					return $client;
-				}
-
-				$this->update_access_token( $client->getAccessToken() );
-				$this->update_refresh_token( $client->getRefreshToken() );
+			// Refresh expired token if needed.
+			if ( $this->client->isAccessTokenExpired() ) {
+				$this->refresh_access_token();
 			}
 		}
 
-		return $client;
+		return $this->client;
+	}
+
+	/**
+	 * Try to get an access token using the authorization code grant.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $code The authorization code returned by Google.
+	 *
+	 * @return WP_Error|true
+	 */
+	private function obtain_access_token( $code ) {
+
+		if ( empty( $code ) ) {
+			return true;
+		}
+
+		try {
+			$creds = $this->client->fetchAccessTokenWithAuthCode( $code );
+		} catch ( Exception $e ) {
+			$creds = [ 'error' => $e->getMessage() ];
+		}
+
+		if ( ! empty( $creds['error'] ) ) {
+			$error_message = $creds['error'];
+
+			if ( $error_message === 'invalid_client' ) {
+				$error_message .= PHP_EOL . esc_html__( 'Please make sure your Google Client ID and Secret in the plugin settings are valid. Save the settings and try the Authorization again.', 'wp-mail-smtp' );
+			}
+
+			return new WP_Error( 'gmail_auth_failed', $error_message );
+		}
+
+		$this->update_access_token( $this->client->getAccessToken() );
+		$this->update_refresh_token( $this->client->getRefreshToken() );
+		$this->update_user_details( $this->client );
+
+		// Update the "from email" to the connected user's email.
+		if ( ! empty( $this->options['user_details']['email'] ) ) {
+			$this->connection_options->set(
+				[
+					'mail' => [
+						'from_email' => $this->options['user_details']['email'],
+					],
+				],
+				false,
+				false
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Refresh expired access token.
+	 *
+	 * Reads the refresh token from the SDK client's internal state (set by an earlier
+	 * setAccessToken call) or from options as a fallback. Bails silently when no
+	 * refresh token is available — the user will need to re-authorize.
+	 *
+	 * @since 4.9.0
+	 */
+	private function refresh_access_token() {
+
+		$refresh = $this->client->getRefreshToken();
+
+		if ( empty( $refresh ) && isset( $this->options['refresh_token'] ) ) {
+			$refresh = $this->options['refresh_token'];
+		}
+
+		if ( empty( $refresh ) ) {
+			return;
+		}
+
+		try {
+			$creds = $this->client->fetchAccessTokenWithRefreshToken( $refresh );
+		} catch ( Exception $e ) {
+			$creds = [ 'error' => $e->getMessage() ];
+		}
+
+		if ( ! empty( $creds['error'] ) ) {
+			DebugEvents::add_throttled(
+				'Mailer: Gmail' . WP::EOL . $creds['error'],
+				'gmail_refresh_error_' . $this->connection->get_id()
+			);
+
+			return;
+		}
+
+		$this->update_access_token( $this->client->getAccessToken() );
+		$this->update_refresh_token( $this->client->getRefreshToken() );
 	}
 
 	/**
@@ -242,6 +269,7 @@ class Auth extends AuthAbstract {
 			wp_safe_redirect(
 				add_query_arg( 'error', 'oauth_invalid_state', $redirect_url )
 			);
+			exit;
 		}
 
 		list( $nonce ) = array_pad( explode( '-', $state ), 1, false );
@@ -260,9 +288,6 @@ class Auth extends AuthAbstract {
 
 		// We can't process without saved client_id/secret.
 		if ( ! $this->is_clients_saved() ) {
-			Debug::set(
-				esc_html__( 'There was an error while processing the Google authentication request. Please make sure that you have Client ID and Client Secret both valid and saved.', 'wp-mail-smtp' )
-			);
 			wp_safe_redirect(
 				add_query_arg(
 					'error',
@@ -319,19 +344,15 @@ class Auth extends AuthAbstract {
 			}
 		}
 
-		// Let's try to get the access token.
-		if (
-			! empty( $code ) &&
-			(
-				$scope === Gmail::MAIL_GOOGLE_COM . ' ' . Gmail::GMAIL_SEND ||
-				$scope === Gmail::GMAIL_SEND . ' ' . Gmail::MAIL_GOOGLE_COM ||
-				$scope === Gmail::GMAIL_SEND ||
-				$scope === Gmail::MAIL_GOOGLE_COM
-			)
-		) {
-			// Save the auth code. So Google_Client can reuse it to retrieve the access token.
-			$this->update_auth_code( $code );
-		} else {
+		// Validate code + scope.
+		$scope_is_valid = (
+			$scope === Gmail::MAIL_GOOGLE_COM . ' ' . Gmail::GMAIL_SEND ||
+			$scope === Gmail::GMAIL_SEND . ' ' . Gmail::MAIL_GOOGLE_COM ||
+			$scope === Gmail::GMAIL_SEND ||
+			$scope === Gmail::MAIL_GOOGLE_COM
+		);
+
+		if ( empty( $code ) || ! $scope_is_valid ) {
 			DebugEvents::add_debug(
 				esc_html__( 'There was an error while processing Google authorization: missing code or scope parameter.', 'wp-mail-smtp' )
 			);
@@ -346,17 +367,21 @@ class Auth extends AuthAbstract {
 			exit;
 		}
 
-		Debug::clear();
+		// Ensure the SDK client is initialized.
+		$this->get_client();
 
-		$this->get_client( true );
+		// Exchange the auth code for an access token.
+		$result = $this->obtain_access_token( $code );
 
-		$error = Debug::get_last();
+		if ( $result instanceof WP_Error ) {
+			$event_id = DebugEvents::add( 'Mailer: Gmail' . WP::EOL . $result->get_error_message() );
 
-		if ( ! empty( $error ) ) {
 			wp_safe_redirect(
 				add_query_arg(
-					'error',
-					'google_unsuccessful_oauth',
+					[
+						'error'          => 'google_unsuccessful_oauth',
+						'debug_event_id' => $event_id,
+					],
 					$redirect_url
 				)
 			);

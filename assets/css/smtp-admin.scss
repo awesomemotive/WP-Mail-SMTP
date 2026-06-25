@@ -1,5 +1,12 @@
+// Cascade layer order. Tailwind utilities (imported by gulp into `@layer utilities`)
+// win over BEM components in `@layer components` regardless of specificity ties — so a
+// utility can override a same-specificity component rule without `!important`.
+@layer components, utilities;
+
+@import "tokens";
 @import "include-media";
 @import "variables";
+@import "element-resets";
 @import "general";
 @import "helpers";
 @import "confirm";
@@ -10,6 +17,9 @@
 @import "conditional-logic";
 @import "toggle";
 @import "footer";
+@import "code-snippets";
+@import "ai-mcp";
+@import "plugin-recommendation-page";
 
 // Screen options are hidden on load, then made visible with JS, to
 // prevent it from "jumping".
@@ -84,6 +94,13 @@
 
 			&:hover {
 				border-color: #999;
+			}
+
+			// Lite-only upsell tab, pinned to the far right with an accent label.
+			&.wp-mail-smtp-tab-get-pro {
+				float: right;
+				margin-right: 0;
+				color: $orange;
 			}
 		}
 
@@ -1145,6 +1162,361 @@
 			margin: 0 10px;
 		}
 	}
+
+	.wpms-email-sending-errors-banner {
+
+		--wpms-esd-color-dismiss: #a7aaad;
+		--wpms-esd-color-surface-alt: #f6f7f7;
+		--wpms-esd-color-tooltip-bg: #3c434a;
+
+		--wpms-esd-font-title-size: 18px;
+		--wpms-esd-font-body-size: 14px;
+		--wpms-esd-font-line-height: 20px;
+		--wpms-esd-font-tooltip-size: 12px;
+
+		position: relative;
+		margin: 0 0 var(--wpms-spacing-md);
+		padding: var(--wpms-spacing-md);
+		background: var(--wpms-color-surface-background-white);
+		border: 1px solid var(--wpms-color-surface-border);
+		border-radius: var(--wpms-radius-table);
+		color: var(--wpms-color-tertiary);
+		font-size: var(--wpms-esd-font-body-size);
+		line-height: var(--wpms-esd-font-line-height);
+
+		&--failed-severity .wpms-email-sending-errors-banner__icon {
+			color: var(--wpms-color-error);
+		}
+
+		&--warning-severity .wpms-email-sending-errors-banner__icon {
+			color: var(--wpms-color-utility-yellow-50);
+		}
+
+		&__header {
+			display: flex;
+			align-items: center;
+			gap: var(--wpms-spacing-sm);
+			margin: 0 0 var(--wpms-spacing-sm);
+			padding-right: 32px; // Reserve room for the absolute-positioned dismiss button.
+		}
+
+		&__icon {
+			display: inline-flex;
+			flex-shrink: 0;
+			align-items: center;
+			justify-content: center;
+			width: 16px;
+			height: 16px;
+			line-height: 1;
+		}
+
+		&__title {
+			margin: 0;
+			flex: 1 1 auto;
+			min-width: 0;
+			font-size: var(--wpms-esd-font-title-size);
+			font-weight: 500;
+			line-height: 1.2;
+			color: var(--wpms-color-primary);
+
+			strong {
+				font-weight: 600;
+			}
+		}
+
+		&__body {
+			display: flex;
+			flex-direction: column;
+			gap: var(--wpms-spacing-md);
+
+			p {
+				margin: 0;
+				font-size: var(--wpms-esd-font-body-size);
+				line-height: var(--wpms-esd-font-line-height);
+				color: var(--wpms-color-tertiary);
+			}
+
+			ul {
+				margin: 0;
+				padding-left: 21px;
+				list-style: disc;
+				color: var(--wpms-color-tertiary);
+
+				li {
+					margin: 0;
+					font-size: var(--wpms-esd-font-body-size);
+					line-height: var(--wpms-esd-font-line-height);
+				}
+			}
+
+			p a {
+				color: var(--wpms-color-link);
+				font-weight: 500;
+				text-decoration: underline;
+
+				&:hover,
+				&:focus {
+					color: #0A4B78;
+					text-decoration: underline;
+				}
+			}
+		}
+
+		&__diagnostic {
+			margin: 0;
+			padding: 12px 14px;
+			background: var(--wpms-esd-color-surface-alt);
+			border: 1px solid var(--wpms-color-surface-divider);
+			border-radius: var(--wpms-radius-table);
+			font-family: Consolas, Monaco, "Courier New", monospace;
+			font-size: 12px;
+			line-height: 1.5;
+			color: var(--wpms-color-secondary);
+			white-space: pre-wrap;
+			word-break: break-word;
+			overflow-x: auto;
+		}
+
+		&__actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: var(--wpms-spacing-sm);
+
+			// Cancel the plugin button system's 16px sibling margin so flex gap is the
+			// only spacing between adjacent buttons in this row.
+			.wp-mail-smtp-btn + .wp-mail-smtp-btn {
+				margin-left: 0;
+			}
+
+			.wp-mail-smtp-btn-link {
+				&:hover,
+				&:active,
+				&:focus {
+					color: var(--wpms-color-primary);
+					text-decoration: underline;
+				}
+			}
+		}
+
+		&__error-log-toggle {
+			min-width: 129px;
+		}
+
+		&__error-log {
+			position: relative;
+			margin: 0;
+		}
+
+		&__help {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			margin: 0;
+			padding-top: var(--wpms-spacing-md);
+			border-top: 1px solid var(--wpms-color-surface-divider);
+			background: transparent;
+
+			ul {
+				margin: 0;
+				padding-left: 21px;
+				list-style: disc;
+
+				li {
+					margin: 0;
+					font-size: var(--wpms-esd-font-body-size);
+					line-height: var(--wpms-esd-font-line-height);
+					color: var(--wpms-color-tertiary);
+				}
+
+				li + li {
+					margin-top: 5px;
+				}
+			}
+
+			a {
+				color: var(--wpms-color-link);
+				font-weight: 500;
+				text-decoration: underline;
+
+				&:hover,
+				&:focus {
+					color: #0A4B78;
+					text-decoration: underline;
+				}
+			}
+		}
+
+		&__help-title {
+			display: flex;
+			align-items: center;
+			gap: var(--wpms-spacing-sm);
+			margin: 0 0 5px !important;
+			font-size: var(--wpms-esd-font-body-size);
+			font-weight: 500;
+			line-height: var(--wpms-esd-font-line-height);
+			color: var(--wpms-color-primary) !important;
+		}
+	}
+
+	.wpms-email-sending-errors-error-log {
+		position: relative;
+		margin: 0;
+		border: 1px solid var(--wpms-color-surface-border);
+		background: var(--wpms-color-surface-background-white);
+		box-shadow: var(--wpms-shadow-subtle);
+
+		&__inner {
+			border-left: 4px solid var(--wpms-color-error);
+			padding: 10px 12px;
+		}
+
+		pre {
+			margin: 0;
+			color: #2c3337;
+			font-size: 13px;
+		}
+
+		&__copy-icon {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			padding: 0;
+			background: transparent;
+			border: 0;
+			border-radius: 3px;
+			color: var(--wpms-esd-color-dismiss);
+			line-height: 0;
+			cursor: pointer;
+
+			&:hover,
+			&:focus {
+				color: var(--wpms-color-secondary);
+				outline: none;
+			}
+
+			&:focus-visible {
+				box-shadow: 0 0 0 2px rgba(5, 106, 171, 0.35);
+			}
+		}
+
+		// PHP toggles `hidden` between the default and done glyphs.
+		&__copy-icon-default,
+		&__copy-icon-done {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			line-height: 0;
+
+			&[hidden] {
+				display: none;
+			}
+		}
+
+		&__copy-tooltip {
+			position: absolute;
+			top: 5px;
+			right: -11px;
+			transform: translateY(-100%);
+			padding: 5px 10px;
+			background: var(--wpms-esd-color-tooltip-bg);
+			color: #fff;
+			font-size: var(--wpms-esd-font-tooltip-size);
+			line-height: 1;
+			border-radius: var(--wpms-radius-table);
+			white-space: nowrap;
+			pointer-events: none;
+			z-index: 1;
+		}
+	}
+
+	.wpms-email-sending-errors-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: 10px;
+		vertical-align: middle;
+		width: 16px;
+		height: 16px;
+		color: var(--wpms-color-error);
+		line-height: 1;
+	}
+
+	@layer components {
+
+		.wpms-test-email-success-banner {
+			position: relative;
+			background-color: #fff;
+			border: 1px solid var(--wpms-color-surface-border);
+			border-radius: 3px;
+			overflow: hidden;
+			margin-bottom: var(--wpms-spacing-sm);
+
+			&__heading {
+				display: flex;
+				align-items: center;
+				gap: var(--wpms-spacing-sm);
+
+				// `!important` because WP admin's unlayered `h2` rules
+				// (e.g. `.wp-mail-smtp-page-content h2`) outrank any rule
+				// in `@layer components` regardless of specificity.
+				h2 {
+					margin: 0 !important;
+					padding: 0 !important;
+					font-size: 18px !important;
+					font-weight: 500 !important;
+					color: var(--wpms-color-primary) !important;
+				}
+			}
+
+			&__card {
+				display: flex;
+				flex-direction: column;
+				gap: 21px;
+				overflow: hidden;
+				background-color: var(--wpms-color-surface-background-white);
+				border: 1px solid var(--wpms-color-surface-divider);
+				border-radius: 4px;
+				padding: var(--wpms-spacing-md);
+				box-shadow: var(--wpms-shadow-subtle);
+				flex: 0 1 380px;
+				min-width: 300px;
+			}
+
+			&__card-msg {
+				margin: 0 !important;
+				padding: 0 !important;
+				font-size: 13px;
+				line-height: 18px;
+				font-weight: 500;
+				color: var(--wpms-color-success);
+			}
+		}
+
+		.wp-mail-smtp-link-loading {
+			opacity: 0.5;
+		}
+
+		.wpms-test-email-pro-tip-strip__loader {
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 6px;
+		}
+
+		// All four sides set explicitly with !important to win over the base
+		// loader's transparent-side !importants.
+		.wpms-test-email-pro-tip-strip .wp-mail-smtp-loading-spin::after {
+			border-top-color: transparent !important;
+			border-right-color: transparent !important;
+			border-bottom-color: var(--wpms-color-link) !important;
+			border-left-color: var(--wpms-color-link) !important;
+		}
+	}
 }
 
 // Buttons.
@@ -1183,6 +1555,10 @@
 	}
 
 	&-loading {
+		// Override `:disabled { opacity: 0.5 }` — opacity creates a stacking
+		// context that dims the ::after spinner too. While loading we want the
+		// spinner at full strength; the spinner itself signals processing.
+		opacity: 1 !important;
 		color: transparent !important;
 		pointer-events: none;
 		user-select: none;
@@ -1211,6 +1587,16 @@
 		}
 	}
 
+	&.wp-mail-smtp-btn-sm {
+		font-size: 13px;
+		font-weight: 500;
+		padding: 6px 10px;
+		min-height: 30px;
+		line-height: 16px;
+		border-width: 1px;
+		border-style: solid;
+	}
+
 	&.wp-mail-smtp-btn-md {
 		font-size: 14px;
 		font-weight: 500;
@@ -1225,6 +1611,16 @@
 		font-size: 16px;
 		font-weight: 600;
 		padding: 16px 28px;
+	}
+
+	&.wp-mail-smtp-btn-cta-large {
+		font-size: 16px;
+		font-weight: 500;
+		padding: 11px 17px;
+		min-height: 44px;
+		line-height: 18px;
+		border-width: 1px;
+		border-style: solid;
 	}
 
 	&.wp-mail-smtp-btn-upgrade,
@@ -1314,6 +1710,35 @@
 			background-color: #eee;
 			color: #444;
 		}
+
+		// Default loading ring is white, invisible on this light background.
+		&.wp-mail-smtp-btn-loading::after {
+			border-color: $orange;
+		}
+	}
+
+	&.wp-mail-smtp-btn-link {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		color: #646970;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 20px;
+		text-decoration: underline;
+		text-decoration-skip-ink: none;
+		text-underline-position: from-font;
+
+		&:hover,
+		&:active,
+		&:focus {
+			color: #1d2327;
+			text-decoration: none;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	&.wp-mail-smtp-btn-blueish {
@@ -1333,6 +1758,19 @@
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #395360;
 		}
 	}
+}
+
+.wp-mail-smtp-inline-loader {
+	display: inline-block;
+	vertical-align: middle;
+	width: 1em;
+	height: 1em;
+	margin-left: 0.5em;
+	border: 2px solid var(--wpms-color-link);
+	border-right-color: transparent;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: wp-mail-smtp-spin 600ms linear infinite;
 }
 
 a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
@@ -1771,5 +2209,19 @@ a.wp-mail-smtp-btn.wp-mail-smtp-btn-md {
 	&__copy-btn {
 		@extend %error-code-copy-btn-base;
 	}
-}
 
+	&__debug-detail {
+		display: block;
+		margin-top: 10px;
+		padding: 10px 12px;
+		background: rgba(0, 0, 0, 0.04);
+		border: 1px solid rgba(0, 0, 0, 0.08);
+		border-radius: 4px;
+		font-family: monospace;
+		font-size: 13px;
+		line-height: 1.5;
+		color: #2c3338;
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+}

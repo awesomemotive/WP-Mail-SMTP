@@ -1,9 +1,9 @@
 === WP Mail SMTP by WPForms - The Most Popular SMTP and Email Log Plugin ===
-Contributors: wpforms, jaredatch, smub, slaFFik, capuderg
+Contributors: wpforms, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
 Tested up to: 7.0
-Stable tag: 4.8.0
+Stable tag: 4.9.0
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -408,6 +408,18 @@ By all means please contact us to discuss features or options you'd like to see 
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.9.0 - 2026-06-26 =
+- Added: WP-CLI commands to configure WP Mail SMTP from the command line, including SMTP and API-key mailer setup and individual setting management.
+- Added: Code Snippets tab on the Tools page to browse, preview, and install WP Mail SMTP's WPCode snippets.
+- Added: Support for the WordPress Abilities API (WordPress 6.9), letting connected tools and AI assistants securely read your debug events.
+- Added: A one-click option to deactivate a conflicting plugin directly from the conflict notice.
+- Added: Confirmation prompt before enabling the "Hide Email Delivery Errors" option, so the setting is not turned on by accident.
+- Changed: Improved error handling and troubleshooting guidance when an email fails to send.
+- Changed: Updated Action Scheduler library to 4.0.0.
+- Fixed: The WPMS_LOG_BLOCKED_EMAILS constant in wp-config.php did not affect the Log Blocked Emails setting; defining the constant now correctly enforces the value, disables the option in the admin area, and shows a notice indicating it is set by a constant.
+- Fixed: The "Last week" stat in the Lite weekly summary email showed the just-started current week's count instead of the actual previous week's total, because the email is sent on Monday at 2pm.
+- Fixed: Hardened permission checks and request handling across several admin features to address potential security issues.
 
 = 4.8.0 - 2026-04-16 =
 - Added: SendLayer Quick Connect - allows connecting to SendLayer without DNS setup in 2 minutes.

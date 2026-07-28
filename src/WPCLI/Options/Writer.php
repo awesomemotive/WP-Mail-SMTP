@@ -4,6 +4,7 @@ namespace WPMailSMTP\WPCLI\Options;
 
 use WP_CLI;
 use WPMailSMTP\Helpers\Data;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Options;
 
 /**
@@ -170,7 +171,7 @@ class Writer {
 			}
 
 			// Email type sanity check.
-			if ( ( $arg['type'] ?? null ) === 'email' && ! is_email( $resolved[ $flag ] ) ) {
+			if ( ( $arg['type'] ?? null ) === 'email' && ! EmailAddress::is_email( $resolved[ $flag ] ) ) {
 				$errors[] = sprintf(
 					/* translators: %1$s is the dotted CLI flag (e.g. mail.from_email). %2$s is the value the operator provided. The flag is not translated. */
 					__( 'Invalid email for --%1$s: %2$s', 'wp-mail-smtp' ),
@@ -232,7 +233,7 @@ class Writer {
 			);
 		}
 
-		if ( ( $arg['type'] ?? null ) === 'email' && ! is_email( $value ) ) {
+		if ( ( $arg['type'] ?? null ) === 'email' && ! EmailAddress::is_email( $value ) ) {
 			WP_CLI::error(
 				sprintf(
 					/* translators: %1$s is the dotted CLI flag (e.g. mail.from_email). %2$s is the value the operator provided. The flag is not translated. */

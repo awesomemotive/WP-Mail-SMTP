@@ -913,9 +913,7 @@ class Core {
 		$mail_catcher = new $class_name( $exceptions );
 
 		if ( $is_old_version ) {
-			$mail_catcher::$validator = static function ( $email ) {
-				return (bool) is_email( $email );
-			};
+			$mail_catcher::$validator = [ Processor::class, 'is_email_callback' ];
 		}
 
 		return $mail_catcher;

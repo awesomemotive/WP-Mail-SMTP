@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Helpers\EmailAddress;
+
 /**
  * Class Processor modifies the behaviour of wp_mail() function.
  *
@@ -260,6 +262,7 @@ class Processor {
 	 * Validate the email address.
 	 *
 	 * @since 3.6.0
+	 * @since {VERSION} Internationalized domains are accepted.
 	 *
 	 * @param string $email The email address.
 	 *
@@ -267,7 +270,7 @@ class Processor {
 	 */
 	public static function is_email_callback( $email ) {
 
-		return (bool) is_email( $email );
+		return EmailAddress::is_email( $email );
 	}
 
 	/**
@@ -276,6 +279,7 @@ class Processor {
 	 * @since 1.0.0
 	 * @since 1.3.0 Forcing email rewrite if option is selected.
 	 * @since 1.7.0 Default email may be empty, so pay attention to that as well.
+	 * @since {VERSION} Internationalized domains are accepted.
 	 *
 	 * @param string $wp_email The email address passed by the filter.
 	 *
@@ -283,8 +287,11 @@ class Processor {
 	 */
 	public function filter_mail_from_email( $wp_email ) {
 
+		// Internationalized domains are only valid in their ASCII (Punycode) form.
+		$wp_email_ascii = EmailAddress::punyencode_email( $wp_email );
+
 		// Save the original from address.
-		$this->filtered_from_email = filter_var( $wp_email, FILTER_VALIDATE_EMAIL );
+		$this->filtered_from_email = filter_var( $wp_email_ascii, FILTER_VALIDATE_EMAIL );
 
 		$connection         = $this->connections_manager->get_mail_connection();
 		$connection_options = $connection->get_options();
@@ -294,7 +301,7 @@ class Processor {
 
 		// Save the "original" set WP email from address for later use.
 		if ( $wp_email !== $def_email ) {
-			$this->wp_mail_from = filter_var( $wp_email, FILTER_VALIDATE_EMAIL );
+			$this->wp_mail_from = filter_var( $wp_email_ascii, FILTER_VALIDATE_EMAIL );
 		}
 
 		// Return FROM EMAIL if forced in settings.
@@ -302,12 +309,12 @@ class Processor {
 			return $from_email;
 		}
 
-		// If the FROM EMAIL is not the default, return it unchanged.
+		// If the FROM EMAIL is not the default, return it as it was passed in.
 		if ( ! empty( $def_email ) && $wp_email !== $def_email ) {
-			return $wp_email;
+			return $wp_email_ascii;
 		}
 
-		return ! empty( $from_email ) ? $from_email : $wp_email;
+		return ! empty( $from_email ) ? $from_email : $wp_email_ascii;
 	}
 
 	/**
@@ -400,6 +407,7 @@ class Processor {
 	 * - the default reply_to address filter `wp_mail_smtp_processor_default_reply_to_addresses` is configured.
 	 *
 	 * @since 2.1.1
+	 * @since {VERSION} Internationalized domains are accepted.
 	 *
 	 * @param MailCatcherInterface $phpmailer The PHPMailer object.
 	 */
@@ -416,7 +424,7 @@ class Processor {
 		}
 
 		foreach ( explode( ',', $default_reply_to_emails ) as $email ) {
-			$email = trim( $email );
+			$email = EmailAddress::punyencode_email( trim( $email ) );
 
 			if ( filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 				$phpmailer->addReplyTo( $email );

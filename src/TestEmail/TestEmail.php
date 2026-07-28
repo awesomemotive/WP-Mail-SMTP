@@ -4,6 +4,7 @@ namespace WPMailSMTP\TestEmail;
 
 use WPMailSMTP\Admin\DomainChecker;
 use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\Helpers\EmailAddress;
 
 /**
  * Class TestEmail.
@@ -234,6 +235,7 @@ class TestEmail {
 	 * fluent setters; the wp_mail() / ob_start / DomainChecker block stays identical.
 	 *
 	 * @since 4.9.0
+	 * @since {VERSION} Internationalized domains are accepted.
 	 *
 	 * @param string $recipient Recipient email address.
 	 *
@@ -241,7 +243,8 @@ class TestEmail {
 	 */
 	public function send( $recipient ) { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks -- Paired add_filter/remove_filter scope the HTML content-type to this single test send only; moving them to hooks() would change behavior.
 
-		$recipient = filter_var( wp_unslash( $recipient ), FILTER_VALIDATE_EMAIL );
+		$recipient = EmailAddress::punyencode_email( wp_unslash( $recipient ) );
+		$recipient = filter_var( $recipient, FILTER_VALIDATE_EMAIL );
 
 		if ( empty( $recipient ) ) {
 			return null;

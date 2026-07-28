@@ -7,6 +7,7 @@ use WPMailSMTP\Options;
 use WPMailSMTP\TestEmail\TestEmail;
 use WPMailSMTP\WP;
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Helpers\UI;
 
 /**
@@ -155,6 +156,7 @@ class TestTab extends PageAbstract {
 
 		if ( ! empty( $data['test']['email'] ) ) {
 			$data['test']['email'] = wp_unslash( $data['test']['email'] );
+			$data['test']['email'] = EmailAddress::punyencode_email( $data['test']['email'] );
 			$data['test']['email'] = filter_var( $data['test']['email'], FILTER_VALIDATE_EMAIL );
 		}
 
@@ -237,8 +239,8 @@ class TestTab extends PageAbstract {
 					<label for="wp-mail-smtp-setting-test_email"><?php esc_html_e( 'Send To', 'wp-mail-smtp' ); ?></label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
-					<input name="wp-mail-smtp[test][email]" value="<?php echo esc_attr( $test_email_options['to'] ); ?>"
-							type="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required>
+					<input name="wp-mail-smtp[test][email]" value="<?php echo esc_attr( EmailAddress::punydecode_email( $test_email_options['to'] ) ); ?>"
+							type="text" inputmode="email" id="wp-mail-smtp-setting-test_email" spellcheck="false" required>
 					<p class="desc">
 						<?php esc_html_e( 'Enter email address where test email will be sent.', 'wp-mail-smtp' ); ?>
 					</p>

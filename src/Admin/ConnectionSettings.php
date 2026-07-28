@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin;
 
 use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\EmailSendingDebug;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
 
@@ -80,8 +81,8 @@ class ConnectionSettings {
 					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'From Email', 'wp-mail-smtp' ); ?></label>
 				</div>
 				<div class="wp-mail-smtp-setting-field">
-					<input name="wp-mail-smtp[mail][from_email]" type="email"
-								 value="<?php echo esc_attr( $connection_options->get( 'mail', 'from_email' ) ); ?>"
+					<input name="wp-mail-smtp[mail][from_email]" type="text" inputmode="email"
+								 value="<?php echo esc_attr( EmailAddress::punydecode_email( $connection_options->get( 'mail', 'from_email' ) ) ); ?>"
 								 id="wp-mail-smtp-setting-from_email" spellcheck="false"
 								 placeholder="<?php echo esc_attr( wp_mail_smtp()->get_processor()->get_default_email() ); ?>"
 								 <?php disabled( $connection_options->is_const_defined( 'mail', 'from_email' ) || ! empty( $disabled_email ) ); ?>

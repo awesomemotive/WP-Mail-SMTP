@@ -5,6 +5,7 @@ namespace WPMailSMTP\Admin;
 use Plugin_Upgrader;
 use WPMailSMTP\Connect;
 use WPMailSMTP\TestEmail\TestEmail;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\Helpers\PluginImportDataRetriever;
 use WPMailSMTP\Options;
@@ -1125,7 +1126,8 @@ class SetupWizard {
 			wp_send_json_error( esc_html__( 'You don\'t have the permission to perform this action.', 'wp-mail-smtp' ) );
 		}
 
-		$email = ! empty( $_POST['email'] ) ? filter_var( wp_unslash( $_POST['email'] ), FILTER_VALIDATE_EMAIL ) : '';
+		$email = ! empty( $_POST['email'] ) ? sanitize_text_field( wp_unslash( $_POST['email'] ) ) : '';
+		$email = filter_var( EmailAddress::punyencode_email( $email ), FILTER_VALIDATE_EMAIL );
 
 		if ( empty( $email ) ) {
 			wp_send_json_error();
@@ -1291,12 +1293,12 @@ class SetupWizard {
 
 		if (
 			defined( $mailer_specific_constant_name ) &&
-			is_email( constant( $mailer_specific_constant_name ) )
+			EmailAddress::is_email( constant( $mailer_specific_constant_name ) )
 		) {
 			$to_email = constant( $mailer_specific_constant_name );
 		} elseif (
 			defined( 'WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT' ) &&
-			is_email( WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT )
+			EmailAddress::is_email( WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT )
 		) {
 			$to_email = WPMS_SETUP_WIZARD_TEST_EMAIL_RECIPIENT;
 		}

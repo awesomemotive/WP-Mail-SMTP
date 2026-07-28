@@ -3,6 +3,7 @@
 namespace WPMailSMTP;
 
 use WPMailSMTP\Helpers\Crypto;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
 use WPMailSMTP\UsageTracking\UsageTracking;
 
@@ -1465,13 +1466,14 @@ class Options {
 								$options[ $group ][ $option_name ] = $mailer;
 								break;
 							case 'from_email':
-								if ( filter_var( $option_value, FILTER_VALIDATE_EMAIL ) ) {
-									$options[ $group ][ $option_name ] = sanitize_email( $option_value );
-								} else {
-									$options[ $group ][ $option_name ] = sanitize_email(
-										wp_mail_smtp()->get_processor()->get_default_email()
-									);
+								// Internationalized domains are stored in their ASCII (Punycode) form.
+								$from_email = EmailAddress::punyencode_email( $option_value );
+
+								if ( ! filter_var( $from_email, FILTER_VALIDATE_EMAIL ) ) {
+									$from_email = wp_mail_smtp()->get_processor()->get_default_email();
 								}
+
+								$options[ $group ][ $option_name ] = sanitize_email( $from_email );
 								break;
 							case 'return_path':
 							case 'from_name_force':

@@ -3,6 +3,7 @@
 namespace WPMailSMTP\WPCLI\Commands;
 
 use WP_CLI;
+use WPMailSMTP\Helpers\EmailAddress;
 use WPMailSMTP\Options;
 use WPMailSMTP\TestEmail\TestEmail;
 
@@ -40,7 +41,7 @@ class Test {
 
 		$recipient = $args[0] ?? null;
 
-		if ( $recipient === null || ! is_email( $recipient ) ) {
+		if ( $recipient === null || ! EmailAddress::is_email( $recipient ) ) {
 			WP_CLI::error( __( 'Pass a valid recipient: wp wp-mail-smtp test <recipient>', 'wp-mail-smtp' ) );
 		}
 

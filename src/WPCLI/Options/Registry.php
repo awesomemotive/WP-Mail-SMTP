@@ -44,6 +44,7 @@ class Registry {
 			$this->postmark_args(),
 			$this->sendlayer_args(),
 			$this->resend_args(),
+			$this->mailchannels_args(),
 			$this->smtpcom_args(),
 			$this->smtp2go_args(),
 			$this->sparkpost_args(),
@@ -103,6 +104,7 @@ class Registry {
 			'postmark',
 			'sendlayer',
 			'resend',
+			'mailchannels',
 			'smtpcom',
 			'smtp2go',
 			'sparkpost',
@@ -380,6 +382,35 @@ class Registry {
 				'required_if' => $req,
 				'sensitive'   => true,
 				'description' => __( 'Resend API key.', 'wp-mail-smtp' ),
+			],
+		];
+	}
+
+	/**
+	 * MailChannels mailer args (`mailchannels.*`).
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return array
+	 */
+	private function mailchannels_args() {
+
+		$req = [ 'mail.mailer' => 'mailchannels' ];
+
+		return [
+			[
+				'flag'        => 'mailchannels.api_key',
+				'type'        => 'string',
+				'required_if' => $req,
+				'sensitive'   => true,
+				'env_var'     => 'MAILCHANNELS_API_KEY',
+				'description' => __( 'MailChannels Email API key.', 'wp-mail-smtp' ),
+			],
+			[
+				'flag'        => 'mailchannels.send_mode',
+				'type'        => 'enum',
+				'enum'        => [ 'direct', 'queued' ],
+				'description' => __( 'MailChannels submission mode: direct or queued.', 'wp-mail-smtp' ),
 			],
 		];
 	}

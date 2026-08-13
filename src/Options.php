@@ -78,6 +78,10 @@ class Options {
 			'api_key',
 			'has_pro_plan',
 		],
+		'mailchannels'             => [
+			'api_key',
+			'send_mode',
+		],
 		'mandrill'                 => [
 			'api_key',
 		],
@@ -176,6 +180,7 @@ class Options {
 		'mailgun',
 		'mailjet',
 		'mailersend',
+		'mailchannels',
 		'mandrill',
 		'outlook',
 		'postmark',
@@ -481,6 +486,10 @@ class Options {
 				$value = $group === 'mailgun' || $group === 'sparkpost' ? 'US' : $value;
 				break;
 
+			case 'send_mode':
+				$value = $group === 'mailchannels' ? 'direct' : $value;
+				break;
+
 			case 'auth':
 			case 'autotls':
 				$value = in_array( $group, [ 'smtp', 'pepipost' ], true ) ? false : true;
@@ -519,6 +528,16 @@ class Options {
 	 * @return mixed
 	 */
 	protected function get_const_value( $group, $key, $value ) {
+
+		if (
+			$group === 'mailchannels' &&
+			$key === 'api_key' &&
+			defined( 'MAILCHANNELS_API_KEY' ) &&
+			MAILCHANNELS_API_KEY &&
+			! ( $this->is_const_enabled() && defined( 'WPMS_MAILCHANNELS_API_KEY' ) && WPMS_MAILCHANNELS_API_KEY )
+		) {
+			return MAILCHANNELS_API_KEY;
+		}
 
 		if ( ! $this->is_const_enabled() ) {
 			return $value;
@@ -797,6 +816,18 @@ class Options {
 
 				break;
 
+			case 'mailchannels':
+				switch ( $key ) {
+					case 'api_key':
+						$return = $this->is_const_defined( $group, $key ) ? ( defined( 'WPMS_MAILCHANNELS_API_KEY' ) && WPMS_MAILCHANNELS_API_KEY ? WPMS_MAILCHANNELS_API_KEY : MAILCHANNELS_API_KEY ) : $value;
+						break;
+					case 'send_mode':
+						$return = $this->is_const_defined( $group, $key ) ? WPMS_MAILCHANNELS_SEND_MODE : $value;
+						break;
+				}
+
+				break;
+
 			case 'pepipostapi':
 				switch ( $key ) {
 					case 'api_key':
@@ -999,6 +1030,10 @@ class Options {
 	 * @return bool
 	 */
 	public function is_const_defined( $group, $key ) {
+
+		if ( $group === 'mailchannels' && $key === 'api_key' && defined( 'MAILCHANNELS_API_KEY' ) && MAILCHANNELS_API_KEY ) {
+			return true;
+		}
 
 		if ( ! $this->is_const_enabled() ) {
 			return false;
@@ -1234,6 +1269,18 @@ class Options {
 				switch ( $key ) {
 					case 'api_key':
 						$return = defined( 'WPMS_RESEND_API_KEY' ) && WPMS_RESEND_API_KEY;
+						break;
+				}
+
+				break;
+
+			case 'mailchannels':
+				switch ( $key ) {
+					case 'api_key':
+						$return = ( defined( 'WPMS_MAILCHANNELS_API_KEY' ) && WPMS_MAILCHANNELS_API_KEY ) || ( defined( 'MAILCHANNELS_API_KEY' ) && MAILCHANNELS_API_KEY );
+						break;
+					case 'send_mode':
+						$return = defined( 'WPMS_MAILCHANNELS_SEND_MODE' ) && in_array( WPMS_MAILCHANNELS_SEND_MODE, [ 'direct', 'queued' ], true );
 						break;
 				}
 
@@ -1571,6 +1618,12 @@ class Options {
 					case 'server_api_token': // postmark.
 					case 'message_stream': // postmark.
 						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : sanitize_text_field( $option_value );
+						break;
+
+					case 'send_mode': // mailchannels.
+						$mode = sanitize_key( $option_value );
+
+						$options[ $mailer ][ $option_name ] = $this->is_const_defined( $mailer, $option_name ) ? '' : ( in_array( $mode, [ 'direct', 'queued' ], true ) ? $mode : 'direct' );
 						break;
 
 					case 'has_pro_plan': // mailersend.

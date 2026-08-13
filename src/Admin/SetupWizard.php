@@ -1496,6 +1496,8 @@ class SetupWizard {
 			'WPMS_ZOHO_CLIENT_ID'                => [ 'zoho', 'client_id' ],
 			'WPMS_ZOHO_CLIENT_SECRET'            => [ 'zoho', 'client_secret' ],
 			'WPMS_RESEND_API_KEY'                => [ 'resend', 'api_key' ],
+			'WPMS_MAILCHANNELS_API_KEY'          => [ 'mailchannels', 'api_key' ],
+			'WPMS_MAILCHANNELS_SEND_MODE'        => [ 'mailchannels', 'send_mode' ],
 			'WPMS_SMTP_HOST'                     => [ 'smtp', 'host' ],
 			'WPMS_SMTP_PORT'                     => [ 'smtp', 'port' ],
 			'WPMS_SSL'                           => [ 'smtp', 'encryption' ],

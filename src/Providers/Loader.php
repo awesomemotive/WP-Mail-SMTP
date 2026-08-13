@@ -39,6 +39,7 @@ class Loader {
 		'mailgun'      => 'WPMailSMTP\Providers\Mailgun\\',
 		'mailjet'      => 'WPMailSMTP\Providers\Mailjet\\',
 		'mailersend'   => 'WPMailSMTP\Providers\MailerSend\\',
+		'mailchannels' => 'WPMailSMTP\Providers\MailChannels\\',
 		'mandrill'     => 'WPMailSMTP\Providers\Mandrill\\',
 		'outlook'      => 'WPMailSMTP\Providers\Outlook\\',
 		'pepipostapi'  => 'WPMailSMTP\Providers\PepipostAPI\\',

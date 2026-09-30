@@ -2,10 +2,10 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
-use Plugin_Upgrader;
 use WPMailSMTP\Admin\PageAbstract;
-use WPMailSMTP\Admin\PluginsInstallSkin;
-use WPMailSMTP\Helpers\Helpers;
+use WPMailSMTP\PartnerPlugins\Catalog;
+use WPMailSMTP\PartnerPlugins\InstallPermission;
+use WPMailSMTP\PartnerPlugins\Installer;
 
 /**
  * About tab.
@@ -118,11 +118,6 @@ class AboutTab extends PageAbstract {
 
 		<?php
 
-		// Do not display the plugin section if the user can't install or activate them.
-		if ( ! current_user_can( 'install_plugins' ) && ! current_user_can( 'activate_plugins' ) ) {
-			return;
-		}
-
 		$this->display_plugins();
 	}
 
@@ -147,11 +142,6 @@ class AboutTab extends PageAbstract {
 						$plugin          = $plugin['pro'];
 
 						$data = array_merge( $data, $this->get_about_plugins_data( $plugin, true ) );
-					}
-
-					// Do not display a plugin which has to be installed and the user can't install it.
-					if ( ! current_user_can( 'install_plugins' ) && $data['status_class'] === 'status-download' ) {
-						continue;
 					}
 
 					?>
@@ -186,8 +176,8 @@ class AboutTab extends PageAbstract {
 									}
 									?>
 									<a href="<?php echo esc_url( $plugin['url'] ); ?>"
-										 class="<?php echo esc_attr( $data['action_class'] . $go_to_class ); ?>"
-										 data-plugin="<?php echo esc_attr( $data['plugin_src'] ); ?>">
+										class="<?php echo esc_attr( $data['action_class'] . $go_to_class ); ?>"
+										data-plugin="<?php echo esc_attr( $data['plugin_src'] ); ?>">
 										<?php echo esc_html( $data['action_text'] ); ?>
 									</a>
 								</div>
@@ -233,8 +223,7 @@ class AboutTab extends PageAbstract {
 				$data['action_text']  = esc_html__( 'Activate', 'wp-mail-smtp' );
 				$data['plugin_src']   = esc_attr( $plugin['path'] );
 			}
-		} else {
-			if ( ! $is_pro ) {
+		} elseif ( ! $is_pro ) {
 				// Doesn't exist, install.
 				// Status text/status.
 				$data['status_class'] = 'status-download';
@@ -246,18 +235,128 @@ class AboutTab extends PageAbstract {
 
 				// If plugin URL is not a zip file, open a new tab with site URL.
 				if ( preg_match( '/.*\.zip$/', $plugin['url'] ) === 0 ) {
-					$data['status_class'] = 'status-open';
-					$data['action_class'] = $data['status_class'] . ' button button-primary';
-					$data['action_text']  = esc_html__( 'Visit Site', 'wp-mail-smtp' );
+				$data['status_class'] = 'status-open';
+				$data['action_class'] = $data['status_class'] . ' button button-primary';
+				$data['action_text']  = esc_html__( 'Visit Site', 'wp-mail-smtp' );
 				}
-			}
 		}
 
 		return $data;
 	}
 
 	/**
-	 * List of AM plugins that we propose to install.
+	 * This page's own copy and imagery for each plugin, in display order.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return array
+	 */
+	private static function get_am_plugins_copy() {
+
+		return [
+			'optinmonster'                  => [
+				'icon' => 'plugin-om.png',
+				'desc' => esc_html__( 'Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', 'wp-mail-smtp' ),
+			],
+			'wpforms'                       => [
+				'icon' => 'plugin-wpf.png',
+				'desc' => esc_html__( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 600+ form templates. Trusted by over 5 million websites as the best forms plugin.', 'wp-mail-smtp' ),
+			],
+			'monsterinsights'               => [
+				'icon' => 'plugin-mi.png',
+				'desc' => esc_html__( 'The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', 'wp-mail-smtp' ),
+			],
+			'aioseo'                        => [
+				'icon' => 'plugin-aioseo.png',
+				'desc' => esc_html__( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'wp-mail-smtp' ),
+			],
+			'seedprod'                      => [
+				'icon' => 'plugin-seedprod.png',
+				'desc' => esc_html__( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'wp-mail-smtp' ),
+			],
+			'rafflepress'                   => [
+				'icon' => 'plugin-rp.png',
+				'desc' => esc_html__( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'wp-mail-smtp' ),
+			],
+			'pushengage'                    => [
+				'icon' => 'plugin-pushengage.png',
+				'desc' => esc_html__( 'Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', 'wp-mail-smtp' ),
+			],
+			'smash-balloon-instagram-feeds' => [
+				'icon' => 'plugin-smash-balloon-instagram-feeds.png',
+				'desc' => esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
+			],
+			'smash-balloon-facebook-feeds'  => [
+				'icon' => 'plugin-smash-balloon-facebook-feeds.png',
+				'desc' => esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
+			],
+			'smash-balloon-youtube-feeds'   => [
+				'icon' => 'plugin-smash-balloon-youtube-feeds.png',
+				'desc' => esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
+			],
+			'smash-balloon-twitter-feeds'   => [
+				'icon' => 'plugin-smash-balloon-twitter-feeds.png',
+				'desc' => esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
+			],
+			'trustpulse'                    => [
+				'icon' => 'plugin-trustpulse.png',
+				'desc' => esc_html__( 'Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', 'wp-mail-smtp' ),
+			],
+			'searchwp'                      => [
+				'icon' => 'searchwp.png',
+				'desc' => esc_html__( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'wp-mail-smtp' ),
+			],
+			'affiliatewp'                   => [
+				'icon' => 'affiliatewp.png',
+				'desc' => esc_html__( 'The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'wp-mail-smtp' ),
+			],
+			'wp-simple-pay'                 => [
+				'icon' => 'wp-simple-pay.png',
+				'desc' => esc_html__( 'The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'wp-mail-smtp' ),
+			],
+			'easy-digital-downloads'        => [
+				'icon' => 'edd.png',
+				'desc' => esc_html__( 'The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', 'wp-mail-smtp' ),
+			],
+			'sugar-calendar'                => [
+				'icon' => 'sugar-calendar.png',
+				'desc' => esc_html__( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'wp-mail-smtp' ),
+			],
+			'wp-charitable'                 => [
+				'icon' => 'plugin-charitable.png',
+				'desc' => esc_html__( 'Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', 'wp-mail-smtp' ),
+			],
+			'wpcode'                        => [
+				'icon' => 'plugin-wpcode.png',
+				'name' => esc_html__( 'WPCode Lite', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', 'wp-mail-smtp' ),
+			],
+			'duplicator'                    => [
+				'icon' => 'duplicator-icon-large.png',
+				'desc' => esc_html__( 'Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', 'wp-mail-smtp' ),
+			],
+			'activelayer'                   => [
+				'icon' => 'icon-activelayer.svg',
+				'desc' => esc_html__( 'Smarter spam protection for WordPress. Catch spam in milliseconds with AI, invisible to your real visitors.', 'wp-mail-smtp' ),
+			],
+			'wpconsent'                     => [
+				'icon' => 'icon-wpconsent.svg',
+				'desc' => esc_html__( 'Stay GDPR & privacy compliant. Add a cookie consent banner to your site and meet privacy laws in minutes.', 'wp-mail-smtp' ),
+			],
+			'wpvibe'                        => [
+				'icon' => 'plugin-vibe-ai.png',
+				'name' => esc_html__( 'Vibe AI', 'wp-mail-smtp' ),
+				'desc' => esc_html__( 'AI-powered tools for WordPress. Work faster and smarter with automation built for your WordPress workflow.', 'wp-mail-smtp' ),
+			],
+			'universally'                   => [
+				'icon' => 'icon-universally.svg',
+				'desc' => esc_html__( 'Make your WordPress site accessible to everyone. Automatic accessibility fixes and a visitor widget, no coding required.', 'wp-mail-smtp' ),
+			],
+		];
+	}
+
+	/**
+	 * The AM plugins we propose to install, in display order.
 	 *
 	 * @since 2.9.0
 	 *
@@ -265,283 +364,40 @@ class AboutTab extends PageAbstract {
 	 */
 	private static function get_am_plugins() {
 
-		$data = [
-			'om'                            => [
-				'path' => 'optinmonster/optin-monster-wp-api.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-om.png',
-				'name' => esc_html__( 'OptinMonster', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
-			],
-			'wpforms'                       => [
-				'path' => 'wpforms-lite/wpforms.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-wpf.png',
-				'name' => esc_html__( 'WPForms', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 600+ form templates. Trusted by over 5 million websites as the best forms plugin.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
-				'pro'  => [
-					'path' => 'wpforms/wpforms.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-wpf.png',
-					'name' => esc_html__( 'WPForms Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 600+ form templates. Trusted by over 5 million websites as the best forms plugin.', 'wp-mail-smtp' ),
-					'url'  => 'https://wpforms.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'mi'                            => [
-				'path' => 'google-analytics-for-wordpress/googleanalytics.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
-				'name' => esc_html__( 'MonsterInsights', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
-				'pro'  => [
-					'path' => 'google-analytics-premium/googleanalytics-premium.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-mi.png',
-					'name' => esc_html__( 'MonsterInsights Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', 'wp-mail-smtp' ),
-					'url'  => 'https://www.monsterinsights.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'aioseo'                        => [
-				'path' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-aioseo.png',
-				'name' => esc_html__( 'AIOSEO', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/all-in-one-seo-pack.zip',
-				'pro'  => [
-					'path' => 'all-in-one-seo-pack-pro/all_in_one_seo_pack.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-aioseo.png',
-					'name' => esc_html__( 'AIOSEO', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'wp-mail-smtp' ),
-					'url'  => 'https://aioseo.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'seedprod'                      => [
-				'path' => 'coming-soon/coming-soon.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-seedprod.png',
-				'name' => esc_html__( 'SeedProd', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/coming-soon.zip',
-				'pro'  => [
-					'path' => 'seedprod-coming-soon-pro-5/seedprod-coming-soon-pro-5.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-seedprod.png',
-					'name' => esc_html__( 'SeedProd', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'wp-mail-smtp' ),
-					'url'  => 'https://www.seedprod.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'rafflepress'                   => [
-				'path' => 'rafflepress/rafflepress.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
-				'name' => esc_html__( 'RafflePress', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/rafflepress.zip',
-				'pro'  => [
-					'path' => 'rafflepress-pro/rafflepress-pro.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-rp.png',
-					'name' => esc_html__( 'RafflePress Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'wp-mail-smtp' ),
-					'url'  => 'https://rafflepress.com/pricing/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'pushengage'                    => [
-				'path' => 'pushengage/main.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-pushengage.png',
-				'name' => esc_html__( 'PushEngage', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/pushengage.zip',
-			],
-			'smash-balloon-instagram-feeds' => [
-				'path' => 'instagram-feed/instagram-feed.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-instagram-feeds.png',
-				'name' => esc_html__( 'Smash Balloon Instagram Feeds', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/instagram-feed.zip',
-				'pro'  => [
-					'path' => 'instagram-feed-pro/instagram-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-instagram-feeds.png',
-					'name' => esc_html__( 'Smash Balloon Instagram Feeds', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'wp-mail-smtp' ),
-					'url'  => 'https://smashballoon.com/instagram-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'smash-balloon-facebook-feeds'  => [
-				'path' => 'custom-facebook-feed/custom-facebook-feed.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-facebook-feeds.png',
-				'name' => esc_html__( 'Smash Balloon Facebook Feeds', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/custom-facebook-feed.zip',
-				'pro'  => [
-					'path' => 'custom-facebook-feed-pro/custom-facebook-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-facebook-feeds.png',
-					'name' => esc_html__( 'Smash Balloon Facebook Feeds', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'wp-mail-smtp' ),
-					'url'  => 'https://smashballoon.com/custom-facebook-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'smash-balloon-youtube-feeds'   => [
-				'path' => 'feeds-for-youtube/youtube-feed.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-youtube-feeds.png',
-				'name' => esc_html__( 'Smash Balloon YouTube Feeds', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/feeds-for-youtube.zip',
-				'pro'  => [
-					'path' => 'youtube-feed-pro/youtube-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-youtube-feeds.png',
-					'name' => esc_html__( 'Smash Balloon YouTube Feeds', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'wp-mail-smtp' ),
-					'url'  => 'https://smashballoon.com/youtube-feed/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'smash-balloon-twitter-feeds'   => [
-				'path' => 'custom-twitter-feeds/custom-twitter-feed.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-twitter-feeds.png',
-				'name' => esc_html__( 'Smash Balloon Twitter Feeds', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/custom-twitter-feeds.zip',
-				'pro'  => [
-					'path' => 'custom-twitter-feeds-pro/custom-twitter-feed.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-smash-balloon-twitter-feeds.png',
-					'name' => esc_html__( 'Smash Balloon Twitter Feeds', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'wp-mail-smtp' ),
-					'url'  => 'https://smashballoon.com/custom-twitter-feeds/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'trustpulse'                    => [
-				'path' => 'trustpulse-api/trustpulse.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-trustpulse.png',
-				'name' => esc_html__( 'TrustPulse', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/trustpulse-api.zip',
-			],
-			'searchwp'                      => [
-				'path' => '',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/searchwp.png',
-				'name' => esc_html__( 'SearchWP', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'wp-mail-smtp' ),
-				'url'  => 'https://searchwp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				'pro'  => [
-					'path' => 'searchwp/index.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/searchwp.png',
-					'name' => esc_html__( 'SearchWP', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'wp-mail-smtp' ),
-					'url'  => 'https://searchwp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'affiliatewp'                   => [
-				'path' => '',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/affiliatewp.png',
-				'name' => esc_html__( 'AffiliateWP', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'wp-mail-smtp' ),
-				'url'  => 'https://affiliatewp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				'pro'  => [
-					'path' => 'affiliate-wp/affiliate-wp.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/affiliatewp.png',
-					'name' => esc_html__( 'AffiliateWP', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'wp-mail-smtp' ),
-					'url'  => 'https://affiliatewp.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'wp-simple-pay'                 => [
-				'path' => 'stripe/stripe-checkout.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/wp-simple-pay.png',
-				'name' => esc_html__( 'WP Simple Pay', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/stripe.zip',
-				'pro'  => [
-					'path' => 'wp-simple-pay-pro-3/simple-pay.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/wp-simple-pay.png',
-					'name' => esc_html__( 'WP Simple Pay Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'wp-mail-smtp' ),
-					'url'  => 'https://wpsimplepay.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'easy-digital-downloads'        => [
-				'path' => 'easy-digital-downloads/easy-digital-downloads.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/edd.png',
-				'name' => esc_html__( 'Easy Digital Downloads', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/easy-digital-downloads.zip',
-			],
-			'sugar-calendar'                => [
-				'path' => 'sugar-calendar-lite/sugar-calendar-lite.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/sugar-calendar.png',
-				'name' => esc_html__( 'Sugar Calendar Lite', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/sugar-calendar-lite.zip',
-				'pro'  => [
-					'path' => 'sugar-calendar/sugar-calendar.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/sugar-calendar.png',
-					'name' => esc_html__( 'Sugar Calendar', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'wp-mail-smtp' ),
-					'url'  => 'https://sugarcalendar.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'wp-charitable'                 => [
-				'path' => 'charitable/charitable.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-charitable.png',
-				'name' => esc_html__( 'Charitable', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/charitable.zip',
-			],
-			'wpcode'                        => [
-				'path' => 'insert-headers-and-footers/ihaf.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-wpcode.png',
-				'name' => esc_html__( 'WPCode Lite', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/insert-headers-and-footers.zip',
-				'pro'  => [
-					'path' => 'wpcode-premium/wpcode.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-wpcode.png',
-					'name' => esc_html__( 'WPCode Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', 'wp-mail-smtp' ),
-					'url'  => 'https://wpcode.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'duplicator'                    => [
-				'path' => 'duplicator/duplicator.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/duplicator-icon-large.png',
-				'name' => esc_html__( 'Duplicator', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/duplicator.zip',
-				'pro'  => [
-					'path' => 'duplicator-pro/duplicator-pro.php',
-					'icon' => wp_mail_smtp()->assets_url . '/images/about/duplicator-icon-large.png',
-					'name' => esc_html__( 'Duplicator Pro', 'wp-mail-smtp' ),
-					'desc' => esc_html__( 'Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', 'wp-mail-smtp' ),
-					'url'  => 'https://duplicator.com/?utm_source=WordPress&utm_medium=about&utm_campaign=smtp',
-				],
-			],
-			'activelayer'                   => [
-				'path' => 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/icon-activelayer.svg',
-				'name' => esc_html__( 'ActiveLayer', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Smarter spam protection for WordPress. Catch spam in milliseconds with AI, invisible to your real visitors.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip',
-			],
-			'wpconsent'                     => [
-				'path' => 'wpconsent-cookies-banner-privacy-suite/wpconsent.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/icon-wpconsent.svg',
-				'name' => esc_html__( 'WPConsent', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Stay GDPR & privacy compliant. Add a cookie consent banner to your site and meet privacy laws in minutes.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/wpconsent-cookies-banner-privacy-suite.zip',
-			],
-			'wpvibe'                        => [
-				'path' => 'vibe-ai/vibe-ai.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/plugin-vibe-ai.png',
-				'name' => esc_html__( 'Vibe AI', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'AI-powered tools for WordPress. Work faster and smarter with automation built for your WordPress workflow.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/vibe-ai.zip',
-			],
-			'universally'                   => [
-				'path' => 'universally-language-translation-multilingual-tool/universally.php',
-				'icon' => wp_mail_smtp()->assets_url . '/images/about/icon-universally.svg',
-				'name' => esc_html__( 'Universally', 'wp-mail-smtp' ),
-				'desc' => esc_html__( 'Make your WordPress site accessible to everyone. Automatic accessibility fixes and a visitor widget, no coding required.', 'wp-mail-smtp' ),
-				'url'  => 'https://downloads.wordpress.org/plugin/universally-language-translation-multilingual-tool.zip',
-			],
-		];
+		$catalog = new Catalog();
+		$plugins = [];
 
-		return $data;
+		foreach ( self::get_am_plugins_copy() as $slug => $copy ) {
+			$plugin = $catalog->get( $slug );
+
+			if ( $plugin === null ) {
+				continue;
+			}
+
+			$icon = wp_mail_smtp()->assets_url . '/images/about/' . $copy['icon'];
+
+			$plugins[ $slug ] = [
+				'path' => $plugin->get_basename(),
+				'icon' => $icon,
+				'name' => $copy['name'] ?? $plugin->get_name(),
+				'desc' => $copy['desc'],
+				'url'  => $plugin->get_download_url() !== '' ? $plugin->get_download_url() : $plugin->get_upgrade_url(),
+			];
+
+			if ( $plugin->get_upgrade_url() === '' ) {
+				continue;
+			}
+
+			$plugins[ $slug ]['pro'] = [
+				'path' => $plugin->get_basename_pro(),
+				'icon' => isset( $copy['icon_pro'] ) ? wp_mail_smtp()->assets_url . '/images/about/' . $copy['icon_pro'] : $icon,
+				'name' => $copy['name_pro'] ?? $plugin->get_name_pro(),
+				'desc' => $copy['desc_pro'] ?? $copy['desc'],
+				'url'  => $plugin->get_upgrade_url(),
+			];
+		}
+
+		return $plugins;
 	}
 
 	/**
@@ -553,40 +409,32 @@ class AboutTab extends PageAbstract {
 
 		$error = esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' );
 
-		// Check for permissions.
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			wp_send_json_error( $error );
-		}
-
 		if ( empty( $_POST['plugin'] ) ) {
 			wp_send_json_error( $error );
 		}
 
-		$plugin_slug = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Area::process_ajax() verifies the nonce before dispatching here.
+		$basename = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
+		$plugin   = ( new Catalog() )->get_by_basename( $basename );
 
-		$whitelisted_plugins = [];
-
-		foreach ( self::get_am_plugins() as $item ) {
-			if ( ! empty( $item['path'] ) ) {
-				$whitelisted_plugins[] = $item['path'];
-			}
-
-			if ( ! empty( $item['pro']['path'] ) ) {
-				$whitelisted_plugins[] = $item['pro']['path'];
-			}
-		}
-
-		if ( ! in_array( $plugin_slug, $whitelisted_plugins, true ) ) {
+		if ( $plugin === null ) {
 			wp_send_json_error( esc_html__( 'Could not activate the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
 		}
 
-		$activate = activate_plugins( $plugin_slug );
+		$permission = new InstallPermission();
+		$permitted  = $permission->check( $plugin );
 
-		if ( ! is_wp_error( $activate ) ) {
-			wp_send_json_success( esc_html__( 'Plugin activated.', 'wp-mail-smtp' ) );
+		if ( is_wp_error( $permitted ) ) {
+			wp_send_json_error( $permission->get_refusal_payload( $permitted ) );
 		}
 
-		wp_send_json_error( $error );
+		$activated = ( new Installer() )->activate( $plugin );
+
+		if ( is_wp_error( $activated ) ) {
+			wp_send_json_error( $error );
+		}
+
+		wp_send_json_success( esc_html__( 'Plugin activated.', 'wp-mail-smtp' ) );
 	}
 
 	/**
@@ -594,105 +442,51 @@ class AboutTab extends PageAbstract {
 	 *
 	 * @since 2.9.0
 	 */
-	public static function ajax_plugin_install() { // phpcs:ignore:Generic.Metrics.CyclomaticComplexity.TooHigh
+	public static function ajax_plugin_install() {
 
 		$error = esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' );
-
-		// Check for permissions.
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			wp_send_json_error( $error );
-		}
 
 		if ( empty( $_POST['plugin'] ) ) {
 			wp_send_json_error();
 		}
 
 		$plugin_url = esc_url_raw( wp_unslash( $_POST['plugin'] ) );
+		$plugin     = ( new Catalog() )->get_by_download_url( $plugin_url );
 
-		if ( ! in_array( $plugin_url, wp_list_pluck( array_values( self::get_am_plugins() ), 'url' ) , true ) ) {
+		if ( $plugin === null ) {
 			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
 		}
 
-		// Set the current screen to avoid undefined notices.
+		$permission = new InstallPermission();
+		$permitted  = $permission->check( $plugin );
+
+		if ( is_wp_error( $permitted ) ) {
+			wp_send_json_error( $permission->get_refusal_payload( $permitted ) );
+		}
+
+		// Avoids undefined notices from the file operations the installer runs.
 		set_current_screen( 'wp-mail-smtp_page_wp-mail-smtp-about' );
 
-		// Prepare variables.
-		$url = esc_url_raw(
-			add_query_arg(
-				[
-					'page' => 'wp-mail-smtp-about',
-				],
-				admin_url( 'admin.php' )
-			)
+		$redirect_url = esc_url_raw( add_query_arg( [ 'page' => 'wp-mail-smtp-about' ], admin_url( 'admin.php' ) ) );
+
+		$result = ( new Installer() )->install( $plugin, $redirect_url );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( $error );
+		}
+
+		if ( $result['basename'] === 'wpforms-lite/wpforms.php' ) {
+			add_option( 'wpforms_installation_source', 'wp-mail-smtp-about-us' );
+		}
+
+		wp_send_json_success(
+			[
+				'msg'          => $result['activated']
+					? esc_html__( 'Plugin installed & activated.', 'wp-mail-smtp' )
+					: esc_html__( 'Plugin installed.', 'wp-mail-smtp' ),
+				'is_activated' => $result['activated'],
+				'basename'     => $result['basename'],
+			]
 		);
-
-		/*
-		 * The `request_filesystem_credentials` function will output a credentials form in case of failure.
-		 * We don't want that, since it will break AJAX response. So just hide output with a buffer.
-		 */
-		ob_start();
-		// phpcs:ignore WPForms.Formatting.EmptyLineAfterAssigmentVariables.AddEmptyLine
-		$creds = request_filesystem_credentials( $url, '', false, false, null );
-		ob_end_clean();
-
-		// Check for file system permissions.
-		if ( false === $creds ) {
-			wp_send_json_error( $error );
-		}
-
-		if ( ! WP_Filesystem( $creds ) ) {
-			wp_send_json_error( $error );
-		}
-
-		// Do not allow WordPress to search/download translations, as this will break JS output.
-		remove_action( 'upgrader_process_complete', [ 'Language_Pack_Upgrader', 'async_upgrade' ], 20 );
-
-		// Import the plugin upgrader.
-		Helpers::include_plugin_upgrader();
-
-		// Create the plugin upgrader with our custom skin.
-		$installer = new Plugin_Upgrader( new PluginsInstallSkin() );
-
-		// Error check.
-		if ( ! method_exists( $installer, 'install' ) ) {
-			wp_send_json_error( $error );
-		}
-
-		$installer->install( $plugin_url );
-
-		// Flush the cache and return the newly installed plugin basename.
-		wp_cache_flush();
-
-		if ( $installer->plugin_info() ) {
-
-			$plugin_basename = $installer->plugin_info();
-
-			if ( $plugin_basename === 'wpforms-lite/wpforms.php' ) {
-				add_option( 'wpforms_installation_source', 'wp-mail-smtp-about-us' );
-			}
-
-			// Activate the plugin silently.
-			$activated = activate_plugin( $plugin_basename );
-
-			if ( ! is_wp_error( $activated ) ) {
-				wp_send_json_success(
-					[
-						'msg'          => esc_html__( 'Plugin installed & activated.', 'wp-mail-smtp' ),
-						'is_activated' => true,
-						'basename'     => $plugin_basename,
-					]
-				);
-			} else {
-				wp_send_json_success(
-					[
-						'msg'          => esc_html__( 'Plugin installed.', 'wp-mail-smtp' ),
-						'is_activated' => false,
-						'basename'     => $plugin_basename,
-					]
-				);
-			}
-		}
-
-		wp_send_json_error( $error );
 	}
 }

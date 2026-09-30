@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations\Pages;
 
 use WPMailSMTP\Admin\Recommendations\PageAbstract;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
+use WPMailSMTP\PartnerPlugins\Plugins\Duplicator as DuplicatorPartner;
 
 /**
  * Duplicator recommended-plugin landing page (Backup & Migration).
@@ -28,13 +30,7 @@ class Duplicator extends PageAbstract {
 	 * @var array
 	 */
 	protected $config = [
-		'lite_plugin'           => 'duplicator/duplicator.php',
-		'lite_wporg_url'        => 'https://wordpress.org/plugins/duplicator/',
-		'lite_download_url'     => 'https://downloads.wordpress.org/plugin/duplicator.zip',
-		'pro_plugin'            => 'duplicator-pro/duplicator-pro.php',
-		'duplicator_addon'      => 'duplicator-pro/duplicator-pro.php',
 		'duplicator_addon_page' => 'https://duplicator.com/?utm_source=wpmailsmtpplugin&utm_medium=link&utm_campaign=duplicator-page',
-		'duplicator_onboarding' => 'admin.php?page=duplicator',
 	];
 
 	/**
@@ -47,6 +43,18 @@ class Duplicator extends PageAbstract {
 	protected static function get_plugin_name(): string {
 
 		return 'duplicator'; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
+	}
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return PartnerPlugin
+	 */
+	protected function create_plugin(): PartnerPlugin {
+
+		return new DuplicatorPartner();
 	}
 
 	/**
@@ -118,6 +126,26 @@ class Duplicator extends PageAbstract {
 	}
 
 	/**
+	 * Whether the plugin has nothing left for the user to set up.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return bool
+	 */
+	protected function is_plugin_finished_setup(): bool {
+
+		if ( ! $this->is_plugin_configured() ) {
+			return false;
+		}
+
+		$plugin         = $this->get_plugin();
+		$count          = $plugin->get_backup_count();
+		$schedule_count = ( $count && $this->is_pro_active() ) ? $plugin->get_schedule_count() : 0;
+
+		return $count && $schedule_count;
+	}
+
+	/**
 	 * Generate and output step 'Result' section HTML.
 	 *
 	 * @since 4.9.0
@@ -164,7 +192,8 @@ class Duplicator extends PageAbstract {
 	 */
 	protected function get_data_step_result(): array {
 
-		$count = $this->get_package_count();
+		$plugin = $this->get_plugin();
+		$count  = $plugin->get_backup_count();
 
 		$data = [
 			'section_class' => $count ? '' : 'grey',
@@ -177,7 +206,7 @@ class Duplicator extends PageAbstract {
 			$data['section_class'] = '';
 			$data['button_class']  = 'button-primary';
 
-			if ( $this->get_schedule_count() ) {
+			if ( $plugin->get_schedule_count() > 0 ) {
 				$data['icon']         = 'plugin-page/complete.svg';
 				$data['button_class'] = 'grey disabled';
 				$data['button_text']  = esc_html__( 'Cloud Backups Set Up', 'wp-mail-smtp' );
@@ -185,166 +214,6 @@ class Duplicator extends PageAbstract {
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Get the number of Duplicator packages (backups) in the database.
-	 *
-	 * Duplicator stores backups in a custom DB table. There is no core API to
-	 * inspect custom plugin tables, so a direct query is required and the result
-	 * is cached with the object cache to limit DB hits per request.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return int Number of packages.
-	 */
-	protected function get_package_count(): int {
-
-		if ( ! $this->is_plugin_available() ) {
-			return 0;
-		}
-
-		global $wpdb;
-
-		$packages_table = $this->is_pro_active() ? $wpdb->prefix . 'duplicator_backups' : $wpdb->prefix . 'duplicator_packages';
-
-		$blog_id                 = function_exists( 'get_current_blog_id' ) ? get_current_blog_id() : 0;
-		$table_exists_cache_key  = "wpms_dup_table_exists_{$blog_id}";
-		$package_count_cache_key = "wpms_dup_package_count_{$blog_id}";
-
-		$table_exists = wp_cache_get( $table_exists_cache_key, 'wp-mail-smtp' );
-
-		if ( $table_exists === false ) {
-			// PHPCS: Direct query required — no WP API exists for custom plugin tables.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $packages_table ) ) );
-
-			wp_cache_set( $table_exists_cache_key, $table_exists, 'wp-mail-smtp', 60 );
-		}
-
-		$package_count = 0;
-
-		if ( $table_exists === $packages_table ) {
-			$package_count = wp_cache_get( $package_count_cache_key, 'wp-mail-smtp' );
-
-			if ( $package_count === false ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$package_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$packages_table}" );
-
-				wp_cache_set( $package_count_cache_key, $package_count, 'wp-mail-smtp', 60 );
-			}
-		}
-
-		return (int) $package_count;
-	}
-
-	/**
-	 * Count saved Duplicator backup schedules.
-	 *
-	 * The schedule model's namespace changed between Duplicator releases, so
-	 * both the current and legacy class locations are checked.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return int Number of saved schedules.
-	 */
-	private function get_schedule_count(): int {
-
-		$classes = [
-			'\Duplicator\Addons\ScheduleAddon\Models\ScheduleEntity',
-			'\Duplicator\Models\ScheduleEntity',
-		];
-
-		foreach ( $classes as $class ) {
-			if ( class_exists( $class ) && method_exists( $class, 'count' ) ) {
-				return (int) $class::count();
-			}
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Whether the plugin is finished setup or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if the plugin is finished setup.
-	 */
-	protected function is_plugin_finished_setup(): bool {
-
-		if ( ! $this->is_plugin_configured() ) {
-			return false;
-		}
-
-		$count          = $this->get_package_count();
-		$schedule_count = ( $count && $this->is_pro_active() ) ? $this->get_schedule_count() : 0;
-
-		return $count && $schedule_count;
-	}
-
-	/**
-	 * Whether a plugin is configured or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is configured properly.
-	 */
-	protected function is_plugin_configured(): bool {
-
-		if ( ! $this->is_plugin_activated() ) {
-			return false;
-		}
-
-		return $this->get_package_count() > 0;
-	}
-
-	/**
-	 * Whether a plugin is active or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is active.
-	 */
-	protected function is_plugin_activated(): bool {
-
-		return ( // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-			( defined( 'DUPLICATOR_VERSION' ) || class_exists( 'Duplicator\Plugin' ) || class_exists( 'Duplicator\Pro\Requirements' ) ) &&
-			(
-				is_plugin_active( $this->config['lite_plugin'] ) ||
-				is_plugin_active( $this->config['pro_plugin'] )
-			)
-		);
-	}
-
-	/**
-	 * Whether a plugin is available (class/function exists).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is available.
-	 */
-	protected function is_plugin_available(): bool {
-
-		return class_exists( 'Duplicator\Plugin' ) || defined( 'DUPLICATOR_VERSION' ) || class_exists( 'DUP_PRO_Plugin' ) || defined( 'DUPLICATOR_PRO_VERSION' ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether pro version is active.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if pro version is active.
-	 */
-	protected function is_pro_active(): bool {
-
-		// Duplicator Pro 4.x exposes no Pro-only class/constant (it shares
-		// DUPLICATOR_VERSION and the Duplicator\ namespace with Lite), so detect
-		// the active Pro plugin file directly; the class/constant checks keep
-		// older Pro releases covered.
-		return is_plugin_active( $this->config['pro_plugin'] ) // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-			|| class_exists( 'DUP_PRO_Plugin' )
-			|| defined( 'DUPLICATOR_PRO_VERSION' );
 	}
 
 	/**

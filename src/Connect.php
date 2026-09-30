@@ -18,48 +18,23 @@ use WPMailSMTP\Helpers\Helpers;
 class Connect {
 
 	/**
+	 * Query parameter marking a return URL as coming back from an upgrade.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var string
+	 */
+	const UPGRADED_QUERY_ARG = 'wp_mail_smtp_upgraded';
+
+	/**
 	 * Hooks.
 	 *
 	 * @since 2.6.0
 	 */
 	public function hooks() {
 
-		add_action( 'wp_mail_smtp_admin_area_enqueue_assets', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_ajax_wp_mail_smtp_connect_url', [ $this, 'ajax_generate_url' ] );
 		add_action( 'wp_ajax_nopriv_wp_mail_smtp_connect_process', [ $this, 'process' ] );
-	}
-
-	/**
-	 * Enqueue connect JS file to WP Mail SMTP admin area hook.
-	 *
-	 * @since 2.6.0
-	 */
-	public function enqueue_scripts() {
-
-		wp_enqueue_script(
-			'wp-mail-smtp-connect',
-			wp_mail_smtp()->assets_url . '/js/connect' . WP::asset_min() . '.js',
-			[ 'jquery' ],
-			WPMS_PLUGIN_VER,
-			true
-		);
-
-		wp_localize_script(
-			'wp-mail-smtp-connect',
-			'wp_mail_smtp_connect',
-			[
-				'ajax_url'   => admin_url( 'admin-ajax.php' ),
-				'plugin_url' => wp_mail_smtp()->plugin_url,
-				'nonce'      => wp_create_nonce( 'wp-mail-smtp-connect' ),
-				'text'       => [
-					'plugin_activate_btn' => esc_html__( 'Activate', 'wp-mail-smtp' ),
-					'almost_done'         => esc_html__( 'Almost Done', 'wp-mail-smtp' ),
-					'oops'                => esc_html__( 'Oops!', 'wp-mail-smtp' ),
-					'ok'                  => esc_html__( 'OK', 'wp-mail-smtp' ),
-					'server_error'        => esc_html__( 'Unfortunately there was a server connection error.', 'wp-mail-smtp' ),
-				],
-			]
-		);
 	}
 
 	/**
@@ -94,7 +69,7 @@ class Connect {
 				'endpoint' => admin_url( 'admin-ajax.php' ),
 				'version'  => WPMS_PLUGIN_VER,
 				'siteurl'  => admin_url(),
-				'homeurl'  => site_url(),
+				'homeurl'  => wp_mail_smtp()->get_license_site_url()->derive(),
 				'redirect' => rawurldecode( base64_encode( $redirect ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'v'        => 2,
 			],
@@ -109,35 +84,31 @@ class Connect {
 	 */
 	public function ajax_generate_url() { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		// Run a security check.
-		check_ajax_referer( 'wp-mail-smtp-connect', 'nonce' );
+		if ( check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) === false ) {
+			wp_send_json_error( esc_html__( 'Your session expired. Please reload the page and try again.', 'wp-mail-smtp' ) );
+		}
 
 		// Check for permissions.
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			wp_send_json_error(
-				[
-					'message' => esc_html__( 'You are not allowed to install plugins.', 'wp-mail-smtp' ),
-				]
-			);
+			wp_send_json_error( esc_html__( 'You are not allowed to install plugins.', 'wp-mail-smtp' ) );
 		}
 
-		$key = ! empty( $_POST['key'] ) ? sanitize_text_field( wp_unslash( $_POST['key'] ) ) : '';
+		// A license key is an md5 hash, so sanitize_key cannot mangle it.
+		$key = ! empty( $_POST['key'] ) ? sanitize_key( wp_unslash( $_POST['key'] ) ) : '';
 
 		if ( empty( $key ) ) {
-			wp_send_json_error(
-				[
-					'message' => esc_html__( 'Please enter your license key to connect.', 'wp-mail-smtp' ),
-				]
-			);
+			wp_send_json_error( esc_html__( 'Please enter your license key to connect.', 'wp-mail-smtp' ) );
+		}
+
+		if ( ! $this->is_valid_key_format( $key ) ) {
+			wp_send_json_error( esc_html__( 'License key format is not valid.', 'wp-mail-smtp' ) );
 		}
 
 		if ( wp_mail_smtp()->is_pro() ) {
-			wp_send_json_error(
-				[
-					'message' => esc_html__( 'Only the Lite version can be upgraded.', 'wp-mail-smtp' ),
-				]
-			);
+			wp_send_json_error( esc_html__( 'Only the Lite version can be upgraded.', 'wp-mail-smtp' ) );
 		}
+
+		$return_url = $this->get_return_url();
 
 		// Verify pro version is not installed.
 		$active = activate_plugin( 'wp-mail-smtp-pro/wp_mail_smtp.php', false, false, true );
@@ -147,25 +118,50 @@ class Connect {
 			// Deactivate Lite.
 			deactivate_plugins( plugin_basename( WPMS_PLUGIN_FILE ) );
 
-			wp_send_json_success(
-				[
-					'message' => esc_html__( 'WP Mail SMTP Pro was already installed, but was not active. We activated it for you.', 'wp-mail-smtp' ),
-					'reload'  => true,
-				]
-			);
+			wp_send_json_success( [ 'url' => $return_url ] );
 		}
 
-		$url = self::generate_url( $key );
+		$url = self::generate_url( $key, '', $return_url );
 
 		if ( empty( $url ) ) {
-			wp_send_json_error(
-				[
-					'message' => esc_html__( 'There was an error while generating an upgrade URL. Please try again.', 'wp-mail-smtp' ),
-				]
-			);
+			wp_send_json_error( esc_html__( 'There was an error while generating an upgrade URL. Please try again.', 'wp-mail-smtp' ) );
 		}
 
 		wp_send_json_success( [ 'url' => $url ] );
+	}
+
+	/**
+	 * Where the upgrade service sends the browser back to once it is done.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return string A marked URL on this site.
+	 */
+	private function get_return_url() {
+
+		// The value travels to the service as a query parameter, so an unvalidated one
+		// would turn the upgrade page into an open redirect.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- ajax_generate_url() verifies the nonce before calling this.
+		$requested = ! empty( $_POST['redirect'] ) ? esc_url_raw( wp_unslash( $_POST['redirect'] ) ) : '';
+		$fallback  = wp_mail_smtp()->get_admin()->get_admin_page_url();
+
+		$url = empty( $requested ) ? $fallback : wp_validate_redirect( $requested, $fallback );
+
+		return add_query_arg( self::UPGRADED_QUERY_ARG, '1', $url );
+	}
+
+	/**
+	 * Whether the key is a 32-char MD5 hex string.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $key License key.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_key_format( $key ) {
+
+		return (bool) preg_match( '/^[a-f0-9]{32}$/i', $key );
 	}
 
 	/**
@@ -173,7 +169,7 @@ class Connect {
 	 *
 	 * @since 2.6.0
 	 */
-	public function process() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
+	public function process() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
 
 		$error = esc_html__( 'There was an error while installing an upgrade. Please download the plugin from wpmailsmtp.com and install it manually.', 'wp-mail-smtp' );
 
@@ -293,6 +289,11 @@ class Connect {
 				$all_opt['license']['is_invalid']       = false;
 				$all_opt['license']['is_limit_reached'] = false;
 
+				// The connect page activated the license against the URL the upgrade link sent,
+				// so pin that same one: this flow never runs an activation of its own.
+				$all_opt['license']['site_url']           = wp_mail_smtp()->get_license_site_url()->derive();
+				$all_opt['license']['site_url_pinned_at'] = time();
+
 				$options->set( $all_opt, false, true );
 
 				wp_send_json_success( esc_html__( 'Plugin installed & activated.', 'wp-mail-smtp' ) );
@@ -304,5 +305,16 @@ class Connect {
 		}
 
 		wp_send_json_error( $error );
+	}
+
+	/**
+	 * Enqueue the connect JS file.
+	 *
+	 * @since      2.6.0
+	 * @deprecated {VERSION}
+	 */
+	public function enqueue_scripts() {
+
+		_deprecated_function( __METHOD__, '4.10.0' );
 	}
 }

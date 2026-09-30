@@ -121,6 +121,22 @@ class Task {
 	}
 
 	/**
+	 * Register the task's callbacks.
+	 *
+	 * @since 4.10.0
+	 */
+	public function hooks() {
+	}
+
+	/**
+	 * Schedule the task.
+	 *
+	 * @since 4.10.0
+	 */
+	public function init() {
+	}
+
+	/**
 	 * Define the type of the task as async.
 	 *
 	 * @since 2.1.0

@@ -83,6 +83,22 @@ class WP {
 	}
 
 	/**
+	 * True if WP is serving a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_doing_rest_request() {
+
+		if ( function_exists( 'wp_is_serving_rest_request' ) ) {
+			return wp_is_serving_rest_request();
+		}
+
+		return ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+	}
+
+	/**
 	 * True if I am in the Admin Panel, not doing AJAX.
 	 *
 	 * @since 1.0.0
@@ -273,8 +289,8 @@ class WP {
 	}
 
 	/**
-	 * Get the postfix for assets files - ".min" or empty.
-	 * ".min" if in production mode.
+	 * Get the postfix for JS asset files - ".min" or empty, ".min" in production mode.
+	 * Unminified CSS is not shipped, so stylesheet URLs point at ".min.css" directly.
 	 *
 	 * @since 1.0.0
 	 *
@@ -431,6 +447,77 @@ class WP {
 		$main_site_options = get_blog_option( get_main_site_id(), Options::META_KEY, [] );
 
 		return ! empty( $main_site_options['general']['network_wide'] );
+	}
+
+	/**
+	 * Whether this request is being served for the network admin.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_network_admin_scope() {
+
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		if ( is_network_admin() ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Names the admin the request came from; every caller verifies its own nonce.
+		return self::is_doing_self_ajax() && ! empty( $_REQUEST['network_admin'] );
+	}
+
+	/**
+	 * Whether the site is a local installation.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_local_environment() {
+
+		$is_local_environment = false;
+
+		if ( function_exists( 'wp_get_environment_type' ) ) {
+			$is_local_environment = in_array(
+				wp_get_environment_type(),
+				[
+					'local',
+					'development',
+				],
+				true
+			);
+		}
+
+		// Matched on the host's trailing label rather than anywhere in the URL, so a
+		// public name that merely contains one of these does not read as local.
+		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+
+		foreach ( [ '.local', '.localhost', '.test' ] as $suffix ) {
+			if ( substr( $host, - strlen( $suffix ) ) === $suffix ) {
+				$is_local_environment = true;
+			}
+		}
+
+		$server_address = isset( $_SERVER['SERVER_ADDR'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) )
+			: '';
+
+		if ( in_array( $server_address, [ '127.0.0.1', '::1', '0.0.0.0' ], true ) ) {
+			$is_local_environment = true;
+		}
+
+		/**
+		 * Whether the site is a local installation.
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param bool $is_local_environment Whether the environment is local.
+		 */
+		return (bool) apply_filters( 'wp_mail_smtp_wp_is_local_environment', $is_local_environment );
 	}
 
 	/**

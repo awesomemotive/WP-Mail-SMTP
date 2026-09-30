@@ -390,7 +390,7 @@ class QuickConnectUsage {
 	 * @param int                      $response_code HTTP/SMTP response code.
 	 * @param ConnectionInterface|null $connection    The connection the send used.
 	 */
-	public function maybe_flag_limit_reached( $error_message, $mailcatcher, $mailer_slug, $error_code, $response_code = 0, ConnectionInterface $connection = null ) {
+	public function maybe_flag_limit_reached( $error_message, $mailcatcher, $mailer_slug, $error_code, $response_code = 0, $connection = null ) {
 
 		if (
 			$this->is_bailed() ||

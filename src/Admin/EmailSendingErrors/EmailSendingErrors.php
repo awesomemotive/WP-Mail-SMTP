@@ -44,6 +44,7 @@ class EmailSendingErrors {
 	public function hooks() {
 
 		add_action( 'wp_mail_smtp_admin_pages_before_content', [ $this, 'render_error_banner' ] );
+		add_action( 'wp_mail_smtp_admin_dashboard_page_before_widgets', [ $this, 'render_error_banner' ] );
 		add_action( 'admin_notices', [ $this, 'render_global_error_notice' ] );
 
 		add_action( 'wp_ajax_wp_mail_smtp_email_sending_errors_dismiss', [ $this, 'ajax_dismiss' ] );
@@ -614,30 +615,11 @@ class EmailSendingErrors {
 			return;
 		}
 
-		$allowed_tags = [
-			'a'      => [
-				'href'   => [],
-				'rel'    => [],
-				'target' => [],
-			],
-			'p'      => [],
-			'strong' => [],
-			'b'      => [],
-			'i'      => [],
-			'br'     => [],
-			'code'   => [],
-			'ul'     => [],
-			'ol'     => [],
-			'li'     => [],
-			'pre'    => [],
-		];
-
 		printf(
 			'<div class="wpms-email-sending-errors-banner__error-log wpms-email-sending-errors-error-log" hidden>' .
 			'<div class="wpms-email-sending-errors-error-log__inner">' .
 			'<button type="button" class="wpms-email-sending-errors-error-log__copy-icon" aria-label="%1$s" title="%1$s">' .
-			'<span class="wpms-email-sending-errors-error-log__copy-icon-default wpms:icon-[fa6-regular--copy] wpms:w-[16px] wpms:h-[16px]"></span>' .
-			'<span class="wpms-email-sending-errors-error-log__copy-icon-done wpms:icon-[fa6-solid--check] wpms:text-success wpms:w-[16px] wpms:h-[16px]" hidden></span>' .
+			'<span class="wpms-email-sending-errors-error-log__copy-glyph wpms:icon-[fa6-regular--copy] wpms:w-[16px] wpms:h-[16px]"></span>' .
 			'</button>' .
 			'<span class="wpms-email-sending-errors-error-log__copy-tooltip" hidden>%2$s</span>' .
 			'%3$s' .
@@ -645,7 +627,7 @@ class EmailSendingErrors {
 			'</div>',
 			esc_attr__( 'Copy error log', 'wp-mail-smtp' ),
 			esc_html__( 'Copied!', 'wp-mail-smtp' ),
-			wp_kses( $this->build_error_log( $record ), $allowed_tags )
+			$this->build_error_log( $record ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- build_error_log() returns wp_kses'd markup.
 		);
 	}
 
@@ -661,9 +643,9 @@ class EmailSendingErrors {
 	 *
 	 * @param array $record EmailSendingDebug record for a single connection.
 	 *
-	 * @return string Pre-formatted HTML block.
+	 * @return string Pre-formatted, sanitized HTML block.
 	 */
-	private function build_error_log( $record ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded -- Linear assembly of optional debug sections; splitting would scatter the bundle layout.
+	public function build_error_log( $record ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded -- Linear assembly of optional debug sections; splitting would scatter the bundle layout.
 
 		$mailer_slug = isset( $record['mailer'] ) ? $record['mailer'] : '';
 		$is_smtp     = ( $mailer_slug === 'smtp' );
@@ -744,7 +726,25 @@ class EmailSendingErrors {
 			]
 		);
 
-		return '<pre>' . implode( '<br>', array_filter( $errors ) ) . '</pre>';
+		$allowed_tags = [
+			'a'      => [
+				'href'   => [],
+				'rel'    => [],
+				'target' => [],
+			],
+			'p'      => [],
+			'strong' => [],
+			'b'      => [],
+			'i'      => [],
+			'br'     => [],
+			'code'   => [],
+			'ul'     => [],
+			'ol'     => [],
+			'li'     => [],
+			'pre'    => [],
+		];
+
+		return wp_kses( '<pre>' . implode( '<br>', array_filter( $errors ) ) . '</pre>', $allowed_tags );
 	}
 
 	/**
@@ -804,7 +804,7 @@ class EmailSendingErrors {
 	 *
 	 * @return array
 	 */
-	private function get_local_failure_info( $record ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded -- Pattern-matching switch over a static registry of failure signatures; flattening would scatter the registry.
+	public function get_local_failure_info( $record ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded -- Pattern-matching switch over a static registry of failure signatures; flattening would scatter the registry.
 
 		$details = [
 			// [any] - cURL error 60/77.

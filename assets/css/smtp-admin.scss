@@ -1,11 +1,11 @@
-// Cascade layer order. Tailwind utilities (imported by gulp into `@layer utilities`)
-// win over BEM components in `@layer components` regardless of specificity ties — so a
-// utility can override a same-specificity component rule without `!important`.
-@layer components, utilities;
+// The design-system reset. Imported first: it declares the cascade layer order, which has to
+// land at the top of the first stylesheet the page loads.
+@import "reset";
 
-@import "tokens";
+@import "tokens-admin";
 @import "include-media";
 @import "variables";
+@import "mixins";
 @import "element-resets";
 @import "general";
 @import "helpers";
@@ -62,6 +62,36 @@
 		&:active {
 			color: $link-hover;
 		}
+
+		// A link focused by pointer or touch keeps no ring, keyboard focus still gets
+		// one. WP core draws that ring with a box-shadow, so that is what goes; its
+		// transparent outline stays, being what Windows High Contrast mode turns into
+		// a visible indicator. Unlayered, like the core rule it has to outrank.
+		&:focus:not( :focus-visible ) {
+			box-shadow: none;
+		}
+
+		// Keyboard focus keeps a ring, in the plugin's link colour rather than the
+		// admin colour scheme's. Core's width variable is kept, so the ring still
+		// follows the user's focus-thickness setting.
+		&:focus-visible {
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus, 1.5px ) $link;
+		}
+	}
+}
+
+// flatpickr appends its calendar to <body>, so this sits outside the page wrapper.
+//
+// WP admin clamps every select and number input to a 40px min-height, and flatpickr
+// only declares `height: auto` on the month dropdown and year field, so nothing
+// opposes the clamp and the 34px header row breaks. Its own class names are used here
+// to stay clear of the core rules on specificity rather than on load order.
+.flatpickr-calendar {
+
+	.flatpickr-monthDropdown-months,
+	input.cur-year,
+	.flatpickr-time input {
+		min-height: 0;
 	}
 }
 
@@ -613,18 +643,13 @@
 			input[type=number],
 			input[type=password],
 			select {
-				background-color: #fff;
-				border: 1px solid $field-border;
-				border-radius: 4px;
-				box-shadow: none;
-				color: $field-text;
+				@include wp-mail-smtp-input;
+
 				display: inline-block;
 				vertical-align: middle;
-				padding: 7px 12px;
 				margin: 0 10px 0 0;
 				width: 400px;
 				min-height: 36px;
-				line-height: 1.3;
 
 				@include media("<desktop") {
 					width: 300px;
@@ -641,22 +666,8 @@
 					}
 				}
 
-				&[readonly] {
-					background-color: #f9f9f9;
-				}
-
 				&.small-text {
 					width: 75px;
-				}
-
-				&:focus {
-					border: 1px solid #016AAB;
-					box-shadow: 0 0 0 1px #016AAB;
-					outline: none;
-				}
-
-				&:disabled {
-					opacity: 0.6;
 				}
 			}
 
@@ -1405,17 +1416,11 @@
 			}
 		}
 
-		// PHP toggles `hidden` between the default and done glyphs.
-		&__copy-icon-default,
-		&__copy-icon-done {
+		&__copy-glyph {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
 			line-height: 0;
-
-			&[hidden] {
-				display: none;
-			}
 		}
 
 		&__copy-tooltip {

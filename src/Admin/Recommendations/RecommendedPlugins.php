@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations;
 
 use WPMailSMTP\Admin\Area;
+use WPMailSMTP\PartnerPlugins\Catalog;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
 
 /**
  * Recommended-plugins rotating menu: catalog, rotation state, sidebar item.
@@ -28,6 +30,27 @@ class RecommendedPlugins {
 	 * @since 4.9.0
 	 */
 	const ADOPTED_AFTER = 7 * DAY_IN_SECONDS;
+
+	/**
+	 * Partner plugin catalog.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var Catalog
+	 */
+	private $catalog;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param Catalog|null $catalog Partner plugin catalog.
+	 */
+	public function __construct( $catalog = null ) {
+
+		$this->catalog = $catalog ?? new Catalog();
+	}
 
 	/**
 	 * Register hooks for the recommended-plugins menu.
@@ -124,82 +147,77 @@ class RecommendedPlugins {
 	 */
 	public function get_products() {
 
-		return [
+		$products = [
 			[
 				'slug'              => 'wpconsent',
-				'name'              => 'WPConsent',
 				'label'             => esc_html__( 'Privacy Compliance', 'wp-mail-smtp' ),
 				'page_class'        => Pages\WPConsent::class,
-				'plugin'            => 'wpconsent-cookies-banner-privacy-suite/wpconsent.php',
-				'plugin_pro'        => 'wpconsent-premium/wpconsent-premium.php',
 				'activation_option' => 'wpconsent_activated',
 			],
 			[
 				'slug'              => 'activelayer',
-				'name'              => 'ActiveLayer',
 				'label'             => esc_html__( 'Spam Protection', 'wp-mail-smtp' ),
 				'page_class'        => Pages\ActiveLayer::class,
-				'plugin'            => 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php',
 				'activation_option' => '', // No activation-time option exposed by the plugin.
 			],
 			[
 				'slug'              => 'duplicator',
-				'name'              => 'Duplicator',
 				'label'             => esc_html__( 'Backups', 'wp-mail-smtp' ),
 				'page_class'        => Pages\Duplicator::class,
-				'plugin'            => 'duplicator/duplicator.php',
-				'plugin_pro'        => 'duplicator-pro/duplicator-pro.php',
 				'activation_option' => 'duplicator_install_info', // migration reads ['time'].
 			],
 			[
 				'slug'              => 'wpvibe',
-				'name'              => 'WPVibe',
 				'label'             => esc_html__( 'AI MCP', 'wp-mail-smtp' ),
 				'page_class'        => Pages\WPVibe::class,
-				'plugin'            => 'vibe-ai/vibe-ai.php',
 				'activation_option' => '', // No activation-time option exposed by the plugin.
 			],
 			[
 				'slug'              => 'universally',
-				'name'              => 'Universally',
 				'label'             => esc_html__( 'Translations', 'wp-mail-smtp' ),
 				'page_class'        => Pages\Universally::class,
-				'plugin'            => 'universally-language-translation-multilingual-tool/universally.php',
 				'activation_option' => '', // No activation-time option exposed by the plugin.
 			],
 			[
 				'slug'              => 'wpcode',
-				'name'              => 'WPCode',
 				'label'             => esc_html__( 'Code Snippets', 'wp-mail-smtp' ),
 				'page_class'        => Pages\WPCode::class,
-				'plugin'            => 'insert-headers-and-footers/ihaf.php',
-				'plugin_pro'        => 'wpcode-premium/wpcode.php',
 				'activation_option' => 'ihaf_activated', // migration reads ['wpcode'].
 			],
 		];
-	}
 
-	/**
-	 * Map of catalog plugin files (lite + pro) to product slug.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return array<string, string>
-	 */
-	private function get_plugin_slug_map() {
+		foreach ( $products as $index => $product ) {
+			$plugin = $this->catalog->get( $product['slug'] );
 
-		$map = [];
-
-		foreach ( $this->get_products() as $product ) {
-			if ( ! empty( $product['plugin'] ) ) {
-				$map[ $product['plugin'] ] = $product['slug'];
+			if ( $plugin === null ) {
+				continue;
 			}
-			if ( ! empty( $product['plugin_pro'] ) ) {
-				$map[ $product['plugin_pro'] ] = $product['slug'];
+
+			// `name`, `plugin` and `plugin_pro` shipped in this array before the
+			// catalog owned them, so they stay in the returned shape.
+			$products[ $index ]['name']   = $plugin->get_name();
+			$products[ $index ]['plugin'] = $plugin->get_basename();
+
+			if ( $plugin->get_basename_pro() !== '' ) {
+				$products[ $index ]['plugin_pro'] = $plugin->get_basename_pro();
 			}
 		}
 
-		return $map;
+		return $products;
+	}
+
+	/**
+	 * The plugin behind a rotation slug.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $slug Rotation product slug.
+	 *
+	 * @return PartnerPlugin|null
+	 */
+	public function get_plugin( $slug ): ?PartnerPlugin {
+
+		return $this->catalog->get( $slug );
 	}
 
 	/**
@@ -212,9 +230,15 @@ class RecommendedPlugins {
 	 */
 	public function record_activation( $plugin, $network_wide ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
-		$slug = $this->get_plugin_slug_map()[ $plugin ] ?? '';
+		$catalog_plugin = $this->catalog->get_by_basename( $plugin );
 
-		if ( $slug === '' ) {
+		if ( $catalog_plugin === null ) {
+			return;
+		}
+
+		$slug = $catalog_plugin->get_slug();
+
+		if ( ! in_array( $slug, wp_list_pluck( $this->get_products(), 'slug' ), true ) ) {
 			return;
 		}
 

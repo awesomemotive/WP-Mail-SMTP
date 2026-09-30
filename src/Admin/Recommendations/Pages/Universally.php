@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations\Pages;
 
 use WPMailSMTP\Admin\Recommendations\PageAbstract;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
+use WPMailSMTP\PartnerPlugins\Plugins\Universally as UniversallyPartner;
 
 /**
  * Universally recommended-plugin landing page.
@@ -28,13 +30,7 @@ class Universally extends PageAbstract {
 	 * @var array
 	 */
 	protected $config = [
-		'lite_plugin'            => 'universally-language-translation-multilingual-tool/universally.php',
-		'lite_wporg_url'         => 'https://wordpress.org/plugins/universally-language-translation-multilingual-tool/',
-		'lite_download_url'      => 'https://downloads.wordpress.org/plugin/universally-language-translation-multilingual-tool.zip',
-		'pro_plugin'             => '',
-		'universally_addon'      => '',
 		'universally_addon_page' => 'https://universally.com/?utm_source=wpmailsmtpplugin&utm_medium=link&utm_campaign=translation-page',
-		'universally_onboarding' => 'admin.php?page=universally_settings',
 	];
 
 	/**
@@ -47,6 +43,18 @@ class Universally extends PageAbstract {
 	protected static function get_plugin_name(): string {
 
 		return 'universally'; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
+	}
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return PartnerPlugin
+	 */
+	protected function create_plugin(): PartnerPlugin {
+
+		return new UniversallyPartner();
 	}
 
 	/**
@@ -173,70 +181,6 @@ class Universally extends PageAbstract {
 		$step['button_url']    = $this->config['universally_addon_page'];
 
 		return $step;
-	}
-
-	/**
-	 * Whether the plugin is finished setup or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if the plugin is finished setup.
-	 */
-	protected function is_plugin_finished_setup(): bool {
-
-		return $this->is_plugin_configured(); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether a plugin is configured or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is configured properly.
-	 */
-	protected function is_plugin_configured(): bool {
-
-		if ( ! $this->is_plugin_activated() ) {
-			return false;
-		}
-
-		return ! empty( get_option( 'universally_api_key' ) );
-	}
-
-	/**
-	 * Whether a plugin is active or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is active.
-	 */
-	protected function is_plugin_activated(): bool {
-
-		return is_plugin_active( $this->config['lite_plugin'] ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether a plugin is available (class/function exists).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is available.
-	 */
-	protected function is_plugin_available(): bool {
-
-		return class_exists( 'Universally\AdminBar', false ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether pro version is active.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if pro version is active.
-	 */
-	protected function is_pro_active(): bool {
-
-		return false; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
 	}
 
 	/**

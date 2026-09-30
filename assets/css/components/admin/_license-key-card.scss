@@ -1,0 +1,191 @@
+// License key card. Owns its inner layout and type only; the container it sits in
+// supplies the surface (width, padding, background, radius, border, shadow).
+@layer wpms-components {
+
+	.wpms-license-key-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--wpms-spacing-20);
+		box-sizing: border-box;
+		text-align: center;
+	}
+
+	// Opt-in, for a card in a container with no padding of its own.
+	.wpms-license-key-card--padded {
+		padding: var(--wpms-padding-32);
+	}
+
+	// One screen per state. The screen sets display: flex, so `hidden` needs saying again.
+	.wpms-license-key-card__screen {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--wpms-spacing-20);
+		width: 100%;
+	}
+
+	.wpms-license-key-card__screen[hidden] {
+		display: none;
+	}
+
+	.wpms-license-key-card__icon {
+		color: var(--wpms-text-icon);
+		font-size: 32px;
+		line-height: 1;
+	}
+
+	// margin: 0 resets the default <p> margin so spacing is driven by the flex gap.
+	.wpms-license-key-card__title {
+		margin: 0;
+		color: var(--wpms-text-primary);
+		font-weight: var(--wpms-typography-font-weight-medium);
+		font-size: var(--wpms-typography-font-size-24);
+		line-height: var(--wpms-typography-line-height-tight);
+	}
+
+	.wpms-license-key-card__body {
+		margin: 0;
+		max-width: 460px;
+		color: var(--wpms-text-secondary);
+		font-weight: var(--wpms-typography-font-weight-regular);
+		font-size: var(--wpms-typography-font-size-18);
+		line-height: var(--wpms-typography-line-height-normal);
+	}
+
+	.wpms-license-key-card__footer,
+	.wpms-license-key-card__error {
+		font-weight: var(--wpms-typography-font-weight-regular);
+		font-size: var(--wpms-typography-font-size-14);
+		line-height: var(--wpms-typography-line-height-normal);
+	}
+
+	.wpms-license-key-card__link {
+		color: var(--wpms-text-link);
+		text-decoration: underline;
+		transition: color var(--wpms-transition-normal);
+	}
+
+	.wpms-license-key-card__link:hover {
+		color: var(--wpms-text-link--hover);
+	}
+
+	// License key row: the field grows, the submit button stays its own width.
+	.wpms-license-key-card__form {
+		display: flex;
+		align-items: stretch;
+		gap: var(--wpms-spacing-10);
+		width: 100%;
+	}
+
+	// The card centers its text; a field's value reads left.
+	.wpms-license-key-card__field {
+		display: flex;
+		flex: 1 1 auto;
+		min-width: 0;
+		text-align: left;
+	}
+
+	// The field look is the plugin's own; only its width belongs to this row.
+	.wpms-license-key-card__field input {
+		@include wp-mail-smtp-input;
+
+		width: 100%;
+	}
+
+	// The shared field look has no error state; the rejected key needs one.
+	.wpms-license-key-card__field input[aria-invalid='true'] {
+		border-color: var(--wpms-components-field-border-error);
+
+		&:focus {
+			border-color: var(--wpms-components-field-border-error);
+			box-shadow: 0 0 0 1px var(--wpms-components-field-border-error);
+		}
+	}
+
+	// Sits closer to the field than the screen's gap allows.
+	.wpms-license-key-card__error {
+		width: 100%;
+		margin-top: calc(var(--wpms-spacing-20) * -1 + var(--wpms-spacing-10));
+		color: var(--wpms-text-error);
+		text-align: left;
+	}
+
+	.wpms-license-key-card__error:empty {
+		display: none;
+	}
+
+	.wpms-license-key-card__footer {
+		margin: 0;
+		color: var(--wpms-text-tertiary);
+	}
+
+	// The license field's description line, for a card that renders its own field.
+	.wpms-license-key-card__desc {
+		margin: 0;
+		color: var(--wpms-text-secondary);
+		font-weight: var(--wpms-typography-font-weight-regular);
+		font-size: var(--wpms-typography-font-size-14);
+		font-style: italic;
+		line-height: var(--wpms-typography-line-height-normal);
+	}
+
+	// The run-on line belongs to the description above it, not to the screen's own gap.
+	.wpms-license-key-card__desc + .wpms-license-key-card__footer {
+		margin-top: calc(var(--wpms-spacing-20) * -1 + var(--wpms-spacing-10));
+	}
+
+	// The field italicises its description lines; inside a card the run-on line after the
+	// first is body copy, not an aside.
+	.wpms-license-key-card .wpms-license-key-field__desc + .wpms-license-key-field__desc {
+		font-style: normal !important;
+	}
+
+	// The field brings its own layout, so only its width belongs here.
+	.wpms-license-key-card .wpms-license-key-field {
+		width: 100%;
+	}
+
+	.wpms-license-key-card .wpms-license-key-field__input {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	// The field spaces its description for a settings row; a card wants its own gap.
+	.wpms-license-key-card .wpms-license-key-field__desc {
+		margin-top: var(--wpms-spacing-20) !important;
+	}
+}
+
+@layer wpms-overrides {
+
+	// The card's container brings the spacing, so the dialog box drops its own.
+	.jconfirm-box.wp-mail-smtp-license-key-card-dialog {
+		padding: 0 !important;
+		border-top-width: 0 !important;
+
+		div.jconfirm-content-pane {
+			margin-bottom: 0 !important;
+		}
+
+		// `_confirm.scss` restyles every button in a dialog; these keep the plugin's shape.
+		.wp-mail-smtp-btn {
+			padding: 9px 15px;
+			border-width: 1px;
+			border-style: solid;
+			border-radius: 3px;
+			font-weight: 500;
+			text-transform: none;
+		}
+
+		// `_confirm.scss`'s `border: 0` shorthand resets the colour to `currentColor` too,
+		// and outweighs the modifiers, so their colours are restated.
+		.wp-mail-smtp-btn-grey {
+			border-color: #999999;
+		}
+
+		.wp-mail-smtp-btn-red {
+			border-color: #d63638;
+		}
+	}
+}

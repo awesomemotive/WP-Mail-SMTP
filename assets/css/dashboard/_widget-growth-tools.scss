@@ -1,0 +1,79 @@
+// Dashboard "Recommended Growth Tools" widget: a two-column grid of bordered plugin
+// tiles, each a small brand icon and name on one line, a description below, and a
+// bordered CTA.
+//
+// Not the shared feature tile: that one lays its icon beside the text for a full-width
+// page, which leaves the description a 74px column here.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-growth-tools {
+		display: grid;
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		gap: var( --wpms-spacing-sm );
+
+		// The sidebar becomes a single narrow column here, so two tiles across would
+		// return the description to a few characters per line.
+		@media ( max-width: 782px ) {
+			grid-template-columns: minmax( 0, 1fr );
+		}
+	}
+
+	.wpms-dashboard-growth-tool {
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpms-spacing-sm );
+		box-sizing: border-box;
+		padding: $dashboard-spacing-ms;
+		border: 1px solid var( --wpms-color-surface-divider );
+		border-radius: var( --wpms-radius-6 );
+	}
+
+	.wpms-dashboard-growth-tool__head {
+		display: flex;
+		gap: var( --wpms-spacing-sm );
+		align-items: center;
+	}
+
+	.wpms-dashboard-growth-tool__name {
+		flex: 1 1 auto;
+		min-width: 0;
+		font-size: $dashboard-font-size-s;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var( --wpms-color-primary );
+		word-break: break-word;
+	}
+
+	.wpms-dashboard-growth-tool__desc {
+		// Grows so every CTA in a row sits on the same baseline whatever the
+		// description's length.
+		flex-grow: 1;
+		margin: 0;
+		font-size: $dashboard-font-size-s;
+		line-height: 20px;
+		color: var( --wpms-color-secondary );
+		word-break: break-word;
+	}
+
+	// Layout only: the CTA also carries the shared small secondary button classes.
+	.wpms-dashboard-growth-tool__cta {
+		align-self: flex-start;
+
+		// A button, so not the shared text link's installed state: it keeps its box and
+		// ground, drops the border, and mutes the label beside the check glyph.
+		&.is-active {
+			padding: 0 var( --wpms-spacing-sm );
+			border-color: transparent;
+			color: var( --wpms-text-icon );
+
+			&:hover,
+			&:focus {
+				border-color: transparent;
+				color: var( --wpms-text-icon );
+			}
+		}
+	}
+}

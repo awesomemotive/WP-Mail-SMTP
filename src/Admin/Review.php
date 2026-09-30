@@ -37,7 +37,7 @@ class Review {
 	public function hooks() {
 
 		add_action( 'admin_init', [ $this, 'admin_notices' ] );
-		add_action( 'wp_ajax_wp_mail_smtp_review_dismiss', array( $this, 'review_dismiss' ) );
+		add_action( 'wp_ajax_wp_mail_smtp_review_dismiss', [ $this, 'review_dismiss' ] );
 	}
 
 	/**
@@ -64,8 +64,9 @@ class Review {
 	 */
 	public function review_request() {
 
-		// Only consider showing the review request to admin users.
-		if ( ! is_super_admin() ) {
+		$cap = is_multisite() ? 'manage_network_options' : wp_mail_smtp()->get_capability_manage_options();
+
+		if ( ! current_user_can( $cap ) ) {
 			return;
 		}
 
@@ -79,12 +80,10 @@ class Review {
 				'time'      => $time,
 				'dismissed' => false,
 			];
+
 			update_option( self::NOTICE_OPTION, $review );
-		} else {
-			// Check if it has been dismissed or not.
-			if ( isset( $review['dismissed'] ) && ! $review['dismissed'] ) {
-				$load = true;
-			}
+		} elseif ( isset( $review['dismissed'] ) && ! $review['dismissed'] ) {
+			$load = true;
 		}
 
 		// If we cannot load, return early.
@@ -132,7 +131,7 @@ class Review {
 
 		// We have a candidate! Output a review message.
 		?>
-		<div class="notice notice-info is-dismissible wp-mail-smtp-review-notice">
+		<div class="notice notice-info is-dismissible wp-mail-smtp-review-notice" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp-mail-smtp-admin' ) ); ?>">
 			<div class="wp-mail-smtp-review-step wp-mail-smtp-review-step-1">
 				<p><?php esc_html_e( 'Are you enjoying WP Mail SMTP?', 'wp-mail-smtp' ); ?></p>
 				<p>
@@ -174,8 +173,12 @@ class Review {
 					if ( ! $( this ).hasClass( 'wp-mail-smtp-review-out' ) ) {
 						e.preventDefault();
 					}
-					$.post( ajaxurl, { action: 'wp_mail_smtp_review_dismiss' } );
-					$( '.wp-mail-smtp-review-notice' ).remove();
+					var $notice = $( this ).closest( '.wp-mail-smtp-review-notice' );
+					$.post( ajaxurl, {
+						action: 'wp_mail_smtp_review_dismiss',
+						nonce: $notice.attr( 'data-nonce' )
+					} );
+					$notice.remove();
 				} );
 
 				$( document ).on( 'click', '.wp-mail-smtp-review-switch-step', function( e ) {
@@ -205,19 +208,39 @@ class Review {
 	 */
 	public function review_dismiss() {
 
+		if ( ! check_ajax_referer( 'wp-mail-smtp-admin', 'nonce', false ) ) {
+			wp_send_json_error(
+				esc_html__( 'Your session has expired. Please refresh this page and try again.', 'wp-mail-smtp' ),
+				403
+			);
+		}
+
+		$cap = is_multisite() ? 'manage_network_options' : wp_mail_smtp()->get_capability_manage_options();
+
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(
+				esc_html__( 'You do not have permission to dismiss this notice.', 'wp-mail-smtp' ),
+				403
+			);
+		}
+
 		$review              = get_option( self::NOTICE_OPTION, [] );
 		$review['time']      = time();
 		$review['dismissed'] = true;
+
 		update_option( self::NOTICE_OPTION, $review );
 
-		if ( is_super_admin() && is_multisite() ) {
-			$site_list = get_sites();
-			foreach ( (array) $site_list as $site ) {
-				switch_to_blog( $site->blog_id );
+		if ( is_multisite() ) {
+			$site_list = get_sites(
+				[
+					'network_id' => get_current_network_id(),
+					'number'     => 0,
+					'fields'     => 'ids',
+				]
+			);
 
-				update_option( self::NOTICE_OPTION, $review );
-
-				restore_current_blog();
+			foreach ( $site_list as $site_id ) {
+				update_blog_option( $site_id, self::NOTICE_OPTION, $review );
 			}
 		}
 

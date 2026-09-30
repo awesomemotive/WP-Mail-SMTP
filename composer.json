@@ -54,12 +54,12 @@
     "composer/installers": "~2.3",
     "google/apiclient": "2.16.1",
     "paragonie/constant_time_encoding": "^2",
-    "guzzlehttp/guzzle": "7.12.1",
+    "guzzlehttp/guzzle": "7.15.2",
     "monolog/monolog": "^2.10",
-    "symfony/polyfill-intl-idn": "1.38.1",
+    "symfony/polyfill-intl-idn": "1.42.0",
     "symfony/polyfill-mbstring": "1.38.2",
     "wikimedia/composer-merge-plugin": "2.1.0",
-    "woocommerce/action-scheduler": "4.0.0"
+    "woocommerce/action-scheduler": "4.1.0"
   },
   "autoload": {
     "psr-4": {
@@ -83,6 +83,9 @@
     "wpforms/phpcs-diff": "^1.2"
   },
   "scripts": {
+    "phpcs": "vendor/bin/phpcs",
+    "test:unit": "cd tests && vendor/bin/codecept run unit",
+    "test": "@test:unit",
     "php-compatibility-lite" : [
       "vendor/bin/phpcs -p ./*.php ./src/* --ignore='./src/Pro/' --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.4-"
     ],
@@ -97,7 +100,7 @@
     "pre-update-cmd": "@create-vendor-prefix-folder",
     "create-vendor-prefix-folder": "npm run gulp composer:create_vendor_prefixed_folder",
     "phpcs-install-standards": [
-      "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs,vendor/awesomemotive/wpforms-phpcs,vendor/phpcompatibility/php-compatibility"
+      "vendor/bin/phpcs --config-set installed_paths ../../automattic/vipwpcs,../../awesomemotive/wpforms-phpcs,../../phpcompatibility/php-compatibility,../../phpcsstandards/phpcsextra,../../phpcsstandards/phpcsutils,../../sirbrillig/phpcs-variable-analysis,../../wp-coding-standards/wpcs"
     ],
     "prefix-dependencies": [
       "@composer --working-dir=php-scoper install",

@@ -1,0 +1,27 @@
+// Dashboard "Getting Started" widget: the documentation list and its footer.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-doc-list {
+		display: flex;
+		flex-direction: column;
+		gap: $dashboard-spacing-ms;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+		}
+	}
+
+	.wpms-dashboard-widget-getting_started {
+
+		.wpms-dashboard-getting-started-footer {
+			padding-top: $dashboard-spacing-ms;
+			border-top: 1px solid var( --wpms-color-surface-divider );
+		}
+	}
+}

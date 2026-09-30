@@ -30,7 +30,7 @@ class Writer {
 	 *
 	 * @param Registry|null $registry Optional injected registry; defaults to a fresh instance.
 	 */
-	public function __construct( Registry $registry = null ) {
+	public function __construct( $registry = null ) {
 
 		$this->registry = $registry !== null ? $registry : new Registry();
 	}

@@ -39,7 +39,7 @@
 			}
 
 			if ( action === 'goto-url' ) {
-				window.open( $btn.attr( 'data-url' ), '_blank', 'noopener' );
+				window.open( $btn.attr( 'data-url' ), '_blank', 'noopener,noreferrer' );
 				return;
 			}
 
@@ -75,7 +75,8 @@
 					action: 'wp_mail_smtp_ajax',
 					task: task,
 					plugin: plugin,
-					nonce: l10n.nonce
+					nonce: l10n.nonce,
+					source: 'activelayer_wc'
 				}
 			)
 				.done( function( res ) {
@@ -93,7 +94,7 @@
 							return;
 						}
 
-						WPMailSMTPActiveLayerWC.fail( $btn, task );
+						WPMailSMTPActiveLayerWC.fail( $btn, task, res );
 						return;
 					}
 
@@ -102,11 +103,11 @@
 						return;
 					}
 
-					WPMailSMTPActiveLayerWC.fail( $btn, task );
+					WPMailSMTPActiveLayerWC.fail( $btn, task, res );
 				} )
-				.fail( function() {
+				.fail( function( xhr ) {
 
-					WPMailSMTPActiveLayerWC.fail( $btn, task );
+					WPMailSMTPActiveLayerWC.fail( $btn, task, xhr ? xhr.responseJSON : null );
 				} );
 		},
 
@@ -131,12 +132,14 @@
 		 *
 		 * @since 4.9.0
 		 *
-		 * @param {jQuery} $btn The section button.
-		 * @param {string} task The dispatcher task that failed.
+		 * @param {jQuery}      $btn     The section button.
+		 * @param {string}      task     The dispatcher task that failed.
+		 * @param {object|null} response AJAX error payload, when available.
 		 */
-		fail: function( $btn, task ) {
+		fail: function( $btn, task, response ) {
 
-			const msg = task === 'about_plugin_install' ? l10n.error_install : l10n.error_activate;
+			const fallback = task === 'about_plugin_install' ? l10n.error_install : l10n.error_activate;
+			const msg      = ( response && response.data && response.data.message ) || fallback;
 
 			$btn
 				.removeClass( 'disabled' )

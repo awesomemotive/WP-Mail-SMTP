@@ -1,0 +1,33 @@
+// Dashboard "Take Your Emails to the Next Level" widget (FeaturesUpsell): the tile grid.
+// The tiles themselves are the shared feature tile from _shared-components.scss.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-features-upsell-grid {
+		display: grid;
+		grid-template-columns: repeat( 2, 1fr );
+		gap: var( --wpms-spacing-md );
+
+		// Each tile's description is one line at the design's two-column width; below
+		// this the column is too narrow for that, so one tile per row reads better.
+		@container ( max-width: 440px ) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.wpms-dashboard-widget-features_upsell .wpms-dashboard-widget-body {
+		container-type: inline-size;
+	}
+
+	// Lite discount badge, shown beside the widget title.
+	.wpms-dashboard-features__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: $dashboard-spacing-xs;
+		color: var( --wpms-color-success );
+		font-size: $dashboard-font-size-s;
+		font-weight: 500;
+	}
+}

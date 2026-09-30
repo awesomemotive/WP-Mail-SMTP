@@ -145,30 +145,18 @@ class Migration extends MigrationAbstract {
 	 */
 	private function seed_active_plugins_as_adopted( &$seeded ) {
 
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
+		$recommended  = new RecommendedPlugins();
 		$adopted_time = time() - RecommendedPlugins::ADOPTED_AFTER - DAY_IN_SECONDS;
 
-		foreach ( ( new RecommendedPlugins() )->get_products() as $product ) {
+		foreach ( $recommended->get_products() as $product ) {
 			if ( isset( $seeded[ $product['slug'] ] ) ) {
 				continue;
 			}
 
-			$files = array_filter(
-				[
-					isset( $product['plugin'] ) ? $product['plugin'] : '',
-					isset( $product['plugin_pro'] ) ? $product['plugin_pro'] : '',
-				]
-			);
+			$plugin = $recommended->get_plugin( $product['slug'] );
 
-			foreach ( $files as $file ) {
-				if ( is_plugin_active( $file ) ) {
-					$seeded[ $product['slug'] ] = $adopted_time;
-
-					break;
-				}
+			if ( $plugin !== null && $plugin->is_active() ) {
+				$seeded[ $product['slug'] ] = $adopted_time;
 			}
 		}
 	}

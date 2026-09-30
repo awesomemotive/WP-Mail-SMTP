@@ -1,0 +1,214 @@
+// Dashboard admin page.
+//
+// Page shell: title bar, date-range control, stat card row, two-column layout.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	a {
+		text-underline-offset: 2px;
+	}
+
+	// Busy cursor while an AJAX stats update is in flight; `!important` overrides
+	// the date-range select's own `pointer` cursor.
+	&.wpms-dashboard-is-loading {
+
+		&,
+		* {
+			cursor: wait !important;
+		}
+	}
+
+	// The shared plugin title bar keeps its own metrics; it only becomes a flex row so
+	// the date-range control can sit at its end.
+	.wp-mail-smtp-page-title {
+		display: flex;
+		align-items: center;
+	}
+
+	// Pushed to the end of the title row (right in LTR, left in RTL).
+	&__title-actions {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-md );
+		margin-inline-start: auto;
+	}
+
+	// Both the select and select2's replacement for it carry the field styling: the bare
+	// select is what shows until select2 loads.
+	.wp-mail-smtp-network-admin-site-selector-form {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-sm );
+		font-size: $dashboard-font-size-s;
+
+		// Also what select2 sizes its own container from.
+		select {
+			@include wp-mail-smtp-input;
+
+			box-sizing: border-box;
+			// Core's 40px `min-height` on a select clamps a plain height.
+			min-height: 36px;
+			height: 36px;
+			min-width: 210px;
+			margin: 0;
+			padding-inline-end: 28px;
+			font-size: inherit;
+			cursor: pointer;
+		}
+
+		.select2-container--default .select2-selection--single {
+			@include wp-mail-smtp-input;
+
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+			height: 36px;
+			// The SVG, position and size `.wp-core-ui select` paints its own chevron with.
+			background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%231e1e1e%22%2F%3E%3C%2Fsvg%3E');
+			background-repeat: no-repeat;
+			background-position: right 8px top 55%;
+			background-size: 16px 16px;
+
+			// Core flips its own copy in forms-rtl.css, which never reaches this one.
+			.rtl & {
+				background-position: left 8px top 55%;
+			}
+
+			.select2-selection__rendered {
+				padding: 0;
+				padding-inline-end: 16px;
+				color: inherit;
+				line-height: inherit;
+			}
+
+			.select2-selection__arrow {
+				display: none;
+			}
+		}
+	}
+
+	.wpms-dashboard-date-range {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-sm );
+
+		// In the layout only while it spins: core hides it with `visibility`, which
+		// reserves its width.
+		&__spinner {
+			display: none;
+			float: none;
+			margin: 0;
+
+			&.is-active {
+				display: block;
+			}
+		}
+
+		// Both controls take the plugin's own field styling, so the title bar reads as
+		// part of the same form vocabulary as the settings screens.
+		&__select,
+		&__input {
+			@include wp-mail-smtp-input;
+
+			box-sizing: border-box;
+			// min-height, not height: WP core's `.wp-core-ui select` sets a 40px
+			// min-height, which clamps a plain height whatever its specificity.
+			min-height: 36px;
+			height: 36px;
+			margin: 0;
+			font-size: $dashboard-font-size-s;
+		}
+
+		// The mixin's even padding would sit the label under the arrow WP paints on a
+		// select, which the plugin's own 400px-wide selects are too roomy to show.
+		&__select {
+			padding-inline-end: 28px;
+			cursor: pointer;
+		}
+
+		// flatpickr makes its input readonly, since the range is picked rather than
+		// typed. That is not a disabled field, so it keeps the plain white ground.
+		&__input {
+			width: 190px;
+
+			&[readonly] {
+				background-color: #fff;
+				cursor: pointer;
+			}
+		}
+	}
+
+	// A fixed four-track grid, not auto-fit: the design's row is always four cards
+	// across, and auto-fit drops the fourth onto its own row at narrow widths.
+	.wpms-dashboard-stat-cards {
+		display: grid;
+
+		// The card count varies with the tier, the mailer's send confirmation and whether
+		// open tracking is on. Auto columns keep however many cards there are on one row,
+		// sharing the width equally, where a fixed track count would wrap the extras.
+		grid-auto-flow: column;
+		grid-auto-columns: minmax( 0, 1fr );
+		gap: var( --wpms-spacing-md );
+		margin-bottom: var( --wpms-spacing-md );
+
+		// Raw media queries, matching the rest of the dashboard partials: 1024px is
+		// where the page stacks its columns, 600px where the sidebar stops being a
+		// two-column band.
+		@media ( max-width: 1024px ) {
+			grid-auto-flow: row;
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		}
+
+		@media ( max-width: 600px ) {
+			grid-auto-flow: row;
+			grid-template-columns: minmax( 0, 1fr );
+		}
+	}
+
+	.wpms-dashboard-columns {
+		display: flex;
+		gap: var( --wpms-spacing-md );
+		align-items: flex-start;
+
+		.wpms-dashboard-column-main {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.wpms-dashboard-column-sidebar {
+			flex: 0 0 400px;
+		}
+
+		// Stack the columns: main becomes full-width, the sidebar drops below.
+		@media ( max-width: 1024px ) {
+			flex-direction: column;
+			align-items: stretch;
+
+			.wpms-dashboard-column-sidebar {
+				flex: 0 0 auto;
+			}
+		}
+
+		// Between the phone and stack widths the dropped sidebar lays its
+		// widgets out as a two-column masonry band; below it stays one column.
+		@media ( min-width: 601px ) and ( max-width: 1024px ) {
+
+			.wpms-dashboard-column-sidebar {
+				columns: 2;
+				column-gap: var( --wpms-spacing-md );
+
+				.wpms-dashboard-widget {
+					break-inside: avoid;
+				}
+			}
+		}
+	}
+}
+
+// Carries the id because the rule it overrides is unlayered at `#wp-mail-smtp`, which a
+// class chain cannot outweigh.
+#wp-mail-smtp .wpms-dashboard-page .wpms-email-sending-errors-banner {
+	border-radius: var( --wpms-radius-cards );
+}

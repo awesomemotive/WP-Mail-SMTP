@@ -1,0 +1,37 @@
+// The no-mailer prompt: an alert glyph inline with the heading, then the body and CTA
+// stacked under both.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-mailer-notice {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var( --wpms-spacing-sm );
+
+		&__icon {
+			flex: 0 0 auto;
+			color: var( --wpms-text-error );
+		}
+
+		&__title {
+			display: flex;
+			align-items: center;
+			gap: var( --wpms-spacing-sm );
+			margin: 0;
+			font-size: $dashboard-font-size-m;
+			font-weight: 700;
+			line-height: normal;
+			color: var( --wpms-text-heading );
+		}
+
+		&__text {
+			margin: 0;
+			font-size: $dashboard-font-size-s;
+			line-height: normal;
+			color: var( --wpms-color-secondary );
+		}
+	}
+}

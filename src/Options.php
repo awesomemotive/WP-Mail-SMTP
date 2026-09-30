@@ -308,7 +308,18 @@ class Options {
 	 */
 	protected function populate_options() {
 
-		$this->options = apply_filters( 'wp_mail_smtp_populate_options', get_option( static::META_KEY, [] ) );
+		$options = $this->use_global_plugin_options()
+			? get_blog_option( get_main_site_id(), static::META_KEY, [] )
+			: get_option( static::META_KEY, [] );
+
+		/**
+		 * Filter the plugin options as they are read.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param array $options Stored plugin options.
+		 */
+		$this->options = apply_filters( 'wp_mail_smtp_populate_options', $options ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 	}
 
 	/**
@@ -420,6 +431,22 @@ class Options {
 		}
 
 		return $this->is_main_options() ? apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key ) : $value;
+	}
+
+	/**
+	 * Whether this install keeps its settings in the main site's record.
+	 *
+	 * Reads `is_pro_allowed()` and not `is_pro()`: this runs before Pro is instantiated,
+	 * so `is_pro()` is still false here even on a Pro install. Network-wide settings are
+	 * a Pro feature, and the flag outlives a downgrade, so Lite keeps its own record.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	private function use_global_plugin_options() {
+
+		return WP::use_global_plugin_settings() && wp_mail_smtp()->is_pro_allowed();
 	}
 
 	/**
@@ -1397,9 +1424,11 @@ class Options {
 	 */
 	public function set( $options, $once = false, $overwrite_existing = true ) {
 
+		$old_options = $this->get_all_raw();
+
 		// Merge existing settings with new values.
 		if ( ! $overwrite_existing ) {
-			$options = self::array_merge_recursive( $this->get_all_raw(), $options );
+			$options = self::array_merge_recursive( $old_options, $options );
 		}
 
 		$options = $this->process_generic_options( $options );
@@ -1408,7 +1437,16 @@ class Options {
 
 		$this->save_options( $options, $once );
 
-		do_action( 'wp_mail_smtp_options_set_after', $options );
+		/**
+		 * After the plugin options have been written.
+		 *
+		 * @since 2.3.1
+		 * @since 4.10.0 Added the $old_options parameter.
+		 *
+		 * @param array $options     Options as they were saved.
+		 * @param array $old_options Options as they were before the write.
+		 */
+		do_action( 'wp_mail_smtp_options_set_after', $options, $old_options );
 	}
 
 	/**
@@ -1425,7 +1463,7 @@ class Options {
 		if ( $once ) {
 			add_option( static::META_KEY, $options, '', 'no' ); // Do not autoload these options.
 		} else {
-			if ( is_multisite() && WP::use_global_plugin_settings() ) {
+			if ( $this->use_global_plugin_options() ) {
 				update_blog_option( get_main_site_id(), static::META_KEY, $options );
 			} else {
 				update_option( static::META_KEY, $options, 'no' );

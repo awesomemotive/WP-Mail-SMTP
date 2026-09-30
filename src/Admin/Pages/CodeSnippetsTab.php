@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\PartnerPlugins\Plugins\WPCode;
 use WPMailSMTP\Integrations\WPCode\RegisterLibrary;
 use WPMailSMTP\Integrations\WPCode\SnippetsProvider;
 use WPMailSMTP\WP;
@@ -40,6 +41,15 @@ class CodeSnippetsTab extends PageAbstract {
 	 * @var bool
 	 */
 	private $display_fallback = false;
+
+	/**
+	 * The partner plugin this tab is about.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var WPCode|null
+	 */
+	private $plugin;
 
 	/**
 	 * Link label of a tab.
@@ -116,7 +126,7 @@ class CodeSnippetsTab extends PageAbstract {
 			'wp-mail-smtp-code-snippets',
 			'wp_mail_smtp_code_snippets',
 			[
-				'wpcode_active'        => function_exists( 'wpcode_get_library_snippets_by_username' ),
+				'wpcode_active'        => $this->get_plugin()->has_snippet_library(),
 				'wpcode_path'          => $this->get_wpcode_plugin_path(),
 				'activate_url'         => $this->get_wpcode_activate_url(),
 				'code_editor'          => $code_editor_settings,
@@ -128,7 +138,7 @@ class CodeSnippetsTab extends PageAbstract {
 				'install_popup_desc'   => esc_html__( 'Using WPCode, you can install WP Mail SMTP code snippets with 1 click right from this page.', 'wp-mail-smtp' ),
 				'install_popup_btn'    => esc_html__( 'Install & Activate WPCode', 'wp-mail-smtp' ),
 				'learn_more_text'      => esc_html__( 'Learn more about WPCode', 'wp-mail-smtp' ),
-				'learn_more_url'       => 'https://wordpress.org/plugins/insert-headers-and-footers/',
+				'learn_more_url'       => $this->get_plugin()->get_wporg_url(),
 				'install_popup_icon'   => esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/wpcode/logo.svg' ),
 				'activate_popup_title' => esc_html__( 'Please Activate WPCode to Use the Snippet Library', 'wp-mail-smtp' ),
 				'activate_popup_desc'  => esc_html__( 'WPCode is installed but not active. Activate it to install WP Mail SMTP code snippets with 1 click right from this page.', 'wp-mail-smtp' ),
@@ -150,7 +160,23 @@ class CodeSnippetsTab extends PageAbstract {
 	 */
 	private function is_wpcode_active() {
 
-		return function_exists( 'wpcode_get_library_snippets_by_username' );
+		return $this->get_plugin()->has_snippet_library();
+	}
+
+	/**
+	 * The WPCode plugin.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return WPCode
+	 */
+	private function get_plugin() {
+
+		if ( $this->plugin === null ) {
+			$this->plugin = new WPCode();
+		}
+
+		return $this->plugin;
 	}
 
 	/**
@@ -162,19 +188,7 @@ class CodeSnippetsTab extends PageAbstract {
 	 */
 	private function get_wpcode_plugin_path() {
 
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$installed = get_plugins();
-
-		foreach ( [ 'wpcode-premium/wpcode.php', 'insert-headers-and-footers/ihaf.php' ] as $path ) {
-			if ( isset( $installed[ $path ] ) ) {
-				return $path;
-			}
-		}
-
-		return '';
+		return $this->get_plugin()->get_installed_basename();
 	}
 
 	/**
@@ -204,7 +218,7 @@ class CodeSnippetsTab extends PageAbstract {
 	 */
 	private function get_lite_activate_url() {
 
-		return $this->build_activate_url( 'insert-headers-and-footers/ihaf.php' );
+		return $this->build_activate_url( $this->get_plugin()->get_basename() );
 	}
 
 	/**
@@ -265,7 +279,7 @@ class CodeSnippetsTab extends PageAbstract {
 		$snippets          = $this->get_snippets();
 		$wpcode_active     = $this->is_wpcode_active();
 		$display_fallback  = $this->display_fallback;
-		$wpcode_url        = 'https://downloads.wordpress.org/plugin/insert-headers-and-footers.zip';
+		$wpcode_url        = $this->get_plugin()->get_download_url();
 		$container_class   = $display_fallback ? 'wp-mail-smtp-wpcode-blur' : '';
 		$wpcode_path       = $this->get_wpcode_plugin_path();
 		$activate_required = ! $wpcode_active && $wpcode_path !== '';
@@ -325,7 +339,7 @@ class CodeSnippetsTab extends PageAbstract {
 						data-action="install" data-plugin="<?php echo esc_url( $wpcode_url ); ?>">
 						<?php esc_html_e( 'Install & Activate WPCode', 'wp-mail-smtp' ); ?>
 					</button>
-					<a href="https://wordpress.org/plugins/insert-headers-and-footers/" class="wp-mail-smtp-wpcode-fallback-link"><?php esc_html_e( 'Learn more about WPCode', 'wp-mail-smtp' ); ?></a>
+					<a href="<?php echo esc_url( $this->get_plugin()->get_wporg_url() ); ?>" class="wp-mail-smtp-wpcode-fallback-link"><?php esc_html_e( 'Learn more about WPCode', 'wp-mail-smtp' ); ?></a>
 				</div>
 			<?php endif; ?>
 		</div>

@@ -204,6 +204,30 @@ class TestEmail {
 	}
 
 	/**
+	 * Get the context this test email was sent in.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return string
+	 */
+	public function get_context() {
+
+		return $this->context;
+	}
+
+	/**
+	 * Whether this test email was sent as HTML.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public function is_html() {
+
+		return (bool) $this->is_html;
+	}
+
+	/**
 	 * Get the DomainChecker instance populated after a successful send (when enabled).
 	 *
 	 * @since 4.9.0
@@ -292,7 +316,7 @@ class TestEmail {
 					$domain = $connection_options->get( $mailer, 'domain' );
 				}
 
-				$this->domain_checker = new DomainChecker( $mailer, $email, $domain );
+				$this->domain_checker = new DomainChecker( $mailer, $email, $domain, $this->connection );
 
 				$this->result = $this->domain_checker->no_issues() ? self::SUCCESS : self::FAILED_DOMAIN_CHECK;
 			} else {
@@ -301,6 +325,15 @@ class TestEmail {
 		} else {
 			$this->result = self::FAILED;
 		}
+
+		/**
+		 * Fires after a test email has been sent and its result resolved.
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param TestEmail $test_email The test email instance, carrying the result.
+		 */
+		do_action( 'wp_mail_smtp_test_email_send_after', $this ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName -- Hook name drops the repeated namespace/class segment per project convention.
 
 		return $this->result;
 	}

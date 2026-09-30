@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\DomainCheckState;
 use WPMailSMTP\Helpers\Helpers;
 
 /**
@@ -37,17 +39,30 @@ class DomainChecker {
 	protected $mailer;
 
 	/**
+	 * The connection the check was run for.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var ConnectionInterface
+	 */
+	protected $connection;
+
+	/**
 	 * Verify the domain for the provided mailer and email address and save the API results.
 	 *
 	 * @since 2.6.0
+	 * @since 4.10.0 Added the $connection parameter.
 	 *
-	 * @param string $mailer         The plugin mailer.
-	 * @param string $email          The email address from which the domain will be extracted.
-	 * @param string $sending_domain The optional sending domain to check the domain records for.
+	 * @param string                   $mailer         The plugin mailer.
+	 * @param string                   $email          The email address from which the domain will be extracted.
+	 * @param string                   $sending_domain The optional sending domain to check the domain records for.
+	 * @param ConnectionInterface|null $connection     The connection being checked. Defaults to the primary one.
 	 */
-	public function __construct( $mailer, $email, $sending_domain = '' ) {
+	public function __construct( $mailer, $email, $sending_domain = '', ?ConnectionInterface $connection = null ) {
 
 		$this->mailer = $mailer;
+
+		$this->connection = $connection ?? wp_mail_smtp()->get_connections_manager()->get_primary_connection();
 
 		$params = [
 			'mailer' => $mailer,
@@ -73,6 +88,8 @@ class DomainChecker {
 		} else {
 			$this->results = json_decode( wp_remote_retrieve_body( $response ), true );
 		}
+
+		DomainCheckState::record( $this, $this->connection );
 	}
 
 	/**
@@ -84,6 +101,18 @@ class DomainChecker {
 	 */
 	public function get_results() {
 		return $this->results;
+	}
+
+	/**
+	 * Simple getter for the checked connection.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return ConnectionInterface
+	 */
+	public function get_connection() {
+
+		return $this->connection;
 	}
 
 	/**

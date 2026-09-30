@@ -81,7 +81,7 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 
 			event.preventDefault();
 
-			app.runInstallerTask( $( event.currentTarget ), 'about_plugin_install' );
+			app.runInstallerTask( $( event.currentTarget ), 'about_plugin_install', 'ai_mcp' );
 		},
 
 		/**
@@ -95,7 +95,7 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 
 			event.preventDefault();
 
-			app.runInstallerTask( $( event.currentTarget ), 'about_plugin_activate' );
+			app.runInstallerTask( $( event.currentTarget ), 'about_plugin_activate', 'ai_mcp' );
 		},
 
 		/**
@@ -108,13 +108,17 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 		 *
 		 * @param {object} $button Button element that was clicked.
 		 * @param {string} task    AJAX task — install or activate.
+		 * @param {string} source  Originating screen sent with the request.
 		 */
-		runInstallerTask: function( $button, task ) {
+		runInstallerTask: function( $button, task, source ) {
 
-			app.clearError( $button );
+			if ( WPMailSMTP.Admin.Settings.pluginInstall.takeManualRoute( $button ) ) {
+				return;
+			}
+
 			app.setLoading( $button );
 
-			app.post( { task: task, plugin: $button.data( 'plugin' ) } )
+			app.post( { task: task, plugin: $button.data( 'plugin' ), source: source } )
 				.done( function( response ) {
 
 					if ( response && response.success ) {
@@ -129,11 +133,11 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 						return;
 					}
 
-					app.showError( $button );
+					app.showError( $button, response );
 				} )
-				.fail( function() {
+				.fail( function( xhr ) {
 
-					app.showError( $button );
+					app.showError( $button, xhr ? xhr.responseJSON : null );
 				} );
 		},
 
@@ -152,42 +156,28 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 		},
 
 		/**
-		 * Restore the button to its initial state and show the inline error.
+		 * Restore the button to its initial state and explain what went wrong.
 		 *
 		 * @since 4.9.0
 		 *
-		 * @param {object} $button Button element.
+		 * @param {object}      $button  Button element.
+		 * @param {object|null} response AJAX error payload, when available.
 		 */
-		showError: function( $button ) {
+		showError: function( $button, response ) {
 
 			$button
 				.removeClass( 'wp-mail-smtp-btn-loading' )
 				.prop( 'disabled', false );
 
-			var $row = $button.closest( '.wp-mail-smtp-ai-mcp-cta-row' );
-			var $error = $row.siblings( '.wp-mail-smtp-ai-mcp-install-error' );
+			var settings  = WPMailSMTP.Admin.Settings;
+			var manualUrl = settings.extractAjaxManualUrl( response );
 
-			if ( ! $error.length ) {
-				$error = $( '<p class="wp-mail-smtp-ai-mcp-install-error" role="alert"></p>' );
-				$row.after( $error );
-			}
+			settings.pluginInstall.offerManualRoute( $button, manualUrl );
 
-			$error.text( window.wp_mail_smtp_ai_mcp.error_text );
-		},
-
-		/**
-		 * Remove a previously shown inline error before a new attempt.
-		 *
-		 * @since 4.9.0
-		 *
-		 * @param {object} $button Button element.
-		 */
-		clearError: function( $button ) {
-
-			$button
-				.closest( '.wp-mail-smtp-ai-mcp-cta-row' )
-				.siblings( '.wp-mail-smtp-ai-mcp-install-error' )
-				.remove();
+			settings.pluginInstall.showErrorModal(
+				settings.extractAjaxError( response, window.wp_mail_smtp_ai_mcp.error_text ),
+				manualUrl
+			);
 		},
 	};
 

@@ -3,7 +3,8 @@
 namespace WPMailSMTP\UsageTracking;
 
 use WPMailSMTP\Admin\DomainChecker;
-use WPMailSMTP\Admin\SetupWizard;
+use WPMailSMTP\Admin\Recommendations\RecommendedPlugins;
+use WPMailSMTP\Admin\SetupWizard\Stats as SetupWizardStats;
 use WPMailSMTP\Conflicts;
 use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Helpers\Helpers;
@@ -33,6 +34,24 @@ class UsageTracking {
 	const FAILED_SETUP_WIZARD_DATA_URL = 'https://wpmailsmtpusage.com/v1/smtp-failed-wizard';
 
 	/**
+	 * Option name storing the last WP Mail SMTP admin page visit timestamp.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var string
+	 */
+	private const LAST_ADMIN_ACTIVITY_OPTION = 'wp_mail_smtp_last_admin_activity';
+
+	/**
+	 * Option name storing the last test email attempt timestamp.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var string
+	 */
+	private const LAST_TEST_EMAIL_OPTION = 'wp_mail_smtp_last_test_email_time';
+
+	/**
 	 * Whether Usage Tracking is enabled.
 	 * Needs to check with a fresh copy of options in order to provide accurate results.
 	 *
@@ -53,7 +72,7 @@ class UsageTracking {
 	 *
 	 * @since 2.3.0
 	 */
-	public function load() {
+	public function load() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
 
 		// Check if loading the usage tracking functionality is allowed.
 		if ( ! (bool) apply_filters( 'wp_mail_smtp_usage_tracking_load_allowed', true ) ) {
@@ -84,6 +103,20 @@ class UsageTracking {
 				( new ErrorStats() )->hooks();
 			}
 
+			/**
+			 * Filter whether to enable sent stats collection.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param bool $enabled Whether sent stats collection is enabled. Default true.
+			 */
+			if ( apply_filters( 'wp_mail_smtp_usage_tracking_sent_stats_enabled', true ) ) { // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+				( new SentStats() )->hooks();
+			}
+
+			add_action( 'admin_init', [ $this, 'track_admin_activity' ] );
+			add_action( 'wp_mail_smtp_test_email_send_after', [ $this, 'track_test_email' ] );
+
 			add_filter(
 				'wp_mail_smtp_tasks_get_tasks',
 				static function ( $tasks ) {
@@ -93,6 +126,38 @@ class UsageTracking {
 				}
 			);
 		}
+	}
+
+	/**
+	 * Stamp the last WP Mail SMTP admin page visit, at most once per day.
+	 *
+	 * Hooked to admin_init and gated to the plugin's own admin pages.
+	 *
+	 * @since 4.10.0
+	 */
+	public function track_admin_activity() {
+
+		if ( ! wp_mail_smtp()->get_admin()->is_admin_page() ) {
+			return;
+		}
+
+		$last = (int) get_option( self::LAST_ADMIN_ACTIVITY_OPTION, 0 );
+
+		if ( ( time() - $last ) < DAY_IN_SECONDS ) {
+			return;
+		}
+
+		update_option( self::LAST_ADMIN_ACTIVITY_OPTION, time(), false );
+	}
+
+	/**
+	 * Stamp the last test email attempt, whatever its outcome.
+	 *
+	 * @since 4.10.0
+	 */
+	public function track_test_email() {
+
+		update_option( self::LAST_TEST_EMAIL_OPTION, time(), false );
 	}
 
 	/**
@@ -124,7 +189,7 @@ class UsageTracking {
 			$options->get( 'mail', 'mailer' ),
 			wp_mail_smtp()->get_processor()->get_phpmailer()
 		);
-		$setup_wizard_stats = SetupWizard::get_stats();
+		$setup_wizard_stats = SetupWizardStats::get();
 
 		$data = array_merge(
 			$this->get_required_data(),
@@ -153,12 +218,19 @@ class UsageTracking {
 				'wp_mail_smtp_is_const_enabled'            => (bool) $options->is_const_enabled(),
 				'wp_mail_smtp_conflicts_is_detected'       => ( new Conflicts() )->is_detected(),
 				'wp_mail_smtp_is_mailer_complete'          => empty( $mailer ) ? false : $mailer->is_mailer_complete(),
-				'wp_mail_smtp_setup_wizard_launched_time'  => isset( $setup_wizard_stats['launched_time'] ) ? (int) $setup_wizard_stats['launched_time'] : 0,
-				'wp_mail_smtp_setup_wizard_completed_time' => isset( $setup_wizard_stats['completed_time'] ) ? (int) $setup_wizard_stats['completed_time'] : 0,
+				'wp_mail_smtp_setup_wizard_launched_time'  => (int) $setup_wizard_stats['launched_time'],
+				'wp_mail_smtp_setup_wizard_completed_time' => (int) $setup_wizard_stats['completed_time'],
 				'wp_mail_smtp_setup_wizard_completed_successfully' => ! empty( $setup_wizard_stats['was_successful'] ),
-				'wp_mail_smtp_setup_wizard_mailer'         => isset( $setup_wizard_stats['mailer'] ) ? $setup_wizard_stats['mailer'] : '',
+				'wp_mail_smtp_setup_wizard_mailer'         => $setup_wizard_stats['mailer'],
+				'wp_mail_smtp_setup_wizard_type'           => $setup_wizard_stats['type'],
 				'wp_mail_smtp_source'                      => sanitize_title( get_option( 'wp_mail_smtp_source', '' ) ),
 				'wp_mail_smtp_optimize_email_sending'      => (bool) OptimizedEmailSending::is_enabled(),
+				'wp_mail_smtp_last_admin_activity'         => (int) get_option( self::LAST_ADMIN_ACTIVITY_OPTION, 0 ),
+				'wp_mail_smtp_last_test_email_time'        => (int) get_option( self::LAST_TEST_EMAIL_OPTION, 0 ),
+				'wp_mail_smtp_wpvibe_state'                => $this->get_wpvibe_state(),
+				'wp_mail_smtp_recommended_plugins_activated_count' => count( (array) get_option( RecommendedPlugins::ACTIVATED_OPTION, [] ) ),
+				'wp_mail_smtp_wpcode_active'               => function_exists( 'wpcode_get_library_snippets_by_username' ),
+				'wp_mail_smtp_abilities_api_available'     => wp_mail_smtp()->get_abilities_registrar()->allow_load(),
 			]
 		);
 
@@ -180,6 +252,37 @@ class UsageTracking {
 		}
 
 		return apply_filters( 'wp_mail_smtp_usage_tracking_get_data', $data );
+	}
+
+	/**
+	 * Resolve the WPVibe install state: not installed, installed but inactive, or active.
+	 *
+	 * Duplicates the detection in Admin\Pages\AiMcpTab until partner plugin
+	 * state helpers are consolidated into a shared class.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return string One of 'not_installed', 'installed_inactive', 'active'.
+	 */
+	private function get_wpvibe_state() {
+
+		$wpvibe_basename = 'vibe-ai/vibe-ai.php';
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugins = get_plugins();
+
+		if ( ! array_key_exists( $wpvibe_basename, $plugins ) ) {
+			return 'not_installed';
+		}
+
+		if ( ! is_plugin_active( $wpvibe_basename ) ) {
+			return 'installed_inactive';
+		}
+
+		return 'active';
 	}
 
 	/**
@@ -362,8 +465,9 @@ class UsageTracking {
 			$this->get_required_data(),
 			$this->get_additional_data(),
 			[
-				'wp_mail_smtp_mailer'     => $options->get( 'mail', 'mailer' ),
-				'wp_mail_smtp_mail_error' => EmailSendingDebug::get_message( 'primary' ),
+				'wp_mail_smtp_mailer'          => $options->get( 'mail', 'mailer' ),
+				'wp_mail_smtp_mail_error'      => EmailSendingDebug::get_message( 'primary' ),
+				'wp_mail_smtp_mail_error_code' => $this->get_failed_setup_wizard_error_code( $domain_checker ),
 			],
 			$this->get_domain_checker_results( $domain_checker )
 		);
@@ -379,6 +483,35 @@ class UsageTracking {
 				'user-agent'  => $this->get_user_agent(),
 			]
 		);
+	}
+
+	/**
+	 * Get the normalized error code for a failed Setup Wizard mailer test.
+	 *
+	 * Prefers the composite error key captured on the send-failure path: unlike the
+	 * raw PHPMailer message it is the same for the same error on any site locale.
+	 * Failures that never reach the send path have no key, so they fall back to a
+	 * `wizard:{category}:-` code - a wizard failure is never reported without one.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param DomainChecker|null $domain_checker The Domain Checker object.
+	 *
+	 * @return string
+	 */
+	private function get_failed_setup_wizard_error_code( $domain_checker ) {
+
+		$record = EmailSendingDebug::get( 'primary' );
+
+		if ( ! empty( $record['error_key'] ) ) {
+			return $record['error_key'];
+		}
+
+		if ( is_a( $domain_checker, DomainChecker::class ) && $domain_checker->has_errors() ) {
+			return 'wizard:domain_check:-';
+		}
+
+		return 'wizard:unknown:-';
 	}
 
 	/**

@@ -1,0 +1,45 @@
+// The Dashboard page's own stylesheet, enqueued only on that page.
+//
+// The shared components come from the partial imported below; the per-widget partials
+// follow, on the local tokens declared between them.
+//
+// Stays unlayered: a layered rule can never outrank the unlayered admin rules that reach
+// this page, so these rules win on specificity instead. The design tokens they reference
+// are CSS custom properties smtp-admin.css has already declared, which the enqueue
+// declares as a dependency.
+//
+// @since {VERSION}
+
+@import "variables";
+@import "mixins";
+@import "shared-components";
+
+// Local tokens: values with no matching project variable in _tokens-admin.scss.
+$dashboard-spacing-xs: 5px;
+$dashboard-spacing-ss: 8px;
+$dashboard-spacing-ms: 15px;
+$dashboard-spacing-xl: 40px;
+
+$dashboard-radius-xs: 3px;
+
+$dashboard-font-size-xs: 12px;
+$dashboard-font-size-ss: 13px;
+$dashboard-font-size-s:  14px;
+$dashboard-font-size-m:  16px;
+$dashboard-font-size-xl: 24px;
+
+@import 'dashboard/framework';
+@import 'dashboard/page';
+@import 'dashboard/stat-cards';
+@import 'dashboard/inline-error';
+@import 'dashboard/primitives';
+@import 'dashboard/widget-version';
+@import 'dashboard/widget-mailer-notice';
+@import 'dashboard/widget-connections';
+@import 'dashboard/widget-email-log';
+@import 'dashboard/widget-email-sources';
+@import 'dashboard/widget-emails-overview';
+@import 'dashboard/widget-checklist-overview';
+@import 'dashboard/widget-features-addons';
+@import 'dashboard/widget-growth-tools';
+@import 'dashboard/widget-getting-started';

@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Options;
+use WPMailSMTP\PartnerPlugins\Catalog;
 use WPMailSMTP\TestEmail\TestEmail;
 use WPMailSMTP\WP;
 use WPMailSMTP\Admin\PageAbstract;
@@ -469,8 +470,6 @@ class TestTab extends PageAbstract {
 	 */
 	protected function display_success_pro_tip_strip() {
 
-		// Capability gating lives in get_cross_sell_recommendations() — it returns
-		// an empty pool for users without install_plugins, which short-circuits below.
 		$recommendations = $this->get_cross_sell_recommendations( 1 );
 
 		if ( empty( $recommendations ) ) {
@@ -542,125 +541,65 @@ class TestTab extends PageAbstract {
 	 *
 	 * @return array<int, array<string, string>>
 	 */
-	protected function get_cross_sell_recommendations( $limit = 3 ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded -- Inner foreach over per-product competitor list is intentional; flattening would obscure the catalog structure.
-
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			return [];
-		}
+	protected function get_cross_sell_recommendations( $limit = 3 ) {
 
 		$assets_url = wp_mail_smtp()->assets_url;
 
-		$catalog = [
-			[
-				'name'              => 'ActiveLayer',
+		// Copy and imagery for the banner; identity and install state come
+		// from the plugin catalog.
+		$copy = [
+			'activelayer' => [
 				'title'             => esc_html__( 'Smarter Spam Protection for WordPress', 'wp-mail-smtp' ),
 				'desc'              => esc_html__( 'Catch spam in milliseconds with AI, invisible to your real visitors.', 'wp-mail-smtp' ),
 				'pro_tip'           => esc_html__( 'Stop spam at the door', 'wp-mail-smtp' ),
 				'icon'              => $assets_url . '/images/about/icon-activelayer.svg',
-				'plugin'            => 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php',
-				'install'           => 'activelayer-anti-spam-spam-protection-for-forms-comments',
-				'install_url'       => 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip',
 				'settings_page_url' => admin_url( 'admin.php?page=activelayer-settings' ),
 				'framed_icon'       => true,
-				'competitors'       => [
-					'akismet/akismet.php',
-					'antispam-bee/antispam_bee.php',
-					'honeypot/wp-armour.php',
-					'wp-armour-extended/wp-armour-extended.php',
-					'cleantalk-spam-protect/cleantalk.php',
-					'wp-cerber/wp-cerber.php',
-					'anti-spam/anti-spam.php',
-				],
 			],
-			[
-				'name'              => 'WPConsent',
+			'wpconsent'   => [
 				'title'             => esc_html__( 'Stay GDPR & Privacy Compliant', 'wp-mail-smtp' ),
 				'desc'              => esc_html__( 'Add a cookie consent banner to your site and meet privacy laws in minutes.', 'wp-mail-smtp' ),
 				'pro_tip'           => esc_html__( 'Stay GDPR & Privacy compliant', 'wp-mail-smtp' ),
 				'icon'              => $assets_url . '/images/about/icon-wpconsent.svg',
-				'plugin'            => 'wpconsent-cookies-banner-privacy-suite/wpconsent.php',
-				'install'           => 'wpconsent-cookies-banner-privacy-suite',
-				'install_url'       => 'https://downloads.wordpress.org/plugin/wpconsent-cookies-banner-privacy-suite.zip',
 				'settings_page_url' => admin_url( 'admin.php?page=wpconsent-cookies' ),
 				'framed_icon'       => true,
-				'competitors'       => [
-					'cookie-law-info/cookie-law-info.php',
-					'complianz-gdpr/complianz-gpdr.php',
-					'complianz-gdpr-premium/complianz-gpdr-premium.php',
-					'cookie-notice/cookie-notice.php',
-					'gdpr-cookie-compliance/moove-gdpr.php',
-					'iubenda-cookie-law-solution/iubenda_cookie_solution.php',
-					'real-cookie-banner/index.php',
-					'cookiebot/cookiebot.php',
-					'uk-cookie-consent/uk-cookie-consent.php',
-					'borlabs-cookie/borlabs-cookie.php',
-				],
 			],
-			[
-				'name'              => 'Duplicator',
+			'duplicator'  => [
 				'title'             => esc_html__( 'Add Secure WordPress Backups', 'wp-mail-smtp' ),
 				'desc'              => esc_html__( 'Automated, encrypted backups with 1-click restore to keep your site safe.', 'wp-mail-smtp' ),
 				'pro_tip'           => esc_html__( 'Protect your site with automated backups', 'wp-mail-smtp' ),
 				'icon'              => $assets_url . '/images/about/icon-duplicator.svg',
-				'plugin'            => 'duplicator/duplicator.php',
-				'plugin_pro'        => 'duplicator-pro/duplicator-pro.php',
-				'install'           => 'duplicator',
-				'install_url'       => 'https://downloads.wordpress.org/plugin/duplicator.zip',
 				'settings_page_url' => admin_url( 'admin.php?page=duplicator-settings' ),
 				'framed_icon'       => false,
-				'competitors'       => [
-					'all-in-one-wp-migration/all-in-one-wp-migration.php',
-					'all-in-one-wp-migration-unlimited-extension/all-in-one-wp-migration-unlimited-extension.php',
-					'updraftplus/updraftplus.php',
-					'wpvivid-backuprestore/wpvivid-backuprestore.php',
-					'wpvivid-backup-pro/wpvivid-backup-pro.php',
-					'backwpup/backwpup.php',
-					'backwpup-pro/backwpup.php',
-					'migrate-guru/migrateguru.php',
-					'wp-migrate-db/wp-migrate-db.php',
-					'wp-migrate-db-pro/wp-migrate-db-pro.php',
-					'wp-staging/wp-staging.php',
-					'wp-staging-pro/wp-staging-pro.php',
-					'backupbuddy/backupbuddy.php',
-				],
 			],
 		];
 
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		$catalog    = new Catalog();
+		$candidates = [];
+
+		foreach ( $copy as $slug => $product ) {
+			$plugin = $catalog->get( $slug );
+
+			if ( $plugin === null ) {
+				continue;
+			}
+
+			// Skip a plugin the site already has, and one whose need a
+			// competitor already covers: recommending Duplicator to an
+			// UpdraftPlus user is wasted screen space.
+			if ( $plugin->is_installed() || $plugin->is_pro_installed() || $plugin->is_competitor_installed() ) {
+				continue;
+			}
+
+			$candidates[] = $product + [
+				'name'        => $plugin->get_name(),
+				'plugin'      => $plugin->get_basename(),
+				'install'     => $plugin->get_wporg_slug(),
+				'install_url' => $plugin->get_download_url(),
+			];
 		}
 
-		$installed = get_plugins();
-
-		$candidates = array_filter(
-			$catalog,
-			function ( $product ) use ( $installed ) {
-				if ( array_key_exists( $product['plugin'], $installed ) ) {
-					return false;
-				}
-
-				// Pro variant present too — treat as "already provided" so we
-				// don't push the Lite when the Pro version is installed.
-				if ( ! empty( $product['plugin_pro'] ) && array_key_exists( $product['plugin_pro'], $installed ) ) {
-					return false;
-				}
-
-				// Drop the entry when a competitor that covers the same need
-				// is installed (e.g., recommending Duplicator to an
-				// UpdraftPlus user is wasted screen space).
-				if ( ! empty( $product['competitors'] ) ) {
-					foreach ( $product['competitors'] as $competitor ) {
-						if ( array_key_exists( $competitor, $installed ) ) {
-							return false;
-						}
-					}
-				}
-
-				return true;
-			}
-		);
-
-		return array_slice( array_values( $candidates ), 0, $limit );
+		return array_slice( $candidates, 0, $limit );
 	}
 
 	/**

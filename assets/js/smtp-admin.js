@@ -56,7 +56,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			$( '#screen-meta-links, #screen-meta' ).prependTo( '#wp-mail-smtp-header-temp' ).show();
 
 			app.bindActions();
-			var removableQueryParams = [ 'sendlayer_quick_connect_result', 'sendlayer_quick_connect_disconnect_result' ];
+			var removableQueryParams = [ 'sendlayer_quick_connect_result', 'sendlayer_quick_connect_disconnect_result', 'wp_mail_smtp_upgraded' ];
 
 			if ( ! $( '.wp-mail-smtp-tab-tools-debug-events' ).length ) {
 				removableQueryParams.push( 'debug_event_id' );
@@ -68,6 +68,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 			// Flyout Menu.
 			app.initFlyoutMenu();
+
+			app.upgradeModal.init();
 		},
 
 		/**
@@ -349,8 +351,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 					var $btn     = $( this );
 					var $panel   = $btn.closest( '.wpms-email-sending-errors-banner__error-log' );
-					var $default = $btn.find( '.wpms-email-sending-errors-error-log__copy-icon-default' );
-					var $done    = $btn.find( '.wpms-email-sending-errors-error-log__copy-icon-done' );
+					var $glyph   = $btn.find( '.wpms-email-sending-errors-error-log__copy-glyph' );
 					var $tooltip = $panel.find( '.wpms-email-sending-errors-error-log__copy-tooltip' );
 
 					if ( ! $panel.length ) {
@@ -362,15 +363,20 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					$content.find( 'br' ).replaceWith( '\n' );
 					var text = $content.text().trim();
 
+					// The glyph's icon class is swapped rather than a second span revealed:
+					// the Iconify utility's own `display` sits in a layer, and a layered
+					// `!important` outranks an unlayered one, so `hidden` cannot hide it.
+					// Tailwind scans this file, so both classes stay whole literals.
+					var copyClass = 'wpms:icon-[fa6-regular--copy]';
+					var doneClass = 'wpms:icon-[fa6-solid--check] wpms:text-success';
+
 					var afterCopy = function() {
-						$default.prop( 'hidden', true );
-						$done.prop( 'hidden', false );
+						$glyph.removeClass( copyClass ).addClass( doneClass );
 						$tooltip.prop( 'hidden', false );
 
 						setTimeout(
 							function() {
-								$default.prop( 'hidden', false );
-								$done.prop( 'hidden', true );
+								$glyph.removeClass( doneClass ).addClass( copyClass );
 								$tooltip.prop( 'hidden', true );
 							},
 							2000
@@ -505,6 +511,10 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 			var $btn = $( this );
 
+			if ( app.pluginInstall.takeManualRoute( $btn ) ) {
+				return;
+			}
+
 			// After install+activate the same button doubles as a Setup Now CTA:
 			// clicking navigates to the plugin's settings page (status-active +
 			// data-settings-url). Keeps a single element and one event hook.
@@ -541,6 +551,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			app.pluginInstall.installPlugin( {
 				plugin: $btn.attr( 'data-plugin' ),
 				task:   task,
+				source: 'test_email_banner',
 				onSuccess: function( res ) {
 
 					if ( task === 'about_plugin_install' && res.data && res.data.basename ) {
@@ -604,11 +615,14 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						.prop( 'disabled', true )
 						.text( strings.installed );
 				},
-				onError: function( message ) {
+				onError: function( message, res ) {
+					var manualUrl = app.extractAjaxManualUrl( res );
+
 					$btn.removeClass( 'wp-mail-smtp-btn-loading' );
 					$btn.prop( 'disabled', false );
 					$btn.html( originalLabel );
-					app.pluginInstall.showErrorModal( message );
+					app.pluginInstall.offerManualRoute( $btn, manualUrl );
+					app.pluginInstall.showErrorModal( message, manualUrl );
 				},
 			} );
 		},
@@ -628,6 +642,10 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			e.preventDefault();
 
 			var $link = $( this );
+
+			if ( app.pluginInstall.takeManualRoute( $link ) ) {
+				return;
+			}
 
 			if ( $link.hasClass( 'wp-mail-smtp-link-loading' ) || $link.hasClass( 'status-active' ) ) {
 				return;
@@ -654,6 +672,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			app.pluginInstall.installPlugin( {
 				plugin: $link.attr( 'data-plugin' ),
 				task:   task,
+				source: 'test_email_pro_tip',
 				onSuccess: function( res ) {
 
 					if ( task === 'about_plugin_install' && res.data && res.data.basename ) {
@@ -686,12 +705,15 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					$strip.find( '.wpms-test-email-pro-tip-strip__initial' ).attr( 'hidden', true );
 					$strip.find( '.wpms-test-email-pro-tip-strip__success' ).removeAttr( 'hidden' );
 				},
-				onError: function( message ) {
+				onError: function( message, res ) {
+					var manualUrl = app.extractAjaxManualUrl( res );
+
 					$loader.remove();
 					$link.removeClass( 'wp-mail-smtp-link-loading' );
 					$link.css( 'pointer-events', '' );
 					$link.html( originalLabel );
-					app.pluginInstall.showErrorModal( message );
+					app.pluginInstall.offerManualRoute( $link, manualUrl );
+					app.pluginInstall.showErrorModal( message, manualUrl );
 				},
 			} );
 		},
@@ -701,7 +723,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 				var mailerName = $input.data( 'title' ).trim();
 
-				app.education.upgradeModal(
+				app.upgradeModal.open(
 					wp_mail_smtp.education.upgrade_title.replace( /%name%/g, mailerName ),
 					wp_mail_smtp.education.upgrade_content.replace( /%name%/g, mailerName ),
 					$input.val()
@@ -710,7 +732,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 			gmailOneClickSetupUpgrade: function() {
 
-				app.education.upgradeModal(
+				app.upgradeModal.open(
 					wp_mail_smtp.education.gmail.one_click_setup_upgrade_title,
 					wp_mail_smtp.education.gmail.one_click_setup_upgrade_content,
 					'gmail-one-click-setup'
@@ -719,40 +741,305 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 			rateLimitUpgrade: function() {
 
-				app.education.upgradeModal(
+				app.upgradeModal.open(
 					wp_mail_smtp.education.rate_limit.upgrade_title,
 					wp_mail_smtp.education.rate_limit.upgrade_content,
 					'rate-limit-setting'
 				);
+			}
+		},
+
+		/**
+		 * The upgrade modal card: an upsell that switches in place to a license-key screen
+		 * and hands the key to the upgrade service.
+		 *
+		 * @since 4.10.0
+		 */
+		upgradeModal: {
+
+			/**
+			 * Bind the settings page's license key form and welcome anyone whose upgrade
+			 * just finished.
+			 *
+			 * @since 4.10.0
+			 */
+			init: function() {
+
+				app.upgradeModal.bindSettingsLicenseKeyForm();
+
+				if ( wp_mail_smtp.upgrade_success_modal.is_upgraded ) {
+					app.upgradeModal.openSuccessModal();
+				}
 			},
 
-			upgradeModal: function( title, content, upgradeUrlUtmContent ) {
+			/**
+			 * Clone the modal markup and open it as a jQuery-confirm dialog.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {string} title      Feature heading, %name% already resolved by the caller.
+			 * @param {string} content    Feature body copy, %name% already resolved by the caller.
+			 * @param {string} utmContent utm_content value for the Upgrade to Pro link.
+			 */
+			open: function( title, content, utmContent ) {
+
+				var $modal = $( '.wpms-upgrade-modal-source .wpms-upgrade-modal' ).clone();
+
+				// The modal is only rendered for users who may install plugins, so there
+				// is nothing to open for anyone else.
+				if ( ! $modal.length ) {
+					return;
+				}
+
+				// The source markup keeps the static id, so a second open would leave two
+				// elements sharing it and break aria-describedby resolution.
+				$modal.find( '.js-wp-mail-smtp-upgrade-modal-error' ).attr( 'id', 'wp-mail-smtp-upgrade-modal-license-key-error-' + $.now() );
+
+				// Scoped to the upsell screen: the license screen carries a heading and
+				// body of its own under the same classes, and those are fixed copy.
+				// .html(), not .text(): these are plugin-authored strings, already
+				// esc_html__()/wp_kses()'d in PHP, and some carry markup like <br>.
+				var $upsellScreen = $modal.find( '[data-screen="default"]' );
+
+				$upsellScreen.find( '.wpms-license-key-card__title' ).html( title );
+				$upsellScreen.find( '.wpms-license-key-card__body' ).html( content );
+
+				app.upgradeModal.bindModalActions( $modal, utmContent );
 
 				$.alert( {
+					title: false,
+					closeIcon: true,
+					buttons: false,
 					backgroundDismiss: true,
 					escapeKey: true,
-					animationBounce: 1,
-					type: 'blue',
-					closeIcon: true,
-					title: title,
-					icon: '"></i>' + wp_mail_smtp.education.upgrade_icon_lock + '<i class="',
-					content: content,
 					boxWidth: '550px',
+					content: $modal,
 					onOpenBefore: function() {
-						this.$btnc.after( '<div class="discount-note">' + wp_mail_smtp.education.upgrade_bonus + wp_mail_smtp.education.upgrade_doc + '</div>' );
-						this.$body.addClass( 'wp-mail-smtp-upgrade-mailer-education-modal' );
-					},
+						this.$body.addClass( 'wp-mail-smtp-license-key-card-dialog' );
+					}
+				} );
+			},
+
+			/**
+			 * Show one of the card's screens and hide the other.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {jQuery} $modal The modal currently shown in the dialog.
+			 * @param {string} screen Either default or already-purchased.
+			 */
+			setScreen: function( $modal, screen ) {
+
+				var $screens = $modal.find( '[data-screen]' );
+
+				$screens.prop( 'hidden', true );
+				$screens.filter( '[data-screen="' + screen + '"]' ).prop( 'hidden', false );
+			},
+
+			/**
+			 * Name the feature that opened the modal in the purchase link's utm_content.
+			 * It is rendered server-side, where which feature is being upsold is not yet
+			 * known, so every mailer would otherwise report the same source.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {jQuery} $modal     The modal currently shown in the dialog.
+			 * @param {string} utmContent utm_content value identifying the feature.
+			 */
+			tagPurchaseLink: function( $modal, utmContent ) {
+
+				var $purchase = $modal.find( '.js-wp-mail-smtp-upgrade-modal-purchase' );
+
+				if ( ! $purchase.length ) {
+					return;
+				}
+
+				var url = new URL( $purchase.attr( 'href' ) );
+
+				url.searchParams.set( 'utm_content', 'Upgrade Modal - Purchase Here - ' + utmContent );
+
+				$purchase.attr( 'href', url.toString() );
+			},
+
+			/**
+			 * Show or clear the message rejecting the license key.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {jQuery} $modal  The modal currently shown in the dialog.
+			 * @param {string} message The message, or an empty string to clear it.
+			 */
+			setLicenseKeyError: function( $modal, message ) {
+
+				var $error      = $modal.find( '.js-wp-mail-smtp-upgrade-modal-error' ),
+					$licenseKey = $modal.find( '.js-wp-mail-smtp-upgrade-modal-license' );
+
+				// The CSS hides the region while it is :empty, so writing the text is also
+				// what reveals it; a role="alert" written to while hidden is not announced.
+				$error.text( message );
+
+				if ( message ) {
+					$licenseKey.attr( 'aria-invalid', 'true' ).attr( 'aria-describedby', $error.attr( 'id' ) );
+					return;
+				}
+
+				$licenseKey.removeAttr( 'aria-invalid' ).removeAttr( 'aria-describedby' );
+			},
+
+			/**
+			 * Bind the modal's own triggers.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {jQuery} $modal     The modal currently shown in the dialog.
+			 * @param {string} utmContent utm_content value for the Upgrade to Pro link.
+			 */
+			bindModalActions: function( $modal, utmContent ) {
+
+				$modal.find( '.js-wp-mail-smtp-upgrade-modal-upgrade' ).on( 'click', function() {
+
+					var appendChar = /(\?)/.test( wp_mail_smtp.education.upgrade_url ) ? '&' : '?',
+						upgradeURL = wp_mail_smtp.education.upgrade_url + appendChar + 'utm_content=' + encodeURIComponent( utmContent );
+
+					window.open( upgradeURL, '_blank' );
+				} );
+
+				app.upgradeModal.tagPurchaseLink( $modal, utmContent );
+
+				$modal.find( '.js-wp-mail-smtp-upgrade-modal-already-purchased' ).on( 'click', function() {
+
+					app.upgradeModal.setScreen( $modal, 'already-purchased' );
+					$modal.find( '.js-wp-mail-smtp-upgrade-modal-license' ).trigger( 'focus' );
+				} );
+
+				$modal.find( '.js-wp-mail-smtp-upgrade-modal-connect' ).on( 'click', function() {
+
+					app.upgradeModal.submitModalLicenseKey( $modal );
+				} );
+
+				// There is no <form> here - one would submit the surrounding settings
+				// page - so Enter on the license field needs its own submit binding.
+				$modal.find( '.js-wp-mail-smtp-upgrade-modal-license' ).on( 'keydown', function( e ) {
+
+					if ( e.key === 'Enter' ) {
+						e.preventDefault();
+						app.upgradeModal.submitModalLicenseKey( $modal );
+					}
+				} );
+			},
+
+			/**
+			 * Post a license key to the upgrade endpoint and follow where it points.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {string}   licenseKey        The key to validate and upgrade with.
+			 * @param {Function} onFailureCallback Receives the message to show the reader.
+			 */
+			requestUpgradeUrl: function( licenseKey, onFailureCallback ) {
+
+				$.post( wp_mail_smtp.ajax_url, {
+					action:   'wp_mail_smtp_connect_url',
+					nonce:    wp_mail_smtp.nonce,
+					key:      licenseKey,
+					redirect: window.location.href,
+				} )
+					.done( function( response ) {
+
+						if ( response.success ) {
+							window.location.href = response.data.url;
+							return;
+						}
+
+						onFailureCallback( app.extractAjaxError( response, wp_mail_smtp.generic_error ) );
+					} )
+					.fail( function() {
+
+						onFailureCallback( wp_mail_smtp.server_error );
+					} );
+			},
+
+			/**
+			 * Submit the license key typed into the modal, reporting failures inline.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {jQuery} $modal The modal currently shown in the dialog.
+			 */
+			submitModalLicenseKey: function( $modal ) {
+
+				var $submitButton = $modal.find( '.js-wp-mail-smtp-upgrade-modal-connect' );
+
+				// The loading class hides pointer events but not the Enter key binding on
+				// the license field, so a second Enter would otherwise re-submit.
+				if ( $submitButton.hasClass( 'wp-mail-smtp-btn-loading' ) ) {
+					return;
+				}
+
+				app.upgradeModal.setLicenseKeyError( $modal, '' );
+				$submitButton.addClass( 'wp-mail-smtp-btn-loading' );
+
+				app.upgradeModal.requestUpgradeUrl(
+					$modal.find( '.js-wp-mail-smtp-upgrade-modal-license' ).val(),
+					function( message ) {
+
+						app.upgradeModal.setLicenseKeyError( $modal, message );
+						$submitButton.removeClass( 'wp-mail-smtp-btn-loading' );
+					}
+				);
+			},
+
+			/**
+			 * Submit the license key typed on the settings page, reporting failures in a
+			 * dialog. The settings page has no modal of its own to write an error into.
+			 *
+			 * @since 4.10.0
+			 */
+			bindSettingsLicenseKeyForm: function() {
+
+				$( document ).on( 'click', '#wp-mail-smtp-setting-upgrade-license-button', function() {
+
+					var $submitButton = $( this );
+
+					// The loading class hides pointer events but not keyboard activation,
+					// so a focused button would still re-submit on a second Enter.
+					if ( $submitButton.hasClass( 'wp-mail-smtp-btn-loading' ) ) {
+						return;
+					}
+
+					$submitButton.addClass( 'wp-mail-smtp-btn-loading' );
+
+					app.upgradeModal.requestUpgradeUrl(
+						$( '#wp-mail-smtp-setting-upgrade-license-key' ).val(),
+						function( message ) {
+
+							$submitButton.removeClass( 'wp-mail-smtp-btn-loading' );
+							app.pluginInstall.showErrorModal( message );
+						}
+					);
+				} );
+			},
+
+			/**
+			 * Welcome a reader whose upgrade has just finished.
+			 *
+			 * @since 4.10.0
+			 */
+			openSuccessModal: function() {
+
+				var strings = wp_mail_smtp.upgrade_success_modal;
+
+				$.alert( {
+					title: strings.title,
+					content: strings.content,
+					icon: 'wpms:icon-[fa6-solid--circle-check] wpms:inline-block wpms:w-[42px] wpms:h-[42px] wpms:text-[var(--wpms-text-success)]',
+					type: 'green',
+					boxWidth: '450px',
 					buttons: {
 						confirm: {
-							text: wp_mail_smtp.education.upgrade_button,
+							text: strings.button,
 							btnClass: 'btn-confirm',
-							keys: [ 'enter' ],
-							action: function() {
-								var appendChar = /(\?)/.test( wp_mail_smtp.education.upgrade_url ) ? '&' : '?',
-									upgradeURL = wp_mail_smtp.education.upgrade_url + appendChar + 'utm_content=' + encodeURIComponent( upgradeUrlUtmContent );
-
-								window.open( upgradeURL, '_blank' );
-							}
+							keys: [ 'enter' ]
 						}
 					}
 				} );
@@ -851,7 +1138,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						if ( response.success && response.data.redirect_url ) {
 							window.location.href = response.data.redirect_url;
 						} else {
-							var message   = response.data && response.data.message ? response.data.message : wp_mail_smtp.sendlayer.error_text;
+							var message   = response.data && response.data.message ? response.data.message : wp_mail_smtp.generic_error;
 							var errorCode = response.data && response.data.error_code ? response.data.error_code : '';
 							self.showConnectError( message, errorCode );
 							if ( onDone ) {
@@ -859,7 +1146,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 							}
 						}
 					} ).fail( function() {
-						self.showConnectError( wp_mail_smtp.sendlayer.server_error, 'plugin.init_connect.ajax_failed' );
+						self.showConnectError( wp_mail_smtp.server_error, 'plugin.init_connect.ajax_failed' );
 						if ( onDone ) {
 							onDone();
 						}
@@ -893,7 +1180,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 
 						var $link = $( this );
 						var originalText = $link.text();
-						$link.text( wp_mail_smtp.sendlayer.connecting_text );
+						$link.text( wp_mail_smtp.connecting );
 
 						self.doConnect( { utm_content: 'Plugin Settings - Quick Connect Change Domain' }, function() { // eslint-disable-line camelcase
 							$link.text( originalText );
@@ -1035,6 +1322,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			 * @param {object}   options          Options.
 			 * @param {string}   options.plugin   data-plugin value to send.
 			 * @param {string}   options.task     'about_plugin_install' or 'about_plugin_activate'.
+			 * @param {string}   options.source   Screen slug that triggered the install.
 			 * @param {Function} options.onSuccess Receives the parsed response.
 			 * @param {Function} options.onError   Receives (message, rawResponse|null).
 			 */
@@ -1045,6 +1333,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					task:   options.task,
 					nonce:  wp_mail_smtp.nonce,
 					plugin: options.plugin,
+					source: options.source || 'unknown',
 				} ).done( function( res ) {
 					if ( res && res.success ) {
 						options.onSuccess( res );
@@ -1058,16 +1347,70 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			},
 
 			/**
+			 * Point a refused CTA at the plugin's own page, so a second click leaves
+			 * wp-admin instead of repeating a request the user may not make.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {object} $cta      The CTA that was refused.
+			 * @param {string} manualUrl The plugin's own page, when the refusal offered one.
+			 */
+			offerManualRoute: function( $cta, manualUrl ) {
+
+				if ( ! manualUrl ) {
+					return;
+				}
+
+				$cta
+					.attr( 'data-manual-url', manualUrl )
+					.text( wp_mail_smtp.plugin_install.manual_btn );
+			},
+
+			/**
+			 * Follow a CTA already pointed at the plugin's own page.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param {object} $cta The clicked CTA.
+			 *
+			 * @returns {boolean} Whether the click was handled here.
+			 */
+			takeManualRoute: function( $cta ) {
+
+				var manualUrl = $cta.attr( 'data-manual-url' );
+
+				if ( ! manualUrl ) {
+					return false;
+				}
+
+				window.open( manualUrl, '_blank', 'noopener,noreferrer' );
+
+				return true;
+			},
+
+			/**
 			 * Show a jconfirm error modal for a plugin install/activate
 			 * failure.
 			 *
 			 * @since 4.9.0
 			 *
-			 * @param {string} message The localized error message body.
+			 * @param {string} message   The localized error message body.
+			 * @param {string} manualUrl Optional plugin page to offer as the manual route.
 			 */
-			showErrorModal: function( message ) {
+			showErrorModal: function( message, manualUrl ) {
 
 				var strings = wp_mail_smtp.plugin_install;
+				var content = $( '<div />' ).append( $( '<p />' ).text( message ) );
+
+				if ( manualUrl ) {
+					content.append(
+						$( '<p />' ).append(
+							$( '<a target="_blank" rel="noopener noreferrer" />' )
+								.attr( 'href', manualUrl )
+								.text( strings.manual_link )
+						)
+					);
+				}
 
 				$.confirm( {
 					backgroundDismiss: false,
@@ -1076,7 +1419,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					closeIcon:         true,
 					type:              'red',
 					title:             strings.error_title,
-					content:           message,
+					content:           content,
 					buttons: {
 						confirm: {
 							text:     strings.btn_ok,
@@ -1105,11 +1448,27 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		 */
 		extractAjaxError: function( response, defaultMessage ) {
 
-			if ( response && typeof response.data === 'string' && response.data.length ) {
-				return response.data;
+			var data = response ? response.data : null;
+
+			if ( typeof data === 'string' && data.length ) {
+				return data;
 			}
 
-			return defaultMessage;
+			return ( data && data.message ) || defaultMessage;
+		},
+
+		/**
+		 * Extract the manual-install URL a refused request offers.
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param {object|null} response Parsed AJAX response, or null on network failure.
+		 *
+		 * @returns {string} The plugin's own page, or an empty string when none was sent.
+		 */
+		extractAjaxManualUrl: function( response ) {
+
+			return ( response && response.data && response.data.manual_url ) || '';
 		},
 
 		/**
@@ -1192,7 +1551,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			} );
 
 			// Set settings changed attribute, if any input was changed.
-			$( ':input:not( #wp-mail-smtp-setting-license-key, .wp-mail-smtp-not-form-input, #wp-mail-smtp-setting-gmail-one_click_setup_enabled, #wp-mail-smtp-setting-outlook-one_click_setup_enabled )', $settingPages ).on( 'change', function() {
+			$( ':input:not( .js-wp-mail-smtp-license-key, .wp-mail-smtp-not-form-input, #wp-mail-smtp-setting-gmail-one_click_setup_enabled, #wp-mail-smtp-setting-outlook-one_click_setup_enabled )', $settingPages ).on( 'change', function() {
 				app.pluginSettingsChanged = true;
 			} );
 

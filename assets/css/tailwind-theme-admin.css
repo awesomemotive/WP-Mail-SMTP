@@ -1,0 +1,100 @@
+/* Tailwind v4 config for the admin bundle — the single home for every Tailwind directive.
+ * The build prepends this to the compiled SCSS bundle and runs @tailwindcss/postcss. */
+
+@import "tailwindcss/theme.css" layer(theme) prefix(wpms);
+@import "tailwindcss/utilities.css" layer(wpms-utils) source(none) prefix(wpms);
+
+/* Files Tailwind scans for utility classes. Paths are relative to the plugin root. */
+@source "../../src/**/*.php";
+@source "../../templates/**/*.php";
+@source "../../assets/js/**/*.js";
+@source "../../assets/pro/js/**/*.js";
+
+@plugin "@iconify/tailwind4" {
+	prefixes: fa6-solid, fa6-regular, fa6-brands, fa7-solid, fa7-regular, fa7-brands;
+	icon-sets: from-json(custom, "./.design/custom-icons.json");
+}
+
+/* Second Iconify instance for icons painted from CSS (pseudo-elements, masks). `icon-src-[set--name]`
+   emits only the glyph var (`--svg: url(...)`); component CSS paints via `mask-image: var(--svg)`. */
+@plugin "@iconify/tailwind4" {
+	prefix: icon-src;
+	overrideOnly: true;
+}
+
+/* Icon glyphs don't shrink in flex rows. In wpms-components so utilities can override. */
+@layer wpms-components {
+	[class*="icon-["] {
+		flex: 0 0 auto;
+	}
+}
+
+/*
+ * Maps Tailwind category prefixes to the plugin's source-of-truth `--wpms-*` vars in
+ * `assets/css/_tokens-admin.scss`.
+ *
+ * `inline` tells Tailwind to inline the `var(--wpms-*)` reference into the utility rule
+ * instead of re-declaring the custom property here, so there is no value duplication.
+ *
+ * Editing a token's VALUE: edit `_tokens-admin.scss`. Adding a NEW token: add it there first,
+ * then map it here. The category prefix (`--color-*`, `--shadow-*`, ...) is what makes
+ * Tailwind generate the matching utility.
+ *
+ * Drop one redundant group prefix when the source name already encodes its category, so
+ * `--wpms-color-text-primary` maps to `--color-primary` (giving `wpms:text-primary`)
+ * rather than double-prefixed `wpms:text-text-primary`.
+ */
+@theme inline {
+	/* px base unit — exact px, no root-font-size drift. */
+	--spacing: 4px;
+
+	/* Named spacing tokens, alongside the numeric scale. */
+	--spacing-sm: var(--wpms-spacing-sm);
+	--spacing-md: var(--wpms-spacing-md);
+	--spacing-lg: var(--wpms-spacing-lg);
+
+	/* Text colors. */
+	--color-primary: var(--wpms-color-primary);
+	--color-secondary: var(--wpms-color-secondary);
+	--color-tertiary: var(--wpms-color-tertiary);
+	--color-gray-900: var(--wpms-color-gray-900);
+	--color-gray-700: var(--wpms-color-gray-700);
+	--color-link: var(--wpms-color-link);
+	--color-success: var(--wpms-color-success);
+	--color-error: var(--wpms-color-error);
+
+	/* Surface colors. */
+	--color-surface-background-white: var(--wpms-color-surface-background-white);
+	--color-surface-background-light: var(--wpms-color-surface-background-light);
+	--color-surface-divider: var(--wpms-color-surface-divider);
+	--color-surface-border: var(--wpms-color-surface-border);
+
+	/* Utility colors. */
+	--color-utility-yellow-50: var(--wpms-color-utility-yellow-50);
+
+	/* Radius. */
+	--radius-table: var(--wpms-radius-table);
+
+	/* Shadows. Multi-value box-shadows must come from a token: the commas in an
+	   arbitrary value break v4's shadow composition and compute to `none`. */
+	--shadow-subtle: var(--wpms-shadow-subtle);
+	--shadow-soft: var(--wpms-shadow-soft);
+
+	/* Line height. Tailwind's stock `leading-normal` is 1.5; the design's auto line
+	   height is 1.2, so `wpms:leading-normal` is redefined to match. */
+	--leading-normal: var(--wpms-leading-normal);
+
+	/* Font sizes in px, since Tailwind's stock scale is rem and would resolve against
+	   the root font size rather than the design's px value. `sm` is 14px/20px, the only
+	   named size the markup uses; add a size here when a design needs one. */
+	--text-sm: 14px;
+	--text-sm--line-height: 20px;
+
+	/* Breakpoints — literal, desktop-first; defaults cleared so only these exist. */
+	--breakpoint-*: initial;
+	--breakpoint-xs-phone: 320px;
+	--breakpoint-phone: 600px;
+	--breakpoint-ipad: 768px;
+	--breakpoint-tablet: 782px;
+	--breakpoint-desktop: 960px;
+}

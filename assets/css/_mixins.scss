@@ -1,0 +1,26 @@
+// Shared mixins. Emits no CSS, so every entry point can import it.
+
+// The plugin's text-field look. Layout belongs to the call site.
+@mixin wp-mail-smtp-input {
+	padding: 7px 12px;
+	background-color: #fff;
+	border: 1px solid $field-border;
+	border-radius: 4px;
+	box-shadow: none;
+	color: $field-text;
+	line-height: 1.3;
+
+	&[readonly] {
+		background-color: #f9f9f9;
+	}
+
+	&:focus {
+		border: 1px solid #016AAB;
+		box-shadow: 0 0 0 1px #016AAB;
+		outline: none;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+	}
+}

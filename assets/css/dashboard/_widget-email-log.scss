@@ -1,0 +1,106 @@
+// Dashboard "Email Log" widget (Pro): column geometry on the shared table skin.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-widget-email-log-table {
+		// Fixed layout: keeps the recipient/mailer/date widths stable so only the
+		// subject column, the flexible one, ellipsises instead of growing the table.
+		table-layout: fixed;
+
+		.wpms-dashboard-widget-email-log-col-subject {
+			width: auto;
+		}
+
+		// The status glyph and the subject share one line at the design's 14px gap.
+		// A wrapper, not the cell itself: `display: flex` on a table cell takes it out
+		// of the table's formatting context and the fixed column widths stop applying.
+		.wpms-dashboard-widget-email-log-subject {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			min-width: 0;
+
+			a {
+				overflow: hidden;
+				font-weight: 500;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+		}
+
+		.wpms-dashboard-widget-email-log-col-recipient {
+			width: 190px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.wpms-dashboard-widget-email-log-col-mailer {
+			width: 130px;
+		}
+
+		.wpms-dashboard-widget-email-log-col-date {
+			width: 154px;
+		}
+
+		.wpms-dashboard-widget-email-log-col-view {
+			width: 44px;
+			text-align: end;
+
+			// 1px less than its siblings: the row's 49px is a border-box height, so a
+			// 25px button plus the usual 12px padding would push every row to 50.
+			padding-block: 11px;
+		}
+
+		.wpms-dashboard-widget-email-log-status {
+			display: inline-flex;
+			flex: 0 0 auto;
+			align-items: center;
+
+			&--sent {
+				color: var( --wpms-text-success );
+			}
+
+			&--waiting {
+				color: var( --wpms-color-utility-yellow-50 );
+			}
+
+			&--failed {
+				color: var( --wpms-text-error );
+			}
+		}
+
+		// A small bordered button around the glyph, as the design draws it.
+		.wpms-dashboard-widget-email-log-view {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			box-sizing: border-box;
+			width: 32px;
+			min-height: 25px;
+			overflow: hidden;
+			border: 1px solid var( --wpms-color-surface-divider );
+			border-radius: $dashboard-radius-xs;
+			background-color: var( --wpms-color-surface-background-white );
+			color: var( --wpms-color-tertiary );
+
+			&:hover,
+			&:focus {
+				border-color: var( --wpms-color-neutral-40 );
+				color: var( --wpms-color-primary );
+			}
+
+			// The ring is drawn inside the control. Both the table's scroll container
+			// and the card clip their overflow, and this sits in the trailing column,
+			// so an outset ring loses its outer edge. An inset outline also keeps
+			// working in forced-colors mode, where a box-shadow ring does not.
+			&:focus-visible {
+				box-shadow: none;
+				outline: 2px solid var( --wpms-text-link--hover );
+				outline-offset: -2px;
+			}
+		}
+	}
+}

@@ -11,12 +11,14 @@ use WPMailSMTP\Admin\DashboardWidget;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Admin\EmailSendingErrors\EmailSendingErrors;
 use WPMailSMTP\Admin\Notifications;
+use WPMailSMTP\Admin\SetupWizard\Launcher as SetupWizardLauncher;
 use WPMailSMTP\Compatibility\Compatibility;
 use WPMailSMTP\Integrations\WPCode\RegisterLibrary as RegisterWPCodeLibrary;
 use WPMailSMTP\Providers\Outlook\Provider as OutlookProvider;
 use WPMailSMTP\Providers\Sendlayer\QuickConnect as SendlayerQuickConnect;
 use WPMailSMTP\Queue\Queue;
 use WPMailSMTP\Reports\Reports;
+use WPMailSMTP\SetupChecklist\SetupChecklist;
 use WPMailSMTP\Tasks\Meta;
 use WPMailSMTP\UsageTracking\UsageTracking;
 use WPMailSMTP\WPCLI\Bootstrap as WPCLIBootstrap;
@@ -167,6 +169,8 @@ class Core {
 				( new SendlayerQuickConnect() )->hooks();
 				( new EmailSendingErrors() )->hooks();
 				( new RegisterWPCodeLibrary() )->hooks();
+				( new SetupWizardLauncher() )->hooks();
+
 				$this->get_abilities_registrar()->hooks();
 			}
 		);
@@ -185,6 +189,8 @@ class Core {
 
 		// Load translations just in case.
 		load_plugin_textdomain( 'wp-mail-smtp', false, plugin_basename( wp_mail_smtp()->plugin_path ) . '/assets/languages' );
+
+		$this->get_setup_checklist();
 
 		/*
 		 * Constantly check in admin area, that we don't need to upgrade DB.
@@ -226,7 +232,7 @@ class Core {
 	 *
 	 * @return bool
 	 */
-	protected function is_pro_allowed() {
+	public function is_pro_allowed() {
 
 		$is_allowed = true;
 
@@ -377,6 +383,36 @@ class Core {
 		}
 
 		return $admin;
+	}
+
+	/**
+	 * Load the plugin Setup Checklist. Its state listeners have to run on REST requests
+	 * too, so the returned instance's own `init()` does the `is_admin()` gating.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return SetupChecklist
+	 */
+	public function get_setup_checklist() {
+
+		static $setup_checklist;
+
+		if ( ! isset( $setup_checklist ) ) {
+			/**
+			 * Filter the Setup Checklist instance.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param SetupChecklist $setup_checklist Setup Checklist instance.
+			 */
+			$setup_checklist = apply_filters( 'wp_mail_smtp_core_get_setup_checklist', new SetupChecklist() );
+
+			if ( method_exists( $setup_checklist, 'init' ) ) {
+				$setup_checklist->init();
+			}
+		}
+
+		return $setup_checklist;
 	}
 
 	/**
@@ -667,6 +703,11 @@ class Core {
 		$license_type = is_readable( $this->plugin_path . '/src/Pro/Pro.php' ) ? 'pro' : 'lite';
 		$activated    = get_option( 'wp_mail_smtp_activated', [] );
 
+		// The stored option can be a scalar when it was written by something other than this plugin.
+		if ( ! is_array( $activated ) ) {
+			$activated = [];
+		}
+
 		if ( empty( $activated[ $license_type ] ) ) {
 			$activated[ $license_type ] = time();
 			update_option( 'wp_mail_smtp_activated', $activated );
@@ -706,6 +747,24 @@ class Core {
 		}
 
 		return strtolower( $type );
+	}
+
+	/**
+	 * Get the site URL that identifies this site to WP Mail SMTP services.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return LicenseSiteUrl
+	 */
+	public function get_license_site_url() {
+
+		static $license_site_url = null;
+
+		if ( is_null( $license_site_url ) ) {
+			$license_site_url = new LicenseSiteUrl();
+		}
+
+		return $license_site_url;
 	}
 
 	/**

@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin;
 
+use WPMailSMTP\PartnerPlugins\Plugins\ActiveLayer;
 use WPMailSMTP\WP;
 
 /**
@@ -10,29 +11,28 @@ use WPMailSMTP\WP;
  * Renders a WooCommerce-native card after the account settings block that helps
  * store owners install, activate, and connect the free ActiveLayer anti-spam
  * plugin. Install and activation reuse the shared plugin installer exposed by
- * the wp_mail_smtp_ajax dispatcher (Pages\AboutTab), so no install plumbing is
- * duplicated here.
+ * the wp_mail_smtp_ajax dispatcher, so no install plumbing is duplicated here.
  *
  * @since 4.9.0
  */
 class WooCommerceActiveLayerEducation {
 
 	/**
-	 * ActiveLayer plugin basename (folder/file), used for install and activation checks.
+	 * ActiveLayer plugin basename.
 	 *
 	 * @since 4.9.0
 	 */
-	const PLUGIN_BASENAME = 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php';
+	const PLUGIN_BASENAME = ActiveLayer::BASENAME;
 
 	/**
-	 * ActiveLayer WordPress.org download URL. Whitelisted in Pages\AboutTab::get_am_plugins().
+	 * ActiveLayer WordPress.org download URL.
 	 *
 	 * @since 4.9.0
 	 */
-	const DOWNLOAD_URL = 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip';
+	const DOWNLOAD_URL = ActiveLayer::DOWNLOAD_URL;
 
 	/**
-	 * ActiveLayer WordPress.org plugin page (manual fallback).
+	 * ActiveLayer WordPress.org plugin page.
 	 *
 	 * @since 4.9.0
 	 */
@@ -80,11 +80,25 @@ class WooCommerceActiveLayerEducation {
 	 */
 	private function is_activelayer_active() {
 
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		return $this->get_plugin()->is_active();
+	}
+
+	/**
+	 * The ActiveLayer plugin.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return ActiveLayer
+	 */
+	private function get_plugin() {
+
+		static $plugin;
+
+		if ( $plugin === null ) {
+			$plugin = new ActiveLayer();
 		}
 
-		return is_plugin_active( self::PLUGIN_BASENAME );
+		return $plugin;
 	}
 
 	/**
@@ -96,23 +110,7 @@ class WooCommerceActiveLayerEducation {
 	 */
 	private function is_activelayer_installed() {
 
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		return array_key_exists( self::PLUGIN_BASENAME, get_plugins() );
-	}
-
-	/**
-	 * Whether the current user can install plugins on this site.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool
-	 */
-	private function can_install() {
-
-		return current_user_can( 'install_plugins' ) && wp_is_file_mod_allowed( 'wp_mail_smtp_can_install' );
+		return $this->get_plugin()->is_installed();
 	}
 
 	/**
@@ -175,7 +173,7 @@ class WooCommerceActiveLayerEducation {
 	 *
 	 * @since 4.9.0
 	 *
-	 * @return string One of 'install', 'activate', 'goto-url', 'connect', 'connected', or '' to hide.
+	 * @return string One of 'install', 'activate', 'connect', 'connected', or '' to hide.
 	 */
 	private function get_state() {
 
@@ -183,23 +181,13 @@ class WooCommerceActiveLayerEducation {
 			return $this->is_api_key_connected() ? 'connected' : 'connect';
 		}
 
-		$is_installed = $this->is_activelayer_installed();
-
-		if ( ! $is_installed && $this->can_install() ) {
-			return 'install';
+		// This section is a guest on the WooCommerce settings page, with no modal of ours
+		// to explain a refusal.
+		if ( ! $this->get_plugin()->current_user_can_install_or_activate() ) {
+			return '';
 		}
 
-		if ( $is_installed && current_user_can( 'activate_plugins' ) ) {
-			return 'activate';
-		}
-
-		// Admins who cannot run the installer (file mods locked) can still follow a link.
-		if ( current_user_can( 'install_plugins' ) ) {
-			return 'goto-url';
-		}
-
-		// Users who cannot act at all (e.g. shop managers) get no dead-end card.
-		return '';
+		return $this->is_activelayer_installed() ? 'activate' : 'install';
 	}
 
 	/**
@@ -305,24 +293,14 @@ class WooCommerceActiveLayerEducation {
 			return;
 		}
 
-		if ( $state === 'install' ) {
-			$action      = 'install';
-			$button_text = esc_html__( 'Install & Activate ActiveLayer', 'wp-mail-smtp' );
-			$button_url  = '';
-		} elseif ( $state === 'activate' ) {
-			$action      = 'activate';
-			$button_text = esc_html__( 'Activate ActiveLayer', 'wp-mail-smtp' );
-			$button_url  = '';
-		} else {
-			$action      = 'goto-url';
-			$button_text = esc_html__( 'Get ActiveLayer', 'wp-mail-smtp' );
-			$button_url  = self::WPORG_URL;
-		}
+		$button_text = $state === 'install'
+			? esc_html__( 'Install & Activate ActiveLayer', 'wp-mail-smtp' )
+			: esc_html__( 'Activate ActiveLayer', 'wp-mail-smtp' );
 		?>
 		<p class="wpms-activelayer-wc__description">
 			<?php echo esc_html__( 'Blocks bot signups and review spam on My Account, checkout, and product reviews. No CAPTCHA anywhere on the path to purchase. Free plugin from WordPress.org, with 1,000 free spam checks and no credit card required.', 'wp-mail-smtp' ); ?>
 		</p>
-		<button type="button" class="wpms-activelayer-wc__cta wp-mail-smtp-activelayer-button" data-action="<?php echo esc_attr( $action ); ?>" data-url="<?php echo esc_url( $button_url ); ?>">
+		<button type="button" class="wpms-activelayer-wc__cta wp-mail-smtp-activelayer-button" data-action="<?php echo esc_attr( $state ); ?>" data-url="">
 			<?php echo esc_html( $button_text ); ?>
 		</button>
 		<?php
@@ -351,7 +329,7 @@ class WooCommerceActiveLayerEducation {
 
 		wp_enqueue_style(
 			'wp-mail-smtp-activelayer-wc',
-			wp_mail_smtp()->assets_url . '/css/smtp-activelayer-wc' . WP::asset_min() . '.css',
+			wp_mail_smtp()->assets_url . '/css/smtp-activelayer-wc.min.css',
 			[],
 			WPMS_PLUGIN_VER
 		);
@@ -370,10 +348,10 @@ class WooCommerceActiveLayerEducation {
 			[
 				'ajax_url'        => admin_url( 'admin-ajax.php' ),
 				'nonce'           => wp_create_nonce( 'wp-mail-smtp-admin' ),
-				'plugin'          => self::PLUGIN_BASENAME,
-				'download_url'    => self::DOWNLOAD_URL,
+				'plugin'          => $this->get_plugin()->get_basename(),
+				'download_url'    => $this->get_plugin()->get_download_url(),
 				'settings_url'    => $this->get_settings_url(),
-				'wporg_url'       => self::WPORG_URL,
+				'wporg_url'       => $this->get_plugin()->get_wporg_url(),
 				'installing'      => esc_html__( 'Installing...', 'wp-mail-smtp' ),
 				'activating'      => esc_html__( 'Activating...', 'wp-mail-smtp' ),
 				'goto_settings'   => esc_html__( 'Connect Your Free Account', 'wp-mail-smtp' ),

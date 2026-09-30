@@ -1,0 +1,218 @@
+// Dashboard presentation primitives: overlay-over-teaser, grouped row list and the
+// dismissible notice card. They build on the shared components in _shared-components.scss.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	// Overlay over a teaser.
+	.wpms-dashboard-overlay-container {
+		position: relative;
+	}
+
+	.wpms-dashboard-teaser {
+		// Decorative only: no pointer events, no text selection, no tab stops.
+		pointer-events: none;
+		user-select: none;
+		opacity: 0.35;
+
+		// Blocked out so the inline baseline gap does not pad the teaser past the height
+		// its artwork declares. The artwork stretches to the card the way the live chart
+		// it stands in for does, rather than being letterboxed inside it.
+		img,
+		svg {
+			display: block;
+			width: 100%;
+			height: 303px;
+			object-fit: fill;
+		}
+	}
+
+	.wpms-dashboard-overlay {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		z-index: 2;
+		box-sizing: border-box;
+		width: min( 450px, 90% );
+		padding: var( --wpms-spacing-lg );
+		border: 1px solid var( --wpms-color-surface-border );
+		border-radius: var( --wpms-radius-cards );
+		background-color: var( --wpms-color-surface-background-white );
+		box-shadow: var( --wpms-shadow-2 );
+		text-align: center;
+
+		// The disclaimer band runs to the card's edges, so the card clips it to its radius.
+		overflow: hidden;
+
+		&__title {
+			margin: 0 0 var( --wpms-spacing-sm );
+			font-size: 22px;
+			font-weight: 500;
+			line-height: normal;
+			color: var( --wpms-text-primary );
+		}
+
+		&__text {
+			margin: 0 0 var( --wpms-spacing-md );
+			font-size: $dashboard-font-size-s;
+			line-height: 20px;
+			color: var( --wpms-color-secondary );
+		}
+
+		&__disclaimer {
+			margin: var( --wpms-spacing-md ) calc( var( --wpms-spacing-lg ) * -1 ) calc( var( --wpms-spacing-lg ) * -1 );
+			padding: var( --wpms-spacing-md ) var( --wpms-spacing-lg );
+			background-color: var( --wpms-color-surface-background-light );
+			font-size: $dashboard-font-size-s;
+			line-height: 20px;
+			color: var( --wpms-text-icon );
+		}
+	}
+
+	// Grouped row list.
+	.wpms-dashboard-row-group {
+
+		&__label {
+			margin: 0 0 var( --wpms-spacing-sm );
+			font-size: $dashboard-font-size-s;
+			font-weight: 500;
+			line-height: normal;
+			color: var( --wpms-color-primary );
+		}
+
+		&__row {
+			display: flex;
+			align-items: center;
+			gap: 13px;
+			box-sizing: border-box;
+			padding: 12px var( --wpms-padding-16 );
+			border: 1px solid var( --wpms-color-surface-divider );
+			border-radius: var( --wpms-radius-6 );
+
+			&--locked {
+				background-color: var( --wpms-color-surface-background-light );
+			}
+		}
+
+		// The dashed box frames the placeholder glyph for a row with nothing connected
+		// yet. A real mailer logo stands on its own.
+		&__icon:not( :has( img ) ) {
+			border: 1px dashed var( --wpms-color-surface-divider );
+		}
+
+		&__info {
+			display: flex;
+			flex: 1 1 auto;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 0;
+		}
+
+		&__title {
+			overflow: hidden;
+			font-size: $dashboard-font-size-s;
+			line-height: 20px;
+			color: var( --wpms-color-primary );
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		// The status line stays tertiary in every state; only its glyph carries the
+		// severity colour, which is how the design distinguishes them.
+		&__subtitle {
+			display: inline-flex;
+			align-items: center;
+			gap: $dashboard-spacing-xs;
+			font-size: $dashboard-font-size-xs;
+			line-height: 17px;
+			color: var( --wpms-color-tertiary );
+		}
+
+		&__status {
+			flex: 0 0 auto;
+		}
+
+		&__action {
+			flex: 0 0 auto;
+		}
+	}
+
+	// Row spacing. A flat adjacent-sibling selector, not `& + &`: nested two levels
+	// under .wpms-dashboard-page, `&` used twice in one selector doubles the whole
+	// ancestor chain into a selector that can never match (same failure mode as the
+	// severity dots below). `:not( :first-child )` is not a substitute here: the group's
+	// own label renders as the row group's first child, so it would put this margin on
+	// the first row too.
+	.wpms-dashboard-row-group__row + .wpms-dashboard-row-group__row {
+		margin-top: var( --wpms-spacing-sm );
+	}
+
+	// Row-group severity, on the glyph only. Written as flat, single-ancestor selectors
+	// (not nested inside .wpms-dashboard-row-group) so compiling `&` twice can't double
+	// the ancestor.
+	.wpms-dashboard-row-group__row--connected .wpms-dashboard-row-group__status {
+		color: var( --wpms-text-success );
+	}
+
+	.wpms-dashboard-row-group__row--domain-warning .wpms-dashboard-row-group__status {
+		color: var( --wpms-color-utility-yellow-50 );
+	}
+
+	.wpms-dashboard-row-group__row--mailer-error .wpms-dashboard-row-group__status,
+	.wpms-dashboard-row-group__row--setup-incomplete .wpms-dashboard-row-group__status {
+		color: var( --wpms-text-error );
+	}
+
+	// Dismissible notice card, rendered by InlineCards::render_inline_cards() inside a
+	// host widget's body.
+	.wpms-dashboard-notice {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-md );
+		box-sizing: border-box;
+		padding: var( --wpms-spacing-md );
+		border-radius: var( --wpms-radius-6 );
+		background-color: var( --wpms-color-surface-background-light );
+
+		&__body {
+			display: flex;
+			flex: 1 1 auto;
+			flex-direction: column;
+			gap: $dashboard-spacing-xs;
+			min-width: 0;
+			padding-right: $dashboard-spacing-xl;
+		}
+
+		&__title {
+			margin: 0;
+			font-size: $dashboard-font-size-s;
+			font-weight: 500;
+			line-height: 20px;
+			color: var( --wpms-color-primary );
+		}
+
+		// The message and its CTA share a row, wrapping only when they must.
+		&__message {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: $dashboard-spacing-xs;
+		}
+
+		&__text {
+			margin: 0;
+			font-size: $dashboard-font-size-s;
+			line-height: normal;
+			color: var( --wpms-color-secondary );
+		}
+
+		&__dismiss {
+			position: absolute;
+			top: var( --wpms-spacing-md );
+			right: var( --wpms-spacing-md );
+		}
+	}
+}

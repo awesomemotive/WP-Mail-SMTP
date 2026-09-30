@@ -1,0 +1,160 @@
+// Single source of truth for design tokens: prefixed --wpms-* CSS custom properties
+// consumed by BOTH Tailwind (via @theme inline in tailwind-theme-admin.css) and
+// BEM/hand-written CSS (via var(--wpms-*) directly).
+//
+// The --wpms-* prefix avoids collisions with WordPress core and other plugins that emit
+// their own :root custom properties.
+//
+// Grouped by what each token is, and within a group the raw values come before the
+// aliases that point at them. Values mirror the design system's own token files, and the
+// semantic-to-primitive aliasing is kept rather than flattened to hex, so a primitive
+// change still propagates the way the design system intends.
+//
+// This is also the admin surface's token layer named by .design/project.json, so the
+// design pipeline checks it before appending a token a design references. Keep the
+// declarations here rather than behind an @import: that check reads this file's own text,
+// and anything it can't see it appends again as a duplicate. An appended token lands at
+// the end of this block; move it into its group.
+
+:root {
+
+	// Palette.
+	--wpms-color-brand-blue-50: #056aab;
+	--wpms-color-brand-blue-70: #04558a;
+	--wpms-color-neutral-white: #ffffff;
+	--wpms-color-neutral-3: #f0f0f1;
+	--wpms-color-neutral-40: #8c8f94;
+	--wpms-color-neutral-50: #646970;
+	--wpms-color-neutral-80: #2c3338;
+	--wpms-color-neutral-90: #1d2327;
+	--wpms-color-gray-700: #374151;
+	--wpms-color-gray-900: #111827;
+	--wpms-color-utility-orange-0: #fdf2eb;
+	--wpms-color-utility-orange-50: #e27730;
+	--wpms-color-utility-red-0: #fcf0f1;
+	--wpms-color-utility-red-30: #f86368;
+	--wpms-color-utility-red-50: #d63638;
+	--wpms-color-utility-green-0: #edfaef;
+	--wpms-color-utility-green-50: #00ba37;
+	--wpms-color-utility-blue-0: #e5f4fe;
+	--wpms-color-utility-blue-50: #0399ed;
+	--wpms-color-utility-yellow-0: #fcf9e8;
+	--wpms-color-utility-yellow-30: #f2d675;
+	--wpms-color-utility-yellow-50: #dba617;
+	--wpms-color-brand-orange-50: #e27730;
+	--wpms-color-neutral-5: #dcdcde;
+	--wpms-color-neutral-10: #c3c4c7;
+	--wpms-color-neutral-30: #8c8f94;
+	--wpms-color-neutral-90: #1d2327;
+	--wpms-color-utility-red-0: #fcf0f1;
+	--wpms-color-utility-green-30: #00ba37;
+	--wpms-color-utility-green-70: #007017;
+	--wpms-color-utility-blue-bright-0: #e5f4fe;
+	--wpms-color-utility-blue-bright-30: #30abf0;
+
+	// Named colors, from before the palette above existed.
+	--wpms-color-primary: #2c3338;
+	--wpms-color-secondary: #50575e;
+	--wpms-color-tertiary: #646970;
+	--wpms-color-link: #056aab;
+	--wpms-color-success: #008a20;
+	--wpms-color-error: #d63638;
+	--wpms-color-surface-background-white: #ffffff;
+	--wpms-color-surface-background-light: #f7f7f7;
+	--wpms-color-surface-divider: #dcdcde;
+	--wpms-color-surface-border: #c3c4c7;
+
+	// Brand.
+	--wpms-brand-secondary: var(--wpms-color-brand-blue-50);
+	--wpms-brand-secondary--hover: var(--wpms-color-brand-blue-70);
+	--wpms-brand-primary: var(--wpms-color-brand-orange-50);
+
+	// Text.
+	--wpms-text-title: #101517;
+	--wpms-text-heading: var(--wpms-color-neutral-90);
+	--wpms-text-primary: var(--wpms-color-neutral-80);
+	--wpms-text-secondary: #50575e;
+	--wpms-text-tertiary: var(--wpms-color-neutral-50);
+	--wpms-text-link: var(--wpms-brand-secondary);
+	--wpms-text-link--hover: var(--wpms-brand-secondary--hover);
+	--wpms-text-icon: #a7aaad;
+	--wpms-text-icon--hover: var(--wpms-color-neutral-50);
+	--wpms-text-success: #008a20;
+	--wpms-text-error: var(--wpms-color-utility-red-50);
+	--wpms-text-heading: var(--wpms-color-neutral-90);
+
+	// Surface.
+	--wpms-surface-background-white: var(--wpms-color-neutral-white);
+	--wpms-surface-border: var(--wpms-color-neutral-10);
+	--wpms-surface-divider: var(--wpms-color-neutral-5);
+
+	// Components.
+	--wpms-components-field-border-error: var(--wpms-color-utility-red-50);
+	--wpms-components-badge-blue-background: var(--wpms-color-utility-blue-bright-0);
+	--wpms-components-badge-blue-text: var(--wpms-color-utility-blue-bright-30);
+
+	// Spacing.
+	--wpms-spacing-5: 5px;
+	--wpms-spacing-10: 10px;
+	--wpms-spacing-20: 20px;
+	--wpms-spacing-sm: 10px;
+	--wpms-spacing-md: 20px;
+	--wpms-spacing-lg: 30px;
+	--wpms-padding-16: 16px;
+	--wpms-padding-32: 32px;
+	--wpms-spacing-5: 5px;
+	--wpms-spacing-15: 15px;
+	--wpms-spacing-25: 25px;
+	--wpms-spacing-30: 30px;
+	--wpms-spacing-50: 50px;
+	--wpms-padding-4: 4px;
+	--wpms-padding-8: 8px;
+	--wpms-padding-12: 12px;
+	--wpms-padding-20: 20px;
+
+	// Radius.
+	--wpms-radius-6: 6px;
+	--wpms-radius-table: 4px;
+	--wpms-radius-modals: var(--wpms-radius-6);
+	--wpms-radius-4: 4px;
+	--wpms-radius-10: 10px;
+	--wpms-radius-100: 100px;
+	--wpms-radius-cards: var(--wpms-radius-10);
+	--wpms-radius-full: var(--wpms-radius-100);
+
+	// Shadows.
+	--wpms-shadow-2: 0 5px 15px rgba(0, 0, 0, 0.15);
+	--wpms-shadow-subtle: 0 2px 4px 0 rgba(0, 0, 0, 0.07);
+	--wpms-shadow-soft: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+	--wpms-shadow-1: 0 2px 4px rgba(0, 0, 0, 0.07);
+
+	// Typography.
+	--wpms-typography-font-size-14: 14px;
+	--wpms-typography-font-size-16: 16px;
+	--wpms-typography-font-size-18: 18px;
+	--wpms-typography-font-size-24: 24px;
+	--wpms-typography-font-weight-regular: 400;
+	--wpms-typography-font-weight-medium: 500;
+	--wpms-typography-font-weight-bold: 700;
+	--wpms-typography-line-height-tight: 1;
+	--wpms-typography-line-height-normal: 1.4;
+	--wpms-typography-font-size-10: 10px;
+	--wpms-typography-font-size-12: 12px;
+	--wpms-typography-line-height-snug: 1.2;
+	--wpms-typography-letter-spacing-percent-5: 0.05em;
+
+	// The design's auto/"normal" line height is 1.2; Tailwind's stock `leading-normal`
+	// is 1.5, so this redefines it. Distinct from the 1.4 above, which is the design
+	// system's own `line-height/normal`.
+	--wpms-leading-normal: 1.2;
+
+	// Transitions.
+	--wpms-transition-normal: 0.15s;
+	--wpms-transition-slower: 0.4s;
+	--wpms-transition-slowest: 0.5s;
+
+	// Breakpoints are intentionally NOT defined here: they're build-time SCSS-only
+	// (used by include-media mixins) and media queries can't resolve runtime custom
+	// properties. Breakpoint values live in _variables.scss and (literal) in
+	// tailwind-theme-admin.css.
+}

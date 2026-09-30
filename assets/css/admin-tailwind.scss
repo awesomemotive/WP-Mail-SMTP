@@ -1,0 +1,14 @@
+// admin Tailwind bundle — tokens only. The build prepends tailwind-theme-admin.css (the
+// Tailwind directives) and runs @tailwindcss/postcss.
+
+@import 'tokens-admin';
+
+// Emit no CSS; imported so the recipes below can reach the shared mixins.
+@import 'variables';
+@import 'mixins';
+
+// Ported design-system recipes. The `wpms-components` layer is declared in
+// `_reset.scss`; the DS sources ship `@layer wp-mail-smtp`, which this plugin never
+// declares, so the layer name is corrected on port. A re-port reintroduces it.
+@import 'components/admin/license-key-card';
+@import 'components/admin/upgrade-modal';

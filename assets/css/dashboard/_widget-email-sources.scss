@@ -1,0 +1,128 @@
+// Dashboard "Email Sources" widget (Pro): a donut chart beside a table of the same rows.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	// The design splits the widget in half: table on one side, donut panel on the other,
+	// both the same height.
+	.wpms-dashboard-widget-email-sources-body {
+		display: flex;
+		align-items: stretch;
+		gap: var( --wpms-spacing-md );
+	}
+
+	// Not an even split: the design gives the table 388 of the 756px left once the gap is
+	// taken, and the donut panel 368. Sized with an explicit basis rather than a grow
+	// ratio, which a table flex item's own intrinsic width pulls back towards half.
+	.wpms-dashboard-widget-email-sources-table {
+		flex: 0 0 calc( ( 100% - var( --wpms-spacing-md ) ) * 388 / 756 );
+		min-width: 0;
+
+		// Top-aligned rather than stretched: a table handed extra height spreads it
+		// across its rows, so a single row would grow to the donut panel's height. The
+		// panel still stretches to whichever side is taller.
+		align-self: flex-start;
+
+		// The design's column widths are absolute in a 388px table; as shares of it they
+		// survive the widget being any width.
+		.wpms-dashboard-widget-email-sources-col-source {
+			width: 36%;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.wpms-dashboard-widget-email-sources-col-share,
+		.wpms-dashboard-widget-email-sources-col-total {
+			width: 32%;
+			white-space: nowrap;
+			text-align: center;
+		}
+	}
+
+	.wpms-dashboard-widget-email-sources-dot {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		margin-inline-end: var( --wpms-spacing-sm );
+		border-radius: 50%;
+	}
+
+	// The donut's own panel, set off from the table on a tinted ground.
+	.wpms-dashboard-widget-email-sources-chart {
+		display: flex;
+		flex: 0 0 calc( ( 100% - var( --wpms-spacing-md ) ) * 368 / 756 );
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		padding: var( --wpms-spacing-md );
+		border-radius: var( --wpms-radius-6 );
+		background-color: var( --wpms-color-surface-background-light );
+	}
+
+	// The ring fills the panel's inner box, squared off against whichever side is
+	// shorter, which is how the design draws it beside a five-row table.
+	.wpms-dashboard-widget-email-sources-chart-canvas {
+		position: relative;
+		width: 100%;
+		max-width: 229px;
+		aspect-ratio: 1;
+
+		// The chart runs with `maintainAspectRatio: false`, so it sizes the canvas from
+		// this box. Out of flow, the pixel height it writes back cannot then stretch the
+		// box past its own square ratio, which would otherwise leave the two measuring
+		// each other.
+		.wpms-dashboard-widget-email-sources-donut {
+			position: absolute;
+			inset: 0;
+		}
+	}
+
+	// Decorative stand-in for the real Chart.js donut, teaser-only: a plain conic
+	// gradient masked into a ring, since the teaser never runs the JS module.
+	.wpms-dashboard-widget-email-sources-donut-teaser {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		background: conic-gradient(
+			#056aab 0% 42%,
+			#00a0d2 42% 73%,
+			#72aee6 73% 81%,
+			#c5e1f9 81% 89%,
+			#d4d4d4 89% 100%
+		);
+		mask: radial-gradient( farthest-side, transparent 0 49%, #000 50% 100% );
+	}
+
+	.wpms-dashboard-widget-email-sources-chart-center {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.wpms-dashboard-widget-email-sources-chart-total {
+		font-size: 28px;
+		font-weight: 500;
+		line-height: normal;
+		color: var( --wpms-text-primary );
+	}
+
+	.wpms-dashboard-widget-email-sources-chart-caption {
+		font-size: $dashboard-font-size-ss;
+		color: var( --wpms-color-tertiary );
+	}
+
+	// Below the tablet width the sidebar column narrows enough that the donut and the
+	// table crowd each other; stack them instead of shrinking either.
+	@media ( max-width: 1024px ) {
+
+		.wpms-dashboard-widget-email-sources-body {
+			flex-direction: column;
+		}
+	}
+}

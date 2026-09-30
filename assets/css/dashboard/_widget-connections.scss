@@ -1,0 +1,14 @@
+// Dashboard "Connections" widget. The rows, groups and mailer-logo icons are shared
+// dashboard primitives (row-group, btn); only the trailing action is local.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	// The action sits on the card's own ground rather than in a footer band. The body's
+	// own gap spaces it, and the paragraph keeps the button hugging its label instead of
+	// stretching across the column.
+	.wpms-dashboard-connections__action {
+		margin: 0;
+	}
+}

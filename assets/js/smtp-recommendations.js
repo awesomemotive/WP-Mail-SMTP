@@ -107,11 +107,16 @@ WPMailSMTPRecommendations.plugin_page = ( function( document, window, $ ) {
 		stepInstallClick: ( e ) => {
 			const $btn = $( e.currentTarget );
 
+			if ( window.WPMailSMTP.Admin.Settings.pluginInstall.takeManualRoute( $btn ) ) {
+				return;
+			}
+
 			if ( $btn.hasClass( 'disabled' ) ) {
 				return;
 			}
 
 			const action = $btn.attr( 'data-action' );
+			const originalLabel = $btn.html();
 
 			let task = '';
 
@@ -125,10 +130,6 @@ WPMailSMTPRecommendations.plugin_page = ( function( document, window, $ ) {
 					task = 'about_plugin_install';
 					$btn.html( wp_mail_smtp_recommendations.plugin_page.installing );
 					break;
-
-				case 'goto-url':
-					window.location.href = $btn.attr( 'data-url' );
-					return;
 
 				default:
 					return;
@@ -144,10 +145,11 @@ WPMailSMTPRecommendations.plugin_page = ( function( document, window, $ ) {
 				task,
 				nonce : wp_mail_smtp.nonce,
 				plugin,
+				source: 'recommendations',
 			};
 			$.post( wp_mail_smtp.ajax_url, data )
 				.done( function( res ) {
-					app.stepInstallDone( res, $btn, action );
+					app.stepInstallDone( res, $btn, action, originalLabel );
 				} )
 				.always( function() {
 					app.hideSpinner( el.$stepInstallNum );
@@ -159,28 +161,39 @@ WPMailSMTPRecommendations.plugin_page = ( function( document, window, $ ) {
 		 *
 		 * @since 4.9.0
 		 *
-		 * @param {object} res    Result of $.post() query.
-		 * @param {jQuery} $btn   Button.
-		 * @param {string} action Action (for more info look at the app.stepInstallClick() function).
+		 * @param {object} res           Result of $.post() query.
+		 * @param {jQuery} $btn          Button.
+		 * @param {string} action        Action (for more info look at the app.stepInstallClick() function).
+		 * @param {string} originalLabel The button label to restore on failure.
 		 */
-		stepInstallDone: ( res, $btn, action ) => { // eslint-disable-line complexity
-			const success = 'install' === action ? res.success && res.data.is_activated : res.success,
-				provider = $btn.data( 'provider' );
+		stepInstallDone: ( res, $btn, action, originalLabel ) => { // eslint-disable-line complexity
+			const provider = $btn.data( 'provider' );
 
-			if ( success ) {
+			if ( 'install' === action && res.success && ! res.data.is_activated ) {
+				$btn
+					.removeClass( 'grey disabled' )
+					.html( wp_mail_smtp_recommendations.plugin_page.activate_now )
+					.attr( 'data-action', 'activate' )
+					.attr( 'data-plugin', res.data.basename );
+
+				return;
+			}
+
+			if ( res.success ) {
 				el.$stepInstallNum.attr( 'src', el.$stepInstallNum.attr( 'src' ).replace( 'step-1.', 'complete.' ) );
 				$btn.addClass( 'grey' ).removeClass( 'button-primary' ).html( wp_mail_smtp_recommendations.plugin_page.activated );
 				app.stepInstallPluginStatus( provider );
 			} else {
-				const activationFail = ( 'install' === action && res.success && ! res.data.is_activated ) || 'activate' === action,
-					installUrl = wp_mail_smtp_recommendations.plugin_page[ provider + '_manual_install_url' ] || '',
-					activateUrl = wp_mail_smtp_recommendations.plugin_page[ provider + '_manual_activate_url' ] || '',
-					url = ! activationFail ? installUrl : activateUrl,
-					msg = ! activationFail ? wp_mail_smtp_recommendations.plugin_page.error_could_not_install : wp_mail_smtp_recommendations.plugin_page.error_could_not_activate,
-					btn = ! activationFail ? wp_mail_smtp_recommendations.plugin_page.download_now : wp_mail_smtp_recommendations.plugin_page.plugins_page;
+				const settings = window.WPMailSMTP.Admin.Settings,
+					manualUrl = settings.extractAjaxManualUrl( res ),
+					fallbackMsg = 'activate' === action ?
+						wp_mail_smtp_recommendations.plugin_page.error_could_not_activate :
+						wp_mail_smtp_recommendations.plugin_page.error_could_not_install;
 
-				$btn.removeClass( 'grey disabled' ).html( btn ).attr( 'data-action', 'goto-url' ).attr( 'data-url', url );
-				$btn.after( '<p class="error">' + msg + '</p>' );
+				$btn.removeClass( 'grey disabled' ).html( originalLabel );
+
+				settings.pluginInstall.offerManualRoute( $btn, manualUrl );
+				settings.pluginInstall.showErrorModal( settings.extractAjaxError( res, fallbackMsg ), manualUrl );
 			}
 		},
 

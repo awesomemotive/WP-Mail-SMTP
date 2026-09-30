@@ -1,0 +1,379 @@
+/**
+ * Components the Setup Checklist and the Dashboard share.
+ *
+ * Imported by each page's own stylesheet, at the top so the page's rules come after.
+ *
+ * `.wp-mail-smtp-page` keeps every component at two class levels, which is what lets the
+ * Checklist's `#wp-mail-smtp` rules win on specificity and the Dashboard's
+ * `.wpms-dashboard-page` rules win on order, without an id or an `!important` either
+ * side. Both sheets load after smtp-admin.css, so a component also outranks that sheet's
+ * generic `.wp-mail-smtp-page a` link colour.
+ *
+ * Unlayered, like both page sheets: a layered rule can never outrank the unlayered
+ * admin rules that reach these pages.
+ *
+ * @since {VERSION}
+ */
+
+// Every CTA on these two pages carries a glyph beside its label, so the plugin's
+// inline-block button becomes a flex row with a gap. Listed per page rather than put on
+// `.wp-mail-smtp-page`, which would reach every other admin page's buttons too.
+.wpms-setup-checklist,
+.wpms-dashboard-page {
+
+	.wp-mail-smtp-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var( --wpms-spacing-sm );
+	}
+}
+
+.wp-mail-smtp-page {
+
+	// Card: the shell a page section, a promo section and a Dashboard widget all sit in.
+	.wpms-card {
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		overflow: hidden;
+		background-color: var( --wpms-color-surface-background-white );
+		border: 1px solid var( --wpms-color-surface-border );
+		border-radius: var( --wpms-radius-cards );
+		box-shadow: var( --wpms-shadow-subtle );
+
+		&__head {
+			box-sizing: border-box;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var( --wpms-spacing-15 );
+			min-height: 60px;
+			padding: var( --wpms-spacing-md );
+			background-color: var( --wpms-color-surface-background-white );
+		}
+
+		// The same 20px line box the text links use, so a head's height comes from its
+		// padding and min-height rather than from whatever the font resolves `normal` to.
+		&__title {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 20px;
+			color: var( --wpms-color-primary );
+
+			// A Dashboard widget's title is a step smaller and heavier than a page
+			// section's.
+			&--widget {
+				font-size: 16px;
+				font-weight: 700;
+				color: var( --wpms-text-heading );
+			}
+		}
+
+		// Footer: a card's bottom band, helper text at one edge and the actions at the
+		// other, on its own tinted ground.
+		&__footer {
+			box-sizing: border-box;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: var( --wpms-spacing-md );
+			width: 100%;
+			padding: var( --wpms-padding-16 ) var( --wpms-spacing-lg );
+			border-top: 1px solid var( --wpms-color-surface-divider );
+			background-color: var( --wpms-color-surface-background-light );
+
+			&-text {
+				margin: 0;
+				font-size: 14px;
+				line-height: 1.5;
+				color: var( --wpms-color-tertiary );
+			}
+
+			&-actions {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: var( --wpms-spacing-sm );
+				margin-inline-start: auto;
+			}
+
+			// Discount chip, sitting beside the CTA on an upgrade footer.
+			&-chip {
+				display: inline-flex;
+				align-items: center;
+				gap: 7px;
+				font-size: 14px;
+				font-weight: 500;
+				color: var( --wpms-color-tertiary );
+			}
+
+			&-chip-icon,
+			&-chip-amount {
+				color: var( --wpms-color-success );
+			}
+
+			&-chip-amount {
+				font-weight: 700;
+			}
+
+			&-cta {
+				flex-shrink: 0;
+			}
+
+			// Narrow screens: the copy and the actions each take their own row.
+			@media ( max-width: 782px ) {
+				flex-direction: column;
+				align-items: flex-start;
+
+				.wpms-card__footer-actions {
+					flex-direction: column;
+					align-items: flex-start;
+					width: 100%;
+					margin-inline-start: 0;
+				}
+
+				.wpms-card__footer-cta {
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	// Status badge: an uppercase pill carrying a section's completion state. The resting
+	// look is the incomplete one, so only completion needs a modifier.
+	.wpms-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 2px var( --wpms-padding-8 );
+		border-radius: var( --wpms-radius-4 );
+		background-color: var( --wpms-color-neutral-3 );
+		font-size: 10px;
+		font-weight: 700;
+		line-height: 16px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var( --wpms-color-neutral-40 );
+
+		&--complete {
+			background-color: var( --wpms-color-utility-green-0 );
+			color: var( --wpms-color-success );
+		}
+
+		// A step down, for the Dashboard's sidebar group headers.
+		&--sm {
+			padding: 6px var( --wpms-padding-8 );
+			font-size: 8px;
+			line-height: 10px;
+			letter-spacing: 0.4px;
+		}
+	}
+
+	// Bare glyph button: a control that is only its icon, with no box of its own. The
+	// glyph's size comes from the Iconify utilities on the icon itself.
+	.wpms-icon-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		border: 0;
+		background: none;
+		line-height: 1;
+		color: var( --wpms-text-icon );
+		cursor: pointer;
+		transition: color var( --wpms-transition-normal ) ease-in-out;
+
+		&:hover,
+		&:focus {
+			color: var( --wpms-color-primary );
+		}
+	}
+
+	// Icon tile: the square a glyph, mailer logo or brand mark sits in.
+	.wpms-icon-tile {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 40px;
+		height: 40px;
+		border-radius: var( --wpms-radius-6 );
+		line-height: 1;
+		color: var( --wpms-text-icon );
+
+		img,
+		svg {
+			display: block;
+			max-width: 100%;
+			max-height: 100%;
+		}
+
+		&--sm {
+			width: 24px;
+			height: 24px;
+		}
+
+		&--md {
+			width: 30px;
+			height: 30px;
+		}
+
+		// The largest tile insets its artwork rather than letting it fill the frame.
+		&--lg {
+			width: 64px;
+			height: 64px;
+
+			img {
+				width: 40px;
+				height: 40px;
+				object-fit: contain;
+			}
+		}
+
+		// A tinted ground, under a glyph that carries the same hue.
+		&--tint {
+			background-color: var( --wpms-color-utility-orange-0 );
+		}
+
+		// A raised white ground, for artwork that needs separating from the card.
+		&--framed {
+			border: 1px solid var( --wpms-color-surface-divider );
+			background-color: var( --wpms-color-surface-background-white );
+			box-shadow: var( --wpms-shadow-subtle );
+		}
+
+		&--accent {
+			color: var( --wpms-color-utility-orange-50 );
+		}
+	}
+
+	// Text link: the blue action a row, tile or card ends with, underlined at rest.
+	.wpms-text-link {
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+		color: var( --wpms-text-link );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --wpms-text-link--hover );
+		}
+
+		// A step down, and the one size without the 20px line box: it shares a line with
+		// a metric or sits inside a message row, either of which a 20px box would grow.
+		&--xs {
+			font-size: 12px;
+			line-height: normal;
+		}
+
+		// A step up, for a link that ends a card rather than a row.
+		&--md {
+			font-size: 14px;
+		}
+
+		// Trailing glyph: the underline moves to the label so it never runs under it.
+		&--arrow {
+			display: inline-flex;
+			align-items: center;
+			gap: var( --wpms-padding-4 );
+			text-decoration: none;
+		}
+
+		&__label {
+			text-decoration: underline;
+		}
+
+		&__icon {
+
+			.rtl & {
+				transform: scaleX( -1 );
+			}
+		}
+
+		// An install CTA mid-request.
+		&.is-loading {
+			opacity: 0.6;
+			pointer-events: none;
+		}
+
+		// An install CTA that has finished: nothing left to click, so it reads as a
+		// label beside its check glyph.
+		&.is-active {
+			display: inline-flex;
+			align-items: center;
+			gap: var( --wpms-padding-4 );
+			color: var( --wpms-color-tertiary );
+			text-decoration: none;
+			cursor: default;
+
+			&:hover,
+			&:focus {
+				color: var( --wpms-color-tertiary );
+			}
+		}
+	}
+
+	// Muted link: a list row that stays quiet until hover, glyph and label together.
+	.wpms-muted-link {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-sm );
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 20px;
+		color: var( --wpms-color-tertiary );
+		text-decoration: none;
+		transition: color var( --wpms-transition-normal ) ease-in-out;
+
+		&:hover,
+		&:focus {
+			color: var( --wpms-color-primary );
+
+			.wpms-muted-link__label {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	// Feature tile: an icon tile beside a title, a description and an optional CTA. Both
+	// pages render it from the same PHP helper.
+	.wpms-feature-tile {
+		display: flex;
+		align-items: flex-start;
+		gap: var( --wpms-spacing-md );
+
+		&__body {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
+
+		&__title {
+			margin: 0;
+			font-size: 15px;
+			font-weight: 700;
+			line-height: 1.5;
+			color: var( --wpms-color-primary );
+		}
+
+		&__content {
+			display: flex;
+			flex-direction: column;
+		}
+
+		&__desc {
+			margin: 0;
+			font-size: 13px;
+			line-height: 1.5;
+			color: var( --wpms-color-secondary );
+		}
+
+		&__link {
+			align-self: flex-start;
+		}
+	}
+}

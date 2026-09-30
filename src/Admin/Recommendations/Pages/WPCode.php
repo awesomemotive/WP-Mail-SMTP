@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations\Pages;
 
 use WPMailSMTP\Admin\Recommendations\PageAbstract;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
+use WPMailSMTP\PartnerPlugins\Plugins\WPCode as WPCodePartner;
 
 /**
  * WPCode recommended-plugin landing page (Code Snippets).
@@ -28,13 +30,7 @@ class WPCode extends PageAbstract {
 	 * @var array
 	 */
 	protected $config = [
-		'lite_plugin'       => 'insert-headers-and-footers/ihaf.php',
-		'lite_wporg_url'    => 'https://wordpress.org/plugins/insert-headers-and-footers/',
-		'lite_download_url' => 'https://downloads.wordpress.org/plugin/insert-headers-and-footers.zip',
-		'pro_plugin'        => 'wpcode-premium/wpcode.php',
-		'wpcode_addon'      => 'wpcode-premium/wpcode.php',
 		'wpcode_addon_page' => 'https://wpcode.com/lite/?utm_source=wpmailsmtpplugin&utm_medium=link&utm_campaign=code-snippets-page',
-		'wpcode_onboarding' => 'admin.php?page=wpcode',
 	];
 
 	/**
@@ -47,6 +43,18 @@ class WPCode extends PageAbstract {
 	protected static function get_plugin_name(): string {
 
 		return 'wpcode'; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
+	}
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return PartnerPlugin
+	 */
+	protected function create_plugin(): PartnerPlugin {
+
+		return new WPCodePartner();
 	}
 
 	/**
@@ -118,6 +126,22 @@ class WPCode extends PageAbstract {
 	}
 
 	/**
+	 * Whether the plugin has nothing left for the user to set up.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return bool
+	 */
+	protected function is_plugin_finished_setup(): bool {
+
+		if ( ! $this->is_plugin_configured() ) {
+			return false;
+		}
+
+		return $this->is_pro_active();
+	}
+
+	/**
 	 * Generate and output step 'Result' section HTML.
 	 *
 	 * @since 4.9.0
@@ -176,7 +200,7 @@ class WPCode extends PageAbstract {
 			$step['button_url']   = $this->config['wpcode_addon_page'];
 			$step['button_class'] = $this->output_data['plugin_setup'] ? 'button-primary' : 'grey disabled';
 		} else {
-			$addon_installed      = array_key_exists( $this->config['wpcode_addon'], $this->output_data['all_plugins'] );
+			$addon_installed      = $this->get_plugin()->is_pro_installed();
 			$step['button_text']  = $addon_installed
 				? esc_html__( 'WPCode Pro Installed & Activated', 'wp-mail-smtp' )
 				: esc_html__( 'Install Now', 'wp-mail-smtp' );
@@ -185,82 +209,6 @@ class WPCode extends PageAbstract {
 		}
 
 		return $step;
-	}
-
-	/**
-	 * Whether the plugin is finished setup or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if the plugin is finished setup.
-	 */
-	protected function is_plugin_finished_setup(): bool {
-
-		if ( ! $this->is_plugin_configured() ) {
-			return false;
-		}
-
-		return $this->is_pro_active();
-	}
-
-	/**
-	 * Whether a plugin is configured or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is configured properly.
-	 */
-	protected function is_plugin_configured(): bool {
-
-		if ( ! $this->is_plugin_activated() ) {
-			return false;
-		}
-
-		$activated = get_option( 'ihaf_activated' );
-
-		return is_array( $activated ) && ! empty( $activated['wpcode'] );
-	}
-
-	/**
-	 * Whether a plugin is active or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is active.
-	 */
-	protected function is_plugin_activated(): bool {
-
-		return ( // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-			function_exists( 'WPCode' ) &&
-			(
-				is_plugin_active( $this->config['lite_plugin'] ) ||
-				is_plugin_active( $this->config['pro_plugin'] )
-			)
-		);
-	}
-
-	/**
-	 * Whether a plugin is available (class/function exists).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is available.
-	 */
-	protected function is_plugin_available(): bool {
-
-		return function_exists( 'WPCode' ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether pro version is active.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if pro version is active.
-	 */
-	protected function is_pro_active(): bool {
-
-		return class_exists( 'WPCode_License' ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
 	}
 
 	/**

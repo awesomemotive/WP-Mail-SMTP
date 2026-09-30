@@ -1,0 +1,114 @@
+// The version strip: a single-row sidebar card, name and version on the left, the
+// per-tier action on the right.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	// The strip has no title row, so it cancels the shared body's column flow: without
+	// the row direction, `align-items: center` centres the strip horizontally instead of
+	// letting it fill the card. It is also a shorter band than the other cards: the
+	// design pads it by 15px, not 20px.
+	.wpms-dashboard-widget-version .wpms-dashboard-widget-body {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: $dashboard-spacing-ss;
+		min-height: 60px;
+		padding-block: $dashboard-spacing-ms;
+	}
+
+	.wpms-dashboard-widget-version--error {
+		border-color: var( --wpms-color-utility-red-50 );
+
+		.wpms-dashboard-version__alert {
+			color: var( --wpms-color-utility-red-50 );
+		}
+	}
+
+	.wpms-dashboard-widget-version--warning {
+		border-color: var( --wpms-color-utility-orange-50 );
+
+		.wpms-dashboard-version__alert {
+			color: var( --wpms-color-utility-orange-50 );
+		}
+	}
+
+	.wpms-dashboard-version {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+
+		&__row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var( --wpms-spacing-sm );
+		}
+
+		&__label {
+			display: inline-flex;
+			align-items: center;
+			gap: $dashboard-spacing-xs;
+			min-width: 0;
+		}
+
+		&__name {
+			font-size: $dashboard-font-size-s;
+			font-weight: 500;
+			line-height: 20px;
+			color: var( --wpms-color-primary );
+		}
+
+		// The design sets the crown 10px off the name, but the label's own 5px gap is
+		// what separates the name from the version, so the crown makes up the rest.
+		&__crown {
+			margin-inline-end: $dashboard-spacing-xs;
+			color: var( --wpms-color-utility-yellow-50 );
+		}
+
+		&__number {
+			font-size: $dashboard-font-size-s;
+			line-height: 20px;
+			color: var( --wpms-color-tertiary );
+		}
+
+		// The plugin's button set carries no blue.
+		&__cta--update {
+			background-color: var( --wpms-color-brand-blue-50 );
+			border-color: var( --wpms-color-brand-blue-50 );
+			color: #fff;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background-color: var( --wpms-color-brand-blue-70 );
+				border-color: var( --wpms-color-brand-blue-70 );
+				color: #fff;
+			}
+		}
+
+		&__alert {
+			margin-inline-end: $dashboard-spacing-xs;
+		}
+
+		// Spans the card, so it pulls back out of the body's padding and supplies its own.
+		&__notice {
+			margin: $dashboard-spacing-ms calc( var( --wpms-spacing-md ) * -1 ) ( -$dashboard-spacing-ms );
+			padding: $dashboard-spacing-ms var( --wpms-spacing-md );
+			border-top: 1px solid var( --wpms-color-surface-divider );
+			font-size: $dashboard-font-size-s;
+			line-height: 20px;
+			color: var( --wpms-color-secondary );
+
+			// The settings styles that dress the report's lead and links are not enqueued here.
+			b {
+				color: var( --wpms-color-primary );
+			}
+
+			a {
+				color: var( --wpms-color-link );
+			}
+		}
+	}
+}

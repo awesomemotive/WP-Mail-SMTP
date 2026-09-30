@@ -213,7 +213,7 @@ WPMailSMTP.Admin.CodeSnippets = WPMailSMTP.Admin.CodeSnippets || ( function( doc
 		 */
 		activatePluginThenInstallSnippet: function( libraryId, plugin, onActivateFail ) {
 
-			app.post( 'wp_mail_smtp_ajax', { task: 'about_plugin_activate', plugin: plugin } )
+			app.post( 'wp_mail_smtp_ajax', { task: 'about_plugin_activate', plugin: plugin, source: 'code_snippets' } )
 				.done( function( response ) {
 
 					if ( ! response || ! response.success ) {
@@ -275,7 +275,7 @@ WPMailSMTP.Admin.CodeSnippets = WPMailSMTP.Admin.CodeSnippets || ( function( doc
 		 */
 		installAndActivatePlugin: function( plugin, onDone, onError ) {
 
-			app.post( 'wp_mail_smtp_ajax', { task: 'about_plugin_install', plugin: plugin } )
+			app.post( 'wp_mail_smtp_ajax', { task: 'about_plugin_install', plugin: plugin, source: 'code_snippets' } )
 				.done( function( response ) {
 
 					if ( ! response || ! response.success ) {
@@ -678,7 +678,7 @@ WPMailSMTP.Admin.CodeSnippets = WPMailSMTP.Admin.CodeSnippets || ( function( doc
 
 			var task = $btn.data( 'action' ) === 'activate' ? 'about_plugin_activate' : 'about_plugin_install';
 
-			app.post( 'wp_mail_smtp_ajax', { task: task, plugin: $btn.data( 'plugin' ) } )
+			app.post( 'wp_mail_smtp_ajax', { task: task, plugin: $btn.data( 'plugin' ), source: 'code_snippets' } )
 				.done( function() {
 
 					window.location.reload();

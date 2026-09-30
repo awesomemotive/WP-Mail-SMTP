@@ -1,0 +1,126 @@
+// Dashboard stat cards: the free-standing metric row above both columns. The row's
+// grid lives in _page.scss; this file is the card.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-stat-card {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-md );
+		box-sizing: border-box;
+		padding: var( --wpms-padding-16 ) var( --wpms-spacing-md );
+		border: 1px solid var( --wpms-color-surface-border );
+		border-radius: var( --wpms-radius-cards );
+		background-color: var( --wpms-color-surface-background-white );
+		box-shadow: var( --wpms-shadow-subtle );
+	}
+
+	.wpms-dashboard-stat-card__icon {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+
+		// Tints. Card 1 ("Emails") is a distinct orange hue the palette had no token
+		// for; the other three are each a shade the palette also lacked, so all four
+		// reference tokens added for this tone rather than the metric's unrelated
+		// semantic colour (e.g. "sent" is not the same green as --wpms-color-success).
+		&--emails {
+			background-color: var( --wpms-color-utility-orange-0 );
+			color: var( --wpms-color-utility-orange-50 );
+		}
+
+		&--failed {
+			background-color: var( --wpms-color-utility-red-0 );
+			color: var( --wpms-color-utility-red-30 );
+		}
+
+		&--sent {
+			background-color: var( --wpms-color-utility-green-0 );
+			color: var( --wpms-color-utility-green-50 );
+		}
+
+		&--opened {
+			background-color: var( --wpms-color-utility-blue-0 );
+			color: var( --wpms-color-utility-blue-50 );
+		}
+	}
+
+	.wpms-dashboard-stat-card__body {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		justify-content: center;
+		min-width: 0;
+	}
+
+	.wpms-dashboard-stat-card__label {
+		font-size: $dashboard-font-size-s;
+		line-height: normal;
+		color: var( --wpms-color-tertiary );
+	}
+
+	.wpms-dashboard-stat-card__value {
+		font-size: $dashboard-font-size-xl;
+		font-weight: 500;
+		line-height: 30px;
+		color: var( --wpms-text-primary );
+	}
+
+	// Locked cards put the teaser figure and its upgrade link on one row, under the label.
+	.wpms-dashboard-stat-card__value-row {
+		display: flex;
+		align-items: center;
+		gap: $dashboard-spacing-ms;
+		min-width: 0;
+	}
+
+	// The locked card's value is a fixed teaser figure (StatCards::build_card()'s
+	// $teaser_value), blurred and topped with a lock glyph. It is never the site's
+	// real number, so it leaks nothing; the blur amount itself is set inline per
+	// card (StatCards.php), since it differs card to card.
+	.wpms-dashboard-stat-card__value-wrap {
+		position: relative;
+		display: inline-block;
+	}
+
+	.wpms-dashboard-stat-card__value--locked {
+		color: var( --wpms-text-icon );
+	}
+
+	.wpms-dashboard-stat-card__lock {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		color: var( --wpms-text-tertiary );
+
+		// A white halo so the glyph reads over the blur behind it.
+		filter: drop-shadow( 0 0 1px var( --wpms-color-surface-background-white ) ) drop-shadow( 0 0 1px var( --wpms-color-surface-background-white ) );
+	}
+
+	.wpms-dashboard-stat-card__delta {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		height: 24px;
+		gap: $dashboard-spacing-xs;
+		padding: 0 $dashboard-spacing-ss;
+		border-radius: $dashboard-radius-xs;
+		background-color: var( --wpms-color-neutral-3 );
+		font-size: $dashboard-font-size-xs;
+		font-weight: 500;
+		color: var( --wpms-color-neutral-40 );
+	}
+
+	.wpms-dashboard-stat-card__unlock {
+		flex: 0 0 auto;
+	}
+}

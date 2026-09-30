@@ -1,0 +1,201 @@
+// Tailwind v4 Preflight, hand-ported and scoped to this plugin's generated markup.
+// Source: tailwindlabs/tailwindcss/packages/tailwindcss/preflight.css.
+//
+// Scoped by EXPLICIT marker classes codegen stamps:
+//   - `.#{$reset}`      — flat marker; resets THAT element.
+//   - `.#{$reset-deep}` — deep marker on component / recipe roots; resets the root + descendants.
+// Unmarked markup is never touched.
+
+$scope: 'wp-mail-smtp-scope';
+$prefix: 'wpms';
+
+$reset: '#{$prefix}-reset';
+$reset-deep: '#{$prefix}-reset-deep';
+
+// Winner-first cascade order — `!important` reverses layer precedence, so overrides > utilities >
+// components > reset. Tailwind's own layers (theme = default vars, properties = @property
+// fallbacks) trail as the weakest, non-!important base. Lands at the top of the page's first
+// stylesheet (this file is imported first).
+@layer #{$prefix}-overrides, #{$prefix}-utils, #{$prefix}-components, #{$prefix}-reset, #{$prefix}-theme, #{$prefix}-properties;
+
+// An owned element: flat-marked (itself), or a deep-marked root or any of its descendants.
+@mixin own($els) {
+	:is(.#{$reset}, .#{$reset-deep}, .#{$reset-deep} *):is(#{$els}) {
+		@content;
+	}
+}
+
+// Same, for a pseudo-element.
+@mixin own-pseudo($pseudo) {
+	.#{$reset}#{$pseudo},
+	.#{$reset-deep}#{$pseudo}, .#{$reset-deep} *#{$pseudo} {
+		@content;
+	}
+}
+
+// Every owned element + its ::before/::after — used by the two universal passes.
+@mixin own-universal {
+	:where(.#{$reset}, .#{$reset-deep}, .#{$reset-deep} *),
+	.#{$reset}::before, .#{$reset}::after,
+	.#{$reset-deep}::before, .#{$reset-deep}::after,
+	.#{$reset-deep} *::before, .#{$reset-deep} *::after {
+		@content;
+	}
+}
+
+@layer #{$prefix}-reset {
+
+	.#{$scope} {
+
+		// Pass 1 — host immunity + native baseline. Preflight below overrides per-property.
+		@include own-universal {
+			all: revert;
+		}
+
+		// 1. border-box; 2. remove margins/padding; 3. reset all borders.
+		@include own-universal {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			border: 0 solid;
+		}
+
+		// Firefox height / border-color inheritance / 1px top border.
+		@include own("hr") {
+			height: 0;
+			color: inherit;
+			border-top-width: 1px;
+		}
+
+		@include own("abbr:where([title])") {
+			-webkit-text-decoration: underline dotted;
+			text-decoration: underline dotted;
+		}
+
+		// Headings opt-in styling — drop UA size/weight.
+		@include own("h1, h2, h3, h4, h5, h6") {
+			font-size: inherit;
+			font-weight: inherit;
+		}
+
+		// Links opt-in styling.
+		@include own("a") {
+			color: inherit;
+			-webkit-text-decoration: inherit;
+			text-decoration: inherit;
+		}
+
+		@include own("b, strong") {
+			font-weight: bolder;
+		}
+
+		// Monospace family + correct em sizing.
+		@include own("code, kbd, samp, pre") {
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+			font-feature-settings: normal;
+			font-variation-settings: normal;
+			font-size: 1em;
+		}
+
+		@include own("small") {
+			font-size: 80%;
+		}
+
+		@include own("sub, sup") {
+			font-size: 75%;
+			line-height: 0;
+			position: relative;
+			vertical-align: baseline;
+		}
+		@include own("sub") { bottom: -0.25em; }
+		@include own("sup") { top: -0.5em; }
+
+		@include own("table") {
+			text-indent: 0;
+			border-color: inherit;
+			border-collapse: collapse;
+		}
+
+		@include own(":-moz-focusring:where(:not(iframe))") {
+			outline: auto;
+		}
+
+		@include own("progress") {
+			vertical-align: baseline;
+		}
+
+		@include own("summary") {
+			display: list-item;
+		}
+
+		// Lists unstyled by default.
+		@include own("ol, ul, menu") {
+			list-style: none;
+		}
+
+		// Replaced elements block-level + sensible vertical alignment.
+		@include own("img, svg, video, canvas, audio, iframe, embed, object") {
+			display: block;
+			vertical-align: middle;
+		}
+
+		@include own("img, video") {
+			max-width: 100%;
+			height: auto;
+		}
+
+		// Form controls inherit typography; drop UA radius / background / opacity.
+		@include own("button, input, select, optgroup, textarea") {
+			font: inherit;
+			font-feature-settings: inherit;
+			font-variation-settings: inherit;
+			letter-spacing: inherit;
+			color: inherit;
+			border-radius: 0;
+			background-color: transparent;
+			opacity: 1;
+		}
+
+		@include own("select:where([multiple], [size]) optgroup") {
+			font-weight: bolder;
+		}
+		@include own("select:where([multiple], [size]) optgroup option") {
+			padding-inline-start: 20px;
+		}
+
+		@include own-pseudo("::placeholder") {
+			opacity: 1;
+		}
+		@supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+			@include own-pseudo("::placeholder") {
+				color: color-mix(in oklab, currentcolor 50%, transparent);
+			}
+		}
+
+		@include own("textarea") {
+			resize: vertical;
+		}
+
+		// Stylable button border-radius across browsers.
+		@include own("button, input:where([type='button'], [type='reset'], [type='submit'])") {
+			appearance: button;
+		}
+
+		@include own-pseudo("::-webkit-search-decoration") {
+			-webkit-appearance: none;
+		}
+
+		@include own-pseudo("::-webkit-inner-spin-button") { height: auto; }
+		@include own-pseudo("::-webkit-outer-spin-button") { height: auto; }
+
+		// Remove Firefox :invalid glow.
+		@include own(":-moz-ui-invalid") {
+			box-shadow: none;
+		}
+
+		// Keep [hidden] hidden.
+		@include own("[hidden]:where(:not([hidden='until-found']))") {
+			display: none;
+		}
+	}
+}

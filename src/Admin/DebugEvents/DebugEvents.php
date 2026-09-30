@@ -339,7 +339,7 @@ class DebugEvents {
 
 		// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 		$sql = $wpdb->prepare(
-			'SELECT COUNT(*) FROM `%1$s` WHERE event_type = %2$d AND created_at >= "%3$s"',
+			'SELECT COUNT(*) FROM `%1$s` WHERE event_type = %2$d AND created_at >= \'%3$s\'',
 			self::get_table_name(),
 			Event::TYPE_ERROR,
 			gmdate( WP::datetime_mysql_format(), $timestamp )

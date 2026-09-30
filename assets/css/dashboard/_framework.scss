@@ -1,0 +1,414 @@
+// Dashboard admin page.
+//
+// Framework: re-usable widget and component classes shared by all dashboard widgets.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	// Widget card: the shared card, stacked down the column and made the containing
+	// block for its own settings popover.
+	.wpms-dashboard-widget {
+		position: relative;
+		margin-bottom: var( --wpms-spacing-md );
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		&-body {
+			display: flex;
+			flex-direction: column;
+			gap: var( --wpms-spacing-md );
+			padding: var( --wpms-spacing-md );
+			background-color: var( --wpms-color-surface-background-white );
+			border-top: 1px solid var( --wpms-color-surface-divider );
+
+			// A card with no title row has nothing above the body to divide it from.
+			&:first-child {
+				border-top: 0;
+			}
+		}
+
+		&-table-scroll {
+			overflow-x: auto;
+		}
+
+		// Light notice panel inside a widget body (inline-card.php): a plain "nothing
+		// to show" message, or a label plus message.
+		&-banner {
+			display: flex;
+			align-items: center;
+			gap: var( --wpms-spacing-md );
+			padding: var( --wpms-spacing-md );
+			background-color: var( --wpms-color-surface-background-light );
+			border-radius: var( --wpms-radius-6 );
+
+			&-text {
+				margin: 0;
+				font-size: $dashboard-font-size-s;
+				line-height: normal;
+				color: var( --wpms-color-secondary );
+			}
+
+			&-label {
+				font-weight: 600;
+				color: var( --wpms-color-primary );
+			}
+		}
+
+		// Gear-menu popover, anchored under the cog; capped against the viewport, not
+		// the card, so a short card does not squeeze the controls into a scrolling sliver.
+		&-settings {
+			position: absolute;
+			inset-block-start: 55px;
+			inset-inline-end: var( --wpms-spacing-md );
+			z-index: 1000;
+			width: 290px;
+			max-width: calc( 100vw - #{$dashboard-spacing-xl} );
+			max-height: 70vh;
+			overflow-x: hidden;
+			overflow-y: auto;
+			box-sizing: border-box;
+			padding-block: $dashboard-spacing-ms 0;
+			padding-inline: $dashboard-spacing-ms;
+			background-color: var( --wpms-color-surface-background-white );
+			border-radius: var( --wpms-radius-6 );
+			box-shadow: var( --wpms-shadow-soft ), 0 5px 15px rgba( 0, 0, 0, .15 );
+
+			&-label {
+				margin: 0 0 var( --wpms-spacing-sm );
+				font-size: $dashboard-font-size-xs;
+				font-weight: 600;
+				line-height: normal;
+				color: var( --wpms-color-tertiary );
+			}
+
+			&-field {
+				width: 100%;
+				margin-block-end: $dashboard-spacing-ms;
+
+				// Locked because another setting overrides it (see `data-locked-by`).
+				&:disabled {
+					background-color: var( --wpms-color-surface-background-light );
+					color: var( --wpms-color-surface-border );
+					cursor: default;
+				}
+			}
+
+			// Compact scrollbar for the checklist/checkbox lists, shown only on hover or
+			// focus so it does not sit permanently visible in a short popover.
+			&-scrollbar {
+				scrollbar-width: thin;
+				scrollbar-color: transparent transparent;
+
+				&:hover,
+				&:focus {
+					scrollbar-color: rgba( 0, 0, 0, .3 ) transparent;
+				}
+
+				&::-webkit-scrollbar {
+					width: 5px;
+				}
+
+				&::-webkit-scrollbar-thumb {
+					background-color: transparent;
+					border-radius: $dashboard-radius-xs;
+				}
+
+				&:hover::-webkit-scrollbar-thumb,
+				&:focus::-webkit-scrollbar-thumb {
+					background-color: rgba( 0, 0, 0, .3 );
+				}
+			}
+
+			&-list {
+				margin: 0;
+				list-style: none;
+
+				li {
+					margin-block-end: var( --wpms-spacing-sm );
+
+					&:last-child {
+						margin-block-end: 0;
+					}
+				}
+
+				label {
+					display: flex;
+					align-items: center;
+					gap: var( --wpms-spacing-sm );
+					font-size: $dashboard-font-size-s;
+					line-height: normal;
+					color: var( --wpms-color-secondary );
+					cursor: pointer;
+
+					&:hover {
+						color: var( --wpms-color-primary );
+					}
+				}
+
+				&.wpms-dashboard-widget-settings-panel {
+					max-height: 300px;
+					overflow-y: auto;
+					margin-block-end: $dashboard-spacing-ms;
+					padding: $dashboard-spacing-ms;
+					background-color: var( --wpms-color-surface-background-light );
+					border-radius: var( --wpms-radius-6 );
+				}
+			}
+
+			&-group {
+				display: flex;
+				flex-direction: column;
+				gap: var( --wpms-spacing-sm );
+				margin-block-end: $dashboard-spacing-ms;
+
+				&.wpms-dashboard-widget-settings-panel {
+					padding: $dashboard-spacing-ms;
+					background-color: var( --wpms-color-surface-background-light );
+					border-radius: var( --wpms-radius-6 );
+				}
+			}
+
+			&-checkbox {
+				display: flex;
+				align-items: center;
+				gap: var( --wpms-spacing-sm );
+				font-size: $dashboard-font-size-s;
+				line-height: normal;
+				color: var( --wpms-color-secondary );
+				cursor: pointer;
+
+				&:hover {
+					color: var( --wpms-color-primary );
+				}
+			}
+
+			// Match the standard admin checkbox: reset the resting box to the field
+			// border/radius, then repaint the checked mark ourselves.
+			input[type="checkbox"] {
+				box-sizing: border-box;
+				position: relative;
+				flex: 0 0 auto;
+				width: 16px;
+				height: 16px;
+				margin: 0;
+				padding: 0;
+				-webkit-appearance: none;
+				appearance: none;
+				background-color: var( --wpms-color-surface-background-white );
+				border: 1px solid var( --wpms-color-surface-border );
+				border-radius: $dashboard-radius-xs;
+				cursor: pointer;
+
+				&:hover {
+					border-color: var( --wpms-color-link );
+				}
+
+				&:checked {
+					background-color: var( --wpms-color-link );
+					border-color: var( --wpms-color-link );
+					box-shadow: none; // WP core's inset shadow muddies the painted box.
+
+					&::before {
+						content: "";
+						position: absolute;
+						top: -1.5px;
+						left: -2.5px;
+						width: 18px;
+						height: 18px;
+						margin: 0;
+						background-color: var( --wpms-color-surface-background-white );
+						-webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E");
+						mask-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E");
+					}
+				}
+
+				&:focus {
+					border-color: var( --wpms-color-link );
+					box-shadow: 0 0 0 1px var( --wpms-color-link );
+					outline: 0;
+				}
+
+				// Held back by the list's cap: inert, and muted so the ceiling reads as a
+				// state rather than a click that did nothing.
+				&:disabled {
+					background-color: var( --wpms-color-surface-background-light );
+					cursor: default;
+
+					&:hover {
+						border-color: var( --wpms-color-surface-border );
+					}
+				}
+			}
+
+			// The label of a capped-out option follows its checkbox.
+			&-list label:has( input:disabled ),
+			&-checkbox:has( input:disabled ) {
+				color: var( --wpms-color-surface-border );
+				cursor: default;
+
+				&:hover {
+					color: var( --wpms-color-surface-border );
+				}
+			}
+
+			// Full-bleed footer split from the fields by a divider.
+			&-footer {
+				position: sticky;
+				inset-block-end: 0;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin: 0 ( -$dashboard-spacing-ms );
+				padding: $dashboard-spacing-ms;
+				background-color: var( --wpms-color-surface-background-white );
+				border-block-start: 1px solid var( --wpms-color-surface-divider );
+			}
+
+			&-save {
+				margin: 0;
+			}
+
+			// Bare icon at the trailing edge of the footer: a reset needs no label next
+			// to the button it undoes, so the glyph carries it. Link-coloured rather than
+			// the shared icon button's muted grey, since it is the footer's second action.
+			&-reset {
+				color: var( --wpms-text-link );
+
+				&:hover,
+				&:focus-visible {
+					color: var( --wpms-text-link--hover );
+				}
+
+				&:focus-visible {
+					border-radius: $dashboard-radius-xs;
+					box-shadow: 0 0 0 2px var( --wpms-text-link--hover );
+					outline: 0;
+				}
+			}
+		}
+
+		// An open popover is taller than the card, so the card stops clipping it; the head
+		// and last row repaint their own corner radius since the clip no longer rounds them.
+		&:has( .wpms-dashboard-widget-settings-open ) {
+			overflow: visible;
+
+			> .wpms-dashboard-widget-head {
+				border-start-start-radius: calc( var( --wpms-radius-cards ) - 1px );
+				border-start-end-radius: calc( var( --wpms-radius-cards ) - 1px );
+			}
+
+			> :last-child {
+				border-end-start-radius: calc( var( --wpms-radius-cards ) - 1px );
+				border-end-end-radius: calc( var( --wpms-radius-cards ) - 1px );
+			}
+		}
+	}
+
+	// Generic "nothing to show yet" panel: the education/connect variant every data
+	// widget falls back to (Connections, Email Log, Email Sources, Emails Overview).
+	.wpms-dashboard-widget__empty {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var( --wpms-spacing-sm );
+	}
+
+	.wpms-dashboard-widget__empty-text {
+		margin: 0;
+		font-size: $dashboard-font-size-s;
+		color: var( --wpms-color-secondary );
+	}
+
+	.wpms-dashboard-widget__cta {
+		display: inline-flex;
+		align-items: center;
+		height: 30px;
+		padding: 0 var( --wpms-spacing-sm );
+		background-color: var( --wpms-color-link );
+		border: 1px solid var( --wpms-color-link );
+		border-radius: var( --wpms-radius-table );
+		color: var( --wpms-color-surface-background-white );
+		font-size: $dashboard-font-size-ss;
+		font-weight: 600;
+		line-height: 1;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			background-color: var( --wpms-text-link--hover );
+			border-color: var( --wpms-text-link--hover );
+			color: var( --wpms-color-surface-background-white );
+		}
+	}
+
+	// A table whose columns have a fixed minimum width cannot compress below it, so it
+	// scrolls inside the widget rather than being clipped by the card's own overflow.
+	.wpms-dashboard-widget-table-scroll {
+		overflow-x: auto;
+	}
+
+	// Shared data table (Email Log, Email Sources): typography, dividers, edge-flush
+	// columns and links; each widget partial keeps only its own column geometry.
+	.wpms-dashboard-widget-table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th,
+		td {
+			box-sizing: border-box;
+			padding: 12px;
+			text-align: start;
+			vertical-align: middle;
+			border-block-end: 1px solid var( --wpms-color-surface-divider );
+		}
+
+		// The design's rows are fixed-height frames, not padding-derived: on a table cell
+		// `height` is a minimum, so content that grows still pushes the row taller.
+		th {
+			height: 37px;
+			padding-block-start: 0;
+			font-size: $dashboard-font-size-s;
+			font-weight: 500;
+			line-height: 20px;
+			color: var( --wpms-color-tertiary );
+		}
+
+		td {
+			height: 49px;
+			font-size: $dashboard-font-size-s;
+			line-height: 17px;
+			color: var( --wpms-color-tertiary );
+		}
+
+		th:first-child,
+		td:first-child {
+			padding-inline-start: 0;
+		}
+
+		th:last-child,
+		td:last-child {
+			padding-inline-end: 0;
+		}
+
+		// The only blue link not underlined at rest: five underlined cells a row reads as
+		// noise, so a table link takes its underline on hover.
+		a {
+			color: var( --wpms-text-link );
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				color: var( --wpms-text-link--hover );
+				text-decoration: underline;
+			}
+		}
+
+		tbody tr:last-child td {
+			padding-block-end: 0;
+			border-block-end: 0;
+		}
+	}
+}

@@ -4,7 +4,7 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\ConnectionSettings;
 use WPMailSMTP\Admin\PageAbstract;
-use WPMailSMTP\Admin\SetupWizard;
+use WPMailSMTP\Admin\SetupWizard\Launcher as SetupWizardLauncher;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -64,7 +64,7 @@ class SettingsTab extends PageAbstract {
 					<h2><?php esc_html_e( 'License', 'wp-mail-smtp' ); ?></h2>
 
 					<p class="desc">
-						<?php esc_html_e( 'Your license key provides access to updates and support.', 'wp-mail-smtp' ); ?>
+						<?php esc_html_e( 'Your license key provides access to WP Mail SMTP Pro features, updates and support.', 'wp-mail-smtp' ); ?>
 					</p>
 				</div>
 			</div>
@@ -92,6 +92,15 @@ class SettingsTab extends PageAbstract {
 				</div>
 			<?php endif; ?>
 
+			<?php
+			/**
+			 * Fires before the License Key field.
+			 *
+			 * @since 4.10.0
+			 */
+			do_action( 'wp_mail_smtp_admin_pages_settings_tab_before_license_key' );
+			?>
+
 			<!-- License Key -->
 			<div id="wp-mail-smtp-setting-row-license_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-license_key wp-mail-smtp-clear">
 				<div class="wp-mail-smtp-setting-label">
@@ -116,7 +125,7 @@ class SettingsTab extends PageAbstract {
 						<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'Setup Wizard', 'wp-mail-smtp' ); ?></label>
 					</div>
 					<div class="wp-mail-smtp-setting-field">
-						<a href="<?php echo esc_url( SetupWizard::get_site_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">
+						<a href="<?php echo esc_url( SetupWizardLauncher::get_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">
 							<?php esc_html_e( 'Launch Setup Wizard', 'wp-mail-smtp' ); ?>
 						</a>
 
@@ -165,7 +174,8 @@ class SettingsTab extends PageAbstract {
 		</p>
 
 		<p>
-			<input type="password" id="wp-mail-smtp-setting-upgrade-license-key" class="wp-mail-smtp-not-form-input" placeholder="<?php esc_attr_e( 'Paste license key here', 'wp-mail-smtp' ); ?>" value="" />
+			<label class="screen-reader-text" for="wp-mail-smtp-setting-upgrade-license-key"><?php esc_html_e( 'License key', 'wp-mail-smtp' ); ?></label>
+			<input type="password" id="wp-mail-smtp-setting-upgrade-license-key" class="wp-mail-smtp-not-form-input" placeholder="<?php esc_attr_e( 'Paste your license key here', 'wp-mail-smtp' ); ?>" value="" />
 			<button type="button" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-orange" id="wp-mail-smtp-setting-upgrade-license-button">
 				<?php esc_attr_e( 'Connect', 'wp-mail-smtp' ); ?>
 			</button>

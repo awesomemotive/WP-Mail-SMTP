@@ -32,14 +32,22 @@ class SummaryEmailTask extends Task {
 	}
 
 	/**
+	 * Register the task's callbacks.
+	 *
+	 * @since 4.10.0
+	 */
+	public function hooks() {
+
+		// Register the action handler.
+		add_action( self::ACTION, array( $this, 'process' ) );
+	}
+
+	/**
 	 * Initialize the task with all the proper checks.
 	 *
 	 * @since 3.0.0
 	 */
 	public function init() {
-
-		// Register the action handler.
-		add_action( self::ACTION, array( $this, 'process' ) );
 
 		$is_disabled = SummaryReportEmail::is_disabled();
 

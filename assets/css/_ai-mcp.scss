@@ -93,21 +93,6 @@ $ai-mcp-panel-shadow: 0 2px 2px rgba(0, 0, 0, 0.07);
 			margin-top: 30px;
 		}
 
-		.wp-mail-smtp-ai-mcp-install-note {
-			font-size: 13px;
-			line-height: 1.5;
-			color: $ai-mcp-eyebrow-color;
-			margin: 10px 0 0;
-		}
-
-		// Inline error shown under the CTA row when install/activate fails.
-		.wp-mail-smtp-ai-mcp-install-error {
-			font-size: 13px;
-			line-height: 1.5;
-			color: $negative;
-			margin: 10px 0 0;
-		}
-
 		.wp-mail-smtp-ai-mcp-capabilities {
 			background: #ffffff;
 			border: 1px solid $ai-mcp-panel-border;

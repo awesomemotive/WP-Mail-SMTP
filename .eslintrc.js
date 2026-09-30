@@ -512,4 +512,36 @@ module.exports = {
 		 */
 		"jsdoc/valid-types": 'error',
 	},
+
+	/**
+	 * Per-file overrides.
+	 *
+	 * @since {VERSION}
+	 */
+	overrides: [
+
+		/**
+		 * The Dashboard's feature modules are ECMAScript modules (dynamically imported
+		 * by smtp-dashboard-page.js's orchestrator), unlike every other script in this
+		 * project. Listed individually rather than by glob: a glob on the
+		 * `smtp-dashboard-*` prefix would also match the unrelated, pre-existing
+		 * `smtp-dashboard-widget.js` (the WP admin dashboard widget feature).
+		 *
+		 * @since {VERSION}
+		 */
+		{
+			files: [
+				'assets/js/smtp-dashboard-widget-email-log.js',
+				'assets/js/smtp-dashboard-widget-email-sources.js',
+				'assets/js/smtp-dashboard-widget-settings.js',
+				'assets/js/smtp-dashboard-widget-emails-overview.js',
+				'assets/js/smtp-dashboard-widget-stat-cards.js',
+				'assets/pro/js/smtp-pro-dashboard-updater.js',
+				'assets/pro/js/smtp-pro-dashboard-date-range.js',
+			],
+			parserOptions: {
+				sourceType: 'module',
+			},
+		},
+	],
 };

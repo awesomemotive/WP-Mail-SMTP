@@ -44,22 +44,63 @@ class SendUsageTask extends Task {
 	}
 
 	/**
-	 * Initialize the task with all the proper checks.
+	 * Register the task's callbacks.
 	 *
-	 * @since 2.3.0
+	 * @since 4.10.0
 	 */
-	public function init() {
+	public function hooks() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
 
 		// Register the action handler.
 		add_action( self::ACTION, [ $this, 'process' ] );
+	}
+
+	/**
+	 * Initialize the task with all the proper checks.
+	 *
+	 * @since 2.3.0
+	 * @since 4.10.0 A fresh install schedules its first ping one day in instead of the weekly slot.
+	 */
+	public function init() {
 
 		// Add new if none exists.
 		if ( Tasks::is_scheduled( self::ACTION ) !== false ) {
 			return;
 		}
 
+		/*
+		 * A fresh install gets a one-off first ping a day in, when the mailer
+		 * is typically configured. Once it runs, process() sets LAST_RUN, and
+		 * the weekly task registers here on the next request. No jitter:
+		 * activation times are naturally distributed across installs.
+		 */
+		if ( $this->needs_initial_ping() ) {
+			$this->once( time() + DAY_IN_SECONDS )
+				->register();
+
+			return;
+		}
+
 		$this->recurring( $this->generate_start_date(), WEEK_IN_SECONDS )
 			->register();
+	}
+
+	/**
+	 * Whether this install has never pinged and was activated recently,
+	 * so the first ping should not wait for the weekly schedule.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	private function needs_initial_ping() {
+
+		if ( get_option( self::LAST_RUN ) !== false ) {
+			return false;
+		}
+
+		$activated = (int) get_option( 'wp_mail_smtp_activated_time', 0 );
+
+		return $activated > 0 && ( time() - $activated ) < MONTH_IN_SECONDS;
 	}
 
 	/**

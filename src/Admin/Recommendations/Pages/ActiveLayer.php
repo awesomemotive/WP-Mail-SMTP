@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations\Pages;
 
 use WPMailSMTP\Admin\Recommendations\PageAbstract;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
+use WPMailSMTP\PartnerPlugins\Plugins\ActiveLayer as ActiveLayerPartner;
 
 /**
  * ActiveLayer recommended-plugin landing page (Spam Protection).
@@ -28,13 +30,7 @@ class ActiveLayer extends PageAbstract {
 	 * @var array
 	 */
 	protected $config = [
-		'lite_plugin'            => 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php',
-		'lite_wporg_url'         => 'https://wordpress.org/plugins/activelayer-anti-spam-spam-protection-for-forms-comments/',
-		'lite_download_url'      => 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip',
-		'pro_plugin'             => '',
-		'activelayer_addon'      => '',
 		'activelayer_addon_page' => 'https://activelayer.com/pricing/?utm_source=wpmailsmtpplugin&utm_medium=link&utm_campaign=spam-protection-page',
-		'activelayer_onboarding' => 'admin.php?page=activelayer-settings',
 	];
 
 	/**
@@ -47,6 +43,18 @@ class ActiveLayer extends PageAbstract {
 	protected static function get_plugin_name(): string {
 
 		return 'activelayer'; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
+	}
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return PartnerPlugin
+	 */
+	protected function create_plugin(): PartnerPlugin {
+
+		return new ActiveLayerPartner();
 	}
 
 	/**
@@ -173,72 +181,6 @@ class ActiveLayer extends PageAbstract {
 		$step['button_class']  = $this->output_data['plugin_setup'] ? 'button-primary' : 'grey disabled';
 
 		return $step;
-	}
-
-	/**
-	 * Whether the plugin is finished setup or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if the plugin is finished setup.
-	 */
-	protected function is_plugin_finished_setup(): bool {
-
-		return $this->is_plugin_configured(); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether a plugin is configured or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is configured properly.
-	 */
-	protected function is_plugin_configured(): bool {
-
-		if ( ! $this->is_plugin_activated() ) {
-			return false;
-		}
-
-		$settings = get_option( 'activelayer_global_settings' );
-
-		return is_array( $settings ) && ! empty( $settings['api_key'] );
-	}
-
-	/**
-	 * Whether a plugin is active or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is active.
-	 */
-	protected function is_plugin_activated(): bool {
-
-		return is_plugin_active( $this->config['lite_plugin'] ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether a plugin is available (class/function exists).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is available.
-	 */
-	protected function is_plugin_available(): bool {
-
-		return class_exists( 'ActiveLayer\Plugin' ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether pro version is active.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if pro version is active.
-	 */
-	protected function is_pro_active(): bool {
-
-		return false; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
 	}
 
 	/**

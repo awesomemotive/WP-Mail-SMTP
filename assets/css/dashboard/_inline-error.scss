@@ -1,0 +1,11 @@
+// Dashboard error notice, injected above the stat cards when a stats request fails
+// (updater.js). Core `.notice` styles carry the look; only the margin is overridden.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-inline-error {
+		margin: 0 0 var( --wpms-spacing-md );
+	}
+}

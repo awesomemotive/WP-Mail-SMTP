@@ -1,0 +1,97 @@
+// Upgrade modal. The surface the license key card sits on inside a jQuery-confirm
+// dialog, plus the bonus banner on its upsell screen, which is this modal's alone.
+@layer wpms-components {
+
+	.wpms-upgrade-modal {
+		position: relative;
+		width: 550px;
+		padding: var(--wpms-padding-32);
+		background: var(--wpms-surface-background-white);
+		// Keeps the full-bleed banner below inside the card.
+		overflow: clip;
+	}
+
+	// The clone source; jQuery-confirm shows the copy it makes.
+	.wpms-upgrade-modal-source {
+		display: none;
+	}
+
+	// Full-bleed: breaks out of the card's inline padding, edge to edge.
+	.wpms-upgrade-modal__bonus {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		// Cancels the card's inline padding on both sides.
+		width: calc(100% + var(--wpms-padding-32) * 2);
+		margin-inline: calc(var(--wpms-padding-32) * -1);
+	}
+
+	// The white disc behind the glyph fills the check's cut-out and rings the circle,
+	// so the cream banner never shows through the mark itself.
+	.wpms-upgrade-modal__bonus-check {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		margin-bottom: -16px;   // straddle the banner's top edge (half of the disc)
+		padding: 5px;
+		background: var(--wpms-surface-background-white);
+		border-radius: 50%;
+		color: var(--wpms-text-success);
+	}
+
+	.wpms-upgrade-modal__bonus-check-glyph {
+		font-size: 22px;
+	}
+
+	// Inline padding keeps the text to the 446px column the design gives it.
+	.wpms-upgrade-modal__bonus-text {
+		box-sizing: border-box;
+		width: 100%;
+		margin: 0;
+		padding: 22px 52px 13px;
+		background: var(--wpms-color-utility-yellow-0);
+		color: var(--wpms-text-secondary);
+		font-weight: var(--wpms-typography-font-weight-regular);
+		font-size: var(--wpms-typography-font-size-16);
+		line-height: var(--wpms-typography-line-height-normal);
+	}
+
+	.wpms-upgrade-modal__bonus-lead {
+		font-weight: var(--wpms-typography-font-weight-bold);
+	}
+
+	.wpms-upgrade-modal__bonus-highlight {
+		color: var(--wpms-text-success);
+		font-weight: var(--wpms-typography-font-weight-bold);
+	}
+
+	// A link-styled action button, so it needs the button chrome removed.
+	.wpms-upgrade-modal__alt-action {
+		margin-top: 11px;   // space below the full-bleed banner
+		padding: 0;
+		background: none;
+		border: 0;
+		color: var(--wpms-text-icon);
+		font-weight: var(--wpms-typography-font-weight-regular);
+		font-size: var(--wpms-typography-font-size-14);
+		line-height: var(--wpms-typography-line-height-normal);
+		text-decoration: underline;
+		cursor: pointer;
+		transition: color var(--wpms-transition-normal);
+	}
+
+	.wpms-upgrade-modal__alt-action:hover {
+		color: var(--wpms-text-icon--hover);
+	}
+
+	// `_confirm.scss` restyles every button in a jQuery-confirm dialog at a specificity
+	// no plain class reaches, so the size class is restated here.
+	.wpms-upgrade-modal .wp-mail-smtp-btn-cta-large {
+		padding: 11px 17px;
+		min-height: 44px;
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 18px;
+		text-transform: none;
+	}
+}

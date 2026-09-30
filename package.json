@@ -1,6 +1,6 @@
 {
   "name": "wp-mail-smtp",
-  "version": "4.9.0",
+  "version": "4.10.0",
   "description": "Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, SendGrid, Mailgun, Zoho, SES, and more.",
   "private": true,
   "repository": {
@@ -16,11 +16,11 @@
     "@iconify-json/fa6-brands": "^1.2.6",
     "@iconify-json/fa6-regular": "^1.2.4",
     "@iconify-json/fa6-solid": "^1.2.4",
-    "@iconify-json/fa7-brands": "^1.2.2",
+    "@iconify-json/fa7-brands": "^1.2.4",
     "@iconify-json/fa7-regular": "^1.2.3",
-    "@iconify-json/fa7-solid": "^1.2.4",
+    "@iconify-json/fa7-solid": "^1.2.5",
     "@iconify/tailwind4": "^1.2.3",
-    "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.0",
     "eslint": "^6.8.0",
@@ -31,6 +31,7 @@
     "gulp-cached": "^1.1.1",
     "gulp-clean": "^0.4.0",
     "gulp-debug": "^4.0.0",
+    "gulp-if": "^3.0.0",
     "gulp-include": "^2.4.1",
     "gulp-insert": "^0.5.0",
     "gulp-postcss": "^10.0.0",
@@ -46,8 +47,9 @@
     "lodash": "^4.17.21",
     "merge-stream": "^2.0.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.5.15",
-    "sass": "^1.69.6",
+    "postcss": "^8.5.28",
+    "postcss-safe-important": "^2.0.1",
+    "sass": "^1.104.0",
     "tailwindcss": "^4.3.0",
     "trim-newlines": "^5.0.0",
     "vue-eslint-parser": "^7.11.0",
@@ -56,7 +58,7 @@
     "yargs-parser": "^13.1.2"
   },
   "engines": {
-    "node": ">=24.0.0",
+    "node": ">=24.15.0",
     "npm": ">=11.5.2"
   },
   "scripts": {

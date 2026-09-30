@@ -1,0 +1,41 @@
+// Dashboard "Emails Overview" widget: the filled-area chart and the failed-emails card.
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-widget__chart-holder {
+		position: relative;
+		height: 303px;
+	}
+
+	// Chart legend, in the widget head beside the title.
+	.wpms-dashboard-widget-emails-overview-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: $dashboard-spacing-ms;
+		font-size: $dashboard-font-size-xs;
+		line-height: normal;
+		color: var( --wpms-color-tertiary );
+	}
+
+	.wpms-dashboard-widget-emails-overview-legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		white-space: nowrap;
+	}
+
+	.wpms-dashboard-widget-emails-overview-legend-dot {
+		flex: 0 0 auto;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+	}
+
+	.wpms-dashboard-widget-emails-overview-chart {
+		width: 100% !important;
+		height: 100% !important;
+	}
+}

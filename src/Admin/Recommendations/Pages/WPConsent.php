@@ -3,6 +3,8 @@
 namespace WPMailSMTP\Admin\Recommendations\Pages;
 
 use WPMailSMTP\Admin\Recommendations\PageAbstract;
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
+use WPMailSMTP\PartnerPlugins\Plugins\WPConsent as WPConsentPartner;
 
 /**
  * WPConsent recommended-plugin landing page (Privacy Compliance).
@@ -28,13 +30,7 @@ class WPConsent extends PageAbstract {
 	 * @var array
 	 */
 	protected $config = [
-		'lite_plugin'          => 'wpconsent-cookies-banner-privacy-suite/wpconsent.php',
-		'lite_wporg_url'       => 'https://wordpress.org/plugins/wpconsent-cookies-banner-privacy-suite/',
-		'lite_download_url'    => 'https://downloads.wordpress.org/plugin/wpconsent-cookies-banner-privacy-suite.zip',
-		'pro_plugin'           => 'wpconsent-premium/wpconsent-premium.php',
-		'wpconsent_addon'      => 'wpconsent-premium/wpconsent-premium.php',
 		'wpconsent_addon_page' => 'https://wpconsent.com/?utm_source=wpmailsmtpplugin&utm_medium=link&utm_campaign=privacy-compliance-page',
-		'wpconsent_onboarding' => 'admin.php?page=wpconsent-onboarding',
 	];
 
 	/**
@@ -64,6 +60,18 @@ class WPConsent extends PageAbstract {
 	protected static function get_plugin_name(): string {
 
 		return 'wpconsent'; // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
+	}
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return PartnerPlugin
+	 */
+	protected function create_plugin(): PartnerPlugin {
+
+		return new WPConsentPartner();
 	}
 
 	/**
@@ -135,6 +143,22 @@ class WPConsent extends PageAbstract {
 	}
 
 	/**
+	 * Whether the plugin has nothing left for the user to set up.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return bool
+	 */
+	protected function is_plugin_finished_setup(): bool {
+
+		if ( ! $this->is_plugin_configured() ) {
+			return false;
+		}
+
+		return $this->is_pro_active();
+	}
+
+	/**
 	 * Generate and output step 'Result' section HTML.
 	 *
 	 * @since 4.9.0
@@ -190,7 +214,7 @@ class WPConsent extends PageAbstract {
 		$step['button_class']  = 'grey disabled';
 		$step['button_url']    = '';
 
-		$plugin_license_level = $this->get_license_level();
+		$plugin_license_level = $this->is_pro_active() ? 'pro' : 'lite';
 
 		switch ( $plugin_license_level ) {
 			case 'lite':
@@ -199,7 +223,7 @@ class WPConsent extends PageAbstract {
 				break;
 
 			case 'pro':
-				$addon_installed      = array_key_exists( $this->config['wpconsent_addon'], $this->output_data['all_plugins'] );
+				$addon_installed      = $this->get_plugin()->is_pro_installed();
 				$step['button_text']  =
 					$addon_installed
 						? esc_html__( 'WPConsent Pro Installed & Activated', 'wp-mail-smtp' )
@@ -210,122 +234,6 @@ class WPConsent extends PageAbstract {
 		}
 
 		return $step;
-	}
-
-	/**
-	 * Retrieve the license level of the plugin.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return string The plugin license level ('lite' or 'pro').
-	 */
-	protected function get_license_level(): string {
-
-		$plugin_license_level = 'lite';
-
-		// Check if premium features are available.
-		if ( function_exists( 'wpconsent' ) ) {
-			$wpconsent = wpconsent();
-
-			if ( isset( $wpconsent->license ) && method_exists( $wpconsent->license, 'is_active' ) ) {
-				$plugin_license_level = $wpconsent->license->is_active() ? 'pro' : 'lite';
-			}
-		}
-
-		return $plugin_license_level;
-	}
-
-	/**
-	 * Whether the plugin is finished setup or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if the plugin is finished setup.
-	 */
-	protected function is_plugin_finished_setup(): bool {
-
-		if ( ! $this->is_plugin_configured() ) {
-			return false;
-		}
-
-		return $this->get_license_level() === 'pro';
-	}
-
-	/**
-	 * Whether a plugin is configured or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is configured properly.
-	 * @noinspection PhpUndefinedFunctionInspection
-	 */
-	protected function is_plugin_configured(): bool {
-
-		if ( ! $this->is_plugin_activated() ) {
-			return false;
-		}
-
-		// The plugin is considered configured if the consent banner is enabled.
-		if ( function_exists( 'wpconsent' ) ) {
-			$wpconsent = wpconsent();
-
-			if ( isset( $wpconsent->settings ) ) {
-				$enable_consent_banner = $wpconsent->settings->get_option( 'enable_consent_banner', 0 );
-
-				return ! empty( $enable_consent_banner );
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Whether a plugin is active or not.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is active.
-	 */
-	protected function is_plugin_activated(): bool {
-
-		return ( // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-			function_exists( 'wpconsent' ) &&
-			(
-				is_plugin_active( $this->config['lite_plugin'] ) ||
-				is_plugin_active( $this->config['pro_plugin'] )
-			)
-		);
-	}
-
-	/**
-	 * Whether a plugin is available (class/function exists).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if plugin is available.
-	 */
-	protected function is_plugin_available(): bool {
-
-		return function_exists( 'wpconsent' ); // phpcs:ignore WPForms.Formatting.EmptyLineBeforeReturn.RemoveEmptyLineBeforeReturnStatement
-	}
-
-	/**
-	 * Whether pro version is active.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool True if pro version is active.
-	 * @noinspection PhpUndefinedFunctionInspection
-	 */
-	protected function is_pro_active(): bool {
-
-		if ( ! function_exists( 'wpconsent' ) ) {
-			return false;
-		}
-
-		$wpconsent = wpconsent();
-
-		return isset( $wpconsent->license ) && method_exists( $wpconsent->license, 'is_active' ) && $wpconsent->license->is_active();
 	}
 
 	/**

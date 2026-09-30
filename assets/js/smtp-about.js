@@ -66,12 +66,17 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 
 				var $btn = $( this );
 
+				if ( WPMailSMTP.Admin.Settings.pluginInstall.takeManualRoute( $btn ) ) {
+					return false;
+				}
+
 				if ( $btn.hasClass( 'disabled' ) || $btn.hasClass( 'loading' ) ) {
 					return false;
 				}
 
 				var $plugin = $btn.closest( '.plugin-item' ),
 					plugin = $btn.attr( 'data-plugin' ),
+					originalLabel = $btn.html(),
 					task,
 					cssClass,
 					statusText,
@@ -115,7 +120,8 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 					action: 'wp_mail_smtp_ajax',
 					task: task,
 					nonce : wp_mail_smtp_about.nonce,
-					plugin: plugin
+					plugin: plugin,
+					source: 'about_tab'
 				};
 
 				$.post( wp_mail_smtp_about.ajax_url, data, function( res ) {
@@ -127,7 +133,10 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 							$btn.attr( 'data-plugin', res.data.basename );
 							successText = res.data.msg;
 							if ( ! res.data.is_activated ) {
-								cssClass = 'button';
+
+								// The class the click handler dispatches on, so the new CTA works
+								// without a reload.
+								cssClass = 'status-inactive button button-secondary';
 								statusText = wp_mail_smtp_about.plugin_inactive;
 								buttonText = wp_mail_smtp_about.plugin_activate;
 							}
@@ -147,21 +156,16 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 					} else {
 						isInstallSuccessful = false;
 
-						if (
-							res.hasOwnProperty( 'data' ) &&
-							res.data.hasOwnProperty( 0 ) &&
-							res.data[ 0 ].hasOwnProperty( 'code' )
-						) {
+						var settings  = WPMailSMTP.Admin.Settings;
+						var manualUrl = settings.extractAjaxManualUrl( res );
 
-							// Specific server-returned error.
-							$plugin.find( '.actions' ).append( '<div class="msg error">' + wp_mail_smtp_about.plugin_install_error + '</div>' );
-						} else {
+						settings.pluginInstall.showErrorModal(
+							settings.extractAjaxError( res, wp_mail_smtp_about.plugin_install_error ),
+							manualUrl
+						);
 
-							// Generic error.
-							$plugin.find( '.actions' ).append( '<div class="msg error">' + res.data + '</div>' );
-						}
-
-						$btn.html( wp_mail_smtp_about.plugin_download_btn );
+						$btn.html( originalLabel );
+						settings.pluginInstall.offerManualRoute( $btn, manualUrl );
 					}
 
 					if ( ! isInstallSuccessful ) {

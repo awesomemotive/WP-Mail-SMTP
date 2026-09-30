@@ -1,0 +1,89 @@
+// Dashboard "Setup Checklist" sidebar widget (SetupChecklistOverview).
+//
+// @since {VERSION}
+
+.wpms-dashboard-page {
+
+	.wpms-dashboard-checklist-overview-group-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var( --wpms-spacing-sm );
+		margin: 0 0 $dashboard-spacing-ms;
+
+		// A completed group has no steps left to list, so its header is the whole group
+		// and has nothing under it to space from.
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.wpms-dashboard-checklist-overview-group-title {
+		margin: 0;
+		font-size: $dashboard-font-size-s;
+		font-weight: 500;
+		line-height: 20px;
+		color: var( --wpms-text-primary );
+
+		&--complete {
+			text-decoration: line-through;
+		}
+	}
+
+	.wpms-dashboard-checklist-overview-items {
+		display: flex;
+		flex-direction: column;
+		gap: $dashboard-spacing-ms;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.wpms-dashboard-checklist-overview-item {
+		margin: 0;
+	}
+
+	// A step that is text rather than a link borrows the muted link's layout without
+	// the hover that would imply it goes somewhere.
+	.wpms-dashboard-checklist-overview-item-static {
+		display: flex;
+		align-items: center;
+		gap: var( --wpms-spacing-sm );
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 20px;
+		color: var( --wpms-color-tertiary );
+	}
+
+	// A finished step is struck through, label and hover alike, and its check goes green.
+	.wpms-dashboard-checklist-overview-item-link--complete {
+
+		.wpms-muted-link__label,
+		&:hover .wpms-muted-link__label,
+		&:focus .wpms-muted-link__label {
+			text-decoration: line-through;
+		}
+
+		.wpms-dashboard-checklist-overview-item-icon {
+			color: var( --wpms-color-success );
+		}
+	}
+
+	// No colour of its own: the glyph follows the muted link through its hover.
+	.wpms-dashboard-checklist-overview-item-icon {
+		flex-shrink: 0;
+		font-size: 16px;
+	}
+
+	.wpms-dashboard-checklist-overview-more {
+		margin: $dashboard-spacing-ms 0 0;
+		font-size: $dashboard-font-size-s;
+		line-height: normal;
+		color: var( --wpms-text-icon );
+	}
+
+	.wpms-dashboard-checklist-overview-footer {
+		padding-top: $dashboard-spacing-ms;
+		border-top: 1px solid var( --wpms-color-surface-divider );
+	}
+}

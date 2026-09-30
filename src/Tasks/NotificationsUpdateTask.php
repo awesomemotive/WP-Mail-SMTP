@@ -29,14 +29,22 @@ class NotificationsUpdateTask extends Task {
 	}
 
 	/**
+	 * Register the task's callbacks.
+	 *
+	 * @since 4.10.0
+	 */
+	public function hooks() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
+
+		// Register the action handler.
+		add_action( self::ACTION, [ $this, 'process' ] );
+	}
+
+	/**
 	 * Initialize the task with all the proper checks.
 	 *
 	 * @since 4.3.0
 	 */
-	public function init() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
-
-		// Register the action handler.
-		add_action( self::ACTION, [ $this, 'process' ] );
+	public function init() {
 
 		// Exit if notifications are disabled
 		// or this task is already scheduled.

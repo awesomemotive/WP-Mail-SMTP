@@ -6,6 +6,7 @@ use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Options;
+use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
  * Class ConnectionSettings.
@@ -280,7 +281,7 @@ class ConnectionSettings {
 		</div>
 
 		<!-- Mailer Options -->
-		<div class="wp-mail-smtp-setting-group wp-mail-smtp-mailer-options">
+		<div class="wp-mail-smtp-setting-group wp-mail-smtp-mailer-options" id="wp-mail-smtp-mailer-options">
 			<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all( $this->connection ) as $provider ) : ?>
 				<?php $provider_desc = $provider->get_description(); ?>
 				<div class="wp-mail-smtp-mailer-option wp-mail-smtp-mailer-option-<?php echo esc_attr( $provider->get_slug() ); ?> <?php echo $mailer === $provider->get_slug() ? 'active' : 'hidden'; ?>">
@@ -315,7 +316,18 @@ class ConnectionSettings {
 						</div>
 					<?php endif; ?>
 
-					<?php $provider->display_options(); ?>
+					<?php
+					/**
+					 * Fires before a mailer's own settings, inside its options block.
+					 *
+					 * @since 4.10.0
+					 *
+					 * @param OptionsAbstract $provider The mailer's options object.
+					 */
+					do_action( 'wp_mail_smtp_admin_connection_settings_display_mailer_options_before', $provider );
+
+					$provider->display_options();
+					?>
 				</div>
 			<?php endforeach; ?>
 		</div>

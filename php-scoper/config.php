@@ -42,6 +42,11 @@ $config = [
 		'trigger_deprecation',
 	],
 
+	// WordPress owns WP_Error, so prefixing references to it would fatal on every scoped error path.
+	'exclude-classes'            => [
+		'WP_Error',
+	],
+
 	/*
 	By default when running php-scoper add-prefix, it will prefix all relevant code found in the current working
 	directory. You can however define which files should be scoped by defining a collection of Finders in the
@@ -358,6 +363,14 @@ if ( file_exists( 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php' ) ) {
 		->files()
 		->in( 'vendor/mk-j/php_xlsxwriter/' )
 		->name( [ 'xlsxwriter.class.php', 'LICENSE', 'composer.json' ] );
+}
+
+// Scoped to the package, not vendor/awesomemotive, which also holds the wpforms-phpcs dev dependency.
+if ( file_exists( 'vendor/awesomemotive/wpforms-product-api-client' ) ) {
+	$config['finders'][] = Finder::create()
+		->files()
+		->in( 'vendor/awesomemotive/wpforms-product-api-client' )
+		->name( [ '*.php', 'LICENSE', 'composer.json' ] );
 }
 
 return $config;

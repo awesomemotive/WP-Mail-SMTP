@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Recommendations;
 
+use WPMailSMTP\PartnerPlugins\PartnerPlugin;
 use WPMailSMTP\WP;
 
 /**
@@ -25,13 +26,22 @@ abstract class PageAbstract {
 	public const SLUG = '';
 
 	/**
-	 * Configuration.
+	 * Configuration. Page-specific links only.
 	 *
 	 * @since 4.9.0
 	 *
 	 * @var array
 	 */
 	protected $config = [];
+
+	/**
+	 * The plugin this page promotes.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var PartnerPlugin
+	 */
+	private $plugin;
 
 	/**
 	 * Runtime data used for generating page HTML.
@@ -169,26 +179,6 @@ abstract class PageAbstract {
 			],
 		];
 
-		if (
-			! $this->output_data['plugin_installed'] &&
-			! $this->output_data['pro_plugin_installed'] &&
-			! current_user_can( 'install_plugins' )
-		) {
-			$button_format       = '<a class="link" href="%1$s" target="_blank" rel="nofollow noopener">%2$s <span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
-			$button_allowed_html = [
-				'a'    => [
-					'class'  => true,
-					'href'   => true,
-					'target' => true,
-					'rel'    => true,
-				],
-				'span' => [
-					'class'       => true,
-					'aria-hidden' => true,
-				],
-			];
-		}
-
 		$is_url      = (bool) preg_match( '#^https?://#i', (string) $step['plugin'] );
 		$plugin_attr = $is_url ? esc_url( $step['plugin'] ) : esc_attr( $step['plugin'] );
 		$button      = sprintf( $button_format, $plugin_attr, esc_html( $step['button_text'] ), esc_attr( $step['button_class'] ), esc_attr( $step['button_action'] ), esc_attr( static::get_plugin_name() ) );
@@ -246,7 +236,7 @@ abstract class PageAbstract {
 			esc_html( $step['heading'] ),
 			esc_html( $step['description'] ),
 			esc_attr( $step['button_class'] ),
-			esc_url( admin_url( $this->config[ static::get_plugin_name() . '_onboarding' ] ) ),
+			esc_url( $this->get_plugin()->get_setup_url() ),
 			esc_html( $step['button_text'] )
 		);
 	}
@@ -269,45 +259,39 @@ abstract class PageAbstract {
 	 */
 	protected function get_data_step_install(): array {
 
-		$step                = [];
-		$step['heading']     = $this->get_install_heading();
-		$step['description'] = $this->get_install_description();
+		$plugin = $this->get_plugin();
 
-		$this->output_data['all_plugins']          = get_plugins();
-		$this->output_data['plugin_installed']     = array_key_exists( $this->config['lite_plugin'], $this->output_data['all_plugins'] );
+		$step                    = [];
+		$step['heading']         = $this->get_install_heading();
+		$step['description']     = $this->get_install_description();
+
+		$this->output_data['plugin_installed']     = $plugin->is_installed();
 		$this->output_data['plugin_activated']     = false;
-		$this->output_data['pro_plugin_installed'] = array_key_exists( $this->config['pro_plugin'], $this->output_data['all_plugins'] );
+		$this->output_data['pro_plugin_installed'] = $plugin->is_pro_installed();
 		$this->output_data['pro_plugin_activated'] = false;
 
-		if ( ! $this->output_data['plugin_installed'] && ! $this->output_data['pro_plugin_installed'] ) {
+		if ( $plugin->get_install_state() === PartnerPlugin::STATE_NOT_INSTALLED ) {
 			$step['icon']          = 'plugin-page/step-1.svg';
 			$step['button_text']   = $this->get_install_button_text();
 			$step['button_class']  = 'button-primary';
 			$step['button_action'] = 'install';
-			$step['plugin']        = $this->config['lite_download_url'];
+			$step['plugin']        = $plugin->get_download_url();
 
-			if ( ! current_user_can( 'install_plugins' ) ) {
-				$step['heading']     = $this->get_plugin_title();
-				$step['description'] = '';
-				$step['button_text'] = $this->get_plugin_title() . ' on WordPress.org';
-				$step['plugin']      = $this->config['lite_wporg_url'];
-			}
-		} else {
-			$this->output_data['plugin_activated'] =
-				is_plugin_active( $this->config['lite_plugin'] ) || is_plugin_active( $this->config['pro_plugin'] );
-			$step['icon']                          = $this->output_data['plugin_activated'] ? 'plugin-page/complete.svg' : 'plugin-page/step-1.svg';
-			$step['button_text']                   =
-				$this->output_data['plugin_activated']
-					? $this->get_installed_activated_text()
-					: $this->get_activate_text();
-			$step['button_class']                  = $this->output_data['plugin_activated']
-				? 'grey disabled'
-				: 'button-primary';
-			$step['button_action']                 = $this->output_data['plugin_activated'] ? '' : 'activate';
-			$step['plugin']                        =
-				$this->output_data['pro_plugin_installed'] ? $this->config['pro_plugin'] : $this->config['lite_plugin'];
-			$step['is_pro']                        = $this->output_data['pro_plugin_installed'];
+			return $step;
 		}
+
+		$this->output_data['plugin_activated'] = $plugin->is_active();
+
+		$is_offered = ! $this->output_data['plugin_activated'];
+
+		$step['icon']          = $this->output_data['plugin_activated'] ? 'plugin-page/complete.svg' : 'plugin-page/step-1.svg';
+		$step['button_text']   = $this->output_data['plugin_activated']
+			? $this->get_installed_activated_text()
+			: $this->get_activate_text();
+		$step['button_class']  = $is_offered ? 'button-primary' : 'grey disabled';
+		$step['button_action'] = $is_offered ? 'activate' : '';
+		$step['plugin']        = $plugin->get_installed_basename();
+		$step['is_pro']        = $this->output_data['pro_plugin_installed'];
 
 		return $step;
 	}
@@ -375,16 +359,10 @@ abstract class PageAbstract {
 
 		$result['setup_status'] = (int) $this->is_plugin_configured();
 
-		$result['license_level']    = 'lite';
+		$result['license_level']    = $this->is_pro_active() ? 'pro' : 'lite';
 		$result['step3_button_url'] = $this->config[ static::get_plugin_name() . '_addon_page' ];
-
-		if ( $this->is_pro_active() ) {
-			$result['license_level'] = 'pro';
-		}
-
-		$result['result_status'] = $this->is_plugin_finished_setup();
-
-		$result['addon_installed'] = (int) array_key_exists( $this->config[ static::get_plugin_name() . '_addon' ], get_plugins() );
+		$result['result_status']    = $this->is_plugin_finished_setup();
+		$result['addon_installed']  = (int) $this->get_plugin()->is_pro_installed();
 
 		wp_send_json_success( $result );
 	}
@@ -398,7 +376,7 @@ abstract class PageAbstract {
 	 */
 	public function plugin_activated( string $plugin_basename ): void {
 
-		if ( $plugin_basename !== $this->config['lite_plugin'] ) {
+		if ( $plugin_basename !== $this->get_plugin()->get_basename() ) {
 			return;
 		}
 
@@ -418,29 +396,9 @@ abstract class PageAbstract {
 	 */
 	protected function get_js_strings(): array {
 
-		$error_could_not_install = sprintf(
-			wp_kses( /* translators: %1$s - Lite plugin download URL. */
-				__( 'Could not install the plugin automatically. Please <a href="%1$s">download</a> it and install it manually.', 'wp-mail-smtp' ),
-				[
-					'a' => [
-						'href' => true,
-					],
-				]
-			),
-			esc_url( $this->config['lite_download_url'] ?? '' )
-		);
+		$error_could_not_install = esc_html__( 'Could not install the plugin automatically. Please install it manually.', 'wp-mail-smtp' );
 
-		$error_could_not_activate = sprintf(
-			wp_kses( /* translators: %1$s - Plugins page URL. */
-				__( 'Could not activate the plugin. Please activate it on the <a href="%1$s">Plugins page</a>.', 'wp-mail-smtp' ),
-				[
-					'a' => [
-						'href' => true,
-					],
-				]
-			),
-			esc_url( admin_url( 'plugins.php' ) )
-		);
+		$error_could_not_activate = esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' );
 
 		return [
 			'installing'               => esc_html__( 'Installing...', 'wp-mail-smtp' ),
@@ -449,12 +407,8 @@ abstract class PageAbstract {
 			'activated_pro'            => $this->get_pro_installed_activated_text(),
 			'install_now'              => esc_html__( 'Install Now', 'wp-mail-smtp' ),
 			'activate_now'             => esc_html__( 'Activate Now', 'wp-mail-smtp' ),
-			'download_now'             => esc_html__( 'Download Now', 'wp-mail-smtp' ),
-			'plugins_page'             => esc_html__( 'Go to Plugins page', 'wp-mail-smtp' ),
 			'error_could_not_install'  => $error_could_not_install,
 			'error_could_not_activate' => $error_could_not_activate,
-			static::get_plugin_name() . '_manual_install_url' => $this->config['lite_download_url'],
-			static::get_plugin_name() . '_manual_activate_url' => admin_url( 'plugins.php' ),
 		];
 	}
 
@@ -601,49 +555,78 @@ abstract class PageAbstract {
 	abstract protected function output_section_step_result(): void;
 
 	/**
-	 * Whether a plugin is configured or not.
+	 * The plugin this page promotes.
 	 *
-	 * @since 4.9.0
+	 * @since 4.10.0
 	 *
-	 * @return bool True if a plugin is configured properly.
+	 * @return PartnerPlugin
 	 */
-	abstract protected function is_plugin_configured(): bool;
+	protected function get_plugin(): PartnerPlugin {
+
+		if ( $this->plugin === null ) {
+			$this->plugin = $this->create_plugin();
+		}
+
+		return $this->plugin;
+	}
 
 	/**
-	 * Whether a plugin is active or not.
+	 * Build the plugin this page promotes.
 	 *
-	 * @since 4.9.0
+	 * @since 4.10.0
 	 *
-	 * @return bool True if the plugin is active.
+	 * @return PartnerPlugin
 	 */
-	abstract protected function is_plugin_activated(): bool;
+	abstract protected function create_plugin(): PartnerPlugin;
 
 	/**
-	 * Whether a plugin is finished setup or not.
+	 * Whether the plugin is configured.
 	 *
 	 * @since 4.9.0
 	 *
-	 * @return bool True if the plugin is finished setup.
+	 * @return bool
 	 */
-	abstract protected function is_plugin_finished_setup(): bool;
+	protected function is_plugin_configured(): bool {
+
+		return $this->get_plugin()->is_configured();
+	}
+
 
 	/**
-	 * Whether a plugin is available (class/function exists).
+	 * Whether the plugin has nothing left for the user to set up.
 	 *
 	 * @since 4.9.0
 	 *
-	 * @return bool True if a plugin is available.
+	 * @return bool
 	 */
-	abstract protected function is_plugin_available(): bool;
+	protected function is_plugin_finished_setup(): bool {
+
+		return $this->is_plugin_configured();
+	}
 
 	/**
-	 * Whether a pro-version is active.
+	 * Whether the plugin's own API is available.
 	 *
 	 * @since 4.9.0
 	 *
-	 * @return bool True if a pro-version is active.
+	 * @return bool
 	 */
-	abstract protected function is_pro_active(): bool;
+	protected function is_plugin_available(): bool {
+
+		return $this->get_plugin()->is_loaded();
+	}
+
+	/**
+	 * Whether the plugin's premium tier is unlocked.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return bool
+	 */
+	protected function is_pro_active(): bool {
+
+		return $this->get_plugin()->is_pro_active();
+	}
 
 	/**
 	 * Get the heading for the installation step.
@@ -662,15 +645,6 @@ abstract class PageAbstract {
 	 * @return string Install step description.
 	 */
 	abstract protected function get_install_description(): string;
-
-	/**
-	 * Get the plugin title.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return string Plugin title.
-	 */
-	abstract protected function get_plugin_title(): string;
 
 	/**
 	 * Get the installation button text.

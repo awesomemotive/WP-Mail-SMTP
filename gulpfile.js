@@ -14,8 +14,10 @@ const replace = require('gulp-replace');
 const { exec } = require('child_process');
 const clean = require('gulp-clean');
 const merge = require('merge-stream');
-const insert = require('gulp-insert');
-const { readFileSync } = require('fs');
+
+// Design-system build tooling, vendored in `.design/tools/`.
+const { registerTailwindTask } = require('./.design/tools/tailwind-build.mjs');
+const { scssElevatePipe } = require('./.design/tools/postcss-elevate-layer.mjs');
 
 const sass = gulpSass( _sass );
 const packageJSON = require( './package.json' );
@@ -81,6 +83,8 @@ var plugin = {
 		'!**/Makefile',
 		'!.packages/**',
 		'!.packages/',
+		'!.design/**',
+		'!.design',
 		'!vendor/composer/!(*.php)/**',
 		'!vendor/wikimedia/**',
 		'!vendor/wikimedia/',
@@ -128,7 +132,8 @@ var plugin = {
 	],
 	lite_files: [
 		'!assets/pro/**',
-		'!src/Pro/**'
+		'!src/Pro/**',
+		'!templates/pro/**'
 	],
 	pro_files: [
 		'loco.xml',
@@ -182,6 +187,7 @@ gulp.task( 'css:sass', function () {
 			.pipe( cached( 'processCSS' ) )
 			.pipe( sourcemaps.init() )
 			.pipe( sass( { outputStyle: 'expanded' } ).on( 'error', sass.logError ) )
+			.pipe( scssElevatePipe() )
 			.pipe( rename( function ( path ) {
 				if ( /-pro-/.test( path.basename ) ) {
 					path.dirname = '/assets/pro/css';
@@ -209,67 +215,13 @@ gulp.task( 'css:sass', function () {
 } );
 
 /**
- * Run Tailwind v4 over the compiled admin bundle.
+ * Run Tailwind v4 over the compiled design-system bundles.
  *
- * Tailwind utilities are injected only into the main admin bundle
- * (smtp-admin.css and smtp-admin.min.css). All other compiled stylesheets
- * are left untouched. Preflight is intentionally NOT imported - the global
- * element reset would clobber WP admin styles.
- *
- * Class scanning targets `src/**\/*.php` and `assets/js/**\/*.js` via the
- * `@source` directive so utilities referenced in PHP/JS are emitted.
- *
- * The `@import` and `@source` directives are prepended in-memory before
- * PostCSS runs, so the SCSS source on disk stays free of Tailwind directives.
+ * `registerTailwindTask` reads `.design/project.json` for the bundle list and, per surface,
+ * prepends the theme file (which carries every Tailwind directive) to the compiled bundle,
+ * then generates, scopes and elevates the utilities.
  */
-
-// Project-specific Tailwind @theme tokens — kept in a separate CSS file so the
-// design system is discoverable + editable independently of the gulp config.
-const tailwindThemeBlock = readFileSync( './assets/css/tailwind-theme.css', 'utf8' );
-
-const tailwindDirectives =
-	'@import "tailwindcss/theme.css" layer(theme) prefix(wpms);\n' +
-	'@import "tailwindcss/utilities.css" layer(utilities) source(none) prefix(wpms);\n' +
-	'@source "../../src/**/*.php";\n' +
-	'@source "../../assets/js/**/*.js";\n' +
-	tailwindThemeBlock + '\n';
-
-// Scope every generated .wpms:* utility selector under `#wp-mail-smtp`. Bumps
-// specificity above many plugin global rules without resorting to !important.
-// Per-utility `!` modifier (e.g. `wpms:m-0!`) is used surgically in markup for
-// the cases where deeper plugin rules outrank the scope — identified via the
-// Playwright style-audit script (see `scripts/check-tailwind-styles.mjs`).
-const scopeTailwindUtilities = () => ( {
-	postcssPlugin: 'scope-tailwind-utilities',
-	Rule( rule ) {
-		if ( rule.selector.includes( '#wp-mail-smtp' ) ) return;
-		if ( ! /\.wpms\\:/.test( rule.selector ) ) return;
-		rule.selector = rule.selector
-			.split( ',' )
-			.map( s => `#wp-mail-smtp ${ s.trim() }` )
-			.join( ',\n' );
-	},
-} );
-scopeTailwindUtilities.postcss = true;
-
-gulp.task( 'css:tailwind', function () {
-	const postcss = require('gulp-postcss');
-	const tailwindcss = require('@tailwindcss/postcss');
-
-	const expanded = gulp.src( 'assets/css/smtp-admin.css' )
-		.pipe( insert.prepend( tailwindDirectives ) )
-		.pipe( postcss( [ tailwindcss( { optimize: false } ), scopeTailwindUtilities() ] ) )
-		.pipe( gulp.dest( 'assets/css/' ) )
-		.pipe( debug( { title: '[css:tailwind]' } ) );
-
-	const minified = gulp.src( 'assets/css/smtp-admin.min.css' )
-		.pipe( insert.prepend( tailwindDirectives ) )
-		.pipe( postcss( [ tailwindcss( { optimize: { minify: true } } ), scopeTailwindUtilities() ] ) )
-		.pipe( gulp.dest( 'assets/css/' ) )
-		.pipe( debug( { title: '[css:tailwind]' } ) );
-
-	return merge( expanded, minified );
-} );
+registerTailwindTask( gulp );
 
 gulp.task( 'css', gulp.series( 'css:sass', 'css:tailwind' ) );
 
@@ -367,6 +319,7 @@ gulp.task( 'composer:pro', function ( cb ) {
 gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 	return gulp.src(
 			[
+				'vendor/awesomemotive/wpforms-product-api-client',
 				'vendor/aws',
 				'vendor/google',
 				'vendor/guzzlehttp',

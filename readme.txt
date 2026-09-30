@@ -2,8 +2,8 @@
 Contributors: wpforms, smub, slaFFik, capuderg
 Tags: smtp, email, gmail, outlook, email logs
 Requires at least: 5.5
-Tested up to: 7.0
-Stable tag: 4.9.0
+Tested up to: 7.1
+Stable tag: 4.10.0
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -409,6 +409,18 @@ By all means please contact us to discuss features or options you'd like to see 
 
 == Changelog ==
 
+= 4.10.0 - 2026-09-30 =
+- Added: New Dashboard page, now the default screen for WP Mail SMTP, with email statistics, a setup overview, connection status, and recommended next steps.
+- Added: Setup Checklist: a new page that guides you through connecting a mailer, sending a test email, and the rest of your email setup, with progress tracked automatically.
+- Added: Email Detective: a new tab on the Tools page that sends a test email through your primary connection and emails you a free deliverability report covering authentication, blocklists, and spam filter scoring.
+- Added: Setup Wizard now verifies your mailer settings with your email provider before saving them, and guides you through each mailer's required settings as numbered steps.
+- Changed: Setup Wizard's email test now reports the exact sending error with the fix steps for it, names the setting at fault where it can be identified, and shows the domain checker results.
+- Changed: Updated Action Scheduler library to 4.1.0.
+- Fixed: The plugin could not be activated on some sites and failed with a fatal error when its stored activation dates were saved in an unexpected format.
+- Fixed: A database error was logged and the Dashboard widget's email error alert never appeared on sites whose MySQL server treats double quotes as identifiers (ANSI_QUOTES mode).
+- Fixed: The Setup Wizard's test email did not send while the "Do Not Send" option was enabled.
+- Fixed: Hardened permission checks and request handling across several admin features to address potential security issues.
+
 = 4.9.0 - 2026-06-26 =
 - Added: WP-CLI commands to configure WP Mail SMTP from the command line, including SMTP and API-key mailer setup and individual setting management.
 - Added: Code Snippets tab on the Tools page to browse, preview, and install WP Mail SMTP's WPCode snippets.
@@ -417,7 +429,6 @@ By all means please contact us to discuss features or options you'd like to see 
 - Added: Confirmation prompt before enabling the "Hide Email Delivery Errors" option, so the setting is not turned on by accident.
 - Changed: Improved error handling and troubleshooting guidance when an email fails to send.
 - Changed: Updated Action Scheduler library to 4.0.0.
-- Fixed: The WPMS_LOG_BLOCKED_EMAILS constant in wp-config.php did not affect the Log Blocked Emails setting; defining the constant now correctly enforces the value, disables the option in the admin area, and shows a notice indicating it is set by a constant.
 - Fixed: The "Last week" stat in the Lite weekly summary email showed the just-started current week's count instead of the actual previous week's total, because the email is sent on Monday at 2pm.
 - Fixed: Hardened permission checks and request handling across several admin features to address potential security issues.
 

@@ -473,10 +473,10 @@ class Mailer extends MailerAbstract {
 
 		$options = $this->connection_options->get_group( $this->mailer );
 
-		$text[] = '<strong>' . esc_html__( 'Api Key:', 'wp-mail-smtp' ) . '</strong> ' .
-							( ! empty( $options['api_key'] ) ? 'Yes' : 'No' );
+		$text[] = '<strong>' . esc_html__( 'API Key:', 'wp-mail-smtp' ) . '</strong> ' .
+							( ! empty( $options['api_key'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		$text[] = '<strong>' . esc_html__( 'Channel:', 'wp-mail-smtp' ) . '</strong> ' .
-							( ! empty( $options['channel'] ) ? 'Yes' : 'No' );
+							( ! empty( $options['channel'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
 		return implode( '<br>', $text );
 	}

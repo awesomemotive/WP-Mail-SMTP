@@ -337,6 +337,10 @@ class Notifications {
 	 */
 	public function update() {
 
+		if ( ! $this->is_enabled() ) {
+			return;
+		}
+
 		$option = $this->get_option();
 
 		// Bail if feed was updated less than an interval ago.

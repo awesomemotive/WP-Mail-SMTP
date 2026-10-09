@@ -240,7 +240,14 @@ class Loader {
 				$entity = new $class( ...$args );
 			}
 		} catch ( \Exception $e ) {
-			DebugEvents::add( "There was a problem while retrieving {$request} for {$provider}: {$e->getMessage()}" );
+			DebugEvents::add(
+				sprintf( /* translators: %1$s - requested entity, %2$s - provider slug, %3$s - error message. */
+					__( 'There was a problem while retrieving %1$s for %2$s: %3$s', 'wp-mail-smtp' ),
+					$request,
+					$provider,
+					$e->getMessage()
+				)
+			);
 			$entity = null;
 		}
 

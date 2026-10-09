@@ -357,7 +357,7 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_debug_info() {
 
-		$sendgrid_text[] = '<strong>Api Key:</strong> ' . ( $this->is_mailer_complete() ? 'Yes' : 'No' );
+		$sendgrid_text[] = '<strong>' . esc_html__( 'API Key:', 'wp-mail-smtp' ) . '</strong> ' . ( $this->is_mailer_complete() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
 		return implode( '<br>', $sendgrid_text );
 	}

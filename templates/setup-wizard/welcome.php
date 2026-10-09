@@ -9,7 +9,7 @@
  * @var string $css_url             Wizard stylesheet URL.
  * @var string $logo_url            Plugin logo URL.
  * @var string $loading_url         Loading indicator URL.
- * @var string $settings_url        Plugin settings page URL, for the exit link.
+ * @var string $dashboard_url       Plugin Dashboard page URL, for the exit link.
  * @var bool   $is_local_environment Whether this site runs the bundled wizard, with nothing to transfer to.
  */
 
@@ -64,11 +64,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</main>
 				<footer>
 					<p class="wp-mail-smtp-exit-link">
-						<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Go back to the Dashboard', 'wp-mail-smtp' ); ?></a>
+						<a href="<?php echo esc_url( $dashboard_url ); ?>"><?php esc_html_e( 'Go back to the Dashboard', 'wp-mail-smtp' ); ?></a>
 					</p>
 					<?php if ( ! $is_local_environment ) : ?>
 						<p class="wpms-setup-wizard-welcome__notice">
-							<?php esc_html_e( 'Note: You will be transferred to wpmailsmtp.com to complete the setup wizard.', 'wp-mail-smtp' ); ?>
+							<?php esc_html_e( 'Note: You will be transferred to the WP Mail SMTP website to complete the setup wizard.', 'wp-mail-smtp' ); ?>
 						</p>
 					<?php endif; ?>
 				</footer>

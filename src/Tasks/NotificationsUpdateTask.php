@@ -71,6 +71,13 @@ class NotificationsUpdateTask extends Task {
 	 */
 	public function process() {
 
+		// Announcements were hidden after the task was scheduled; init() schedules it again once they are shown.
+		if ( ! wp_mail_smtp()->get_notifications()->is_enabled() ) {
+			$this->cancel_force();
+
+			return;
+		}
+
 		// Delete task duplicates.
 		try {
 			$this->remove_pending( 1000 );

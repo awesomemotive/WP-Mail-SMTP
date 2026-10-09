@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\SetupWizard;
 
 use WPMailSMTP\Admin\Area;
+use WPMailSMTP\Admin\Dashboard\Page as DashboardPage;
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Gmail\Auth as GmailAuth;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
@@ -159,7 +160,7 @@ class Hosted {
 				'css_url'              => $assets_url . '/vue/css/wizard' . $rtl . '.min.css?ver=' . WPMS_PLUGIN_VER,
 				'logo_url'             => $assets_url . '/vue/img/logo.svg',
 				'loading_url'          => $assets_url . '/vue/img/loading-pattie.svg',
-				'settings_url'         => wp_mail_smtp()->get_admin()->get_admin_page_url(),
+				'dashboard_url'        => wp_mail_smtp()->get_admin()->get_admin_page_url( DashboardPage::SLUG ),
 				// A site with nothing to transfer to is shown no transfer notice.
 				'is_local_environment' => WP::is_local_environment(),
 			],
@@ -512,7 +513,7 @@ class Hosted {
 		return [
 			'is_multisite'         => is_multisite(),
 			'translations'         => WP::get_jed_locale_data( 'wp-mail-smtp' ),
-			'plugin_admin_url'     => wp_mail_smtp()->get_admin()->get_admin_page_url(),
+			'plugin_admin_url'     => wp_mail_smtp()->get_admin()->get_admin_page_url( DashboardPage::SLUG ),
 			'wizard_restart_url'   => Launcher::get_url(),
 			'email_test_tab_url'   => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ),
 			'is_pro'               => wp_mail_smtp()->is_pro(),

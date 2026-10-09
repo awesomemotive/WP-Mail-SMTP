@@ -636,6 +636,8 @@ class Area {
 			'is_network_admin'        => is_network_admin(),
 			'ajax_url'                => admin_url( 'admin-ajax.php' ),
 			'lang_code'               => sanitize_key( WP::get_language_code() ),
+			'ok_text'                 => esc_html__( 'OK', 'wp-mail-smtp' ),
+			'copy_text'               => esc_attr__( 'Copy', 'wp-mail-smtp' ),
 			'sendlayer'               => [
 				'connect_nonce' => wp_create_nonce( 'wp-mail-smtp-sendlayer-connect' ),
 				'return_url'    => $this->get_admin_page_url(),

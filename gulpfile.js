@@ -123,6 +123,12 @@ var plugin = {
 		'!vendor/wp-coding-standards/',
 		'!vendor/wpforms/**',
 		'!vendor/wpforms/',
+		// random_compat build scripts and dev files.
+		'!vendor/paragonie/random_compat/dist/**',
+		'!vendor/paragonie/random_compat/dist/',
+		'!vendor/paragonie/random_compat/other/**',
+		'!vendor/paragonie/random_compat/other/',
+		'!vendor/paragonie/random_compat/psalm-autoload.php',
 		'!build.sh',
 		'!phpcs.xml',
 		'!crowdin.yml',
@@ -139,9 +145,7 @@ var plugin = {
 	pro_files: [
 		'loco.xml',
 		'CHANGELOG.md',
-		'!readme.txt',
-		'!vendor/paragonie/random_compat/dist/**',
-		'!vendor/paragonie/random_compat/dist/'
+		'!readme.txt'
 	],
 	php: [
 		'**/*.php',

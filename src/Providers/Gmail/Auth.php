@@ -237,7 +237,10 @@ class Auth extends AuthAbstract {
 
 		if ( ! empty( $creds['error'] ) ) {
 			DebugEvents::add_throttled(
-				'Mailer: Gmail' . WP::EOL . $creds['error'],
+				sprintf( /* translators: %s - mailer name. */
+					esc_html__( 'Mailer: %s', 'wp-mail-smtp' ),
+					'Gmail'
+				) . WP::EOL . $creds['error'],
 				'gmail_refresh_error_' . $this->connection->get_id()
 			);
 
@@ -381,7 +384,12 @@ class Auth extends AuthAbstract {
 		$result = $this->obtain_access_token( $code );
 
 		if ( $result instanceof WP_Error ) {
-			$event_id = DebugEvents::add( 'Mailer: Gmail' . WP::EOL . $result->get_error_message() );
+			$event_id = DebugEvents::add(
+				sprintf( /* translators: %s - mailer name. */
+					esc_html__( 'Mailer: %s', 'wp-mail-smtp' ),
+					'Gmail'
+				) . WP::EOL . $result->get_error_message()
+			);
 
 			wp_safe_redirect(
 				add_query_arg(

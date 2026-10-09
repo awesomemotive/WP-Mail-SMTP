@@ -443,7 +443,7 @@ class Mailer extends MailerAbstract {
 
 		$mailgun = $this->connection_options->get_group( $this->mailer );
 
-		$mg_text[] = '<strong>Api Key / Domain:</strong> ' . ( ! empty( $mailgun['api_key'] ) && ! empty( $mailgun['domain'] ) ? 'Yes' : 'No' );
+		$mg_text[] = '<strong>' . esc_html__( 'Api Key / Domain:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $mailgun['api_key'] ) && ! empty( $mailgun['domain'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
 		return implode( '<br>', $mg_text );
 	}

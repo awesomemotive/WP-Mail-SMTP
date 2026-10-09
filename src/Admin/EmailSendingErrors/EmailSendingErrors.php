@@ -541,26 +541,26 @@ class EmailSendingErrors {
 		/*
 		 * Versions Debug.
 		 */
-		$versions_text  = '<strong>Versions:</strong><br>';
+		$versions_text  = '<strong>' . esc_html__( 'Versions:', 'wp-mail-smtp' ) . '</strong><br>';
 		$versions_text .= '<strong>WordPress:</strong> ' . esc_html( isset( $record['wp_version'] ) ? $record['wp_version'] : '' ) . '<br>';
-		$versions_text .= '<strong>WordPress MS:</strong> ' . ( ! empty( $record['is_multisite'] ) ? 'Yes' : 'No' ) . '<br>';
+		$versions_text .= '<strong>' . esc_html__( 'WordPress MS:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $record['is_multisite'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) ) . '<br>';
 		$versions_text .= '<strong>PHP:</strong> ' . esc_html( isset( $record['php_version'] ) ? $record['php_version'] : '' ) . '<br>';
 		$versions_text .= '<strong>WP Mail SMTP:</strong> ' . esc_html( isset( $record['plugin_version'] ) ? $record['plugin_version'] : '' ) . '<br>';
 
 		/*
 		 * Mailer Debug.
 		 */
-		$mailer_text  = '<strong>Params:</strong><br>';
-		$mailer_text .= '<strong>Mailer:</strong> ' . esc_html( $mailer_slug ) . '<br>';
+		$mailer_text  = '<strong>' . esc_html__( 'Params:', 'wp-mail-smtp' ) . '</strong><br>';
+		$mailer_text .= '<strong>' . esc_html__( 'Mailer:', 'wp-mail-smtp' ) . '</strong> ' . esc_html( $mailer_slug ) . '<br>';
 
 		if ( $record['context'] !== 'test' ) {
-			$mailer_text .= '<strong>Source:</strong> ' . esc_html( isset( $record['initiator_name'] ) ? $record['initiator_name'] : '' ) . ' - ' . esc_html( isset( $record['initiator_file'] ) ? $record['initiator_file'] : '' ) . '<br>';
+			$mailer_text .= '<strong>' . esc_html__( 'Source:', 'wp-mail-smtp' ) . '</strong> ' . esc_html( isset( $record['initiator_name'] ) ? $record['initiator_name'] : '' ) . ' - ' . esc_html( isset( $record['initiator_file'] ) ? $record['initiator_file'] : '' ) . '<br>';
 		}
 
-		$mailer_text .= '<strong>Constants:</strong> ' . ( ! empty( $record['constants_enabled'] ) ? 'Yes' : 'No' ) . '<br>';
+		$mailer_text .= '<strong>' . esc_html__( 'Constants:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $record['constants_enabled'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) ) . '<br>';
 
 		if ( ! empty( $record['conflicts'] ) ) {
-			$mailer_text .= '<strong>Conflicts:</strong> ' . esc_html( implode( ', ', (array) $record['conflicts'] ) ) . '<br>';
+			$mailer_text .= '<strong>' . esc_html__( 'Conflicts:', 'wp-mail-smtp' ) . '</strong> ' . esc_html( implode( ', ', (array) $record['conflicts'] ) ) . '<br>';
 		}
 
 		if ( ! empty( $record['mailer_debug_info'] ) ) {
@@ -568,7 +568,7 @@ class EmailSendingErrors {
 		}
 
 		if ( ! empty( $record['error_message'] ) ) {
-			$mailer_text .= '<br><br><strong>Error:</strong><br>' .
+			$mailer_text .= '<br><br><strong>' . esc_html__( 'Error:', 'wp-mail-smtp' ) . '</strong><br>' .
 											wp_strip_all_tags( $record['error_message'] ) .
 											'<br>';
 		}
@@ -579,10 +579,10 @@ class EmailSendingErrors {
 		$smtp_text = '';
 
 		if ( $is_smtp ) {
-			$smtp_text  = '<strong>SMTP Debug:</strong><br>';
+			$smtp_text  = '<strong>' . esc_html__( 'SMTP Debug:', 'wp-mail-smtp' ) . '</strong><br>';
 			$smtp_text .= ! empty( $record['smtp_debug_info'] )
 				? '<pre>' . $record['smtp_debug_info'] . '</pre>'
-				: '[empty]';
+				: esc_html__( '[empty]', 'wp-mail-smtp' );
 		}
 
 		/**

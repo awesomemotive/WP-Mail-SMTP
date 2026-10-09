@@ -25,22 +25,6 @@ spl_autoload_register( function ( $class ) {
 	}
 
 	/*
-	 * Backward-compatibility aliases for classes relocated to a new namespace.
-	 * Resolved here (not eagerly) so the target loads only when legacy code
-	 * references the old name.
-	 */
-	$aliases = [
-		'WPMailSMTP\Admin\SetupWizard' => 'WPMailSMTP\Admin\SetupWizard\Local',
-		'WPMailSMTP\Geo'               => 'WPMailSMTP\Deprecated\Geo',
-	];
-
-	if ( isset( $aliases[ $class ] ) ) {
-		class_alias( $aliases[ $class ], $class );
-
-		return;
-	}
-
-	/*
 	 * This folder can be both "wp-mail-smtp" and "wp-mail-smtp-pro".
 	 */
 	$plugin_dir = basename( __DIR__ );

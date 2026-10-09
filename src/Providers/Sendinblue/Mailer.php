@@ -450,7 +450,7 @@ class Mailer extends MailerAbstract {
 	 */
 	public function get_debug_info() {
 
-		$mailjet_text[] = '<strong>API Key:</strong> ' . ( $this->is_mailer_complete() ? 'Yes' : 'No' );
+		$mailjet_text[] = '<strong>' . esc_html__( 'API Key:', 'wp-mail-smtp' ) . '</strong> ' . ( $this->is_mailer_complete() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
 		return implode( '<br>', $mailjet_text );
 	}

@@ -434,9 +434,9 @@ class Mailer extends MailerAbstract {
 		$options = $this->connection_options->get_group( $this->mailer );
 
 		$text[] = '<strong>' . esc_html__( 'Server API Token:', 'wp-mail-smtp' ) . '</strong> ' .
-							( ! empty( $options['server_api_token'] ) ? 'Yes' : 'No' );
+							( ! empty( $options['server_api_token'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		$text[] = '<strong>' . esc_html__( 'Message Stream ID:', 'wp-mail-smtp' ) . '</strong> ' .
-							( ! empty( $this->get_message_stream() ) ? esc_html( $this->get_message_stream() ) : 'No' );
+							( ! empty( $this->get_message_stream() ) ? esc_html( $this->get_message_stream() ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
 		return implode( '<br>', $text );
 	}

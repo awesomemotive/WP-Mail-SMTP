@@ -196,6 +196,8 @@ class Summary {
 			wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG )
 		);
 
+		$link_style = "-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #72777c;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;padding: 0;margin: 0;text-align: left;mso-line-height-rule: exactly;line-height: 140%;text-decoration: underline;";
+
 		ob_start();
 		?>
 		</td>
@@ -205,10 +207,12 @@ class Summary {
 			<td class="footer" align="center" valign="top" style="word-wrap: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 30px 0px;vertical-align: top;text-align: center;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #777777;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;margin: 0;mso-line-height-rule: exactly;line-height: 140%;font-size: 13px;border-collapse: collapse !important;">
 				<?php
 				echo wp_kses(
-					sprintf( /* translators: %1$s - link to a site; %2$s - link to the settings page. */
-						__( 'This email was auto-generated and sent from %1$s. Learn %2$s.', 'wp-mail-smtp' ),
-						'<a href="' . esc_url( home_url() ) . '" style="-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #72777c;font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif;font-weight: normal;padding: 0;margin: 0;text-align: left;mso-line-height-rule: exactly;line-height: 140%;text-decoration: underline;">' . esc_html( wp_specialchars_decode( get_bloginfo( 'name' ) ) ) . '</a>',
-						'<a href="' . esc_url( $settings_link ) . '" style="-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #72777c;font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif;font-weight: normal;padding: 0;margin: 0;text-align: left;mso-line-height-rule: exactly;line-height: 140%;text-decoration: underline;">' . esc_html__( 'how to disable it', 'wp-mail-smtp' ) . '</a>'
+					sprintf(
+						/* translators: %1$s - link to a site; %2$s - opening link tag; %3$s - closing link tag. */
+						__( 'This email was auto-generated and sent from %1$s. Learn %2$show to disable it%3$s.', 'wp-mail-smtp' ),
+						'<a href="' . esc_url( home_url() ) . '" style="' . $link_style . '">' . esc_html( wp_specialchars_decode( get_bloginfo( 'name' ) ) ) . '</a>',
+						'<a href="' . esc_url( $settings_link ) . '" style="' . $link_style . '">',
+						'</a>'
 					),
 					[
 						'a' => [

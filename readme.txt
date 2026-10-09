@@ -3,11 +3,11 @@ Contributors: wpforms, smub, capuderg
 Tags: smtp, email, gmail, outlook, brevo
 Requires at least: 5.5
 Tested up to: 7.1
-Stable tag: 4.10.1
+Stable tag: 4.10.2
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
-Make email delivery easy for WordPress. Connect with SMTP, Gmail, Outlook, Brevo, SendGrid, Amazon SES, Mailgun, SendLayer, Postmark + more, with powerful WordPress SMTP Email plugin.
+Make email delivery easy for WordPress. Connect with SMTP, Gmail, Brevo, SendGrid, Amazon SES + more, with powerful WordPress SMTP Email plugin.
 
 == Description ==
 
@@ -457,6 +457,11 @@ Privacy policy: [https://wpcode.com/privacy-policy/](https://wpcode.com/privacy-
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.10.2 - 2026-10-08 =
+- Changed: Setup Wizard now returns to the Dashboard page instead of Settings when it is finished or closed.
+- Changed: Improved translations across the admin area and the emails the plugin sends.
+- Fixed: A "Class not found" fatal error could occur right after updating the plugin on sites with PHP OPcache enabled.
 
 = 4.10.1 - 2026-10-07 =
 - Changed: Improved security and privacy across the plugin, including temporary file storage and requests to external services.

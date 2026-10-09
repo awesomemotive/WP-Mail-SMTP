@@ -174,32 +174,33 @@ class Mailer extends MailerAbstract {
 		$gmail_text = array();
 
 		$gmail    = $this->connection_options->get_group( 'gmail' );
-		$curl_ver = 'No';
+		$curl_ver = esc_html__( 'No', 'wp-mail-smtp' );
+
 		if ( function_exists( 'curl_version' ) ) {
 			$curl     = curl_version();
 			$curl_ver = $curl['version'];
 		}
 
-		$gmail_text[] = '<strong>Client ID/Secret:</strong> ' . ( ! empty( $gmail['client_id'] ) && ! empty( $gmail['client_secret'] ) ? 'Yes' : 'No' );
-		$gmail_text[] = '<strong>Auth Code:</strong> ' . ( ! empty( $gmail['auth_code'] ) ? 'Yes' : 'No' );
-		$gmail_text[] = '<strong>Access Token:</strong> ' . ( ! empty( $gmail['access_token'] ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>' . esc_html__( 'Client ID/Secret:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $gmail['client_id'] ) && ! empty( $gmail['client_secret'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
+		$gmail_text[] = '<strong>' . esc_html__( 'Auth Code:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $gmail['auth_code'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
+		$gmail_text[] = '<strong>' . esc_html__( 'Access Token:', 'wp-mail-smtp' ) . '</strong> ' . ( ! empty( $gmail['access_token'] ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 
-		$gmail_text[] = '<br><strong>Server:</strong>';
+		$gmail_text[] = '<br><strong>' . esc_html__( 'Server:', 'wp-mail-smtp' ) . '</strong>';
 
-		$gmail_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) && defined( 'OPENSSL_VERSION_TEXT' ) ? OPENSSL_VERSION_TEXT : 'No' );
-		$gmail_text[] = '<strong>PHP.allow_url_fopen:</strong> ' . ( ini_get( 'allow_url_fopen' ) ? 'Yes' : 'No' );
-		$gmail_text[] = '<strong>PHP.stream_socket_client():</strong> ' . ( function_exists( 'stream_socket_client' ) ? 'Yes' : 'No' );
-		$gmail_text[] = '<strong>PHP.fsockopen():</strong> ' . ( function_exists( 'fsockopen' ) ? 'Yes' : 'No' );
+		$gmail_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) && defined( 'OPENSSL_VERSION_TEXT' ) ? OPENSSL_VERSION_TEXT : esc_html__( 'No', 'wp-mail-smtp' ) );
+		$gmail_text[] = '<strong>PHP.allow_url_fopen:</strong> ' . ( ini_get( 'allow_url_fopen' ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
+		$gmail_text[] = '<strong>PHP.stream_socket_client():</strong> ' . ( function_exists( 'stream_socket_client' ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
+		$gmail_text[] = '<strong>PHP.fsockopen():</strong> ' . ( function_exists( 'fsockopen' ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		$gmail_text[] = '<strong>PHP.curl_version():</strong> ' . $curl_ver;
 		if ( function_exists( 'apache_get_modules' ) ) {
 			$modules      = apache_get_modules();
-			$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
+			$gmail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 		if ( function_exists( 'selinux_is_enabled' ) ) {
-			$gmail_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? 'Yes' : 'No' );
+			$gmail_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 		if ( function_exists( 'grsecurity_is_enabled' ) ) {
-			$gmail_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? 'Yes' : 'No' );
+			$gmail_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 
 		return implode( '<br>', $gmail_text );

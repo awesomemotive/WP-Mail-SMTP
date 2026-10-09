@@ -78,7 +78,7 @@ class MiscTab extends PageAbstract {
 						<?php esc_html_e( 'Do Not Send', 'wp-mail-smtp' ); ?>
 					</label>
 					<span class="wp-mail-smtp-tooltip wp-mail-smtp-tooltip-with-icon">
-						<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/font-awesome/info-circle.svg' ); ?>" width="15" height="15" alt="info"/>
+						<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/font-awesome/info-circle.svg' ); ?>" width="15" height="15" alt="<?php esc_attr_e( 'Info', 'wp-mail-smtp' ); ?>"/>
 						<span class="wp-mail-smtp-tooltip-text wp-mail-smtp-tooltip-small-text">
 						<?php
 						printf(

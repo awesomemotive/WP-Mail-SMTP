@@ -188,7 +188,7 @@ class QuickConnect {
 			$error_code = 'plugin.init_connect.start_session_request_to_site.connection_failed';
 
 			DebugEvents::add(
-				'SendLayer Quick Connect: ' . $error_code . ' — ' . $response->get_error_message()
+				'SendLayer Quick Connect: ' . $error_code . ' - ' . $response->get_error_message()
 			);
 
 			return new WP_Error( $error_code, $this->get_generic_error_message() );
@@ -205,7 +205,7 @@ class QuickConnect {
 				: 'plugin.init_connect.start_session_request_to_site.unexpected_error_response';
 
 			DebugEvents::add(
-				'SendLayer Quick Connect: ' . $error_code . ' — HTTP ' . $response_code
+				'SendLayer Quick Connect: ' . $error_code . ' - HTTP ' . $response_code
 			);
 
 			return new WP_Error( $error_code, $this->get_generic_error_message() );
@@ -216,7 +216,7 @@ class QuickConnect {
 			$error_code = 'plugin.init_connect.start_session_request_to_site.unexpected_success_response';
 
 			DebugEvents::add(
-				'SendLayer Quick Connect: ' . $error_code . ' — missing session_id'
+				'SendLayer Quick Connect: ' . $error_code . ' - missing session_id'
 			);
 
 			return new WP_Error( $error_code, $this->get_generic_error_message() );

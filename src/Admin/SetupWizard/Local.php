@@ -4,6 +4,7 @@ namespace WPMailSMTP\Admin\SetupWizard;
 
 use Plugin_Upgrader;
 use WPMailSMTP\Admin\Area;
+use WPMailSMTP\Admin\Dashboard\Page as DashboardPage;
 use WPMailSMTP\Admin\PluginsInstallSkin;
 use WPMailSMTP\Admin\DomainChecker;
 use WPMailSMTP\Connect;
@@ -167,7 +168,7 @@ class Local {
 				'nonce'              => wp_create_nonce( 'wpms-admin-nonce' ),
 				'is_multisite'       => is_multisite(),
 				'translations'       => WP::get_jed_locale_data( 'wp-mail-smtp' ),
-				'exit_url'           => wp_mail_smtp()->get_admin()->get_admin_page_url(),
+				'exit_url'           => wp_mail_smtp()->get_admin()->get_admin_page_url( DashboardPage::SLUG ),
 				'email_test_tab_url' => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ),
 				'is_pro'             => wp_mail_smtp()->is_pro(),
 				'is_ssl'             => is_ssl(),
@@ -240,9 +241,9 @@ class Local {
 	 * @since 2.6.0
 	 */
 	public function setup_wizard_content() {
-		$admin_url = is_network_admin() ? network_admin_url() : admin_url();
+		$dashboard_url = wp_mail_smtp()->get_admin()->get_admin_page_url( DashboardPage::SLUG );
 
-		$this->settings_error_page( 'wp-mail-smtp-vue-setup-wizard', '<a href="' . $admin_url . '">' . esc_html__( 'Go back to the Dashboard', 'wp-mail-smtp' ) . '</a>' );
+		$this->settings_error_page( 'wp-mail-smtp-vue-setup-wizard', '<a href="' . esc_url( $dashboard_url ) . '">' . esc_html__( 'Go back to the Dashboard', 'wp-mail-smtp' ) . '</a>' );
 		$this->settings_inline_js();
 	}
 

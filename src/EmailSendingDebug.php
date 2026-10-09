@@ -178,7 +178,10 @@ class EmailSendingDebug {
 			? $options->get_title()
 			: esc_html__( 'Unknown', 'wp-mail-smtp' );
 
-		return 'Mailer: ' . $mailer_title . WP::EOL . (string) $record['error_message'];
+		return sprintf( /* translators: %s - mailer name. */
+			esc_html__( 'Mailer: %s', 'wp-mail-smtp' ),
+			$mailer_title
+		) . WP::EOL . (string) $record['error_message'];
 	}
 
 	/**

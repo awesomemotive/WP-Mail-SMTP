@@ -19,21 +19,22 @@ class Mailer extends MailerAbstract {
 
 		$mail_text = array();
 
-		$mail_text[] = '<br><strong>Server:</strong>';
+		$mail_text[] = '<br><strong>' . esc_html__( 'Server:', 'wp-mail-smtp' ) . '</strong>';
 
 		$disabled_functions = ini_get( 'disable_functions' );
 		$disabled           = (array) explode( ',', trim( $disabled_functions ) );
 
-		$mail_text[] = '<strong>PHP.mail():</strong> ' . ( in_array( 'mail', $disabled, true ) || ! function_exists( 'mail' ) ? 'No' : 'Yes' );
+		$mail_text[] = '<strong>PHP.mail():</strong> ' . ( in_array( 'mail', $disabled, true ) || ! function_exists( 'mail' ) ? esc_html__( 'No', 'wp-mail-smtp' ) : esc_html__( 'Yes', 'wp-mail-smtp' ) );
+
 		if ( function_exists( 'apache_get_modules' ) ) {
 			$modules     = apache_get_modules();
-			$mail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
+			$mail_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 		if ( function_exists( 'selinux_is_enabled' ) ) {
-			$mail_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? 'Yes' : 'No' );
+			$mail_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 		if ( function_exists( 'grsecurity_is_enabled' ) ) {
-			$mail_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? 'Yes' : 'No' );
+			$mail_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? esc_html__( 'Yes', 'wp-mail-smtp' ) : esc_html__( 'No', 'wp-mail-smtp' ) );
 		}
 
 		return implode( '<br>', $mail_text );

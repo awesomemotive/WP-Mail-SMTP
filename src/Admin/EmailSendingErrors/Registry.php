@@ -24,8 +24,9 @@ class Registry {
 	 * Product-api registry endpoint path, relative to the base URL.
 	 *
 	 * @since 4.9.0
+	 * @since 4.10.1 Lists every mailer's errors.
 	 */
-	const ENDPOINT_PATH = 'troubleshooting/v1/errors';
+	const ENDPOINT_PATH = 'troubleshooting/v1/errors/all';
 
 	/**
 	 * Transient key for the per-mailer-keyed map. Each entry carries its own
@@ -183,7 +184,7 @@ class Registry {
 		$endpoint = trailingslashit( $base_url ) . self::ENDPOINT_PATH;
 
 		$response = wp_remote_get(
-			add_query_arg( 'mailer', $mailer, $endpoint ),
+			$endpoint,
 			[
 				'timeout'    => 5,
 				'user-agent' => Helpers::get_default_user_agent(),
@@ -224,14 +225,14 @@ class Registry {
 		// start a fresh window instead of inheriting a partially-elapsed one.
 		delete_transient( $backoff_key );
 
-		if ( ! isset( $decoded['errors'] ) ) {
+		if ( ! isset( $decoded['mailers'][ $mailer ] ) ) {
 			return [
 				'populated_at' => time(),
 				'codes'        => [],
 			];
 		}
 
-		$errors = is_array( $decoded['errors'] ) ? $decoded['errors'] : (array) $decoded['errors'];
+		$errors = (array) $decoded['mailers'][ $mailer ];
 
 		return [
 			'populated_at' => time(),

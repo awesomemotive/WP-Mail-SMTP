@@ -19,7 +19,6 @@ use WPMailSMTP\Providers\Preflight\Code as PreflightCode;
 use WPMailSMTP\Providers\Preflight\Finding as PreflightFinding;
 use WPMailSMTP\Providers\Preflight\PreflightInterface;
 use WPMailSMTP\Providers\Preflight\Throttle as PreflightThrottle;
-use WPMailSMTP\Providers\Sendlayer\QuickConnect;
 use WPMailSMTP\SettingsImport\SettingsImport;
 use WPMailSMTP\TestEmail\TestEmail;
 use WPMailSMTP\UsageTracking\UsageTracking;
@@ -70,8 +69,17 @@ class RestApi {
 	 */
 	public function __construct( Hosted $setup_wizard ) {
 
+		/**
+		 * Filters the setup wizard settings class name.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param string $class_name The setup wizard settings class name to be instantiated.
+		 */
+		$settings_class = apply_filters( 'wp_mail_smtp_admin_setup_wizard_rest_api_settings_class', Settings::class );
+
 		$this->setup_wizard = $setup_wizard;
-		$this->settings     = new Settings();
+		$this->settings     = new $settings_class();
 	}
 
 	/**
@@ -452,7 +460,7 @@ class RestApi {
 	 */
 	public function sendlayer_disconnect() {
 
-		( new QuickConnect() )->disconnect();
+		wp_mail_smtp()->get_sendlayer_quick_connect()->disconnect();
 
 		return $this->response();
 	}
@@ -824,7 +832,7 @@ class RestApi {
 		if ( $plugin === null || ! array_key_exists( $plugin->get_slug(), $this->get_offered_partners() ) ) {
 			return new WP_Error(
 				'wp_mail_smtp_partner_not_offered',
-				esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' )
+				esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' )
 			);
 		}
 

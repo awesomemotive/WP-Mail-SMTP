@@ -166,12 +166,12 @@ class Core {
 			function() {
 				( new OptimizedEmailSending() )->hooks();
 				( new OutlookProvider() )->hooks();
-				( new SendlayerQuickConnect() )->hooks();
-				( new EmailSendingErrors() )->hooks();
 				( new RegisterWPCodeLibrary() )->hooks();
 				( new SetupWizardLauncher() )->hooks();
 
 				$this->get_abilities_registrar()->hooks();
+				$this->get_sendlayer_quick_connect()->hooks();
+				$this->get_email_sending_errors()->hooks();
 			}
 		);
 
@@ -325,7 +325,7 @@ class Core {
 
 			if ( is_readable( $path ) ) {
 				/** @noinspection PhpIncludeInspection */
-				include_once $path;
+				require_once $path;
 			}
 		}
 	}
@@ -1325,6 +1325,60 @@ class Core {
 		}
 
 		return $wp_mail_initiator;
+	}
+
+	/**
+	 * Get the SendLayer Quick Connect handler (lite or pro version).
+	 *
+	 * @since 4.10.1
+	 *
+	 * @return SendlayerQuickConnect
+	 */
+	public function get_sendlayer_quick_connect() {
+
+		static $sendlayer_quick_connect = null;
+
+		if ( is_null( $sendlayer_quick_connect ) ) {
+
+			/**
+			 * Filter the SendLayer Quick Connect class name.
+			 *
+			 * @since 4.10.1
+			 *
+			 * @param string $class_name The SendLayer Quick Connect class name to be instantiated.
+			 */
+			$class_name              = apply_filters( 'wp_mail_smtp_core_get_sendlayer_quick_connect', SendlayerQuickConnect::class );
+			$sendlayer_quick_connect = new $class_name();
+		}
+
+		return $sendlayer_quick_connect;
+	}
+
+	/**
+	 * Get the email sending errors handler (lite or pro version).
+	 *
+	 * @since 4.10.1
+	 *
+	 * @return EmailSendingErrors
+	 */
+	public function get_email_sending_errors() {
+
+		static $email_sending_errors = null;
+
+		if ( is_null( $email_sending_errors ) ) {
+
+			/**
+			 * Filter the email sending errors class name.
+			 *
+			 * @since 4.10.1
+			 *
+			 * @param string $class_name The email sending errors class name to be instantiated.
+			 */
+			$class_name           = apply_filters( 'wp_mail_smtp_core_get_email_sending_errors', EmailSendingErrors::class );
+			$email_sending_errors = new $class_name();
+		}
+
+		return $email_sending_errors;
 	}
 
 	/**

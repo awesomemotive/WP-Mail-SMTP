@@ -298,7 +298,7 @@ class TestTab extends PageAbstract {
 					<span><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></span>
 					<?php echo wp_mail_smtp()->prepare_loader( 'white', 'sm' ); // phpcs:ignore ?>
 				</button>
-				<?php echo $help_text; ?>
+				<?php echo wp_kses_post( $help_text ); ?>
 			</p>
 			<?php $this->post_form_hidden_field(); ?>
 		</form>

@@ -51,7 +51,6 @@ class Registry {
 			$this->mailersend_args(),
 			$this->sendinblue_args(),
 			$this->elasticemail_args(),
-			$this->amazonses_args(),
 			$this->mandrill_args()
 		);
 
@@ -95,24 +94,33 @@ class Registry {
 	 */
 	public static function supported_mailers() {
 
-		return [
-			'mail',
-			'smtp',
-			'sendgrid',
-			'mailgun',
-			'postmark',
-			'sendlayer',
-			'resend',
-			'smtpcom',
-			'smtp2go',
-			'sparkpost',
-			'mailjet',
-			'mailersend',
-			'brevo',
-			'elasticemail',
-			'amazonses',
-			'mandrill',
-		];
+		/**
+		 * Filters the non-OAuth mailers selectable via `mail.mailer`.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param array $mailers Mailer slugs.
+		 */
+		return apply_filters( // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+			'wp_mail_smtp_wpcli_options_registry_supported_mailers',
+			[
+				'mail',
+				'smtp',
+				'sendgrid',
+				'mailgun',
+				'postmark',
+				'sendlayer',
+				'resend',
+				'smtpcom',
+				'smtp2go',
+				'sparkpost',
+				'mailjet',
+				'mailersend',
+				'brevo',
+				'elasticemail',
+				'mandrill',
+			]
+		);
 	}
 
 	/**
@@ -566,43 +574,6 @@ class Registry {
 				'required_if' => $req,
 				'sensitive'   => true,
 				'description' => __( 'Elastic Email API key.', 'wp-mail-smtp' ),
-			],
-		];
-	}
-
-	/**
-	 * Amazon SES mailer args (`amazonses.*`).
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return array
-	 */
-	private function amazonses_args() {
-
-		$req = [ 'mail.mailer' => 'amazonses' ];
-
-		return [
-			[
-				'flag'         => 'amazonses.access_key_id',
-				'storage_path' => 'amazonses.client_id',
-				'type'         => 'string',
-				'required_if'  => $req,
-				'sensitive'    => true,
-				'description'  => __( 'AWS access key ID.', 'wp-mail-smtp' ),
-			],
-			[
-				'flag'         => 'amazonses.secret_access_key',
-				'storage_path' => 'amazonses.client_secret',
-				'type'         => 'string',
-				'required_if'  => $req,
-				'sensitive'    => true,
-				'description'  => __( 'AWS secret access key.', 'wp-mail-smtp' ),
-			],
-			[
-				'flag'        => 'amazonses.region',
-				'type'        => 'string',
-				'required_if' => $req,
-				'description' => __( 'AWS region (e.g. us-east-1).', 'wp-mail-smtp' ),
 			],
 		];
 	}

@@ -182,14 +182,26 @@ class Helpers {
 	 * Get the default user agent.
 	 *
 	 * @since 3.9.0
+	 * @since 4.10.1 Identifies the site only when usage tracking is enabled.
 	 *
 	 * @return string
 	 */
 	public static function get_default_user_agent() {
 
-		$license_type = wp_mail_smtp()->get_license_type();
+		$full_user_agent      = 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) . '; WPMailSMTP/' . wp_mail_smtp()->get_license_type() . '-' . WPMS_PLUGIN_VER;
+		$anonymous_user_agent = 'WPMailSMTP/' . WPMS_PLUGIN_VER;
+		$user_agent           = wp_mail_smtp()->get_usage_tracking()->is_enabled() ? $full_user_agent : $anonymous_user_agent;
 
-		return 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) . '; WPMailSMTP/' . $license_type . '-' . WPMS_PLUGIN_VER;
+		/**
+		 * Filters the user agent sent with the plugin's HTTP requests.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param string $user_agent           User agent: anonymous unless usage tracking is enabled.
+		 * @param string $full_user_agent      User agent with the WordPress version, site URL and license type.
+		 * @param string $anonymous_user_agent User agent with the plugin version only.
+		 */
+		return (string) apply_filters( 'wp_mail_smtp_helpers_get_default_user_agent', $user_agent, $full_user_agent, $anonymous_user_agent );
 	}
 
 	/**

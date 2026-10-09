@@ -873,10 +873,10 @@ trait MailCatcherTrait {
 				$this->clearAttachments();
 
 				foreach ( $state['attachment'] as $attachment ) {
-					[ $path, , $name ] = $attachment;
+					[ $path, , $name, $encoding, $type, , $disposition ] = $attachment;
 
 					try {
-						$this->addAttachment( $path, $name );
+						$this->addAttachment( $path, $name, $encoding, $type, $disposition );
 					} catch ( Exception $e ) {
 						continue;
 					}

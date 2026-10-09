@@ -392,23 +392,16 @@ abstract class PageAbstract {
 	 * @since 4.9.0
 	 *
 	 * @return array Array of strings.
-	 * @noinspection HtmlUnknownTarget
 	 */
 	protected function get_js_strings(): array {
 
-		$error_could_not_install = esc_html__( 'Could not install the plugin automatically. Please install it manually.', 'wp-mail-smtp' );
-
-		$error_could_not_activate = esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' );
-
 		return [
-			'installing'               => esc_html__( 'Installing...', 'wp-mail-smtp' ),
-			'activating'               => esc_html__( 'Activating...', 'wp-mail-smtp' ),
-			'activated'                => $this->get_installed_activated_text(),
-			'activated_pro'            => $this->get_pro_installed_activated_text(),
-			'install_now'              => esc_html__( 'Install Now', 'wp-mail-smtp' ),
-			'activate_now'             => esc_html__( 'Activate Now', 'wp-mail-smtp' ),
-			'error_could_not_install'  => $error_could_not_install,
-			'error_could_not_activate' => $error_could_not_activate,
+			'installing'    => esc_html__( 'Installing...', 'wp-mail-smtp' ),
+			'activating'    => esc_html__( 'Activating...', 'wp-mail-smtp' ),
+			'activated'     => $this->get_installed_activated_text(),
+			'activated_pro' => $this->get_pro_installed_activated_text(),
+			'install_now'   => esc_html__( 'Install Now', 'wp-mail-smtp' ),
+			'activate_now'  => esc_html__( 'Activate Now', 'wp-mail-smtp' ),
 		];
 	}
 
@@ -514,8 +507,8 @@ abstract class PageAbstract {
 			</section>',
 			esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/' . static::get_plugin_name() . '/screenshot-tnail.png' ),
 			esc_attr( $this->get_screenshot_alt_text() ),
-			esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/' . static::get_plugin_name() . '/screenshot-full@2x.png' ),
-			esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/' . static::get_plugin_name() . '/screenshot-tnail@2x.png' ),
+			esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/' . static::get_plugin_name() . '/screenshot-full-2x.png' ),
+			esc_url( wp_mail_smtp()->assets_url . '/images/recommendations/plugins/' . static::get_plugin_name() . '/screenshot-tnail-2x.png' ),
 			wp_kses(
 				$list,
 				[

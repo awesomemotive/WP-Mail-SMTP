@@ -648,7 +648,8 @@ class Area {
 				/* translators: %s - plugin name (e.g. WPConsent). */
 				'activate_with_name' => esc_html__( 'Activate %s', 'wp-mail-smtp' ),
 				'setup_now'          => esc_html__( 'Setup Now', 'wp-mail-smtp' ),
-				'error'              => esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
+				'error'              => esc_html__( 'Could not install the plugin. Please download it from WordPress.org and install it manually.', 'wp-mail-smtp' ),
+				'error_activate'     => esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' ),
 				'error_title'        => esc_html__( 'Error', 'wp-mail-smtp' ),
 				'manual_link'        => esc_html__( 'Install it manually from WordPress.org', 'wp-mail-smtp' ),
 				'manual_btn'         => esc_html__( 'Download', 'wp-mail-smtp' ),
@@ -747,7 +748,6 @@ class Area {
 				'plugin_inactive'             => esc_html__( 'Inactive', 'wp-mail-smtp' ),
 				'plugin_processing'           => esc_html__( 'Processing...', 'wp-mail-smtp' ),
 				'plugin_visit'                => esc_html__( 'Visit Site', 'wp-mail-smtp' ),
-				'plugin_install_error'        => esc_html__( 'Could not install a plugin. Please download from WordPress.org and install manually.', 'wp-mail-smtp' ),
 				'plugin_install_activate_btn' => esc_html__( 'Install and Activate', 'wp-mail-smtp' ),
 				'plugin_activate_btn'         => esc_html__( 'Activate', 'wp-mail-smtp' ),
 			];

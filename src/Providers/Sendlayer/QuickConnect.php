@@ -6,8 +6,6 @@ use WP_Error;
 use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\ConnectionInterface;
 use WPMailSMTP\Options;
-use WPMailSMTP\Pro\AdditionalConnections\Connection as AdditionalConnection;
-use WPMailSMTP\Pro\AdditionalConnections\ConnectionOptions;
 use WPMailSMTP\WP;
 
 /**
@@ -147,11 +145,7 @@ class QuickConnect {
 			return new WP_Error( 'plugin.init_connect.invalid_return_url', $this->get_generic_error_message() );
 		}
 
-		// Optional mode flag. Currently only `backup_mailer` is supported — the
-		// return handler will create a new additional connection and assign it
-		// as the backup connection in one OAuth round-trip.
-		$allowed_modes = [ 'backup_mailer' ];
-		$mode          = in_array( $mode, $allowed_modes, true ) ? $mode : '';
+		$mode = in_array( $mode, $this->get_allowed_modes(), true ) ? $mode : '';
 
 		// Build the redirect URL on the general settings page.
 		// The auth handler always fires here; return_url is the final clean destination.
@@ -395,30 +389,9 @@ class QuickConnect {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$mode = ! empty( $_GET['mode'] ) ? sanitize_key( $_GET['mode'] ) : '';
+		$mode = in_array( $mode, $this->get_allowed_modes(), true ) ? $mode : '';
 
-		$connection = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
-
-		if ( $mode === 'backup_mailer' && wp_mail_smtp()->is_pro() ) {
-			$new_connection_id  = uniqid();
-			$connection_options = new ConnectionOptions( $new_connection_id );
-
-			$connection_options->set(
-				[
-					'connection' => [
-						'name' => __( 'Backup', 'wp-mail-smtp' ),
-					],
-				]
-			);
-
-			$connection = new AdditionalConnection( $new_connection_id );
-		} else {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$connection_id = ! empty( $_GET['connection_id'] ) ? sanitize_key( $_GET['connection_id'] ) : '';
-
-			if ( ! empty( $connection_id ) && wp_mail_smtp()->is_pro() ) {
-				$connection = wp_mail_smtp()->get_connections_manager()->get_connection( $connection_id, false );
-			}
-		}
+		$connection = $this->get_target_connection( $mode );
 
 		if ( $connection === false ) {
 			$this->redirect_with_result( $return_url, 'plugin.return.invalid_connection' );
@@ -434,11 +407,6 @@ class QuickConnect {
 		$all_opt['sendlayer']['is_shared_domain'] = $is_shared_domain;
 		$all_opt['sendlayer']['free_upgrade_url'] = ! empty( $response_body['free_upgrade_url'] ) ? esc_url_raw( $response_body['free_upgrade_url'] ) : '';
 
-		if ( $mode === 'backup_mailer' && wp_mail_smtp()->is_pro() ) {
-			$all_opt['mail']['from_name']  = (string) Options::init()->get( 'mail', 'from_name' );
-			$all_opt['mail']['from_email'] = (string) Options::init()->get( 'mail', 'from_email' );
-		}
-
 		// Store the sender domain and configure From Email for shared domains.
 		if ( ! empty( $sender_domain ) ) {
 			$all_opt['sendlayer']['sender_domain'] = $sender_domain;
@@ -451,23 +419,52 @@ class QuickConnect {
 
 		$options->set( $all_opt );
 
-		if ( $mode === 'backup_mailer' && wp_mail_smtp()->is_pro() ) {
-			Options::init()->set(
-				[
-					'backup_connection' => [
-						'connection_id' => $connection->get_id(),
-					],
-				],
-				false,
-				false
-			);
+		$result = $this->complete_connection( $connection, $mode );
 
-			$this->redirect_with_result( $return_url, 'backup_success' );
-		}
+		$this->redirect_with_result( $return_url, $result );
+	}
+
+	/**
+	 * Get the connect modes accepted on top of the default one.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @return string[]
+	 */
+	protected function get_allowed_modes() {
+
+		return [];
+	}
+
+	/**
+	 * Get the connection the SendLayer API key is stored in.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @param string $mode Connect mode.
+	 *
+	 * @return ConnectionInterface|false
+	 */
+	protected function get_target_connection( $mode ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+
+		return wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+	}
+
+	/**
+	 * Finish the connection after the SendLayer settings are saved.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @param ConnectionInterface $connection The connection the settings were saved to.
+	 * @param string              $mode       Connect mode.
+	 *
+	 * @return string The result code to redirect with.
+	 */
+	protected function complete_connection( $connection, $mode ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 
 		$this->usage->reset();
 
-		$this->redirect_with_result( $return_url, 'success' );
+		return 'success';
 	}
 
 	/**
@@ -511,16 +508,6 @@ class QuickConnect {
 		if ( $result === 'success' ) {
 			WP::add_admin_notice(
 				esc_html__( 'SendLayer connected successfully! You can now send emails through SendLayer.', 'wp-mail-smtp' ),
-				WP::ADMIN_NOTICE_SUCCESS
-			);
-
-			return;
-		}
-
-		// Backup-mailer mode success.
-		if ( $result === 'backup_success' ) {
-			WP::add_admin_notice(
-				esc_html__( 'SendLayer is now set up as your Backup Connection. Emails that fail to send with your primary connection will be sent via SendLayer.', 'wp-mail-smtp' ),
 				WP::ADMIN_NOTICE_SUCCESS
 			);
 

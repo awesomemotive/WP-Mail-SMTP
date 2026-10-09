@@ -47,7 +47,15 @@ class Auth extends AuthAbstract {
 
 		$this->options = $this->connection_options->get_group( $this->mailer_slug );
 
-		if ( wp_mail_smtp()->is_pro() && ! empty( $this->options['one_click_setup_enabled'] ) ) {
+		/**
+		 * Filters whether the Gmail API client is set up for this connection.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param bool                $is_client_needed Whether the Gmail API client is set up.
+		 * @param ConnectionInterface $connection       The Connection object.
+		 */
+		if ( ! apply_filters( 'wp_mail_smtp_providers_gmail_auth_is_client_needed', true, $this->connection ) ) {
 			return;
 		}
 

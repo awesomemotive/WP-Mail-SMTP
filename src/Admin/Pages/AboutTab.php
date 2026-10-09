@@ -407,10 +407,8 @@ class AboutTab extends PageAbstract {
 	 */
 	public static function ajax_plugin_activate() {
 
-		$error = esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' );
-
 		if ( empty( $_POST['plugin'] ) ) {
-			wp_send_json_error( $error );
+			wp_send_json_error( esc_html__( 'No plugin was specified.', 'wp-mail-smtp' ) );
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Area::process_ajax() verifies the nonce before dispatching here.
@@ -418,7 +416,7 @@ class AboutTab extends PageAbstract {
 		$plugin   = ( new Catalog() )->get_by_basename( $basename );
 
 		if ( $plugin === null ) {
-			wp_send_json_error( esc_html__( 'Could not activate the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' ) );
 		}
 
 		$permission = new InstallPermission();
@@ -431,7 +429,7 @@ class AboutTab extends PageAbstract {
 		$activated = ( new Installer() )->activate( $plugin );
 
 		if ( is_wp_error( $activated ) ) {
-			wp_send_json_error( $error );
+			wp_send_json_error( $activated->get_error_message() );
 		}
 
 		wp_send_json_success( esc_html__( 'Plugin activated.', 'wp-mail-smtp' ) );
@@ -444,17 +442,15 @@ class AboutTab extends PageAbstract {
 	 */
 	public static function ajax_plugin_install() {
 
-		$error = esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' );
-
 		if ( empty( $_POST['plugin'] ) ) {
-			wp_send_json_error();
+			wp_send_json_error( esc_html__( 'No plugin was specified.', 'wp-mail-smtp' ) );
 		}
 
 		$plugin_url = esc_url_raw( wp_unslash( $_POST['plugin'] ) );
 		$plugin     = ( new Catalog() )->get_by_download_url( $plugin_url );
 
 		if ( $plugin === null ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' ) );
 		}
 
 		$permission = new InstallPermission();
@@ -472,7 +468,7 @@ class AboutTab extends PageAbstract {
 		$result = ( new Installer() )->install( $plugin, $redirect_url );
 
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( $error );
+			wp_send_json_error( $result->get_error_message() );
 		}
 
 		if ( $result['basename'] === 'wpforms-lite/wpforms.php' ) {

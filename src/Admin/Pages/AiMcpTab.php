@@ -97,7 +97,7 @@ class AiMcpTab extends PageAbstract {
 	}
 
 	/**
-	 * Enqueue the tab's install/activate script and localized strings.
+	 * Enqueue the tab's install/activate script.
 	 *
 	 * @since 4.9.0
 	 */
@@ -109,14 +109,6 @@ class AiMcpTab extends PageAbstract {
 			[ 'jquery', 'wp-mail-smtp-admin' ],
 			WPMS_PLUGIN_VER,
 			true
-		);
-
-		wp_localize_script(
-			'wp-mail-smtp-ai-mcp',
-			'wp_mail_smtp_ai_mcp',
-			[
-				'error_text' => esc_html__( 'Something went wrong. Please try again.', 'wp-mail-smtp' ),
-			]
 		);
 	}
 
@@ -159,11 +151,14 @@ class AiMcpTab extends PageAbstract {
 	private function render_cta_button( $state, $setup_url ) {
 
 		if ( $state === PartnerPlugin::STATE_ACTIVE ) {
+			$label = $this->get_plugin()->is_configured()
+				? esc_html__( 'Go To WPVibe', 'wp-mail-smtp' )
+				: esc_html__( 'Set Up WPVibe', 'wp-mail-smtp' );
 			?>
 			<a
 				class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-blueish wp-mail-smtp-ai-mcp-wpvibe-button"
 				href="<?php echo esc_url( $setup_url ); ?>"
-			><?php esc_html_e( 'Set Up WPVibe', 'wp-mail-smtp' ); ?></a>
+			><?php echo esc_html( $label ); ?></a>
 			<?php
 
 			return;

@@ -4,6 +4,10 @@ namespace WPMailSMTP\Admin\DebugEvents;
 
 use WPMailSMTP\Helpers\Helpers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! class_exists( 'WP_List_Table', false ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }

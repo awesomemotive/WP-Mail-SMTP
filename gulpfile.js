@@ -1,6 +1,7 @@
 /**
  * Load plugins.
  */
+const fs = require('fs');
 const gulp = require('gulp');
 const cached = require('gulp-cached');
 const _sass = require('sass');
@@ -336,6 +337,7 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
 				'vendor/sendinblue',
 				'vendor/symfony/polyfill-mbstring',
 				'vendor/symfony/polyfill-intl-idn',
+				'vendor/symfony/polyfill-intl-normalizer',
 				'vendor/symfony/deprecation-contracts',
 				'vendor/mk-j',
 			],
@@ -468,6 +470,16 @@ gulp.task( 'prefix_outside_files', function () {
 		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap.php', 'vendor_prefixed/symfony/polyfill-intl-idn/bootstrap80.php' ], { allowEmpty: true } )
 			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Idn/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Idn' ) )
 			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-idn/' ) ),
+
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-normalizer/bootstrap.php', 'vendor_prefixed/symfony/polyfill-intl-normalizer/bootstrap80.php' ], { allowEmpty: true } )
+			.pipe( replace( /use Symfony\\Polyfill\\Intl\\Normalizer/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Normalizer' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-normalizer/' ) ),
+
+		// The stub declares the global Normalizer class, so it stays unscoped and only its
+		// parent reference is rewritten to the scoped implementation.
+		gulp.src( [ 'vendor_prefixed/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php' ], { allowEmpty: true } )
+			.pipe( replace( /extends Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer/gm, 'extends WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' ) )
+			.pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-intl-normalizer/Resources/stubs/' ) ),
 	);
 } );
 
@@ -514,6 +526,15 @@ gulp.task( 'vue:translations', function ( cb ) {
 		function ( err, stdout, stderr ) {
 			console.log( stdout );
 			console.log( stderr );
+
+			if ( ! err ) {
+				// pot-to-php has no option for it, so the direct access guard is added after the generated-file notice.
+				const file = 'assets/languages/wp-mail-smtp-vue.php';
+				const notice = '/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */\n';
+
+				fs.writeFileSync( file, fs.readFileSync( file, 'utf8' ).replace( notice, notice + "if ( ! defined( 'ABSPATH' ) ) {\n\texit;\n}\n" ) );
+			}
+
 			cb( err );
 		}
 	);

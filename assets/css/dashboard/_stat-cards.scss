@@ -72,7 +72,7 @@
 		color: var( --wpms-text-primary );
 	}
 
-	// Locked cards put the teaser figure and its upgrade link on one row, under the label.
+	// Education cards put the teaser figure and its upgrade link on one row, under the label.
 	.wpms-dashboard-stat-card__value-row {
 		display: flex;
 		align-items: center;
@@ -80,7 +80,7 @@
 		min-width: 0;
 	}
 
-	// The locked card's value is a fixed teaser figure (StatCards::build_card()'s
+	// The education card's value is a fixed teaser figure (StatCards::build_card()'s
 	// $teaser_value), blurred and topped with a lock glyph. It is never the site's
 	// real number, so it leaks nothing; the blur amount itself is set inline per
 	// card (StatCards.php), since it differs card to card.

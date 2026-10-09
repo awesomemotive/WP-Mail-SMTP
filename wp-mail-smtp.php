@@ -31,6 +31,7 @@ spl_autoload_register( function ( $class ) {
 	 */
 	$aliases = [
 		'WPMailSMTP\Admin\SetupWizard' => 'WPMailSMTP\Admin\SetupWizard\Local',
+		'WPMailSMTP\Geo'               => 'WPMailSMTP\Deprecated\Geo',
 	];
 
 	if ( isset( $aliases[ $class ] ) ) {

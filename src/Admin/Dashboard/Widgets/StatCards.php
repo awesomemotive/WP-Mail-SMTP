@@ -53,7 +53,7 @@ class StatCards extends AbstractWidget {
 	}
 
 	/**
-	 * Get the widget state. The cards row is always visible, locked or not.
+	 * Get the widget state. The cards row is always visible, as education or data.
 	 *
 	 * @since 4.10.0
 	 *
@@ -133,12 +133,12 @@ class StatCards extends AbstractWidget {
 	 *
 	 * @param string     $id           Card identifier.
 	 * @param string     $label        Card label.
-	 * @param int|null   $value        Metric value, null when locked.
-	 * @param float|null $delta        Percent change against the previous week, null when locked.
-	 * @param bool       $locked       Whether the card is locked (Lite-only Pro metric).
+	 * @param int|null   $value        Metric value, null for an education card.
+	 * @param float|null $delta        Percent change against the previous week, null for an education card.
+	 * @param bool       $locked       Whether the card is an education card for a Pro metric.
 	 * @param string     $icon         Iconify identifier (set--name) for the card's icon.
 	 * @param string     $tone         Icon tint, one of 'emails', 'failed', 'sent', 'opened'.
-	 * @param int        $teaser_value Fixed teaser figure shown blurred while locked. Not site
+	 * @param int        $teaser_value Fixed teaser figure shown blurred on an education card. Not site
 	 *                                 data: the design shows the same figure regardless of the
 	 *                                 site's real numbers, so it must never be swapped for a live value.
 	 * @param float      $teaser_blur  Blur radius, in pixels, for the teaser figure.

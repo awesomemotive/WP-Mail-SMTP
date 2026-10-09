@@ -8,6 +8,7 @@ use WPMailSMTP\Providers\Gmail\Auth as GmailAuth;
 use WPMailSMTP\Reports\Emails\Summary as SummaryReportEmail;
 use WPMailSMTP\SettingsImport\SettingsImport;
 use WPMailSMTP\WP;
+use WPMailSMTP\Helpers\Helpers;
 
 /**
  * The hosted Setup Wizard: a cross-origin SPA the plugin hands off to, backed by
@@ -239,8 +240,9 @@ class Hosted {
 			[
 				// Clear of the hosted wizard's own budget for reaching this site and
 				// answering, and inside a 30 second max_execution_time.
-				'timeout' => 12,
-				'body'    => array_merge(
+				'timeout'    => 12,
+				'user-agent' => Helpers::get_default_user_agent(),
+				'body'       => array_merge(
 					[
 						'token'           => $token,
 						'rest_url'        => $this->api->get_url(),

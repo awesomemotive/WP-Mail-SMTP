@@ -4,7 +4,6 @@ namespace WPMailSMTP\Admin\EmailSendingErrors;
 
 use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Options;
-use WPMailSMTP\ConnectionInterface;
 
 /**
  * Persistent error banner shown across WP Mail SMTP admin pages whenever a real
@@ -53,13 +52,11 @@ class EmailSendingErrors {
 	/**
 	 * Render the in-plugin banner on every WP Mail SMTP admin page.
 	 *
-	 * Renders the primary connection's record as a full banner (when set) and
-	 * each additional connection's record as a stacked one-liner. Suppressed
-	 * when no records exist or the current user lacks the manage-options cap.
+	 * Suppressed when no records exist or the current user lacks the manage-options cap.
 	 *
 	 * @since 4.9.0
 	 */
-	public function render_error_banner() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded -- Linear gate chain over context (capability, multisite, test-tab, AC-edit). Splitting hurts readability.
+	public function render_error_banner() {
 
 		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
 			return;
@@ -82,9 +79,9 @@ class EmailSendingErrors {
 			return;
 		}
 
-		$all = EmailSendingDebug::get();
+		$records = $this->get_failure_records();
 
-		if ( empty( $all ) ) {
+		if ( empty( $records ) ) {
 			return;
 		}
 
@@ -96,53 +93,7 @@ class EmailSendingErrors {
 			return;
 		}
 
-		// Which connection's record gets the primary (full banner) slot on this
-		// page: the AC edit-view's `connection_id`, the just-tested connection on
-		// the Test Email tab, or 'primary' everywhere else.
-		$connection_id = $this->get_primary_banner_connection_id();
-
-		// Render the full banner — except on the Connections list page, where
-		// primary failures route to the one-liner notice and the full banner is
-		// reserved for the per-connection edit view.
-		if (
-			isset( $all[ $connection_id ] ) &&
-			! ( $this->is_connections_tab() && $connection_id === 'primary' )
-		) {
-			$this->print_primary_banner(
-				$connection_id === 'primary' ? 'primary' : 'additional',
-				$all[ $connection_id ],
-				$this->get_connection_name( $connection_id ),
-				$connection_id
-			);
-
-			unset( $all[ $connection_id ] );
-		}
-
-		// AC edit page and Test Email tab are connection-focused surfaces:
-		// they show only the active connection's banner. Skip stacking the
-		// one-liner notices for every other failing connection. Read-only
-		// presence check; the connection_id GET param is a navigation key.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if (
-			( $this->is_connections_tab() && isset( $_GET['connection_id'] ) ) ||
-			$this->is_test_tab()
-		) {
-			return;
-		}
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		// Primary was either rendered above (and removed from $all) or is
-		// suppressed on the Connections list page. Either way, the loop below
-		// only handles additional connections.
-		unset( $all['primary'] );
-
-		foreach ( $all as $connection_id => $record ) {
-			$connection = wp_mail_smtp()->get_connections_manager()->get_connection( $connection_id, false );
-
-			if ( $connection !== false ) {
-				$this->print_additional_connection_note( $record, $connection );
-			}
-		}
+		$this->print_error_banners( $records );
 	}
 
 	/**
@@ -168,9 +119,8 @@ class EmailSendingErrors {
 			return;
 		}
 
-		$all  = EmailSendingDebug::get();
 		$live = array_filter(
-			$all,
+			$this->get_failure_records(),
 			static function ( $record ) {
 
 				return isset( $record['status'], $record['context'] )
@@ -183,25 +133,10 @@ class EmailSendingErrors {
 			return;
 		}
 
-		$settings_url  = wp_mail_smtp()->get_admin()->get_admin_page_url();
-		$connection_id = array_keys( $live )[0];
-
-		if ( count( $live ) === 1 && $connection_id !== 'primary' ) {
-			$settings_url = add_query_arg(
-				[
-					'page'          => 'wp-mail-smtp',
-					'tab'           => 'connections',
-					'mode'          => 'edit',
-					'connection_id' => $connection_id,
-				],
-				admin_url( 'admin.php' )
-			);
-		}
-
 		printf(
 			'<div class="notice notice-error"><p>%1$s <a href="%2$s">%3$s</a></p></div>',
 			esc_html__( 'WP Mail SMTP: One or more emails recently failed to send.', 'wp-mail-smtp' ),
-			esc_url( $settings_url ),
+			esc_url( $this->get_global_error_notice_url( $live ) ),
 			esc_html__( 'View details', 'wp-mail-smtp' )
 		);
 	}
@@ -233,56 +168,47 @@ class EmailSendingErrors {
 	}
 
 	/**
-	 * Resolve the connection_id when viewing an Additional Connection's edit page.
+	 * Get the failure records the banners and the notice report, keyed by connection id.
 	 *
-	 * Returns an empty string when not on the AC edit view. Read-only access to
-	 * request superglobals — no state changes are made here.
+	 * @since 4.10.1
 	 *
-	 * @since 4.9.0
-	 *
-	 * @return string
+	 * @return array
 	 */
-	private function get_primary_banner_connection_id() {
+	protected function get_failure_records() {
 
-		$connection_id = 'primary';
+		$records = EmailSendingDebug::get();
 
-		// Read-only banner-target resolution during admin render. Submission
-		// nonce is verified by TestTab::process_post() before any side effects,
-		// and the AC edit view's connection_id is a navigation parameter (not
-		// processed input).
-		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Recommended
-		if ( $this->is_connections_tab() && isset( $_GET['connection_id'] ) ) {
-			$connection_id = sanitize_key( wp_unslash( $_GET['connection_id'] ) );
-		} elseif ( $this->is_test_tab() && isset( $_POST['wp-mail-smtp']['test']['connection'] ) ) {
-			$connection_id = sanitize_key( wp_unslash( $_POST['wp-mail-smtp']['test']['connection'] ) );
-		}
-		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Recommended
-
-		return $connection_id;
+		return isset( $records['primary'] ) ? [ 'primary' => $records['primary'] ] : [];
 	}
 
 	/**
-	 * Look up a connection's display name (primary or additional).
+	 * Print the in-plugin banners for the failure records.
 	 *
-	 * @since 4.9.0
+	 * @since 4.10.1
 	 *
-	 * @param string $connection_id Connection ID.
+	 * @param array $records Failure records keyed by connection id.
+	 */
+	protected function print_error_banners( $records ) {
+
+		if ( ! isset( $records['primary'] ) ) {
+			return;
+		}
+
+		$this->print_primary_banner( 'primary', $records['primary'], esc_html__( 'Primary Connection', 'wp-mail-smtp' ), 'primary' );
+	}
+
+	/**
+	 * Get the URL the cross-admin notice links to.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @param array $failed_records Failed regular-context records keyed by connection id.
 	 *
 	 * @return string
 	 */
-	private function get_connection_name( $connection_id ) {
+	protected function get_global_error_notice_url( $failed_records ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 
-		if ( $connection_id === 'primary' ) {
-			return esc_html__( 'Primary Connection', 'wp-mail-smtp' );
-		}
-
-		$connection = wp_mail_smtp()->get_connections_manager()->get_connection( $connection_id, false );
-
-		if ( $connection ) {
-			return $connection->get_name();
-		}
-
-		return esc_html__( 'an additional connection', 'wp-mail-smtp' );
+		return wp_mail_smtp()->get_admin()->get_admin_page_url();
 	}
 
 	/**
@@ -296,7 +222,7 @@ class EmailSendingErrors {
 	 * @param string $connection_name Display name.
 	 * @param string $connection_id   Connection id this banner is rendering ('primary' or an additional id).
 	 */
-	private function print_primary_banner( $role, $record, $connection_name, $connection_id ) {
+	protected function print_primary_banner( $role, $record, $connection_name, $connection_id ) {
 
 		$is_warning = ( isset( $record['status'] ) && $record['status'] === 'sent' );
 
@@ -308,7 +234,7 @@ class EmailSendingErrors {
 			? esc_html__( 'Warning', 'wp-mail-smtp' )
 			: esc_html__( 'Error', 'wp-mail-smtp' );
 
-		$title = $this->get_title( $record, $role, $connection_name );
+		$title = $this->get_banner_title( $record, $role, $connection_name );
 
 		$doc_state = $this->resolve_doc_state( $record );
 
@@ -337,11 +263,6 @@ class EmailSendingErrors {
 	/**
 	 * Build the banner title.
 	 *
-	 * The generic "last email was unsuccessful" string is the unconditional
-	 * fallback; specific framings override for primary-rescued, additional-failed,
-	 * and additional-rescued. The test-context variants substitute "test email"
-	 * (bolded) for "email".
-	 *
 	 * @since 4.9.0
 	 *
 	 * @param array  $record          Failure record.
@@ -350,42 +271,9 @@ class EmailSendingErrors {
 	 *
 	 * @return string Title HTML (with bolded interpolations).
 	 */
-	private function get_title( $record, $role, $connection_name ) {
+	protected function get_banner_title( $record, $role, $connection_name ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 
-		$is_test    = ( isset( $record['context'] ) && $record['context'] === 'test' );
-		$rescued    = ( isset( $record['status'] ) && $record['status'] === 'sent' );
-		$is_primary = ( $role === 'primary' );
-		$name_html  = '<strong>' . esc_html( $connection_name ) . '</strong>';
-
-		if ( $is_primary && $rescued ) {
-			return $is_test
-				? esc_html__( 'Heads up! Your primary connection failed to send the last test email. Your backup connection sent it successfully', 'wp-mail-smtp' )
-				: esc_html__( 'Heads up! Your primary connection failed to send the last email. Your backup connection sent it successfully', 'wp-mail-smtp' );
-		}
-
-		if ( ! $is_primary && $rescued ) {
-			return $is_test
-				? sprintf( /* translators: %s: the connection name, bolded. */
-					__( 'Heads up! %s failed to send the last test email. Your backup connection sent it successfully', 'wp-mail-smtp' ),
-					$name_html
-				)
-				: sprintf( /* translators: %s: the connection name, bolded. */
-					__( 'Heads up! %s failed to send the last email. Your backup connection sent it successfully', 'wp-mail-smtp' ),
-					$name_html
-				);
-		}
-
-		if ( ! $is_primary && ! $rescued ) {
-			return $is_test
-				? sprintf( /* translators: %s: connection name, bolded. */
-					__( 'Heads up! The last test email your site attempted to send via %s was unsuccessful', 'wp-mail-smtp' ),
-					$name_html
-				)
-				: sprintf( /* translators: %s: the additional connection name, bolded. */
-					__( 'Heads up! The last email your site attempted to send via %s was unsuccessful', 'wp-mail-smtp' ),
-					$name_html
-				);
-		}
+		$is_test = ( isset( $record['context'] ) && $record['context'] === 'test' );
 
 		if ( $is_test ) {
 			return esc_html__( 'Heads up! The last test email your site attempted to send was unsuccessful', 'wp-mail-smtp' );
@@ -1508,109 +1396,6 @@ class EmailSendingErrors {
 	}
 
 	/**
-	 * Render the verbose one-liner notice for an additional connection. On the
-	 * General Settings page these stack vertically under the primary banner.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @param array               $record     Failure record.
-	 * @param ConnectionInterface $connection Additional connection object.
-	 */
-	private function print_additional_connection_note( $record, $connection ) {
-
-		$connection_id   = $connection->get_id();
-		$connection_name = $connection->get_name();
-
-		if ( $connection_name === '' ) {
-			$connection_name = esc_html__( 'an additional connection', 'wp-mail-smtp' );
-		}
-
-		$severity_class = ( isset( $record['status'] ) && $record['status'] === 'sent' )
-			? 'notice-warning'
-			: 'notice-error';
-
-		$edit_url = add_query_arg(
-			[
-				'page'          => 'wp-mail-smtp',
-				'tab'           => 'connections',
-				'mode'          => 'edit',
-				'connection_id' => $connection_id,
-			],
-			admin_url( 'admin.php' )
-		);
-
-		$is_backup     = $this->is_backup_connection( $connection_id );
-		$name_html     = '<strong>' . esc_html( $connection_name ) . '</strong>';
-		$rescued       = ( isset( $record['status'] ) && $record['status'] === 'sent' );
-		$is_test       = ( isset( $record['context'] ) && $record['context'] === 'test' );
-		$test_word     = '<strong>' . esc_html__( 'test', 'wp-mail-smtp' ) . '</strong>';
-		$backup_prefix = $is_backup
-			? sprintf( /* translators: %s: connection name, bolded. */
-				__( 'your backup connection %s', 'wp-mail-smtp' ),
-				$name_html
-			)
-			: $name_html;
-
-		if ( $rescued ) {
-			$copy = sprintf( /* translators: %s: connection display name. */
-				__( '%s failed to send the last email. Your backup connection sent it successfully.', 'wp-mail-smtp' ),
-				$backup_prefix
-			);
-		} elseif ( $is_test ) {
-			$copy = sprintf( /* translators: %1$s: literal word "test", bolded. %2$s: connection display name. */
-				__( 'The last %1$s email your site attempted to send via %2$s was unsuccessful.', 'wp-mail-smtp' ),
-				$test_word,
-				$name_html
-			);
-		} else {
-			$copy = sprintf( /* translators: %s: connection display name. */
-				__( 'The last email your site attempted to send via %s was unsuccessful.', 'wp-mail-smtp' ),
-				$backup_prefix
-			);
-		}
-
-		$manage_html = wp_kses(
-			sprintf(
-				/* translators: %s - link to the Additional Connection Settings page. */
-				__( 'Manage it on the %s page.', 'wp-mail-smtp' ),
-				sprintf(
-					'<a href="%s">%s</a>',
-					esc_url( $edit_url ),
-					esc_html__( 'Additional Connection Settings', 'wp-mail-smtp' )
-				)
-			),
-			[ 'a' => [ 'href' => [] ] ]
-		);
-
-		printf(
-			'<div class="notice %1$s is-dismissible wpms-email-sending-errors-one-liner" data-connection-id="%2$s">' .
-			'<p>%3$s %4$s</p>' .
-			'</div>',
-			esc_attr( $severity_class ),
-			esc_attr( $connection_id ),
-			wp_kses( $copy, [ 'strong' => [] ] ),
-			$manage_html // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		);
-	}
-
-	/**
-	 * Whether a given additional-connection id is currently configured as the
-	 * backup connection. Returns false when Pro is inactive or no backup is set.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @param string $connection_id Connection ID.
-	 *
-	 * @return bool
-	 */
-	private function is_backup_connection( $connection_id ) {
-
-		$backup_id = Options::init()->get( 'backup_connection', 'connection_id' );
-
-		return ! empty( $backup_id ) && $backup_id === $connection_id;
-	}
-
-	/**
 	 * Whether we're on Tools > Email Test tab.
 	 *
 	 * Handles the implicit-default case: {@see \WPMailSMTP\Admin\Pages\Tools::$default_tab}
@@ -1623,7 +1408,7 @@ class EmailSendingErrors {
 	 *
 	 * @return bool
 	 */
-	private function is_test_tab() {
+	protected function is_test_tab() {
 
 		if ( ! wp_mail_smtp()->get_admin()->is_admin_page( 'tools' ) ) {
 			return false;
@@ -1633,29 +1418,5 @@ class EmailSendingErrors {
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
 
 		return $tab === '' || $tab === 'test';
-	}
-
-	/**
-	 * Whether we're currently viewing the Additional Connections tab on Settings.
-	 *
-	 * Settings → Connections is `page=wp-mail-smtp&tab=connections`; the AC tab is
-	 * NOT a registered WP admin page slug, so `is_admin_page('connections')` falls
-	 * back to matching the Settings page (any tab). This helper does the
-	 * tab-aware check.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool
-	 */
-	private function is_connections_tab() {
-
-		if ( ! wp_mail_smtp()->get_admin()->is_admin_page( 'general' ) ) {
-			return false;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
-
-		return $tab === 'connections';
 	}
 }

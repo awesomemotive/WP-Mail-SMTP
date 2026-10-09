@@ -206,7 +206,7 @@ const WPMailSMTPSetupChecklist = window.WPMailSMTPSetupChecklist || ( function( 
 			} )
 				.done( ( response ) => {
 					if ( ! response || ! response.success ) {
-						app.installPluginFailed( $link, response, originalText );
+						app.installPluginFailed( $link, response, originalText, action );
 
 						return;
 					}
@@ -227,7 +227,7 @@ const WPMailSMTPSetupChecklist = window.WPMailSMTPSetupChecklist || ( function( 
 
 					app.markInstalled( $link );
 				} )
-				.fail( ( jqXHR ) => app.installPluginFailed( $link, jqXHR && jqXHR.responseJSON, originalText ) );
+				.fail( ( jqXHR ) => app.installPluginFailed( $link, jqXHR && jqXHR.responseJSON, originalText, action ) );
 		},
 
 		/**
@@ -238,10 +238,12 @@ const WPMailSMTPSetupChecklist = window.WPMailSMTPSetupChecklist || ( function( 
 		 * @param {jQuery} $link        The clicked link.
 		 * @param {object} response     AJAX error payload, when available.
 		 * @param {string} originalText The link label to restore.
+		 * @param {string} action       The data-action the link carried.
 		 */
-		installPluginFailed( $link, response, originalText ) {
+		installPluginFailed( $link, response, originalText, action ) {
 			const settings  = WPMailSMTP.Admin.Settings;
 			const manualUrl = settings.extractAjaxManualUrl( response );
+			const fallback  = settings.pluginInstall.fallbackError( action === 'activate-plugin' );
 
 			$link
 				.removeClass( 'is-loading' )
@@ -249,7 +251,7 @@ const WPMailSMTPSetupChecklist = window.WPMailSMTPSetupChecklist || ( function( 
 
 			settings.pluginInstall.offerManualRoute( $link, manualUrl );
 
-			app.showError( settings.extractAjaxError( response, app.getStrings().error ), manualUrl );
+			app.showError( settings.extractAjaxError( response, fallback ), manualUrl );
 		},
 
 		/**
@@ -400,14 +402,11 @@ const WPMailSMTPSetupChecklist = window.WPMailSMTPSetupChecklist || ( function( 
 		 * @param {object} response AJAX error payload, when available.
 		 */
 		itemActionFailed( $button, response ) {
-			const settings  = WPMailSMTP.Admin.Settings;
-			const manualUrl = settings.extractAjaxManualUrl( response );
+			const l10n = window.wp_mail_smtp_setup_checklist || {};
 
 			$button.removeClass( 'wp-mail-smtp-btn-loading' );
 
-			settings.pluginInstall.offerManualRoute( $button, manualUrl );
-
-			app.showError( settings.extractAjaxError( response, app.getStrings().error ), manualUrl );
+			app.showError( WPMailSMTP.Admin.Settings.extractAjaxError( response, l10n.error ) );
 		},
 
 		/**

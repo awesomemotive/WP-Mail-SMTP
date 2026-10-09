@@ -160,7 +160,7 @@ WPMailSMTP.Admin.About = WPMailSMTP.Admin.About || ( function( document, window,
 						var manualUrl = settings.extractAjaxManualUrl( res );
 
 						settings.pluginInstall.showErrorModal(
-							settings.extractAjaxError( res, wp_mail_smtp_about.plugin_install_error ),
+							settings.extractAjaxError( res, settings.pluginInstall.fallbackError( 'about_plugin_activate' === task ) ),
 							manualUrl
 						);
 

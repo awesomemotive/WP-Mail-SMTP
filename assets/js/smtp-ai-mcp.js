@@ -133,11 +133,11 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 						return;
 					}
 
-					app.showError( $button, response );
+					app.showError( $button, response, task );
 				} )
 				.fail( function( xhr ) {
 
-					app.showError( $button, xhr ? xhr.responseJSON : null );
+					app.showError( $button, xhr ? xhr.responseJSON : null, task );
 				} );
 		},
 
@@ -162,8 +162,9 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 		 *
 		 * @param {object}      $button  Button element.
 		 * @param {object|null} response AJAX error payload, when available.
+		 * @param {string}      task     AJAX task that failed.
 		 */
-		showError: function( $button, response ) {
+		showError: function( $button, response, task ) {
 
 			$button
 				.removeClass( 'wp-mail-smtp-btn-loading' )
@@ -175,7 +176,7 @@ WPMailSMTP.Admin.AiMcp = WPMailSMTP.Admin.AiMcp || ( function( document, window,
 			settings.pluginInstall.offerManualRoute( $button, manualUrl );
 
 			settings.pluginInstall.showErrorModal(
-				settings.extractAjaxError( response, window.wp_mail_smtp_ai_mcp.error_text ),
+				settings.extractAjaxError( response, settings.pluginInstall.fallbackError( task === 'about_plugin_activate' ) ),
 				manualUrl
 			);
 		},

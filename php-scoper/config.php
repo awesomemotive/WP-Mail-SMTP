@@ -105,6 +105,10 @@ $config = [
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 			->files()
+			->in( 'vendor/symfony/polyfill-intl-normalizer' )
+			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		Finder::create()
+			->files()
 			->in( 'vendor/symfony/deprecation-contracts' )
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 	],
@@ -326,6 +330,9 @@ $config = [
 		'../vendor/symfony/polyfill-mbstring/bootstrap80.php',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap.php',
 		'../vendor/symfony/polyfill-intl-idn/bootstrap80.php',
+		'../vendor/symfony/polyfill-intl-normalizer/bootstrap.php',
+		'../vendor/symfony/polyfill-intl-normalizer/bootstrap80.php',
+		'../vendor/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
 	],
 ];
 

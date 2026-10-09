@@ -2,6 +2,8 @@
 
 namespace WPMailSMTP\Integrations\WPCode;
 
+use WPMailSMTP\Helpers\Helpers;
+
 /**
  * Provides the plugin's WPCode library snippets as a single, normalized
  * view-model, whether or not the WPCode plugin is active.
@@ -180,7 +182,7 @@ class SnippetsProvider {
 			return $cached;
 		}
 
-		$response = wp_remote_get( self::API_BASE . sanitize_key( $this->username ) );
+		$response = wp_remote_get( self::API_BASE . sanitize_key( $this->username ), [ 'user-agent' => Helpers::get_default_user_agent() ] );
 
 		if ( ! is_wp_error( $response ) && (int) wp_remote_retrieve_response_code( $response ) === 200 ) {
 			$mapped = $this->map_response( json_decode( wp_remote_retrieve_body( $response ), true ) );

@@ -805,7 +805,7 @@ class WP {
 
 		if ( ! empty( $result[1] ) ) {
 			if ( ! function_exists( 'get_plugins' ) ) {
-				include ABSPATH . '/wp-admin/includes/plugin.php';
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
 			$all_plugins = empty( $check_mu_plugin ) ? get_plugins() : get_mu_plugins();

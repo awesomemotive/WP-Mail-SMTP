@@ -52,7 +52,7 @@ class EmailSources extends AbstractWidget {
 	}
 
 	/**
-	 * Get the widget state. This tier locks the widget behind an upgrade prompt whatever
+	 * Get the widget state. This tier shows the education variant with an upgrade prompt whatever
 	 * the mailer or log state, so it never queries the log.
 	 *
 	 * @since 4.10.0

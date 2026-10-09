@@ -1,19 +1,11 @@
 /* global wp_mail_smtp_recommendations, wp_mail_smtp */
 
 /**
+ * @param wp_mail_smtp_recommendations.plugin_page.activate_now
  * @param wp_mail_smtp_recommendations.plugin_page.activated
  * @param wp_mail_smtp_recommendations.plugin_page.activated_pro
- * @param wp_mail_smtp_recommendations.plugin_page.download_now
- * @param wp_mail_smtp_recommendations.plugin_page.error_could_not_activate
- * @param wp_mail_smtp_recommendations.plugin_page.error_could_not_install
- * @param wp_mail_smtp_recommendations.plugin_page.is_activated
- * @param wp_mail_smtp_recommendations.plugin_page.license_level
- * @param wp_mail_smtp_recommendations.plugin_page.result_status
- * @param wp_mail_smtp_recommendations.plugin_page.plugins_page
- * @param wp_mail_smtp_recommendations.plugin_page.setup_status
- * @param wp_mail_smtp_recommendations.plugin_page.step3_button_url
- * @param wp_mail_smtp_recommendations.plugin_page.manual_activate_url
- * @param wp_mail_smtp_recommendations.plugin_page.manual_install_url
+ * @param wp_mail_smtp_recommendations.plugin_page.activating
+ * @param wp_mail_smtp_recommendations.plugin_page.installing
  */
 
 'use strict';
@@ -186,9 +178,7 @@ WPMailSMTPRecommendations.plugin_page = ( function( document, window, $ ) {
 			} else {
 				const settings = window.WPMailSMTP.Admin.Settings,
 					manualUrl = settings.extractAjaxManualUrl( res ),
-					fallbackMsg = 'activate' === action ?
-						wp_mail_smtp_recommendations.plugin_page.error_could_not_activate :
-						wp_mail_smtp_recommendations.plugin_page.error_could_not_install;
+					fallbackMsg = settings.pluginInstall.fallbackError( 'activate' === action );
 
 				$btn.removeClass( 'grey disabled' ).html( originalLabel );
 

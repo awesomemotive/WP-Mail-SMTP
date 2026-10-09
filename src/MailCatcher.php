@@ -4,6 +4,10 @@ namespace WPMailSMTP;
 
 use phpmailerException;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Load PHPMailer class, so we can subclass it.
 if ( ! class_exists( 'PHPMailer', false ) ) {
 	require_once ABSPATH . WPINC . '/class-phpmailer.php';
@@ -56,6 +60,6 @@ class MailCatcher extends \PHPMailer implements MailCatcherInterface {
 	 */
 	protected function throw_exception( $error ) {
 
-		throw new phpmailerException( $error );
+		throw new phpmailerException( $error ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text PHPMailer error, escaped on output.
 	}
 }

@@ -266,7 +266,7 @@ class Connections extends AbstractWidget {
 	}
 
 	/**
-	 * The Backup group, rendered locked and pointing at an upgrade on a tier with no
+	 * The Backup group, rendered as education and pointing at an upgrade on a tier with no
 	 * backup connections.
 	 *
 	 * @since 4.10.0
@@ -288,7 +288,7 @@ class Connections extends AbstractWidget {
 	}
 
 	/**
-	 * The Additional Connections group, rendered locked and pointing at an upgrade on a
+	 * The Additional Connections group, rendered as education and pointing at an upgrade on a
 	 * tier that has none.
 	 *
 	 * @since 4.10.0
@@ -335,7 +335,7 @@ class Connections extends AbstractWidget {
 	}
 
 	/**
-	 * A locked placeholder row, offering an upgrade instead of the row's usual action.
+	 * An education placeholder row, offering an upgrade instead of the row's usual action.
 	 *
 	 * @since 4.10.0
 	 *
@@ -359,7 +359,7 @@ class Connections extends AbstractWidget {
 	}
 
 	/**
-	 * Upgrade link for a locked row.
+	 * Upgrade link for an education row.
 	 *
 	 * @since 4.10.0
 	 *

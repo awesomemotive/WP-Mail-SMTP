@@ -26,9 +26,9 @@ class Attachments {
 
 		$attachments = array_map(
 			function( $attachment ) {
-				[ $path, , $name, , , $is_string_attachment ] = $attachment;
+				[ $path, , , , , $is_string_attachment ] = $attachment;
 
-				$path = $this->process_attachment( $path, $name, $is_string_attachment );
+				$path = $this->process_attachment( $path, $is_string_attachment );
 
 				if ( ! empty( $path ) ) {
 					$attachment[0] = $path;
@@ -49,12 +49,11 @@ class Attachments {
 	 * @since 4.0.0
 	 *
 	 * @param string $path                 The path to obfuscate.
-	 * @param string $name                 The name of the file at $path.
 	 * @param bool   $is_string_attachment Whether this attachment is a string attachment.
 	 *
 	 * @return string|false New path of the attachment, or false for no path.
 	 */
-	private function process_attachment( $path, $name = '', $is_string_attachment = false ) {
+	private function process_attachment( $path, $is_string_attachment = false ) {
 
 		$file_content = $this->get_attachment_file_content( $path, $is_string_attachment );
 
@@ -62,12 +61,7 @@ class Attachments {
 			return false;
 		}
 
-		if ( ! $is_string_attachment && $name === '' ) {
-			$name = wp_basename( $path );
-		}
-
-		$name            = sanitize_file_name( $name );
-		$obfuscated_path = $this->store_file( $file_content, $name );
+		$obfuscated_path = $this->store_file( $file_content );
 
 		if ( empty( $obfuscated_path ) ) {
 			return $path;
@@ -104,12 +98,11 @@ class Attachments {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string $file_content      The file's contents.
-	 * @param string $original_filename The original file's name.
+	 * @param string $file_content The file's contents.
 	 *
 	 * @return string The file's path.
 	 */
-	private function store_file( $file_content, $original_filename ) {
+	private function store_file( $file_content ) {
 
 		$uploads_directory = $this->get_uploads_directory();
 
@@ -126,13 +119,16 @@ class Attachments {
 			// Check if the index.html exists in the directories, if not - create them.
 			Uploads::create_index_html_file( Uploads::upload_dir()['path'] );
 			Uploads::create_index_html_file( $uploads_directory );
+
+			// Queued attachments are private and only read from disk, so the folder denies all web access.
+			Uploads::create_deny_htaccess_file( $uploads_directory );
 		}
 
-		$file_extension    = pathinfo( $original_filename, PATHINFO_EXTENSION );
-		$filename          = wp_unique_filename( $uploads_directory, wp_generate_password( 32, false, false ) . '.' . $file_extension );
+		// A fixed extension keeps attachment content from being executable; the original name and type travel with the email.
+		$filename          = wp_unique_filename( $uploads_directory, wp_generate_password( 32, false, false ) . '.tmp' );
 		$uploads_directory = trailingslashit( $uploads_directory );
 
-		if ( ! is_writeable( $uploads_directory ) ) {
+		if ( ! wp_is_writable( $uploads_directory ) ) {
 			return false;
 		}
 
@@ -218,7 +214,7 @@ class Attachments {
 		}
 
 		foreach ( $files as $file ) {
-			@unlink( $file );
+			wp_delete_file( $file );
 		}
 	}
 

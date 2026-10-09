@@ -124,37 +124,11 @@ class Settings {
 	 *
 	 * @return array
 	 */
-	private function get_meta( $settings ) {
+	protected function get_meta( $settings ) {
 
 		return [
 			'connections' => $this->get_mailer_connections( $settings ),
-			'license'     => [
-				'is_valid' => $this->is_license_valid( $settings ),
-			],
 		];
-	}
-
-	/**
-	 * Whether a valid, active license is stored.
-	 *
-	 * The wizard gates the one-click mailers on licensing but never needs the
-	 * key itself, so the key stays server-side and only this boolean is exposed.
-	 *
-	 * @since 4.10.0
-	 *
-	 * @param array $settings Full options tree from Options::get_all().
-	 *
-	 * @return bool
-	 */
-	private function is_license_valid( $settings ) {
-
-		$license = isset( $settings['license'] ) ? $settings['license'] : [];
-
-		return ! empty( $license['key'] ) &&
-			empty( $license['is_expired'] ) &&
-			empty( $license['is_disabled'] ) &&
-			empty( $license['is_invalid'] ) &&
-			empty( $license['is_limit_reached'] );
 	}
 
 	/**
@@ -162,8 +136,7 @@ class Settings {
 	 *
 	 * The wizard only needs to tell a connected mailer from an unconnected one,
 	 * so the raw tokens are withheld and each mode is reported as a single
-	 * `is_*_authorized` boolean. gmail/outlook expose both the custom-app and
-	 * one-click modes because the client switches between them live.
+	 * `is_*_authorized` boolean.
 	 *
 	 * @since 4.10.0
 	 *
@@ -191,18 +164,10 @@ class Settings {
 	 *
 	 * @return array[]
 	 */
-	private function get_mailer_connection_map() {
+	protected function get_mailer_connection_map() {
 
 		return [
-			'gmail'   => [
-				'is_authorized'                 => [ 'access_token', 'refresh_token' ],
-				'is_one_click_setup_authorized' => [ 'one_click_setup_credentials' ],
-			],
-			'outlook' => [
-				'is_authorized'                 => [ 'access_token', 'refresh_token' ],
-				'is_one_click_setup_authorized' => [ 'one_click_setup_credentials' ],
-			],
-			'zoho'    => [
+			'gmail' => [
 				'is_authorized' => [ 'access_token', 'refresh_token' ],
 			],
 		];
@@ -235,9 +200,9 @@ class Settings {
 	/**
 	 * Whether a stored credential value counts as present.
 	 *
-	 * Tokens are stored either as scalars or as arrays (e.g. the one-click setup
-	 * credentials); an array counts as present only when it is non-empty and none
-	 * of its parts are empty, matching the client's "all parts required" check.
+	 * Tokens are stored either as scalars or as arrays; an array counts as present only
+	 * when it is non-empty and none of its parts are empty, matching the client's
+	 * "all parts required" check.
 	 *
 	 * @since 4.10.0
 	 *
@@ -275,7 +240,7 @@ class Settings {
 	 *
 	 * @return array[]
 	 */
-	private function get_allowed_keys() {
+	protected function get_allowed_keys() {
 
 		return [
 			'mail'         => [ 'mailer', 'from_email', 'from_name', 'return_path', 'from_email_force', 'from_name_force' ],
@@ -292,14 +257,9 @@ class Settings {
 			'sparkpost'    => [ 'api_key', 'region' ],
 			'postmark'     => [ 'server_api_token', 'message_stream' ],
 			'mandrill'     => [ 'api_key' ],
-			'amazonses'    => [ 'client_id', 'client_secret', 'region' ],
 			'elasticemail' => [ 'api_key' ],
-			'gmail'        => [ 'client_id', 'client_secret', 'user_details', 'one_click_setup_enabled', 'one_click_setup_user_details' ],
-			'outlook'      => [ 'client_id', 'client_secret', 'user_details', 'one_click_setup_enabled', 'one_click_setup_user_details' ],
-			'zoho'         => [ 'client_id', 'client_secret', 'domain', 'user_details' ],
-			'logs'         => [ 'enabled', 'log_email_content', 'save_attachments', 'open_email_tracking', 'click_link_tracking' ],
+			'gmail'        => [ 'client_id', 'client_secret', 'user_details' ],
 			'general'      => [ SummaryReportEmail::SETTINGS_SLUG ],
-			'alert_email'  => [ 'enabled', 'connections' ],
 		];
 	}
 }

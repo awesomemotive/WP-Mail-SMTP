@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Admin\SetupWizard;
 
 use WP_Error;
-use WPMailSMTP\Providers\Sendlayer\QuickConnect;
 
 /**
  * Bridges the tokenless hosted-wizard REST session to a cookie-authenticated admin request.
@@ -159,7 +158,7 @@ class RedirectBridge {
 		$utm_content   = isset( $_GET['utm_content'] ) ? sanitize_text_field( wp_unslash( $_GET['utm_content'] ) ) : 'Quick Connect';
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		$result = ( new QuickConnect() )->init_connect_session( $return_url, $connection_id, $mode, $utm_content );
+		$result = wp_mail_smtp()->get_sendlayer_quick_connect()->init_connect_session( $return_url, $connection_id, $mode, $utm_content );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

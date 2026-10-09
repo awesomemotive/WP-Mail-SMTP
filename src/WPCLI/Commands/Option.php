@@ -62,36 +62,39 @@ class Option {
 		$show_sensitive_desc = __( 'Show sensitive values instead of masking them.', 'wp-mail-smtp' );
 		$format_desc         = __( 'Output format for `list`. table | json | yaml. Default: table.', 'wp-mail-smtp' );
 
-		return <<<HELP
-## OPTIONS
-
-<action>
-: {$action_desc}
-
-[<flag>]
-: {$flag_desc}
-
-[<value>]
-: {$value_desc}
-
-[--value-file=<path>]
-: {$value_file_desc}
-
-[--show-sensitive]
-: {$show_sensitive_desc}
-
-[--format=<format>]
-: {$format_desc}
-
-## EXAMPLES
-
-    wp wp-mail-smtp option get mail.from_email
-    wp wp-mail-smtp option set smtp.host mail.example.com
-    wp wp-mail-smtp option set sendgrid.api_key --value-file=/run/secret/sg
-    wp wp-mail-smtp option list --format=json
-
-{$flags}
-HELP;
+		return implode(
+			"\n",
+			[
+				'## OPTIONS',
+				'',
+				'<action>',
+				': ' . $action_desc,
+				'',
+				'[<flag>]',
+				': ' . $flag_desc,
+				'',
+				'[<value>]',
+				': ' . $value_desc,
+				'',
+				'[--value-file=<path>]',
+				': ' . $value_file_desc,
+				'',
+				'[--show-sensitive]',
+				': ' . $show_sensitive_desc,
+				'',
+				'[--format=<format>]',
+				': ' . $format_desc,
+				'',
+				'## EXAMPLES',
+				'',
+				'    wp wp-mail-smtp option get mail.from_email',
+				'    wp wp-mail-smtp option set smtp.host mail.example.com',
+				'    wp wp-mail-smtp option set sendgrid.api_key --value-file=/run/secret/sg',
+				'    wp wp-mail-smtp option list --format=json',
+				'',
+				$flags,
+			]
+		);
 	}
 
 	/**

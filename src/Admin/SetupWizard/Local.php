@@ -803,21 +803,21 @@ class Local {
 
 		// Check for permissions.
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. You don\'t have permission to install plugins.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'Your account does not have permission to install plugins on this site.', 'wp-mail-smtp' ) );
 		}
 
 		if ( ! current_user_can( 'activate_plugins' ) ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. You don\'t have permission to activate plugins.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'Your account does not have permission to activate plugins on this site.', 'wp-mail-smtp' ) );
 		}
 
 		$slug = ! empty( $_POST['slug'] ) ? sanitize_text_field( wp_unslash( $_POST['slug'] ) ) : '';
 
 		if ( empty( $slug ) ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin slug is missing.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'No plugin was specified.', 'wp-mail-smtp' ) );
 		}
 
 		if ( ! in_array( $slug, wp_list_pluck( $this->get_partner_plugins(), 'slug' ), true ) ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. Plugin is not whitelisted.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' ) );
 		}
 
 		$url = esc_url_raw( WP::admin_url( 'admin.php?page=' . Area::SLUG . '-setup-wizard' ) );
@@ -833,11 +833,11 @@ class Local {
 
 		// Check for file system permissions.
 		if ( false === $creds ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. Don\'t have file permission.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'Could not install the plugin. Missing file system permission.', 'wp-mail-smtp' ) );
 		}
 
 		if ( ! WP_Filesystem( $creds ) ) {
-			wp_send_json_error( esc_html__( 'Could not install the plugin. Don\'t have file permission.', 'wp-mail-smtp' ) );
+			wp_send_json_error( esc_html__( 'Could not install the plugin. Missing file system permission.', 'wp-mail-smtp' ) );
 		}
 
 		// Do not allow WordPress to search/download translations, as this will break JS output.
@@ -854,7 +854,7 @@ class Local {
 			wp_send_json_error( esc_html__( 'Could not install the plugin. WP Plugin installer initialization failed.', 'wp-mail-smtp' ) );
 		}
 
-		include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
 		$api = plugins_api(
 			'plugin_information',
@@ -937,7 +937,7 @@ class Local {
 			}
 		}
 
-		wp_send_json_error( esc_html__( 'Could not install the plugin. WP Plugin installer could not retrieve plugin information.', 'wp-mail-smtp' ) );
+		wp_send_json_error( esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' ) );
 	}
 
 	/**

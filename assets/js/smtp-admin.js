@@ -1211,8 +1211,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						} );
 					} );
 
-					// SendLayer Quick Connect button — supports per-button data-mode
-					// (e.g. backup-mailer mode from the test email success banner).
+					// SendLayer Quick Connect button, forwarding an optional per-button data-mode.
 					$( document ).on( 'click', '.js-wp-mail-smtp-sendlayer-quick-connect-btn', function( e ) {
 						e.preventDefault();
 
@@ -1313,6 +1312,20 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 		pluginInstall: {
 
 			/**
+			 * The message to show when a failed request carried none of its own.
+			 *
+			 * @since 4.10.1
+			 *
+			 * @param {boolean} isActivate Whether the request was an activation.
+			 *
+			 * @returns {string} The localized fallback message.
+			 */
+			fallbackError: function( isActivate ) {
+
+				return isActivate ? wp_mail_smtp.plugin_install.error_activate : wp_mail_smtp.plugin_install.error;
+			},
+
+			/**
 			 * POST to the shared About-tab plugin install/activate AJAX
 			 * endpoint and dispatch to caller-supplied success/error
 			 * callbacks.
@@ -1328,6 +1341,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			 */
 			installPlugin: function( options ) {
 
+				var fallback = app.pluginInstall.fallbackError( options.task === 'about_plugin_activate' );
+
 				$.post( wp_mail_smtp.ajax_url, {
 					action: 'wp_mail_smtp_ajax',
 					task:   options.task,
@@ -1339,10 +1354,10 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						options.onSuccess( res );
 						return;
 					}
-					options.onError( app.extractAjaxError( res, wp_mail_smtp.plugin_install.error ), res );
+					options.onError( app.extractAjaxError( res, fallback ), res );
 				} ).fail( function( xhr ) {
 					var res = xhr && xhr.responseJSON ? xhr.responseJSON : null;
-					options.onError( app.extractAjaxError( res, wp_mail_smtp.plugin_install.error ), res );
+					options.onError( app.extractAjaxError( res, fallback ), res );
 				} );
 			},
 

@@ -349,7 +349,8 @@ class Processor {
 	 */
 	public function get_default_email() {
 
-		$server_name = Geo::get_site_domain();
+		// CLI requests have no SERVER_NAME, so the home URL host is used instead.
+		$server_name = ! empty( $_SERVER['SERVER_NAME'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ) : wp_parse_url( get_home_url( get_current_blog_id() ), PHP_URL_HOST );
 
 		if ( empty( $server_name ) ) {
 			return '';

@@ -132,6 +132,7 @@ class Page {
 			'wp_mail_smtp_setup_checklist',
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'error'    => esc_html__( 'Something went wrong. Please try again.', 'wp-mail-smtp' ),
 				'dismiss'  => [
 					'title'   => esc_html__( 'Are you sure?', 'wp-mail-smtp' ),
 					'content' => esc_html__( 'This will permanently dismiss the Setup Checklist, and you will not be able to bring it back. This cannot be undone.', 'wp-mail-smtp' ),
@@ -144,7 +145,6 @@ class Page {
 					'activating' => esc_html__( 'Activating…', 'wp-mail-smtp' ),
 					'activate'   => esc_html__( 'Activate', 'wp-mail-smtp' ),
 					'installed'  => esc_html__( 'Installed', 'wp-mail-smtp' ),
-					'error'      => esc_html__( 'Something went wrong. Please install the plugin from the Plugins page.', 'wp-mail-smtp' ),
 				],
 			]
 		);

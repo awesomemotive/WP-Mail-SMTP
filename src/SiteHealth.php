@@ -157,7 +157,7 @@ class SiteHealth {
 
 			$debug_info[ self::DEBUG_INFO_SLUG ]['fields']['lite_install_date'] = [
 				'label' => esc_html__( 'Lite install date', 'wp-mail-smtp' ),
-				'value' => date_i18n( esc_html__( 'M j, Y @ g:ia' ), $date ),
+				'value' => date_i18n( /* translators: Date and time format, see https://www.php.net/manual/datetime.format.php. */ esc_html__( 'M j, Y @ g:ia', 'wp-mail-smtp' ), $date ),
 			];
 		}
 
@@ -334,40 +334,65 @@ class SiteHealth {
 			esc_html( WP::get_email_domain( $email ) )
 		);
 
-		$result = array(
-			'label'       => esc_html__( 'Email domain is configured correctly', 'wp-mail-smtp' ),
-			'status'      => 'good',
-			'badge'       => array(
+		$result = [
+			'label'   => esc_html__( 'Email domain is configured correctly', 'wp-mail-smtp' ),
+			'status'  => 'good',
+			'badge'   => [
 				'label' => $this->get_label(),
 				'color' => self::BADGE_COLOR,
-			),
-			'description' => sprintf(
-				'<p>%1$s</p><p>%2$s</p>',
-				$email_domain_text,
-				esc_html__( 'All checks for your email domain were successful. It looks like everything is configured correctly.', 'wp-mail-smtp' )
-			),
-			'actions'     => sprintf(
+			],
+			'actions' => sprintf(
 				'<p><a href="%1$s">%2$s</a></p>',
 				esc_url( add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ) ),
 				esc_html__( 'Send a Test Email', 'wp-mail-smtp' )
 			),
-			'test'        => 'wp_mail_smtp_email_domain_check',
-		);
+			'test'    => 'wp_mail_smtp_email_domain_check',
+		];
 
 		// Add the optional sending domain parameter.
 		if ( in_array( $mailer, [ 'mailgun', 'sendinblue', 'sendgrid' ], true ) ) {
 			$domain = $options->get( $mailer, 'domain' );
 		}
 
-		$domain_checker = new DomainChecker( $mailer, $email, $domain );
+		// The check contacts an external service, so Site Health shows the last one the user ran instead of running it.
+		$check = DomainCheckState::get( 'primary' );
 
-		if ( ! $domain_checker->no_issues() ) {
+		if (
+			empty( $check['results'] ) ||
+			$check['mailer'] !== $mailer ||
+			strtolower( (string) $check['from_email'] ) !== strtolower( (string) $email ) ||
+			(string) $check['sending_domain'] !== (string) $domain
+		) {
+			$result['label']       = esc_html__( 'Send a test email to check your email domain', 'wp-mail-smtp' );
+			$result['status']      = 'recommended';
+			$result['description'] = sprintf(
+				'<p>%1$s</p><p>%2$s</p>',
+				$email_domain_text,
+				esc_html__( 'Your email domain is checked when you send a test email. No check has run yet for the current mailer and From email.', 'wp-mail-smtp' )
+			);
+
+			wp_send_json_success( $result );
+		}
+
+		$email_domain_text .= '<br>' . sprintf(
+			/* translators: %s - date and time of the last domain check. */
+			esc_html__( 'Last checked: %s', 'wp-mail-smtp' ),
+			esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $check['checked_at'] ) )
+		);
+
+		$result['description'] = sprintf(
+			'<p>%1$s</p><p>%2$s</p>',
+			$email_domain_text,
+			esc_html__( 'All checks for your email domain were successful. It looks like everything is configured correctly.', 'wp-mail-smtp' )
+		);
+
+		if ( $check['state'] === DomainCheckState::ISSUES ) {
 			$result['label']       = esc_html__( 'Email domain issues detected', 'wp-mail-smtp' );
 			$result['status']      = 'recommended';
 			$result['description'] = sprintf(
 				'<p>%1$s</p> %2$s',
 				$email_domain_text,
-				$domain_checker->get_results_html()
+				DomainChecker::render_results( $check['results'], $mailer )
 			);
 			$result['actions']     = sprintf(
 				'<p><a href="%1$s">%2$s</a></p>',

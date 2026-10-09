@@ -39,7 +39,8 @@ class Installer {
 
 		Helpers::include_plugin_upgrader();
 
-		$installer = new Plugin_Upgrader( new PluginsInstallSkin() );
+		$skin      = new PluginsInstallSkin();
+		$installer = new Plugin_Upgrader( $skin );
 
 		$installer->install( $plugin->get_download_url() );
 
@@ -48,7 +49,7 @@ class Installer {
 
 		$basename = $installer->plugin_info();
 
-		if ( ! $basename ) {
+		if ( $skin->has_failure() || ! $basename ) {
 			return new WP_Error( 'wp_mail_smtp_partner_install_failed', esc_html__( 'Could not install the plugin.', 'wp-mail-smtp' ) );
 		}
 
@@ -61,12 +62,14 @@ class Installer {
 		 */
 		do_action( 'wp_mail_smtp_partners_installer_installed', $plugin->get_slug() );
 
-		// Core's installer leaves a plugin inactive for a user who may not activate it.
-		$activated = current_user_can( 'activate_plugins' )
-			? $this->run_activation( $plugin, $basename )
-			: new WP_Error( 'wp_mail_smtp_partner_cannot_activate', esc_html__( 'Your account does not have permission to activate plugins on this site.', 'wp-mail-smtp' ) );
+		$activated = false;
 
-		if ( ! is_wp_error( $activated ) ) {
+		// Core's installer leaves a plugin inactive for a user who may not activate it.
+		if ( current_user_can( 'activate_plugins' ) ) {
+			$activated = ! is_wp_error( $this->run_activation( $plugin, $basename ) );
+		}
+
+		if ( $activated ) {
 			/**
 			 * After a partner plugin was activated.
 			 *
@@ -79,7 +82,7 @@ class Installer {
 
 		return [
 			'basename'  => $basename,
-			'activated' => ! is_wp_error( $activated ),
+			'activated' => $activated,
 		];
 	}
 
@@ -101,10 +104,8 @@ class Installer {
 
 		$basename = $plugin->get_installed_basename();
 
-		$activated = $this->run_activation( $plugin, $basename );
-
-		if ( is_wp_error( $activated ) ) {
-			return $activated;
+		if ( is_wp_error( $this->run_activation( $plugin, $basename ) ) ) {
+			return new WP_Error( 'wp_mail_smtp_partner_activate_failed', esc_html__( 'Could not activate the plugin. Please activate it from the Plugins page.', 'wp-mail-smtp' ) );
 		}
 
 		/**

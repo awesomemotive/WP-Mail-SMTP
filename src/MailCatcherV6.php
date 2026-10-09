@@ -49,6 +49,6 @@ class MailCatcherV6 extends \PHPMailer\PHPMailer\PHPMailer implements MailCatche
 	 */
 	protected function throw_exception( $error ) {
 
-		throw new Exception( $error );
+		throw new Exception( $error ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text PHPMailer error, escaped on output.
 	}
 }

@@ -6,7 +6,7 @@
  *
  * @var string $variant        Template variant: 'education', 'connect' or 'data'.
  * @var string $connect_reason Why the 'connect' variant is showing: 'primary_connection' or 'test_email'.
- * @var string $education_url  Upgrade link for the Lite lock (education variant).
+ * @var string $education_url  Upgrade link for the education variant.
  * @var string $connect_url    Settings URL, connections tab.
  * @var string $test_email_url Email test tool URL.
  * @var array  $rows           Log rows (Pro, data variant): subject, subject_attr, recipient,

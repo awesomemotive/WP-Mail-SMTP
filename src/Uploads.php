@@ -123,7 +123,7 @@ class Uploads {
 				return true;
 			}
 
-			@unlink( $htaccess_file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			wp_delete_file( $htaccess_file );
 		}
 
 		if ( ! function_exists( 'insert_with_markers' ) ) {
@@ -177,6 +177,32 @@ class Uploads {
 		}
 
 		return $created;
+	}
+
+	/**
+	 * Create an .htaccess file that denies all web access in the specified directory, if it doesn't exist.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @param string $path Path to the directory.
+	 *
+	 * @return int|false Number of bytes that were written to the file, or false on failure.
+	 */
+	public static function create_deny_htaccess_file( $path ) {
+
+		if ( ! is_dir( $path ) || is_link( $path ) ) {
+			return false;
+		}
+
+		$htaccess_file = wp_normalize_path( trailingslashit( $path ) . '.htaccess' );
+
+		if ( file_exists( $htaccess_file ) ) {
+			return false;
+		}
+
+		$contents = "<IfModule mod_authz_core.c>\n  Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n  Order deny,allow\n  Deny from all\n</IfModule>\n";
+
+		return file_put_contents( $htaccess_file, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 	}
 
 	/**

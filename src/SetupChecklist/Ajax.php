@@ -243,6 +243,10 @@ class Ajax {
 			wp_send_json_error( [ 'message' => esc_html__( 'Your session expired. Please reload the page and try again.', 'wp-mail-smtp' ) ] );
 		}
 
+		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'You do not have permission.', 'wp-mail-smtp' ) ] );
+		}
+
 		$plugin     = $this->resolve_requested_plugin();
 		$permission = new InstallPermission();
 		$permitted  = $permission->check( $plugin );
@@ -279,13 +283,13 @@ class Ajax {
 		$basename = isset( $_POST['plugin'] ) && is_string( $_POST['plugin'] ) ? sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) : '';
 
 		if ( $basename === '' ) {
-			wp_send_json_error( [ 'message' => esc_html__( 'Please select a plugin to install.', 'wp-mail-smtp' ) ] );
+			wp_send_json_error( [ 'message' => esc_html__( 'No plugin was specified.', 'wp-mail-smtp' ) ] );
 		}
 
 		$plugin = $this->catalog->get_by_basename( $basename );
 
 		if ( $plugin === null ) {
-			wp_send_json_error( [ 'message' => esc_html__( 'That plugin is not one we can install for you.', 'wp-mail-smtp' ) ] );
+			wp_send_json_error( [ 'message' => esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' ) ] );
 		}
 
 		return $plugin;

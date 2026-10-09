@@ -1,14 +1,15 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 4.10.0
+ * Version: 4.10.1
  * Requires at least: 5.5
  * Requires PHP: 7.4
  * Plugin URI: https://wpmailsmtp.com/
  * Description: Send WordPress emails reliably via SMTP or API using SendLayer, Brevo, SMTP.com, Gmail, Outlook, or another email service of your choice.
  * Author: WP Mail SMTP
  * Author URI: https://wpmailsmtp.com/
- * Network: false
+ * License: GNU General Public License v3.0 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: wp-mail-smtp
  * Domain Path: /assets/languages
  */
@@ -19,6 +20,10 @@
  * This code is released under the GPL licence version 3 or later, available here
  * https://www.gnu.org/licenses/gpl.txt
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Setting options in wp-config.php
@@ -105,7 +110,7 @@ if ( ! function_exists( 'wp_mail_smtp_check_pro_loading_allowed' ) ) {
 		}
 
 		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . '/wp-admin/includes/plugin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$lite_plugin_slug = 'wp-mail-smtp/wp_mail_smtp.php';
@@ -237,7 +242,7 @@ if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
 	 *
 	 * @since 0.11.1
 	 */
-	define( 'WPMS_PLUGIN_VER', '4.10.0' );
+	define( 'WPMS_PLUGIN_VER', '4.10.1' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	/**

@@ -27,6 +27,24 @@ class Connect {
 	const UPGRADED_QUERY_ARG = 'wp_mail_smtp_upgraded';
 
 	/**
+	 * The only plugin the Connect flow installs and activates.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @var string
+	 */
+	private const PRO_PLUGIN_BASENAME = 'wp-mail-smtp-pro/wp_mail_smtp.php';
+
+	/**
+	 * The host the Pro package is downloaded from.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @var string
+	 */
+	private const DOWNLOAD_HOST = 'wpmailsmtpapi.com';
+
+	/**
 	 * Hooks.
 	 *
 	 * @since 2.6.0
@@ -59,7 +77,7 @@ class Connect {
 
 		$redirect = ! empty( $redirect ) ? $redirect : wp_mail_smtp()->get_admin()->get_admin_page_url();
 
-		update_option( 'wp_mail_smtp_connect_token', $oth );
+		set_transient( 'wp_mail_smtp_connect_token', $oth, HOUR_IN_SECONDS );
 		update_option( 'wp_mail_smtp_connect', $key );
 
 		return add_query_arg(
@@ -177,12 +195,12 @@ class Connect {
 		$post_oth = ! empty( $_REQUEST['oth'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['oth'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 		$post_url = ! empty( $_REQUEST['file'] ) ? esc_url_raw( wp_unslash( $_REQUEST['file'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-		if ( empty( $post_oth ) || empty( $post_url ) ) {
+		if ( empty( $post_oth ) || empty( $post_url ) || ! $this->is_valid_download_url( $post_url ) ) {
 			wp_send_json_error( $error );
 		}
 
 		// Verify oth.
-		$oth = get_option( 'wp_mail_smtp_connect_token' );
+		$oth = get_transient( 'wp_mail_smtp_connect_token' );
 
 		if ( empty( $oth ) ) {
 			wp_send_json_error( $error );
@@ -193,7 +211,7 @@ class Connect {
 		}
 
 		// Delete so cannot replay.
-		delete_option( 'wp_mail_smtp_connect_token' );
+		delete_transient( 'wp_mail_smtp_connect_token' );
 
 		// Set the current screen to avoid undefined notices.
 		set_current_screen( 'toplevel_page_wp-mail-smtp' );
@@ -268,43 +286,76 @@ class Connect {
 
 		$plugin_basename = $installer->plugin_info();
 
-		if ( $plugin_basename ) {
-
-			// Deactivate the lite version first.
-			deactivate_plugins( plugin_basename( WPMS_PLUGIN_FILE ) );
-
-			// Activate the plugin silently.
-			$activated = activate_plugin( $plugin_basename, '', false, true );
-
-			if ( ! is_wp_error( $activated ) ) {
-
-				// Save the license data, since it was verified on the connect page.
-				$options = Options::init();
-				$all_opt = $options->get_all_raw();
-
-				$all_opt['license']['key']              = $key;
-				$all_opt['license']['type']             = 'pro';
-				$all_opt['license']['is_expired']       = false;
-				$all_opt['license']['is_disabled']      = false;
-				$all_opt['license']['is_invalid']       = false;
-				$all_opt['license']['is_limit_reached'] = false;
-
-				// The connect page activated the license against the URL the upgrade link sent,
-				// so pin that same one: this flow never runs an activation of its own.
-				$all_opt['license']['site_url']           = wp_mail_smtp()->get_license_site_url()->derive();
-				$all_opt['license']['site_url_pinned_at'] = time();
-
-				$options->set( $all_opt, false, true );
-
-				wp_send_json_success( esc_html__( 'Plugin installed & activated.', 'wp-mail-smtp' ) );
-			} else {
-				// Reactivate the lite plugin if pro activation failed.
-				activate_plugin( plugin_basename( WPMS_PLUGIN_FILE ), '', false, true );
-				wp_send_json_error( esc_html__( 'Pro version installed but needs to be activated on the Plugins page.', 'wp-mail-smtp' ) );
+		if ( $plugin_basename !== self::PRO_PLUGIN_BASENAME ) {
+			// Not delete_plugins(): it would run the package's uninstall code.
+			if ( is_array( $installer->result ) && ! empty( $installer->result['destination'] ) ) {
+				$installer->clear_destination( $installer->result['destination'] );
 			}
+
+			wp_send_json_error( $error );
 		}
 
-		wp_send_json_error( $error );
+		// Deactivate the lite version first.
+		deactivate_plugins( plugin_basename( WPMS_PLUGIN_FILE ) );
+
+		// Activate the plugin silently.
+		$activated = activate_plugin( $plugin_basename, '', false, true );
+
+		if ( ! is_wp_error( $activated ) ) {
+
+			// Save the license data, since it was verified on the connect page.
+			$options = Options::init();
+			$all_opt = $options->get_all_raw();
+
+			$all_opt['license']['key']              = $key;
+			$all_opt['license']['type']             = 'pro';
+			$all_opt['license']['is_expired']       = false;
+			$all_opt['license']['is_disabled']      = false;
+			$all_opt['license']['is_invalid']       = false;
+			$all_opt['license']['is_limit_reached'] = false;
+
+			// The connect page activated the license against the URL the upgrade link sent,
+			// so pin that same one: this flow never runs an activation of its own.
+			$all_opt['license']['site_url']           = wp_mail_smtp()->get_license_site_url()->derive();
+			$all_opt['license']['site_url_pinned_at'] = time();
+
+			$options->set( $all_opt, false, true );
+
+			wp_send_json_success( esc_html__( 'Plugin installed & activated.', 'wp-mail-smtp' ) );
+		} else {
+			// Reactivate the lite plugin if pro activation failed.
+			activate_plugin( plugin_basename( WPMS_PLUGIN_FILE ), '', false, true );
+			wp_send_json_error( esc_html__( 'Pro version installed but needs to be activated on the Plugins page.', 'wp-mail-smtp' ) );
+		}
+	}
+
+	/**
+	 * Whether a package URL points at the Pro download host over HTTPS.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @param string $url Package URL.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_download_url( $url ) {
+
+		$parts = wp_parse_url( $url );
+
+		$is_valid = ! empty( $parts['scheme'] ) &&
+			! empty( $parts['host'] ) &&
+			strtolower( $parts['scheme'] ) === 'https' &&
+			strtolower( $parts['host'] ) === self::DOWNLOAD_HOST;
+
+		/**
+		 * Filters whether the Connect flow accepts a package URL.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param bool   $is_valid Whether the URL is on the Pro download host over HTTPS.
+		 * @param string $url      Package URL.
+		 */
+		return (bool) apply_filters( 'wp_mail_smtp_connect_is_valid_download_url', $is_valid, $url );
 	}
 
 	/**

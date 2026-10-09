@@ -67,7 +67,14 @@ class DomainCheckState {
 
 		self::set(
 			$connection instanceof ConnectionInterface ? $connection->get_id() : 'primary',
-			$domain_checker->no_issues() ? self::CLEAN : self::ISSUES
+			$domain_checker->no_issues() ? self::CLEAN : self::ISSUES,
+			[
+				'mailer'         => $domain_checker->get_mailer(),
+				'from_email'     => $domain_checker->get_from_email(),
+				'sending_domain' => $domain_checker->get_sending_domain(),
+				'checked_at'     => time(),
+				'results'        => $results,
+			]
 		);
 	}
 
@@ -106,18 +113,20 @@ class DomainCheckState {
 	 * Record a state for a connection, merging into any record already stored.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.1 Added the $details parameter.
 	 *
 	 * @param string $connection_id Connection id, or 'primary'.
 	 * @param string $value         One of the state constants.
+	 * @param array  $details       Details of the check that produced the state.
 	 */
-	public static function set( $connection_id, $value ) {
+	public static function set( $connection_id, $value, array $details = [] ) {
 
 		if ( empty( $connection_id ) || ! in_array( $value, [ self::ISSUES, self::CLEAN ], true ) ) {
 			return;
 		}
 
 		$all             = self::get_raw();
-		$record          = self::get( $connection_id );
+		$record          = array_merge( self::get( $connection_id ), $details );
 		$record['state'] = $value;
 
 		if ( $value === self::ISSUES ) {
@@ -146,12 +155,13 @@ class DomainCheckState {
 	 * One connection's record, or an empty array when none is stored.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.1 Made public.
 	 *
 	 * @param string $connection_id Connection id, or 'primary'.
 	 *
 	 * @return array
 	 */
-	private static function get( $connection_id ) {
+	public static function get( $connection_id ) {
 
 		$record = self::get_raw()[ $connection_id ] ?? [];
 

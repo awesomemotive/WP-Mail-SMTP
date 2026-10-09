@@ -44,24 +44,27 @@ class Setup {
 
 		$force_desc = __( 'Skip the refusal that fires when the plugin is already configured. Does NOT wipe existing settings — only flags you pass are written.', 'wp-mail-smtp' );
 
-		return <<<HELP
-## OPTIONS
-
-[--force]
-: {$force_desc}
-
-## EXAMPLES
-
-    wp wp-mail-smtp setup --mail.from_email=noreply@example.com --mail.from_name="Example" \\
-        --mail.mailer=smtp --smtp.host=mail.example.com --smtp.port=587 \\
-        --smtp.encryption=tls --smtp.auth=1 --smtp.user=foo \\
-        --smtp.pass-file=/run/secret/smtp_pass
-
-    wp wp-mail-smtp setup --mail.from_email=noreply@example.com --mail.from_name="Example" \\
-        --mail.mailer=sendgrid --sendgrid.api_key=\$SG_KEY
-
-{$flags}
-HELP;
+		return implode(
+			"\n",
+			[
+				'## OPTIONS',
+				'',
+				'[--force]',
+				': ' . $force_desc,
+				'',
+				'## EXAMPLES',
+				'',
+				'    wp wp-mail-smtp setup --mail.from_email=noreply@example.com --mail.from_name="Example" \\',
+				'        --mail.mailer=smtp --smtp.host=mail.example.com --smtp.port=587 \\',
+				'        --smtp.encryption=tls --smtp.auth=1 --smtp.user=foo \\',
+				'        --smtp.pass-file=/run/secret/smtp_pass',
+				'',
+				'    wp wp-mail-smtp setup --mail.from_email=noreply@example.com --mail.from_name="Example" \\',
+				'        --mail.mailer=sendgrid --sendgrid.api_key=$SG_KEY',
+				'',
+				$flags,
+			]
+		);
 	}
 
 	/**

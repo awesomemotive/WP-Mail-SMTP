@@ -144,7 +144,6 @@ class Page {
 					'activating' => esc_html__( 'Activating…', 'wp-mail-smtp' ),
 					'activate'   => esc_html__( 'Activate', 'wp-mail-smtp' ),
 					'installed'  => esc_html__( 'Installed', 'wp-mail-smtp' ),
-					'error'      => esc_html__( 'Something went wrong. Please install the plugin from the Plugins page.', 'wp-mail-smtp' ),
 				],
 			]
 		);

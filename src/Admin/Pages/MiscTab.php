@@ -2,7 +2,6 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
-use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\OptimizedEmailSending;
@@ -144,35 +143,7 @@ class MiscTab extends PageAbstract {
 						}
 						?>
 					</p>
-					<?php
-					if ( wp_mail_smtp()->is_pro() ) {
-						$is_log_blocked_emails_const_defined = $options->is_const_defined( 'logs', 'log_blocked_emails' );
-						?>
-						<div style="margin-top: 10px; display: <?php echo (bool) $options->get( 'general', 'do_not_send' ) ? 'block' : 'none'; ?>;">
-							<?php
-							UI::toggle(
-								[
-									'name'     => 'wp-mail-smtp[logs][log_blocked_emails]',
-									'id'       => 'wp-mail-smtp-setting-log_blocked_emails',
-									'value'    => 'true',
-									'label'    => esc_html__( 'Log Blocked Emails', 'wp-mail-smtp' ),
-									'checked'  => (bool) $options->get( 'logs', 'log_blocked_emails' ),
-									'disabled' => $is_log_blocked_emails_const_defined,
-								]
-							);
-							?>
-							<p class="desc">
-								<?php esc_html_e( 'When selected, emails blocked by the "Do Not Send" option will be logged in the Email Log.', 'wp-mail-smtp' ); ?>
-							</p>
-							<?php if ( $is_log_blocked_emails_const_defined ) : ?>
-								<p class="desc">
-									<?php echo $options->get_const_set_message( 'WPMS_LOG_BLOCKED_EMAILS' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-								</p>
-							<?php endif; ?>
-						</div>
-						<?php
-					}
-					?>
+					<?php $this->display_after_do_not_send_setting_field_description(); ?>
 				</div>
 			</div>
 
@@ -309,6 +280,8 @@ class MiscTab extends PageAbstract {
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<?php
+					$is_summary_report_email_setting_available = $this->is_summary_report_email_setting_available();
+
 					UI::toggle(
 						[
 							'name'     => 'wp-mail-smtp[general][' . SummaryReportEmail::SETTINGS_SLUG . ']',
@@ -317,7 +290,7 @@ class MiscTab extends PageAbstract {
 							'checked'  => (bool) SummaryReportEmail::is_disabled(),
 							'disabled' => (
 								$options->is_const_defined( 'general', SummaryReportEmail::SETTINGS_SLUG ) ||
-								( wp_mail_smtp()->is_pro() && empty( Options::init()->get( 'logs', 'enabled' ) ) )
+								! $is_summary_report_email_setting_available
 							),
 						]
 					);
@@ -325,12 +298,9 @@ class MiscTab extends PageAbstract {
 					<p class="desc">
 						<?php esc_html_e( 'Disable Email Summaries weekly delivery.', 'wp-mail-smtp' ); ?>
 						<?php
-						if ( wp_mail_smtp()->is_pro() && empty( Options::init()->get( 'logs', 'enabled' ) ) ) {
+						if ( ! $is_summary_report_email_setting_available ) {
 							echo wp_kses(
-								sprintf( /* translators: %s - Email Log settings url. */
-									__( 'Please enable <a href="%s">Email Logging</a> first, before this setting can be configured.', 'wp-mail-smtp' ),
-									esc_url( wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '&tab=logs' ) )
-								),
+								$this->get_summary_report_email_setting_requirement_notice(),
 								[
 									'a' => [
 										'href' => [],
@@ -436,6 +406,37 @@ class MiscTab extends PageAbstract {
 	}
 
 	/**
+	 * Display content after the Do Not Send setting field description.
+	 *
+	 * @since 4.10.1
+	 */
+	protected function display_after_do_not_send_setting_field_description() {}
+
+	/**
+	 * Whether the Email Summaries setting can be configured.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @return bool
+	 */
+	protected function is_summary_report_email_setting_available() {
+
+		return true;
+	}
+
+	/**
+	 * Get the notice explaining what the Email Summaries setting requires before it can be configured.
+	 *
+	 * @since 4.10.1
+	 *
+	 * @return string
+	 */
+	protected function get_summary_report_email_setting_requirement_notice() {
+
+		return '';
+	}
+
+	/**
 	 * Display rate limit settings.
 	 *
 	 * @since 4.0.0
@@ -502,9 +503,6 @@ class MiscTab extends PageAbstract {
 		// Unchecked checkboxes doesn't exist in $_POST, so we need to ensure we actually have them in data to save.
 		if ( empty( $data['general']['do_not_send'] ) ) {
 			$data['general']['do_not_send'] = false;
-		}
-		if ( empty( $data['logs']['log_blocked_emails'] ) ) {
-			$data['logs']['log_blocked_emails'] = false;
 		}
 		if ( empty( $data['general']['am_notifications_hidden'] ) ) {
 			$data['general']['am_notifications_hidden'] = false;

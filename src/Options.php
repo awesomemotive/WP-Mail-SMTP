@@ -436,17 +436,22 @@ class Options {
 	/**
 	 * Whether this install keeps its settings in the main site's record.
 	 *
-	 * Reads `is_pro_allowed()` and not `is_pro()`: this runs before Pro is instantiated,
-	 * so `is_pro()` is still false here even on a Pro install. Network-wide settings are
-	 * a Pro feature, and the flag outlives a downgrade, so Lite keeps its own record.
-	 *
 	 * @since 4.10.0
 	 *
 	 * @return bool
 	 */
 	private function use_global_plugin_options() {
 
-		return WP::use_global_plugin_settings() && wp_mail_smtp()->is_pro_allowed();
+		/**
+		 * Filters whether the plugin settings are read from and saved to the main site's record.
+		 *
+		 * Applied on the first options read, so callbacks have to be added before `plugins_loaded` fires.
+		 *
+		 * @since 4.10.1
+		 *
+		 * @param bool $use_global_plugin_options Whether to use the main site's settings record.
+		 */
+		return (bool) apply_filters( 'wp_mail_smtp_options_use_global_plugin_options', false );
 	}
 
 	/**

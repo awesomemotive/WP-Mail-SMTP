@@ -34,6 +34,15 @@ class RestApi {
 	use RestApiResponse;
 
 	/**
+	 * Mailers the OAuth routes accept.
+	 *
+	 * @since 4.10.3
+	 *
+	 * @var string[]
+	 */
+	private const OAUTH_MAILERS = [ 'gmail', 'outlook', 'zoho' ];
+
+	/**
 	 * Setup wizard instance.
 	 *
 	 * @since 4.10.0
@@ -302,8 +311,33 @@ class RestApi {
 	public function update( $request ) {
 
 		$value = $request->get_param( 'value' );
+		$value = is_array( $value ) ? $value : [];
 
-		$this->settings->update( is_array( $value ) ? $value : [] );
+		if ( isset( $value['smtp'] ) && is_array( $value['smtp'] ) && $this->settings->is_constant_pass_smtp_host_change( $value['smtp'] ) ) {
+			// Throttled before the comparison, with the preflight bucket, or a match would still tell guesses apart.
+			$throttle = new PreflightThrottle();
+			$key      = (string) get_current_user_id();
+
+			if ( ! $throttle->allows( $key ) ) {
+				return $this->error(
+					esc_html__( 'Too many attempts. Wait a moment and try again.', 'wp-mail-smtp' ),
+					200,
+					'preflight_throttled'
+				);
+			}
+
+			$throttle->record( $key );
+
+			if ( $this->settings->is_unconfirmed_smtp_host_change( $value['smtp'] ) ) {
+				return $this->error(
+					esc_html__( 'The password does not match the one set in wp-config.php.', 'wp-mail-smtp' ),
+					200,
+					'smtp_pass_mismatch'
+				);
+			}
+		}
+
+		$this->settings->update( $value );
 
 		return $this->response();
 	}
@@ -393,20 +427,21 @@ class RestApi {
 	public function get_oauth_url( $request ) {
 
 		$data   = [];
-		$mailer = ! empty( $request->get_param( 'mailer' ) ) ? sanitize_text_field( $request->get_param( 'mailer' ) ) : '';
+		$mailer = $request->get_param( 'mailer' );
 
-		// Stored slashed, matching what Options::get() strips back off on read.
-		$settings = wp_slash( (array) $request->get_param( 'settings' ) );
-
-		if ( empty( $mailer ) ) {
+		if ( ! in_array( $mailer, self::OAUTH_MAILERS, true ) ) {
 			return $this->error( esc_html__( 'Please provide a mailer to get the OAuth authorization URL for.', 'wp-mail-smtp' ) );
 		}
 
-		// Which wizard to return to; the provider's auth callback reads it back.
-		$settings = array_merge( $settings, [ 'is_setup_wizard_auth' => Launcher::VARIANT_HOSTED ] );
+		// Stored slashed, matching what Options::get() strips back off on read.
+		$settings = $this->settings->prepare_secrets_for_save(
+			$this->settings->filter_allowed( [ $mailer => wp_slash( (array) $request->get_param( 'settings' ) ) ] )
+		);
 
-		$options = Options::init();
-		$options->set( [ $mailer => $settings ], false, false );
+		// Which wizard to return to; the provider's auth callback reads it back.
+		$settings[ $mailer ]['is_setup_wizard_auth'] = Launcher::VARIANT_HOSTED;
+
+		Options::init()->set( $settings, false, false );
 
 		// A bounce URL, not the OAuth URL itself: the provider's state nonce has to be
 		// minted in the bridge's cookie-authenticated request.
@@ -424,9 +459,9 @@ class RestApi {
 	 */
 	public function remove_oauth_connection( $request ) {
 
-		$mailer = ! empty( $request->get_param( 'mailer' ) ) ? sanitize_text_field( $request->get_param( 'mailer' ) ) : '';
+		$mailer = $request->get_param( 'mailer' );
 
-		if ( empty( $mailer ) ) {
+		if ( ! in_array( $mailer, self::OAUTH_MAILERS, true ) ) {
 			return $this->error( esc_html__( 'Please provide a mailer to remove the OAuth connection for.', 'wp-mail-smtp' ) );
 		}
 
@@ -684,9 +719,21 @@ class RestApi {
 
 		$throttle->record( $key );
 
+		$config = $this->get_preflight_config( $mailer, $request );
+
+		// Checked after the throttle, since the answer tells whether a guess matched the constant.
+		if ( $mailer === 'smtp' && $this->settings->is_unconfirmed_smtp_host_change( $config ) ) {
+			return $this->response(
+				[
+					'findings' => [ ( new PreflightFinding( 'smtp_pass_mismatch', 'pass', PreflightFinding::ERROR ) )->to_array() ],
+					'checked'  => true,
+				]
+			);
+		}
+
 		return $this->response(
 			[
-				'findings' => $this->run_preflight( $preflight, $this->get_preflight_config( $mailer, $request ) ),
+				'findings' => $this->run_preflight( $preflight, $config ),
 				'checked'  => true,
 			]
 		);
@@ -738,7 +785,8 @@ class RestApi {
 	}
 
 	/**
-	 * Reduce a submitted configuration to the fields one mailer's probe may receive.
+	 * Reduce a submitted configuration to the fields one mailer's probe may receive, with the
+	 * stored secrets filled in where the client left them untouched.
 	 *
 	 * @since 4.10.0
 	 *
@@ -759,7 +807,7 @@ class RestApi {
 			]
 		);
 
-		return isset( $allowed[ $mailer ] ) ? $allowed[ $mailer ] : [];
+		return $this->settings->fill_stored_secrets( $mailer, isset( $allowed[ $mailer ] ) ? $allowed[ $mailer ] : [] );
 	}
 
 	/**

@@ -14,7 +14,7 @@ class Auth {
 	/**
 	 * Token transient name.
 	 *
-	 * Stores an array: [ 'token' => string, 'user_id' => int, 'nonces' => array ].
+	 * Stores an array: [ 'token' => string, 'user_id' => int, 'nonces' => array, 'issued_at' => int ].
 	 * The nonces map spent request nonces to their expiry.
 	 *
 	 * @since 4.10.0
@@ -57,8 +57,16 @@ class Auth {
 	const ERROR_CLOCK_SKEW = 'clock_skew';
 
 	/**
-	 * Get the wizard signing key for the current user, minting one on first call
-	 * and refreshing its expiry thereafter.
+	 * How long a signing key stays valid from the moment it was minted, whatever the activity.
+	 *
+	 * @since 4.10.3
+	 *
+	 * @var int
+	 */
+	private const MAX_LIFETIME = 2 * HOUR_IN_SECONDS;
+
+	/**
+	 * Mint a new wizard signing key for the current user, retiring any previous one.
 	 *
 	 * Sent to the hosted wizard server to server, never through the browser. Bound
 	 * to the issuing user because the signed requests carry no auth cookies and
@@ -79,27 +87,15 @@ class Auth {
 			return '';
 		}
 
-		$stored = get_transient( self::TRANSIENT );
-
-		$nonces = [];
-
-		if (
-			is_array( $stored )
-			&& ! empty( $stored['token'] )
-			&& $user_id === (int) ( $stored['user_id'] ?? 0 )
-		) {
-			$raw    = $stored['token'];
-			$nonces = ( isset( $stored['nonces'] ) && is_array( $stored['nonces'] ) ) ? $stored['nonces'] : [];
-		} else {
-			$raw = hash( 'sha512', wp_rand() );
-		}
+		$raw = hash( 'sha512', wp_rand() );
 
 		set_transient(
 			self::TRANSIENT,
 			[
-				'token'   => $raw,
-				'user_id' => $user_id,
-				'nonces'  => $nonces,
+				'token'     => $raw,
+				'user_id'   => $user_id,
+				'nonces'    => [],
+				'issued_at' => time(),
 			],
 			HOUR_IN_SECONDS
 		);
@@ -117,7 +113,7 @@ class Auth {
 	 *
 	 * The HMAC is checked before the timestamp so an unauthenticated caller can
 	 * never get the clock-skew code back. Recording the spent nonce also refreshes
-	 * the token transient's rolling expiry.
+	 * the token transient's rolling expiry, up to the key's MAX_LIFETIME.
 	 *
 	 * @since 4.10.0
 	 *
@@ -158,7 +154,14 @@ class Auth {
 			return new WP_Error( self::ERROR_AUTH_FAILED );
 		}
 
-		$now    = time();
+		$now = time();
+
+		$stored['issued_at'] = $this->get_issued_at( $stored, $now );
+
+		if ( $now - $stored['issued_at'] > self::MAX_LIFETIME ) {
+			return new WP_Error( self::ERROR_AUTH_FAILED );
+		}
+
 		$nonces = ( isset( $stored['nonces'] ) && is_array( $stored['nonces'] ) ) ? $stored['nonces'] : [];
 
 		// Drop nonces past the window: the timestamp check already rejects anything
@@ -181,5 +184,20 @@ class Auth {
 		set_transient( self::TRANSIENT, $stored, HOUR_IN_SECONDS );
 
 		return $user_id;
+	}
+
+	/**
+	 * Get the stored key's issue time, starting it now for a key minted before it was recorded.
+	 *
+	 * @since 4.10.3
+	 *
+	 * @param array $stored The stored key.
+	 * @param int   $now    The current time.
+	 *
+	 * @return int
+	 */
+	private function get_issued_at( $stored, $now ) {
+
+		return isset( $stored['issued_at'] ) && is_int( $stored['issued_at'] ) ? $stored['issued_at'] : $now;
 	}
 }

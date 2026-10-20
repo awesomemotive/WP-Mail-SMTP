@@ -1,9 +1,9 @@
-=== WP Mail SMTP by WPForms - Free SMTP Plugin with Gmail, Outlook, Amazon SES, SendGrid, Mailgun, Zoho & other SMTP ===
+=== WP Mail SMTP by WPForms - SMTP for Reliable Email Delivery with Gmail, Outlook, Amazon SES, Brevo, Other SMTP & More ===
 Contributors: wpforms, smub, capuderg
 Tags: smtp, email, gmail, outlook, brevo
 Requires at least: 5.5
 Tested up to: 7.1
-Stable tag: 4.10.2
+Stable tag: 4.10.3
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -457,6 +457,9 @@ Privacy policy: [https://wpcode.com/privacy-policy/](https://wpcode.com/privacy-
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.10.3 - 2026-10-20 =
+- Changed: Improved the Setup Wizard steps.
 
 = 4.10.2 - 2026-10-08 =
 - Changed: Setup Wizard now returns to the Dashboard page instead of Settings when it is finished or closed.

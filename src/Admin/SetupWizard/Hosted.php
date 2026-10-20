@@ -53,7 +53,7 @@ class Hosted {
 	 *
 	 * @var string
 	 */
-	const URL = 'https://wpmailsmtpapi.com/setupwizard/v1';
+	const URL = 'https://sw.wpmailsmtpapi.com/setupwizard/v1';
 
 	/**
 	 * Constructor.
@@ -441,7 +441,7 @@ class Hosted {
 	}
 
 	/**
-	 * Base URL of the product-api hosted wizard shell.
+	 * Base URL of the hosted wizard shell.
 	 *
 	 * @since 4.10.0
 	 *

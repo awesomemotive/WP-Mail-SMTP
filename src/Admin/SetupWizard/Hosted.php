@@ -204,6 +204,12 @@ class Hosted {
 			wp_send_json_success( [] );
 		}
 
+		if ( ! Transport::is_supported() ) {
+			Launcher::record_start( Launcher::VARIANT_LOCAL, 'transport_unsupported' );
+
+			wp_send_json_success( [] );
+		}
+
 		$token = $this->get_auth()->get_token();
 
 		if ( empty( $token ) ) {
@@ -247,6 +253,7 @@ class Hosted {
 					[
 						'token'           => $token,
 						'rest_url'        => $this->api->get_url(),
+						'protocol'        => 2,
 						'installation_id' => $this->get_installation_id(),
 						'site_url'        => wp_mail_smtp()->get_license_site_url()->get(),
 					],

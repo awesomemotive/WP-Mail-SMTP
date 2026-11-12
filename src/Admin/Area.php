@@ -631,6 +631,10 @@ class Area {
 				'content'     => esc_html__( 'WP Mail SMTP Pro has been successfully installed and activated. Feel free to close this window and start exploring your new Pro features.', 'wp-mail-smtp' ),
 				'button'      => esc_html__( 'Done', 'wp-mail-smtp' ),
 			],
+			'pro_installed_modal'     => [
+				'title'  => esc_html__( 'WP Mail SMTP Pro is installed', 'wp-mail-smtp' ),
+				'button' => esc_html__( 'Activate WP Mail SMTP Pro', 'wp-mail-smtp' ),
+			],
 			'all_mailers_supports'    => wp_mail_smtp()->get_providers()->get_supports_all(),
 			'nonce'                   => wp_create_nonce( 'wp-mail-smtp-admin' ),
 			'is_network_admin'        => is_network_admin(),

@@ -934,7 +934,7 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 			 * @since 4.10.0
 			 *
 			 * @param {string}   licenseKey        The key to validate and upgrade with.
-			 * @param {Function} onFailureCallback Receives the message to show the reader.
+			 * @param {Function} onFailureCallback Receives the message to show the reader, empty when there is none.
 			 */
 			requestUpgradeUrl: function( licenseKey, onFailureCallback ) {
 
@@ -945,6 +945,12 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 					redirect: window.location.href,
 				} )
 					.done( function( response ) {
+
+						if ( response.success && response.data.plugins_page_url ) {
+							onFailureCallback( '' );
+							app.upgradeModal.openProInstalledModal( response.data.message, response.data.plugins_page_url );
+							return;
+						}
 
 						if ( response.success ) {
 							window.location.href = response.data.url;
@@ -1014,9 +1020,49 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 						function( message ) {
 
 							$submitButton.removeClass( 'wp-mail-smtp-btn-loading' );
-							app.pluginInstall.showErrorModal( message );
+
+							if ( message ) {
+								app.pluginInstall.showErrorModal( message );
+							}
 						}
 					);
+				} );
+			},
+
+			/**
+			 * Point a reader who already has Pro uploaded at the Plugins screen.
+			 *
+			 * @since 4.10.4
+			 *
+			 * @param {string} message        The message to show.
+			 * @param {string} pluginsPageUrl The Plugins screen URL.
+			 */
+			openProInstalledModal: function( message, pluginsPageUrl ) {
+
+				var strings = wp_mail_smtp.pro_installed_modal;
+
+				// The upgrade modal is a dialog too, and would stay on top of this one.
+				$.each( jconfirm.instances, ( index, instance ) => instance.close() );
+
+				$.alert( {
+					title: strings.title,
+					content: $( '<p />' ).text( message ),
+					icon: 'wpms:icon-[fa6-solid--circle-check] wpms:inline-block wpms:w-[42px] wpms:h-[42px] wpms:text-[var(--wpms-text-success)]',
+					type: 'green',
+					boxWidth: '450px',
+					closeIcon: true,
+					backgroundDismiss: true,
+					escapeKey: true,
+					buttons: {
+						confirm: {
+							text: strings.button,
+							btnClass: 'btn-confirm',
+							keys: [ 'enter' ],
+							action: () => {
+								window.location.href = pluginsPageUrl;
+							},
+						},
+					},
 				} );
 			},
 

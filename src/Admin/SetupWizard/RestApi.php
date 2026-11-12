@@ -6,13 +6,10 @@ use Throwable;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WPMailSMTP\Admin\Area;
-use WPMailSMTP\PartnerPlugins\Catalog;
-use WPMailSMTP\PartnerPlugins\Installer;
-use WP_Error;
 use WPMailSMTP\Admin\DomainChecker;
 use WPMailSMTP\Admin\EmailSendingErrors\EmailSendingErrors;
 use WPMailSMTP\Connect;
+use WPMailSMTP\Deprecated\Admin\SetupWizard\RestApi as DeprecatedMethods;
 use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Options;
 use WPMailSMTP\Providers\Preflight\Code as PreflightCode;
@@ -31,7 +28,19 @@ use WPMailSMTP\WP;
  */
 class RestApi {
 
+	/**
+	 * REST response helpers.
+	 *
+	 * @since 4.10.0
+	 */
 	use RestApiResponse;
+
+	/**
+	 * Backward-compatibility methods relocated from this class.
+	 *
+	 * @since 4.10.4
+	 */
+	use DeprecatedMethods;
 
 	/**
 	 * Mailers the OAuth routes accept.
@@ -157,17 +166,9 @@ class RestApi {
 				WP_REST_Server::CREATABLE,
 				[ $this, 'mailer_preflight' ],
 			],
-			'/install-plugin'             => [
-				WP_REST_Server::CREATABLE,
-				[ $this, 'install_plugin' ],
-			],
 			'/upgrade-plugin'             => [
 				WP_REST_Server::CREATABLE,
 				[ $this, 'upgrade_plugin' ],
-			],
-			'/get-partner-plugins-info'   => [
-				WP_REST_Server::CREATABLE,
-				[ $this, 'get_partner_plugins_info' ],
 			],
 		];
 
@@ -216,7 +217,7 @@ class RestApi {
 		$auth      = $this->setup_wizard->get_auth();
 
 		$endpoint = $this->get_signed_endpoint( $request->get_route() );
-		$payload  = $request->get_method() . "\n" . $endpoint . "\n" . $timestamp . "\n" . $nonce;
+		$payload  = Transport::signed_string( $endpoint, $timestamp, $nonce );
 
 		$user_id = $auth->verify_signature( $payload, $timestamp, $nonce, $signature );
 
@@ -224,6 +225,12 @@ class RestApi {
 			// The code distinguishes clock skew from a failed signature; the message
 			// stays generic.
 			return $this->error( __( 'Session expired.', 'wp-mail-smtp' ), 401, $user_id->get_error_code() );
+		}
+
+		$key = $auth->get_key();
+
+		if ( ! $this->open_request_body( $request, $key, $payload, $nonce ) ) {
+			return $this->error( __( 'Session expired.', 'wp-mail-smtp' ), 401, Transport::ERROR_TRANSPORT_FAILED );
 		}
 
 		// Hydrate the request as the bound user so capability checks work even though
@@ -234,6 +241,8 @@ class RestApi {
 		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_global_options() ) ) {
 			return $this->error( __( 'Insufficient permissions.', 'wp-mail-smtp' ), 403 );
 		}
+
+		Transport::begin( $key, $endpoint, $nonce );
 
 		return true;
 	}
@@ -257,6 +266,42 @@ class RestApi {
 	private function get_signed_endpoint( $route ) {
 
 		return trim( substr( $route, strlen( '/' . self::URL_PREFIX ) ), '/' );
+	}
+
+	/**
+	 * Replace a request's sealed body with its plaintext JSON, so handlers read params unchanged.
+	 *
+	 * @since 4.10.4
+	 *
+	 * @param WP_REST_Request $request Current request.
+	 * @param string          $key     Signing key.
+	 * @param string          $signed  The signed string, which is the body's associated data.
+	 * @param string          $nonce   Request nonce.
+	 *
+	 * @return bool Whether the body opened.
+	 */
+	private function open_request_body( $request, $key, $signed, $nonce ) {
+
+		$envelope = json_decode( $request->get_body(), true );
+
+		if ( ! is_array( $envelope ) || ! is_string( $envelope['c'] ?? null ) ) {
+			return false;
+		}
+
+		$plaintext = Transport::open( $key, $envelope['c'], $signed, $nonce );
+
+		if ( is_wp_error( $plaintext ) ) {
+			return false;
+		}
+
+		$request->set_body( $plaintext );
+		$request->set_header( 'content-type', 'application/json' );
+
+		// Only the sealed body is covered by the tag, so no other source may supply a param.
+		$request->set_query_params( [] );
+		$request->set_body_params( [] );
+
+		return true;
 	}
 
 	/**
@@ -295,6 +340,9 @@ class RestApi {
 	 * @return WP_REST_Response
 	 */
 	public function hydrate() {
+
+		// The hosted wizard opens off-site, so its boot call is where this site sees it reached.
+		( new UpgradeReturn() )->forget();
 
 		return $this->response( $this->setup_wizard->get_bootstrap_data() );
 	}
@@ -811,177 +859,6 @@ class RestApi {
 	}
 
 	/**
-	 * Catalog slug to the name the wizard shows, in display order. Only these
-	 * can be installed from the wizard.
-	 *
-	 * @since 4.10.0
-	 *
-	 * @return array
-	 */
-	private function get_offered_partners() {
-
-		return [
-			'wpforms'                       => esc_html__( 'Contact Forms by WPForms', 'wp-mail-smtp' ),
-			'aioseo'                        => esc_html__( 'All in One SEO', 'wp-mail-smtp' ),
-			'monsterinsights'               => esc_html__( 'Google Analytics by MonsterInsights', 'wp-mail-smtp' ),
-			'wpcode'                        => esc_html__( 'Code Snippets by WPCode', 'wp-mail-smtp' ),
-			'rafflepress'                   => esc_html__( 'Giveaways by RafflePress', 'wp-mail-smtp' ),
-			'smash-balloon-instagram-feeds' => esc_html__( 'Smash Balloon Social Photo Feed', 'wp-mail-smtp' ),
-			'seedprod'                      => esc_html__( 'SeedProd Landing Page Builder', 'wp-mail-smtp' ),
-			'wp-call-button'                => esc_html__( 'WP Call Button', 'wp-mail-smtp' ),
-		];
-	}
-
-	/**
-	 * The partner plugins the wizard offers, with their install state.
-	 *
-	 * @since 2.6.0
-	 *
-	 * @return array
-	 */
-	private function get_partner_plugins() {
-
-		$catalog = new Catalog();
-		$plugins = [];
-
-		foreach ( $this->get_offered_partners() as $slug => $name ) {
-			$plugin = $catalog->get( $slug );
-
-			if ( $plugin === null ) {
-				continue;
-			}
-
-			$plugins[] = [
-				'slug'         => $plugin->get_wporg_slug(),
-				'name'         => $name,
-				'is_activated' => $plugin->is_loaded(),
-				'is_installed' => $plugin->is_installed(),
-			];
-		}
-
-		return $plugins;
-	}
-
-	/**
-	 * Install and activate a partner plugin the wizard offers, by its
-	 * WordPress.org slug.
-	 *
-	 * @since 4.10.0
-	 *
-	 * @param string $slug WordPress.org directory slug.
-	 *
-	 * @return array|WP_Error The wizard's install result on success.
-	 */
-	private function install_partner_plugin( $slug ) {
-
-		$catalog = new Catalog();
-		$plugin  = $catalog->get_by_wporg_slug( $slug );
-
-		if ( $plugin === null || ! array_key_exists( $plugin->get_slug(), $this->get_offered_partners() ) ) {
-			return new WP_Error(
-				'wp_mail_smtp_partner_not_offered',
-				esc_html__( 'This plugin is not allowed.', 'wp-mail-smtp' )
-			);
-		}
-
-		$redirect_url = esc_url_raw( WP::admin_url( 'admin.php?page=' . Area::SLUG . '-setup-wizard' ) );
-
-		$result = ( new Installer() )->install( $plugin, $redirect_url );
-
-		if ( is_wp_error( $result ) ) {
-			return $result;
-		}
-
-		if ( $plugin->get_slug() === 'wpforms' ) {
-			add_option( 'wpforms_installation_source', 'wp-mail-smtp-setup-wizard' );
-		}
-
-		return [
-			'slug'         => $slug,
-			'is_installed' => true,
-			'is_activated' => $result['activated'],
-		];
-	}
-
-	/**
-	 * REST endpoint for installing a partner plugin.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param WP_REST_Request $request Current request.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function install_plugin( $request ) {
-
-		// Beyond the route gate, which only covers the plugin's options capability.
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			return $this->error( esc_html__( 'Could not install the plugin. You don\'t have permission to install plugins.', 'wp-mail-smtp' ) );
-		}
-
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return $this->error( esc_html__( 'Could not install the plugin. You don\'t have permission to activate plugins.', 'wp-mail-smtp' ) );
-		}
-
-		$slug = ! empty( $request->get_param( 'slug' ) ) ? sanitize_text_field( $request->get_param( 'slug' ) ) : '';
-
-		if ( empty( $slug ) ) {
-			return $this->error( esc_html__( 'Could not install the plugin. Plugin slug is missing.', 'wp-mail-smtp' ) );
-		}
-
-		$result = $this->install_partner_plugin( $slug );
-
-		if ( is_wp_error( $result ) ) {
-			return $this->error( $result->get_error_message() );
-		}
-
-		return $this->response( $result );
-	}
-
-	/**
-	 * REST endpoint for getting all partner's plugin information.
-	 *
-	 * @since 4.10.0
-	 */
-	public function get_partner_plugins_info() {
-
-		$plugins = $this->get_partner_plugins();
-
-		$contact_form_plugin_already_installed = false;
-
-		$contact_form_basenames = [
-			'wpforms-lite/wpforms.php',
-			'wpforms/wpforms.php',
-			'formidable/formidable.php',
-			'formidable/formidable-pro.php',
-			'gravityforms/gravityforms.php',
-			'ninja-forms/ninja-forms.php',
-		];
-
-		$installed_plugins = get_plugins();
-
-		foreach ( $installed_plugins as $basename => $plugin_info ) {
-			if ( in_array( $basename, $contact_form_basenames, true ) ) {
-				$contact_form_plugin_already_installed = true;
-
-				break;
-			}
-		}
-
-		// Final check if maybe WPForms is already install and active as a MU plugin.
-		if ( class_exists( '\WPForms\WPForms' ) ) {
-			$contact_form_plugin_already_installed = true;
-		}
-
-		$data = [
-			'plugins'                               => $plugins,
-			'contact_form_plugin_already_installed' => $contact_form_plugin_already_installed,
-		];
-
-		return $this->response( $data );
-	}
-
-	/**
 	 * REST endpoint for plugin upgrade, from lite to pro.
 	 *
 	 * @since 4.10.0
@@ -998,8 +875,8 @@ class RestApi {
 			);
 		}
 
-		// The upgrade swaps the plugin out, so it needs the install capability on top
-		// of the options capability the route gate checks.
+		// The upgrade ends in a plugin install, so it needs the install capability on
+		// top of the options capability the route gate checks.
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return $this->error( esc_html__( 'You don\'t have the permission to perform this action.', 'wp-mail-smtp' ) );
 		}
@@ -1010,15 +887,24 @@ class RestApi {
 			return $this->error( esc_html__( 'Please enter a valid license key!', 'wp-mail-smtp' ) );
 		}
 
-		$url = Connect::generate_url(
-			$license_key,
-			'',
-			Launcher::get_url( Launcher::VARIANT_HOSTED, [ 'upgrade-redirect' => '1' ], '/step/license' )
-		);
+		$upgrade_return = new UpgradeReturn();
+		$return_step    = $upgrade_return->get_valid_step( $request->get_param( 'return_step' ) );
+
+		$pro_installed = Connect::get_pro_installed_response();
+
+		if ( ! empty( $pro_installed ) ) {
+			$upgrade_return->remember( $return_step, Launcher::VARIANT_HOSTED );
+
+			return $this->response( $pro_installed );
+		}
+
+		$url = Connect::generate_url( $license_key, '', $upgrade_return->get_url( $return_step, Launcher::VARIANT_HOSTED ) );
 
 		if ( empty( $url ) ) {
 			return $this->error( esc_html__( 'Upgrade functionality not available!', 'wp-mail-smtp' ) );
 		}
+
+		$upgrade_return->remember( $return_step, Launcher::VARIANT_HOSTED );
 
 		return $this->response( [ 'redirect_url' => $url ] );
 	}

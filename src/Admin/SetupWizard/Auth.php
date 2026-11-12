@@ -137,8 +137,7 @@ class Auth {
 			return new WP_Error( self::ERROR_AUTH_FAILED );
 		}
 
-		$key      = hash_hmac( 'sha512', $stored['token'], wp_salt() );
-		$expected = hash_hmac( 'sha512', $payload, $key );
+		$expected = hash_hmac( 'sha512', $payload, $this->derive_key( $stored ) );
 
 		if ( ! hash_equals( $expected, $signature ) ) {
 			return new WP_Error( self::ERROR_AUTH_FAILED );
@@ -184,6 +183,34 @@ class Auth {
 		set_transient( self::TRANSIENT, $stored, HOUR_IN_SECONDS );
 
 		return $user_id;
+	}
+
+	/**
+	 * Get the current signing key, the value get_token() handed out.
+	 *
+	 * @since 4.10.4
+	 *
+	 * @return string Signing key, or empty string if none is stored.
+	 */
+	public function get_key() {
+
+		$stored = get_transient( self::TRANSIENT );
+
+		return is_array( $stored ) && ! empty( $stored['token'] ) ? $this->derive_key( $stored ) : '';
+	}
+
+	/**
+	 * Derive the signing key from a stored key record.
+	 *
+	 * @since 4.10.4
+	 *
+	 * @param array $stored The stored key record, carrying a non-empty token.
+	 *
+	 * @return string
+	 */
+	private function derive_key( $stored ) {
+
+		return hash_hmac( 'sha512', $stored['token'], wp_salt() );
 	}
 
 	/**

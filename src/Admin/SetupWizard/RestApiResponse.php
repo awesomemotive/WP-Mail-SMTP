@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Admin\SetupWizard;
 
 use WP_Error;
-use WP_REST_Response;
 
 /**
  * Shared response envelope for setup wizard REST handlers.
@@ -24,14 +23,34 @@ trait RestApiResponse {
 	 * @param mixed $data    Response data.
 	 * @param bool  $success Response status.
 	 *
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public function response( $data = [], $success = true ) {
 
+		$envelope = [
+			'success' => $success,
+			'data'    => $data,
+		];
+		$context  = Transport::current();
+
+		if ( $context === null ) {
+			return rest_ensure_response( $envelope );
+		}
+
+		Transport::end();
+
+		$plaintext = wp_json_encode( $envelope );
+
+		if ( $plaintext === false ) {
+			return $this->error( __( 'The response could not be encoded.', 'wp-mail-smtp' ), 500 );
+		}
+
+		$nonce = bin2hex( random_bytes( 16 ) );
+
 		return rest_ensure_response(
 			[
-				'success' => $success,
-				'data'    => $data,
+				'n' => $nonce,
+				'c' => Transport::seal( $context['token'], $plaintext, Transport::response_ad( $context['endpoint'], $context['nonce'] ), $nonce ),
 			]
 		);
 	}
@@ -50,6 +69,8 @@ trait RestApiResponse {
 	public function error( $message, $status_code = 200, $error_code = '' ) {
 
 		if ( $status_code !== 200 ) {
+			Transport::end();
+
 			$error_data = [ 'status' => $status_code ];
 
 			if ( $error_code !== '' ) {

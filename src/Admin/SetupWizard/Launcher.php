@@ -185,6 +185,9 @@ class Launcher {
 			return;
 		}
 
+		// Reaching the wizard by any route ends the wait for an upgrade to return to it.
+		( new UpgradeReturn() )->forget();
+
 		// Only its own type=local URL renders the bundled wizard, so that URL stays
 		// bookmarkable and valid as a return target.
 		if ( $this->is_local() ) {

@@ -1100,15 +1100,24 @@ class Local {
 			wp_send_json_error( esc_html__( 'Please enter a valid license key!', 'wp-mail-smtp' ) );
 		}
 
-		$url = Connect::generate_url(
-			$license_key,
-			'',
-			add_query_arg( 'upgrade-redirect', '1', self::get_base_url() ) . '#/step/license'
-		);
+		$upgrade_return = new UpgradeReturn();
+		$return_step    = $upgrade_return->get_valid_step( '/step/license' );
+
+		$pro_installed = Connect::get_pro_installed_response( true );
+
+		if ( ! empty( $pro_installed ) ) {
+			$upgrade_return->remember( $return_step, Launcher::VARIANT_LOCAL );
+
+			wp_send_json_success( $pro_installed );
+		}
+
+		$url = Connect::generate_url( $license_key, '', $upgrade_return->get_url( $return_step, Launcher::VARIANT_LOCAL ) );
 
 		if ( empty( $url ) ) {
 			wp_send_json_error( esc_html__( 'Upgrade functionality not available!', 'wp-mail-smtp' ) );
 		}
+
+		$upgrade_return->remember( $return_step, Launcher::VARIANT_LOCAL );
 
 		wp_send_json_success( [ 'redirect_url' => $url ] );
 	}

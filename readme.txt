@@ -3,7 +3,7 @@ Contributors: wpforms, smub, capuderg
 Tags: smtp, email, gmail, outlook, brevo
 Requires at least: 5.5
 Tested up to: 7.1
-Stable tag: 4.10.3
+Stable tag: 4.10.4
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -457,6 +457,10 @@ Privacy policy: [https://wpcode.com/privacy-policy/](https://wpcode.com/privacy-
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.10.4 - 2026-11-11 =
+- Changed: Improved the Setup Wizard.
+- Changed: Updated the upgrade flow from WP Mail SMTP Lite to Pro.
 
 = 4.10.3 - 2026-10-20 =
 - Changed: Improved the Setup Wizard steps.

@@ -248,7 +248,7 @@ class WP {
 			wp_enqueue_script(
 				'wp-mail-smtp-admin-notices',
 				wp_mail_smtp()->assets_url . '/js/smtp-admin-notices' . self::asset_min() . '.js',
-				[ 'jquery' ],
+				[ 'jquery', 'wp-a11y' ],
 				WPMS_PLUGIN_VER,
 				true
 			);
@@ -257,7 +257,8 @@ class WP {
 				'wp-mail-smtp-admin-notices',
 				'wp_mail_smtp_admin_notices',
 				[
-					'nonce' => wp_create_nonce( 'wp-mail-smtp-admin' ),
+					'nonce'       => wp_create_nonce( 'wp-mail-smtp-admin' ),
+					'text_copied' => esc_html__( 'The error code has been copied to your clipboard.', 'wp-mail-smtp' ),
 				]
 			);
 		}

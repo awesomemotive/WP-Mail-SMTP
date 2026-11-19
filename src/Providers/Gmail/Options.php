@@ -165,7 +165,8 @@ class Options extends OptionsAbstract {
 				<button type="button" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-grey wp-mail-smtp-setting-copy"
 					title="<?php esc_attr_e( 'Copy URL to clipboard', 'wp-mail-smtp' ); ?>"
 					data-source_id="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-client_redirect">
-					<span class="dashicons dashicons-admin-page"></span>
+					<span class="dashicons dashicons-admin-page" aria-hidden="true"></span>
+					<span class="screen-reader-text"><?php esc_html_e( 'Copy URL to clipboard', 'wp-mail-smtp' ); ?></span>
 				</button>
 				<p class="desc">
 					<?php esc_html_e( 'Please copy this URL into the "Authorized redirect URIs" field of your Google web application.', 'wp-mail-smtp' ); ?>

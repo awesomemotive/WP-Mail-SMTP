@@ -589,12 +589,13 @@ class Area {
 		wp_enqueue_script(
 			'wp-mail-smtp-admin',
 			wp_mail_smtp()->assets_url . '/js/smtp-admin' . WP::asset_min() . '.js',
-			[ 'jquery', 'underscore' ],
+			[ 'jquery', 'underscore', 'wp-a11y' ],
 			WPMS_PLUGIN_VER,
 			false
 		);
 
 		$script_data = [
+			'text_url_copied'         => esc_html__( 'The URL has been copied to your clipboard.', 'wp-mail-smtp' ),
 			'text_provider_remove'    => esc_html__( 'Are you sure you want to reset the current provider connection? You will need to immediately create a new one to be able to send emails.', 'wp-mail-smtp' ),
 			'text_settings_not_saved' => esc_html__( 'Changes that you made to the settings are not saved!', 'wp-mail-smtp' ),
 			'default_mailer_notice'   => [

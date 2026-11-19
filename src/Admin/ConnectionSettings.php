@@ -223,10 +223,10 @@ class ConnectionSettings {
 		<!-- Mailer -->
 		<div id="wp-mail-smtp-setting-row-mailer" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-mailer wp-mail-smtp-clear">
 			<div class="wp-mail-smtp-setting-label">
-				<label for="wp-mail-smtp-setting-mailer"><?php esc_html_e( 'Mailer', 'wp-mail-smtp' ); ?></label>
+				<label id="wp-mail-smtp-setting-mailer-label"><?php esc_html_e( 'Mailer', 'wp-mail-smtp' ); ?></label>
 			</div>
 			<div class="wp-mail-smtp-setting-field">
-				<div class="wp-mail-smtp-mailers">
+				<div class="wp-mail-smtp-mailers" role="radiogroup" aria-labelledby="wp-mail-smtp-setting-mailer-label">
 
 					<?php foreach ( wp_mail_smtp()->get_providers()->get_options_all( $this->connection ) as $provider ) : ?>
 

@@ -122,7 +122,7 @@ class SettingsTab extends PageAbstract {
 				<!-- Setup Wizard button -->
 				<div id="wp-mail-smtp-setting-row-setup-wizard-button" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
 					<div class="wp-mail-smtp-setting-label">
-						<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'Setup Wizard', 'wp-mail-smtp' ); ?></label>
+						<label><?php esc_html_e( 'Setup Wizard', 'wp-mail-smtp' ); ?></label>
 					</div>
 					<div class="wp-mail-smtp-setting-field">
 						<a href="<?php echo esc_url( SetupWizardLauncher::get_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">

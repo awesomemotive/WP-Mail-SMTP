@@ -158,7 +158,7 @@ class LogsTab extends PageAbstract {
 					<?php foreach ( $screenshots as $screenshot ) : ?>
 						<div>
 							<a href="<?php echo esc_url( $screenshot['url'] ); ?>" data-lity data-lity-desc="<?php echo esc_attr( $screenshot['title'] ); ?>">
-								<img src="<?php echo esc_url( $screenshot['url_thumbnail'] ); ?>" alt="<?php esc_attr( $screenshot['title'] ); ?>">
+								<img src="<?php echo esc_url( $screenshot['url_thumbnail'] ); ?>" alt="<?php echo esc_attr( $screenshot['title'] ); ?>">
 							</a>
 							<span><?php echo esc_html( $screenshot['title'] ); ?></span>
 						</div>

@@ -213,6 +213,8 @@ WPMailSMTP.Admin.Settings = WPMailSMTP.Admin.Settings || ( function( document, w
 				target.select();
 				document.execCommand( 'Copy' );
 
+				wp.a11y.speak( wp_mail_smtp.text_url_copied );
+
 				var $buttonIcon = $( this ).find( '.dashicons' );
 
 				$buttonIcon

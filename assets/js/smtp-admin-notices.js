@@ -63,7 +63,9 @@ var WPMailSMTPAdminNotices = window.WPMailSMTPAdminNotices || ( function( docume
 			var code = $btn.siblings( 'code' ).text();
 
 			if ( navigator.clipboard ) {
-				navigator.clipboard.writeText( code );
+				navigator.clipboard.writeText( code ).then( function() {
+					wp.a11y.speak( wp_mail_smtp_admin_notices.text_copied );
+				} );
 			}
 
 			$btn.find( '.wp-mail-smtp-notice__icon-copy' ).hide();

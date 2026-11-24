@@ -55,7 +55,7 @@ if ( $tile['image'] !== '' ) {
 
 			<?php if ( $tile['link_text'] !== '' ) : ?>
 				<?php
-				echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+				wp_mail_smtp_render(
 					'promo-link',
 					[
 						'base_class' => 'wpms-text-link wpms-feature-tile__link',

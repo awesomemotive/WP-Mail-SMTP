@@ -108,8 +108,7 @@ class Promos {
 
 		$cta_url = $cta['url'] ?? '#';
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the template.
-		echo wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'card-footer',
 			[
 				'text' => $cta['text'] ?? '',

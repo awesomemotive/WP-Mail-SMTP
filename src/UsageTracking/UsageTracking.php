@@ -10,7 +10,6 @@ use WPMailSMTP\EmailSendingDebug;
 use WPMailSMTP\Helpers\Helpers;
 use WPMailSMTP\OptimizedEmailSending;
 use WPMailSMTP\Options;
-use WPMailSMTP\WP;
 
 /**
  * Usage Tracker functionality to understand what's going on on client's sites.
@@ -243,12 +242,8 @@ class UsageTracking {
 		}
 
 		if ( is_multisite() ) {
-			$use_global_settings                         = WP::use_global_plugin_settings();
-			$data['wp_mail_smtp_multisite_network_wide'] = $use_global_settings;
-
-			if ( ! $use_global_settings ) {
-				$data['wp_mail_smtp_multisite_is_subsite'] = ! is_main_site();
-			}
+			$data['wp_mail_smtp_multisite_network_wide'] = false;
+			$data['wp_mail_smtp_multisite_is_subsite']   = ! is_main_site();
 		}
 
 		return apply_filters( 'wp_mail_smtp_usage_tracking_get_data', $data );

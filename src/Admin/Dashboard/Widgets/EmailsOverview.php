@@ -146,16 +146,14 @@ class EmailsOverview extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_head_aside( string $variant, array $data ): string {
+	protected function render_head_aside( string $variant, array $data ) {
 
 		if ( $variant !== 'data' ) {
-			return '';
+			return;
 		}
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widgets/emails-overview-legend',
 			[ 'series_meta' => $this->get_series_meta() ],
 			true
@@ -169,12 +167,10 @@ class EmailsOverview extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_body( string $variant, array $data ): string {
+	protected function render_body( string $variant, array $data ) {
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widgets/emails-overview',
 			[
 				'variant'        => $variant,
@@ -183,7 +179,7 @@ class EmailsOverview extends AbstractWidget {
 				'series_meta'    => $this->get_series_meta(),
 				'connect_url'    => wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '#wp-mail-smtp-setting-row-mailer' ),
 				'test_email_url' => add_query_arg( 'tab', 'test', wp_mail_smtp()->get_admin()->get_admin_page_url( Area::SLUG . '-tools' ) ),
-				'inline_cards'   => $this->render_inline_cards( $this->get_inline_cards( $data ) ),
+				'inline_cards'   => fn() => $this->render_inline_cards( $this->get_inline_cards( $data ) ),
 			],
 			true
 		);

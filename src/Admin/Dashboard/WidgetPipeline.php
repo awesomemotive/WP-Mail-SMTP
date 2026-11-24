@@ -106,23 +106,22 @@ class WidgetPipeline {
 	}
 
 	/**
-	 * Render all visible widgets of a column into HTML.
+	 * Print all visible widgets of a column.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints the widgets instead of returning their markup.
 	 *
-	 * @param string $column Column: 'main' or 'sidebar'.
+	 * @param string $column Column: 'top', 'main' or 'sidebar'.
 	 * @param array  $data   Aggregated data.
 	 *
-	 * @return string
+	 * @return string Always empty. Kept a string so callers written when it returned the markup do not fail.
 	 */
 	public function render_column( string $column, array $data ): string {
 
-		$html = '';
-
 		foreach ( $this->widgets[ $column ] ?? [] as $item ) {
-			$html .= $item['widget']->render( $item['variant'], $data );
+			$item['widget']->render( $item['variant'], $data );
 		}
 
-		return $html;
+		return '';
 	}
 }

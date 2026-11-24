@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Admin\Dashboard;
 
 use WPMailSMTP\Admin\Area;
-use WPMailSMTP\WP;
 
 /**
  * Dashboard orchestrator.
@@ -93,6 +92,18 @@ class Dashboard {
 	}
 
 	/**
+	 * Whether the Dashboard page belongs to the admin being built: each site's own one.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @return bool
+	 */
+	protected function is_submenu_item_allowed() {
+
+		return ! is_network_admin();
+	}
+
+	/**
 	 * Register the Dashboard submenu entry, ahead of the plugin's other pages. The Setup
 	 * Checklist splices itself above this while it is active, and WordPress takes the
 	 * top-level menu link from whichever submenu item ends up first.
@@ -103,9 +114,7 @@ class Dashboard {
 	 */
 	public function add_submenu_item( $access_capability ) {
 
-		// The page belongs wherever the plugin is administered from: the network admin
-		// while the settings are network-wide, each site's own admin otherwise.
-		if ( is_network_admin() !== WP::use_global_plugin_settings() ) {
+		if ( ! $this->is_submenu_item_allowed() ) {
 			return;
 		}
 

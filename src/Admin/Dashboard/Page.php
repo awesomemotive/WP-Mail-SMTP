@@ -220,15 +220,30 @@ class Page {
 	}
 
 	/**
-	 * Get the date-range datepicker HTML. Empty on Lite; the Pro subclass overrides this.
+	 * Print the date-range datepicker. Nothing on Lite; the Pro subclass overrides this.
+	 *
+	 * @since 4.10.5
+	 */
+	protected function render_datepicker(): void {
+	}
+
+	/**
+	 * Get the date-range datepicker HTML.
 	 *
 	 * @since 4.10.0
+	 * @deprecated 4.10.5
 	 *
 	 * @return string
 	 */
 	protected function get_datepicker_html(): string {
 
-		return '';
+		_deprecated_function( __METHOD__, '4.10.5', __CLASS__ . '::render_datepicker()' );
+
+		ob_start();
+
+		$this->render_datepicker();
+
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -266,14 +281,14 @@ class Page {
 		$this->widget_pipeline->init( $access );
 
 		$view = [
-			'datepicker'      => $this->get_datepicker_html(),
-			'top_widgets'     => $this->widget_pipeline->render_column( 'top', $data ),
-			'main_widgets'    => $this->widget_pipeline->render_column( 'main', $data ),
-			'sidebar_widgets' => $this->widget_pipeline->render_column( 'sidebar', $data ),
+			'datepicker'      => fn() => $this->render_datepicker(),
+			'top_widgets'     => fn() => $this->widget_pipeline->render_column( 'top', $data ),
+			'main_widgets'    => fn() => $this->widget_pipeline->render_column( 'main', $data ),
+			'sidebar_widgets' => fn() => $this->widget_pipeline->render_column( 'sidebar', $data ),
 		];
 
 		echo '<div class="wrap wp-mail-smtp-page" id="wp-mail-smtp">';
-		echo wp_mail_smtp_render( 'dashboard/page', $view, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes its own output.
+		wp_mail_smtp_render( 'dashboard/page', $view, true );
 		echo '</div>';
 	}
 }

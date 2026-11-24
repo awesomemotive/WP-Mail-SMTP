@@ -3,7 +3,6 @@
 namespace WPMailSMTP\Admin\SetupWizard;
 
 use WPMailSMTP\Admin\Area;
-use WPMailSMTP\WP;
 
 /**
  * Entry point shared by both Setup Wizard variants.
@@ -270,7 +269,7 @@ class Launcher {
 			return;
 		}
 
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() || WP::use_global_plugin_settings() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! $this->is_activation_redirect_allowed() ) {
 			return;
 		}
 
@@ -283,6 +282,19 @@ class Launcher {
 			wp_safe_redirect( self::get_url() );
 			exit;
 		}
+	}
+
+	/**
+	 * Whether this activation may be followed by a redirect to the Setup Wizard.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @return bool
+	 */
+	protected function is_activation_redirect_allowed() {
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ! isset( $_GET['activate-multi'] ) && ! is_network_admin();
 	}
 
 	/**

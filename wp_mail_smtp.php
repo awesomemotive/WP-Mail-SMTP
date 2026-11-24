@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP
- * Version: 4.10.4
+ * Version: 4.10.5
  * Requires at least: 5.5
  * Requires PHP: 7.4
  * Plugin URI: https://wpmailsmtp.com/
@@ -181,7 +181,7 @@ if ( ! function_exists( 'wp_mail_smtp_check_pro_loading_allowed' ) ) {
 			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Please deactivate the free version of the WP Mail SMTP plugin before activating WP Mail SMTP Pro.', 'wp-mail-smtp' ) . '</p></div>';
 
 			if ( isset( $_GET['activate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				unset( $_GET['activate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				unset( $_GET['activate'] );
 			}
 		}
 	}
@@ -253,8 +253,8 @@ if ( ! function_exists( 'wp_mail_smtp_insecure_php_version_notice' ) ) {
 		<?php
 
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { //phpcs:ignore
-			unset( $_GET['activate'] ); //phpcs:ignore
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			unset( $_GET['activate'] );
 		}
 	}
 }
@@ -265,7 +265,7 @@ if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
 	 *
 	 * @since 0.11.1
 	 */
-	define( 'WPMS_PLUGIN_VER', '4.10.4' );
+	define( 'WPMS_PLUGIN_VER', '4.10.5' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	/**
@@ -337,8 +337,8 @@ if ( ! function_exists( 'wp_mail_smtp_unsupported_wp_version_notice' ) ) {
 		<?php
 
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { //phpcs:ignore
-			unset( $_GET['activate'] ); //phpcs:ignore
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			unset( $_GET['activate'] );
 		}
 	}
 }

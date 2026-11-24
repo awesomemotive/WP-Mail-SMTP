@@ -40,48 +40,38 @@ class FlyoutMenu {
 			return;
 		}
 
-		printf(
-			'<div id="wp-mail-smtp-flyout">
-				<div id="wp-mail-smtp-flyout-items">%1$s</div>
-				<a href="#" class="wp-mail-smtp-flyout-button wp-mail-smtp-flyout-head">
-					<div class="wp-mail-smtp-flyout-label">%2$s</div>
-					<figure><img src="%3$s" alt="%2$s"/></figure>
-				</a>
-			</div>',
-			$this->get_items_html(), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html__( 'See Quick Links', 'wp-mail-smtp' ),
-			esc_url( wp_mail_smtp()->assets_url . '/images/flyout-menu/mascot.svg' )
-		);
+		$label = __( 'See Quick Links', 'wp-mail-smtp' );
+		?>
+		<div id="wp-mail-smtp-flyout">
+			<div id="wp-mail-smtp-flyout-items"><?php $this->render_items(); ?></div>
+			<a href="#" class="wp-mail-smtp-flyout-button wp-mail-smtp-flyout-head">
+				<div class="wp-mail-smtp-flyout-label"><?php echo esc_html( $label ); ?></div>
+				<figure><img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/flyout-menu/mascot.svg' ); ?>" alt="<?php echo esc_attr( $label ); ?>"/></figure>
+			</a>
+		</div>
+		<?php
 	}
 
 	/**
-	 * Generate menu items HTML.
+	 * Print the menu items.
 	 *
 	 * @since 3.0.0
-	 *
-	 * @return string Menu items HTML.
+	 * @since 4.10.5 Prints the items instead of returning their markup.
 	 */
-	private function get_items_html() {
+	private function render_items() {
 
-		$items      = array_reverse( $this->menu_items() );
-		$items_html = '';
+		$items = array_reverse( $this->menu_items() );
 
 		foreach ( $items as $item_key => $item ) {
-			$items_html .= sprintf(
-				'<a href="%1$s" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-flyout-button wp-mail-smtp-flyout-item wp-mail-smtp-flyout-item-%2$d"%5$s%6$s>
-					<div class="wp-mail-smtp-flyout-label">%3$s</div>
-					<img src="%4$s" alt="%3$s">
-				</a>',
-				esc_url( $item['url'] ),
-				(int) $item_key,
-				esc_html( $item['title'] ),
-				esc_url( $item['icon'] ),
-				! empty( $item['bgcolor'] ) ? ' style="background-color: ' . esc_attr( $item['bgcolor'] ) . '"' : '',
-				! empty( $item['hover_bgcolor'] ) ? ' onMouseOver="this.style.backgroundColor=\'' . esc_attr( $item['hover_bgcolor'] ) . '\'" onMouseOut="this.style.backgroundColor=\'' . esc_attr( $item['bgcolor'] ) . '\'"' : ''
-			);
+			?>
+			<a href="<?php echo esc_url( $item['url'] ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-flyout-button wp-mail-smtp-flyout-item wp-mail-smtp-flyout-item-<?php echo (int) $item_key; ?>"
+				<?php echo empty( $item['bgcolor'] ) ? '' : 'style="background-color: ' . esc_attr( $item['bgcolor'] ) . '"'; ?>
+				<?php echo empty( $item['hover_bgcolor'] ) ? '' : 'onMouseOver="this.style.backgroundColor=\'' . esc_attr( $item['hover_bgcolor'] ) . '\'" onMouseOut="this.style.backgroundColor=\'' . esc_attr( $item['bgcolor'] ) . '\'"'; ?>>
+				<div class="wp-mail-smtp-flyout-label"><?php echo esc_html( $item['title'] ); ?></div>
+				<img src="<?php echo esc_url( $item['icon'] ); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>">
+			</a>
+			<?php
 		}
-
-		return $items_html;
 	}
 
 	/**

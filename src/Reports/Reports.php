@@ -359,7 +359,7 @@ class Reports {
 
 		$email = $this->get_summary_report_email();
 
-		echo $email->get_content(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$email->render_content();
 
 		exit;
 	}

@@ -5,7 +5,7 @@
  *
  * @since 4.10.0
  *
- * @var string $settings            Start-request settings, JSON-encoded for the inline script.
+ * @var string $settings            Start-request settings, JSON-encoded, read by the inline script from the handoff form.
  * @var string $css_url             Wizard stylesheet URL.
  * @var string $logo_url            Plugin logo URL.
  * @var string $loading_url         Loading indicator URL.
@@ -78,11 +78,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<img src="<?php echo esc_url( $loading_url ); ?>" class="icon" width="150" height="159" alt="" />
 		</div>
 	</div>
-	<form id="wp-mail-smtp-setup-wizard-handoff" method="POST"></form>
+	<form id="wp-mail-smtp-setup-wizard-handoff" method="POST" data-settings="<?php echo esc_attr( $settings ); ?>"></form>
 	<script>
 		(function () {
-			<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded, read as a JavaScript literal. ?>
-			var settings = <?php echo $settings; ?>;
+			var settings = JSON.parse(document.getElementById('wp-mail-smtp-setup-wizard-handoff').dataset.settings);
 			var button = document.getElementById('wp-mail-smtp-setup-wizard-start');
 			var error = document.getElementById('wp-mail-smtp-setup-wizard-error');
 			var loading = document.getElementById('wp-mail-smtp-setup-wizard-loading');

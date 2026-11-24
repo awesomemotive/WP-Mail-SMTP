@@ -3,7 +3,7 @@ Contributors: wpforms, smub, capuderg
 Tags: smtp, email, gmail, outlook, brevo
 Requires at least: 5.5
 Tested up to: 7.1
-Stable tag: 4.10.4
+Stable tag: 4.10.5
 Requires PHP: 7.4
 License: GNU General Public License v3.0 or later
 
@@ -457,6 +457,9 @@ Privacy policy: [https://wpcode.com/privacy-policy/](https://wpcode.com/privacy-
 16. Smart Routing - Conditional logic for email sending (Pro)
 
 == Changelog ==
+
+= 4.10.5 - 2026-11-24 =
+- Changed: Improved input sanitization and output escaping across admin screens.
 
 = 4.10.4 - 2026-11-11 =
 - Changed: Improved the Setup Wizard.

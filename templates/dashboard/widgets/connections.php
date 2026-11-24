@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 foreach ( $groups as $group ) {
-	echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+	wp_mail_smtp_render(
 		'dashboard/widget-row-group',
 		[
 			'label' => $group['label'],

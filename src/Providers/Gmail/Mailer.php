@@ -86,7 +86,7 @@ class Mailer extends MailerAbstract {
 			$base64 = str_replace(
 				[ '+', '/', '=' ],
 				[ '-', '_', '' ],
-				base64_encode( $this->phpmailer->getSentMIMEMessage() ) //phpcs:ignore
+				base64_encode( $this->phpmailer->getSentMIMEMessage() ) // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			);
 
 			$message->setRaw( $base64 );

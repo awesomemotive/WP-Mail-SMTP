@@ -180,109 +180,7 @@ class DebugEventsTab extends PageAbstract {
 	 */
 	public function display() {
 
-		?>
-		<?php if( WP::use_global_plugin_settings() && ! current_user_can( 'manage_network_options' ) ) : ?>
-			<!-- Debug Events Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading" id="wp-mail-smtp-setting-row-email-heading">
-				<div class="wp-mail-smtp-setting-field">
-					<h2><?php esc_html_e( 'Debug Events', 'wp-mail-smtp' ); ?></h2>
-				</div>
-				<p>
-					<?php esc_html_e( 'On this page, you can view different plugin debugging events and email sending errors.', 'wp-mail-smtp' ); ?>
-				</p>
-			</div>
-		<?php else: ?>
-			<form method="POST" action="<?php echo esc_url( $this->get_link() ); ?>">
-				<?php $this->wp_nonce_field(); ?>
-
-				<!-- Debug Events Section Title -->
-				<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading wp-mail-smtp-section-heading--has-divider">
-					<div class="wp-mail-smtp-setting-field">
-						<h2><?php esc_html_e( 'Debug Events', 'wp-mail-smtp' ); ?></h2>
-					</div>
-					<p>
-						<?php esc_html_e( 'On this page, you can view and configure different plugin debugging events. View email sending errors and enable debugging events, allowing you to detect email sending issues.', 'wp-mail-smtp' ); ?>
-					</p>
-				</div>
-
-				<!-- Debug Events -->
-				<div id="wp-mail-smtp-setting-row-debug_event_types" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
-					<div class="wp-mail-smtp-setting-label">
-						<label for="wp-mail-smtp-setting-debug_event_types">
-							<?php esc_html_e( 'Event Types', 'wp-mail-smtp' ); ?>
-						</label>
-					</div>
-					<div class="wp-mail-smtp-setting-field">
-						<?php
-						UI::toggle(
-							[
-								'name'     => 'wp-mail-smtp[debug_events][email_errors]',
-								'id'       => 'wp-mail-smtp-setting-debug_events_email_errors',
-								'value'    => 'true',
-								'checked'  => true,
-								'disabled' => true,
-							]
-						);
-						?>
-						<p class="desc">
-							<?php esc_html_e( 'Email Sending Errors', 'wp-mail-smtp' ); ?>
-						</p>
-						<p class="desc">
-							<?php esc_html_e( 'This debug event is always enabled and will record any email sending errors in the table below.', 'wp-mail-smtp' ); ?>
-						</p>
-						<hr class="wp-mail-smtp-setting-mid-row-sep">
-						<?php
-						UI::toggle(
-							[
-								'name'    => 'wp-mail-smtp[debug_events][email_debug]',
-								'id'      => 'wp-mail-smtp-setting-debug_events_email_debug',
-								'value'   => 'true',
-								'checked' => (bool) $this->options->get( 'debug_events', 'email_debug' ),
-							]
-						);
-						?>
-						<p class="desc">
-							<?php esc_html_e( 'Debug Email Sending', 'wp-mail-smtp' ); ?>
-						</p>
-						<p class="desc">
-							<?php esc_html_e( 'Check this if you would like to debug the email sending process. Once enabled, all debug events will be logged in the table below. This setting should only be enabled for shorter debugging periods and disabled afterwards.', 'wp-mail-smtp' ); ?>
-						</p>
-					</div>
-				</div>
-
-				<div id="wp-mail-smtp-setting-row-debug_events_retention_period" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-select wp-mail-smtp-clear">
-					<div class="wp-mail-smtp-setting-label">
-						<label for="wp-mail-smtp-setting-debug_events_retention_period">
-							<?php esc_html_e( 'Events Retention Period', 'wp-mail-smtp' ); ?>
-						</label>
-					</div>
-					<div class="wp-mail-smtp-setting-field">
-						<select name="wp-mail-smtp[debug_events][retention_period]" id="wp-mail-smtp-setting-debug_events_retention_period"
-							<?php disabled( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ); ?>>
-							<option value=""><?php esc_html_e( 'Forever', 'wp-mail-smtp' ); ?></option>
-							<?php foreach ( $this->get_debug_events_retention_period_options() as $value => $label ) : ?>
-								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $this->options->get( 'debug_events', 'retention_period' ), $value ); ?>>
-									<?php echo esc_html( $label ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="desc">
-							<?php
-							esc_html_e( 'Debug events older than the selected period will be permanently deleted from the database.', 'wp-mail-smtp' );
-
-							if ( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ) {
-								//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								echo '<br>' . $this->options->get_const_set_message( 'WPMS_DEBUG_EVENTS_RETENTION_PERIOD' );
-							}
-							?>
-						</p>
-					</div>
-				</div>
-
-				<?php $this->display_save_btn(); ?>
-			</form>
-		<?php endif; ?>
-		<?php
+		$this->display_settings();
 
 		if ( ! DebugEvents::is_valid_db() ) {
 			$this->display_debug_events_not_installed();
@@ -351,6 +249,105 @@ class DebugEventsTab extends PageAbstract {
 	}
 
 	/**
+	 * Display the debug events settings form.
+	 *
+	 * @since 4.10.5
+	 */
+	protected function display_settings() {
+
+		?>
+		<form method="POST" action="<?php echo esc_url( $this->get_link() ); ?>">
+			<?php $this->wp_nonce_field(); ?>
+
+			<!-- Debug Events Section Title -->
+			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading wp-mail-smtp-section-heading--has-divider">
+				<div class="wp-mail-smtp-setting-field">
+					<h2><?php esc_html_e( 'Debug Events', 'wp-mail-smtp' ); ?></h2>
+				</div>
+				<p>
+					<?php esc_html_e( 'On this page, you can view and configure different plugin debugging events. View email sending errors and enable debugging events, allowing you to detect email sending issues.', 'wp-mail-smtp' ); ?>
+				</p>
+			</div>
+
+			<!-- Debug Events -->
+			<div id="wp-mail-smtp-setting-row-debug_event_types" class="wp-mail-smtp-setting-row wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-debug_event_types">
+						<?php esc_html_e( 'Event Types', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<?php
+					UI::toggle(
+						[
+							'name'     => 'wp-mail-smtp[debug_events][email_errors]',
+							'id'       => 'wp-mail-smtp-setting-debug_events_email_errors',
+							'value'    => 'true',
+							'checked'  => true,
+							'disabled' => true,
+						]
+					);
+					?>
+					<p class="desc">
+						<?php esc_html_e( 'Email Sending Errors', 'wp-mail-smtp' ); ?>
+					</p>
+					<p class="desc">
+						<?php esc_html_e( 'This debug event is always enabled and will record any email sending errors in the table below.', 'wp-mail-smtp' ); ?>
+					</p>
+					<hr class="wp-mail-smtp-setting-mid-row-sep">
+					<?php
+					UI::toggle(
+						[
+							'name'    => 'wp-mail-smtp[debug_events][email_debug]',
+							'id'      => 'wp-mail-smtp-setting-debug_events_email_debug',
+							'value'   => 'true',
+							'checked' => (bool) $this->options->get( 'debug_events', 'email_debug' ),
+						]
+					);
+					?>
+					<p class="desc">
+						<?php esc_html_e( 'Debug Email Sending', 'wp-mail-smtp' ); ?>
+					</p>
+					<p class="desc">
+						<?php esc_html_e( 'Check this if you would like to debug the email sending process. Once enabled, all debug events will be logged in the table below. This setting should only be enabled for shorter debugging periods and disabled afterwards.', 'wp-mail-smtp' ); ?>
+					</p>
+				</div>
+			</div>
+
+			<div id="wp-mail-smtp-setting-row-debug_events_retention_period" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-select wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-debug_events_retention_period">
+						<?php esc_html_e( 'Events Retention Period', 'wp-mail-smtp' ); ?>
+					</label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<select name="wp-mail-smtp[debug_events][retention_period]" id="wp-mail-smtp-setting-debug_events_retention_period"
+						<?php disabled( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ); ?>>
+						<option value=""><?php esc_html_e( 'Forever', 'wp-mail-smtp' ); ?></option>
+						<?php foreach ( $this->get_debug_events_retention_period_options() as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $this->options->get( 'debug_events', 'retention_period' ), $value ); ?>>
+								<?php echo esc_html( $label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+					<p class="desc">
+						<?php
+						esc_html_e( 'Debug events older than the selected period will be permanently deleted from the database.', 'wp-mail-smtp' );
+
+						if ( $this->options->is_const_defined( 'debug_events', 'retention_period' ) ) {
+							echo '<br>' . wp_kses_post( $this->options->get_const_set_message( 'WPMS_DEBUG_EVENTS_RETENTION_PERIOD' ) );
+						}
+						?>
+					</p>
+				</div>
+			</div>
+
+			<?php $this->display_save_btn(); ?>
+		</form>
+		<?php
+	}
+
+	/**
 	 * Process tab form submission ($_POST ).
 	 *
 	 * @since 3.0.0
@@ -358,11 +355,6 @@ class DebugEventsTab extends PageAbstract {
 	 * @param array $data Post data specific for the plugin.
 	 */
 	public function process_post( $data ) {
-
-		// Intentional literal: this is the defensive floor for the only globally-writing path through the parent-page dispatcher.
-		if ( WP::use_global_plugin_settings() && ! current_user_can( 'manage_network_options' ) ) {
-			wp_die( esc_html__( 'You don\'t have the capability to perform this action.', 'wp-mail-smtp' ) );
-		}
 
 		// Unchecked checkboxes doesn't exist in $_POST, so we need to ensure we actually have them in data to save.
 		if ( empty( $data['debug_events']['email_debug'] ) ) {
@@ -548,7 +540,7 @@ class DebugEventsTab extends PageAbstract {
 					'_wpnonce',
 					'wp-mail-smtp-debug-events-nonce',
 				],
-				$_SERVER['REQUEST_URI'] // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) )
 			);
 		}
 	}

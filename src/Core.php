@@ -89,10 +89,6 @@ class Core {
 		if ( $this->is_not_loadable() ) {
 			add_action( 'admin_notices', 'wp_mail_smtp_insecure_php_version_notice' );
 
-			if ( WP::use_global_plugin_settings() ) {
-				add_action( 'network_admin_notices', 'wp_mail_smtp_insecure_php_version_notice' );
-			}
-
 			return;
 		}
 
@@ -167,7 +163,7 @@ class Core {
 				( new OptimizedEmailSending() )->hooks();
 				( new OutlookProvider() )->hooks();
 				( new RegisterWPCodeLibrary() )->hooks();
-				( new SetupWizardLauncher() )->hooks();
+				$this->get_setup_wizard_launcher()->hooks();
 
 				$this->get_abilities_registrar()->hooks();
 				$this->get_sendlayer_quick_connect()->hooks();
@@ -214,13 +210,8 @@ class Core {
 
 		// Plugin admin area notices. Display to "admins" only.
 		if ( current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
-			add_action( 'admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
-			add_action( 'admin_notices', array( $this, 'display_general_notices' ) );
-
-			if ( WP::use_global_plugin_settings() ) {
-				add_action( 'network_admin_notices', array( '\WPMailSMTP\WP', 'display_admin_notices' ) );
-				add_action( 'network_admin_notices', array( $this, 'display_general_notices' ) );
-			}
+			add_action( 'admin_notices', [ '\WPMailSMTP\WP', 'display_admin_notices' ] );
+			add_action( 'admin_notices', [ $this, 'display_general_notices' ] );
 		}
 	}
 
@@ -1355,6 +1346,33 @@ class Core {
 	}
 
 	/**
+	 * Get the Setup Wizard launcher.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @return SetupWizardLauncher
+	 */
+	public function get_setup_wizard_launcher() {
+
+		static $setup_wizard_launcher = null;
+
+		if ( is_null( $setup_wizard_launcher ) ) {
+
+			/**
+			 * Filter the Setup Wizard launcher class name.
+			 *
+			 * @since 4.10.5
+			 *
+			 * @param string $class_name The Setup Wizard launcher class name to be instantiated.
+			 */
+			$class_name            = apply_filters( 'wp_mail_smtp_core_get_setup_wizard_launcher', SetupWizardLauncher::class );
+			$setup_wizard_launcher = new $class_name();
+		}
+
+		return $setup_wizard_launcher;
+	}
+
+	/**
 	 * Get the email sending errors handler (lite or pro version).
 	 *
 	 * @since 4.10.1
@@ -1474,33 +1492,25 @@ class Core {
 	/**
 	 * Capability required to manage WP Mail SMTP actions that operate on global plugin state.
 	 *
-	 * Returns `manage_network_options` on multisite when WP Mail SMTP's network-wide settings
-	 * mode is on, and `manage_options` otherwise. Use this getter (rather than
-	 * {@see Core::get_capability_manage_options()}) when the gated action reads or writes
-	 * state that lives on the main site / network scope in network-wide mode (the
-	 * `wp_mail_smtp` and `wp_mail_smtp_connections` option rows, license fields, OAuth
-	 * credentials, alerts subscriptions). Naming mirrors {@see WP::use_global_plugin_settings()}.
+	 * Use this getter (rather than {@see Core::get_capability_manage_options()}) when the gated
+	 * action reads or writes state that can be shared by more than one site: the plugin
+	 * settings, license fields, OAuth credentials, alerts subscriptions.
 	 *
 	 * @since 4.9.0
+	 * @since 4.10.5 The default is always `manage_options`.
 	 *
 	 * @return string
 	 */
 	public function get_capability_manage_global_options() {
-
-		$default = ( is_multisite() && WP::use_global_plugin_settings() )
-			? 'manage_network_options'
-			: 'manage_options';
 
 		/**
 		 * Filters the capability required to manage global WP Mail SMTP actions.
 		 *
 		 * @since 4.9.0
 		 *
-		 * @param string $capability The default capability for global actions. Defaults to
-		 *                           `manage_network_options` on multisite when network-wide
-		 *                           settings are on, and `manage_options` otherwise.
+		 * @param string $capability The capability for global actions.
 		 */
-		return apply_filters( 'wp_mail_smtp_core_get_capability_manage_global_options', $default );
+		return apply_filters( 'wp_mail_smtp_core_get_capability_manage_global_options', 'manage_options' );
 	}
 
 	/**

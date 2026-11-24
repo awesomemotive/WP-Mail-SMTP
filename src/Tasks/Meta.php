@@ -194,7 +194,7 @@ class Meta {
 
 		global $wpdb;
 
-		if ( empty( $column ) || empty( $column_where ) || empty( $column_value ) || ! array_key_exists( $column, $this->get_columns() ) ) {
+		if ( empty( $column ) || empty( $column_where ) || empty( $column_value ) || ! array_key_exists( $column, $this->get_columns() ) || ! array_key_exists( $column_where, $this->get_columns() ) ) {
 			return false;
 		}
 
@@ -272,6 +272,10 @@ class Meta {
 
 		if ( empty( $where ) ) {
 			$where = $this->primary_key;
+		}
+
+		if ( ! array_key_exists( $where, $this->get_columns() ) ) {
+			return false;
 		}
 
 		do_action( 'wp_mail_smtp_pre_update_' . $type, $data );

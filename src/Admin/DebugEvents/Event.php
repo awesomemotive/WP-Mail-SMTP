@@ -395,8 +395,8 @@ class Event {
 									esc_html__( '[%1$d] %2$s called at [%3$s:%4$s]', 'wp-mail-smtp' ),
 									absint( $i ),
 									isset( $item['class'] ) ? esc_html( $item['class'] . $item['type'] . $item['function'] ) : esc_html( $item['function'] ),
-									isset( $item['file'] ) ? esc_html( $item['file'] ) : '', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									isset( $item['line'] ) ? esc_html( $item['line'] ) : '' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									isset( $item['file'] ) ? esc_html( $item['file'] ) : '',
+									isset( $item['line'] ) ? esc_html( $item['line'] ) : ''
 								);
 								echo '<br>';
 							}

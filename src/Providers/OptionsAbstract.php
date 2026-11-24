@@ -529,7 +529,7 @@ abstract class OptionsAbstract implements OptionsInterface {
 	 */
 	protected function display_const_set_message( $constant ) {
 
-		printf( '<p class="desc">%s</p>', $this->options->get_const_set_message( $constant ) ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( '<p class="desc">%s</p>', wp_kses_post( $this->options->get_const_set_message( $constant ) ) );
 	}
 
 	/**

@@ -4,7 +4,6 @@ namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Helpers\UI;
-use WPMailSMTP\WP;
 
 /**
  * Class ControlTab is a placeholder for Pro Email Control tab settings.
@@ -254,7 +253,7 @@ class ControlTab extends PageAbstract {
 						continue;
 					}
 
-					if ( $this->is_it_for_multisite( sanitize_key( $section_id ) ) && ! WP::use_global_plugin_settings() ) {
+					if ( $this->is_it_for_multisite( sanitize_key( $section_id ) ) ) {
 						continue;
 					}
 					?>
@@ -272,7 +271,7 @@ class ControlTab extends PageAbstract {
 							continue;
 						}
 
-						if ( $this->is_it_for_multisite( sanitize_key( $email_id ) ) && ! WP::use_global_plugin_settings() ) {
+						if ( $this->is_it_for_multisite( sanitize_key( $email_id ) ) ) {
 							continue;
 						}
 						?>
@@ -286,7 +285,7 @@ class ControlTab extends PageAbstract {
 								?>
 								<?php if ( ! empty( $email['desc'] ) ) : ?>
 									<p class="desc">
-										<?php echo $email['desc']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										<?php echo wp_kses_post( $email['desc'] ); ?>
 									</p>
 								<?php endif; ?>
 							</div>

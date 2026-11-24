@@ -505,14 +505,12 @@ class Connections extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_body( string $variant, array $data ): string {
+	protected function render_body( string $variant, array $data ) {
 
 		$is_mailer_configured = $this->is_mailer_configured();
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widgets/connections',
 			[
 				'groups'    => $this->get_groups(),

@@ -64,11 +64,7 @@ $cta_color = $license_tone === 'error' ? 'wp-mail-smtp-btn-red' : 'wp-mail-smtp-
 
 	<?php if ( $variant === 'license' && $license_notice !== '' ) : ?>
 		<p class="wpms-dashboard-version__notice">
-			<?php
-			// Built from escaped strings.
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $license_notice;
-			?>
+			<?php echo wp_kses_post( $license_notice ); ?>
 		</p>
 	<?php endif; ?>
 </div>

@@ -1,5 +1,8 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $generated_i18n_strings = array(
 	// Reference: modules/mailer-preflight/utils/finding-copy.js:102
 	__( 'This server doesn\'t accept a username and password', 'wp-mail-smtp' ),

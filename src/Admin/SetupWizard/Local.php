@@ -841,9 +841,6 @@ class Local {
 			wp_send_json_error( esc_html__( 'Could not install the plugin. Missing file system permission.', 'wp-mail-smtp' ) );
 		}
 
-		// Do not allow WordPress to search/download translations, as this will break JS output.
-		remove_action( 'upgrader_process_complete', [ 'Language_Pack_Upgrader', 'async_upgrade' ], 20 );
-
 		// Import the plugin upgrader.
 		Helpers::include_plugin_upgrader();
 

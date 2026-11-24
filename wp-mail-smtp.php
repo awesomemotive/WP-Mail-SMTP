@@ -80,19 +80,24 @@ function wp_mail_smtp() {
 }
 
 /**
- * Render a plugin template and return its markup.
+ * Render a plugin template: the template prints its own escaped markup.
+ *
+ * Use WPMailSMTP\Helpers\Templates::get_html() for the markup as a string.
  *
  * @since 4.10.0
+ * @since 4.10.5 Prints the template instead of returning its markup.
  *
  * @param string $template Path relative to the templates directory, without extension.
  * @param array  $args     Variables the template consumes.
  * @param bool   $extract  Expose each key of $args as its own variable.
  *
- * @return string
+ * @return string Always empty. Kept a string so callers written when it returned the markup do not fail.
  */
 function wp_mail_smtp_render( $template, $args = [], $extract = false ) {
 
-	return Templates::get_html( $template, $args, $extract );
+	Templates::display( $template, $args, $extract );
+
+	return '';
 }
 
 wp_mail_smtp();

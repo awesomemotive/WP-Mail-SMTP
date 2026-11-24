@@ -8,13 +8,13 @@
  * @var string $variant        Widget variant; appended as the `wpms-dashboard-widget-{id}-{variant}` state class.
  * @var array  $extra_classes  Extra state classes for the card root, declared by the widget.
  * @var bool   $is_dismissible Whether to add the `wpms-dashboard-dismiss-container` class to the card root.
- * @var string $title          Widget title.
- * @var string $head           Optional rich head HTML (title row). When empty, $title is rendered instead.
- * @var string $head_aside     Optional HTML for the trailing edge of the title row, before the cog.
- * @var bool   $has_settings   Whether the widget has a settings (cog) menu.
- * @var string $settings       Settings popover rendered HTML (framework-built from the widget schema).
- * @var string $body           Widget body rendered HTML.
- * @var string $footer         Widget footer rendered HTML. Empty string hides the footer.
+ * @var bool     $has_head     Whether the widget has a title row.
+ * @var bool     $has_settings Whether the widget has a settings (cog) menu.
+ * @var callable $head         Prints the title row content: the widget title by default.
+ * @var callable $head_aside   Prints the trailing edge of the title row, before the cog.
+ * @var callable $settings     Prints the settings popover (framework-built from the widget schema).
+ * @var callable $body         Prints the widget body.
+ * @var callable $footer       Prints the widget footer; printing nothing hides it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,22 +42,20 @@ if ( ! empty( $is_dismissible ) ) {
 }
 ?>
 <div class="<?php echo esc_attr( implode( ' ', $widget_classes ) ); ?>" data-widget="<?php echo esc_attr( $id ); ?>">
-	<?php
-	// The version strip and the no-mailer prompt are bare cards in the design: no title,
-	// no controls, and so no title row above the body at all.
-	$has_head = $head !== '' || $title !== '' || $head_aside !== '' || ! empty( $has_settings );
-	?>
+	<?php // The version strip and the no-mailer prompt are bare cards in the design: no title, no controls, and so no title row. ?>
 	<?php if ( $has_head ) : ?>
 		<div class="wpms-card__head wpms-dashboard-widget-head">
-			<?php if ( $head !== '' ) : ?>
-				<?php echo $head; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<?php else : ?>
-				<h2 class="wpms-card__title wpms-card__title--widget"><?php echo esc_html( $title ); ?></h2>
-			<?php endif; ?>
+			<?php
+			if ( is_callable( $head ?? null ) ) {
+				$head();
+			}
+			?>
 
-			<?php if ( $head_aside !== '' ) : ?>
-				<?php echo $head_aside; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Pre-rendered by the widget, escaped there. ?>
-			<?php endif; ?>
+			<?php
+			if ( is_callable( $head_aside ?? null ) ) {
+				$head_aside();
+			}
+			?>
 
 			<?php if ( ! empty( $has_settings ) ) : ?>
 				<button type="button" class="wpms-icon-btn wpms-dashboard-widget-cog" aria-label="<?php esc_attr_e( 'Widget settings', 'wp-mail-smtp' ); ?>">
@@ -67,17 +65,23 @@ if ( ! empty( $is_dismissible ) ) {
 		</div>
 	<?php endif; ?>
 
-	<?php if ( ! empty( $has_settings ) && ! empty( $settings ) ) : ?>
-		<?php echo $settings; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built by the framework settings template, escaped there. ?>
-	<?php endif; ?>
+	<?php
+	if ( is_callable( $settings ?? null ) ) {
+		$settings();
+	}
+	?>
 
-	<?php if ( $body !== '' ) : ?>
-		<div class="wpms-dashboard-widget-body">
-			<?php echo $body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		</div>
-	<?php endif; ?>
+	<div class="wpms-dashboard-widget-body">
+		<?php
+		if ( is_callable( $body ?? null ) ) {
+			$body();
+		}
+		?>
+	</div>
 
-	<?php if ( ! empty( $footer ) ) : ?>
-		<?php echo $footer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	<?php endif; ?>
+	<?php
+	if ( is_callable( $footer ?? null ) ) {
+		$footer();
+	}
+	?>
 </div>

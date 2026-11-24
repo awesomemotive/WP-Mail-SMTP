@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
-echo wp_mail_smtp_render( 'dashboard/doc-list', [ 'links' => $links ], true );
+wp_mail_smtp_render( 'dashboard/doc-list', [ 'links' => $links ], true );
 ?>
 <div class="wpms-dashboard-getting-started-footer">
 	<a class="wpms-text-link wpms-text-link--arrow wpms-text-link--md" href="<?php echo esc_url( $view_all['url'] ); ?>" target="_blank" rel="noopener noreferrer">

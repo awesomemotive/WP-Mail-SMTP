@@ -63,7 +63,7 @@ class EmailSendingErrors {
 		}
 
 		// Read-only sticky-banner gate during admin render. Submission nonce is verified by TestTab::process_post() before any side effects.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$is_test_submission = $this->is_test_tab() && isset( $_POST['wp-mail-smtp'] );
 
 		// Respect the "hide delivery errors" option, except on a fresh test
@@ -88,7 +88,7 @@ class EmailSendingErrors {
 		// Test Email tab always starts fresh on initial load — the banner only
 		// surfaces after the user actually submits a test send. Read-only
 		// presence check; submission nonce is verified by TestTab::process_post().
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( $this->is_test_tab() && ! isset( $_POST['wp-mail-smtp'] ) ) {
 			return;
 		}
@@ -238,26 +238,18 @@ class EmailSendingErrors {
 
 		$doc_state = $this->resolve_doc_state( $record );
 
-		ob_start();
-		$this->print_banner_body( $record, $doc_state, $connection_id );
-		$body = ob_get_clean();
-
-		printf(
-			'<div class="wpms-email-sending-errors-banner %1$s" data-connection-id="%2$s">' .
-			'<button type="button" class="notice-dismiss wpms-email-sending-errors-banner__dismiss" aria-label="%3$s"><span class="screen-reader-text">%3$s</span></button>' .
-			'<div class="wpms-email-sending-errors-banner__header">' .
-			'<span class="wpms-email-sending-errors-banner__icon wpms:icon-[fa6-solid--circle-exclamation] wpms:w-[16px] wpms:h-[16px] wpms:shrink-0" role="img" aria-label="%4$s"></span>' .
-			'<p class="wpms-email-sending-errors-banner__title">%5$s</p>' .
-			'</div>' .
-			'<div class="wpms-email-sending-errors-banner__body">%6$s</div>' .
-			'</div>',
-			esc_attr( $severity_class ),
-			esc_attr( $connection_id ),
-			esc_attr__( 'Dismiss this notice', 'wp-mail-smtp' ),
-			esc_attr( $severity_label ),
-			$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			$body // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		);
+		?>
+		<div class="wpms-email-sending-errors-banner <?php echo esc_attr( $severity_class ); ?>" data-connection-id="<?php echo esc_attr( $connection_id ); ?>">
+			<button type="button" class="notice-dismiss wpms-email-sending-errors-banner__dismiss" aria-label="<?php esc_attr_e( 'Dismiss this notice', 'wp-mail-smtp' ); ?>">
+				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice', 'wp-mail-smtp' ); ?></span>
+			</button>
+			<div class="wpms-email-sending-errors-banner__header">
+				<span class="wpms-email-sending-errors-banner__icon wpms:icon-[fa6-solid--circle-exclamation] wpms:w-[16px] wpms:h-[16px] wpms:shrink-0" role="img" aria-label="<?php echo esc_attr( $severity_label ); ?>"></span>
+				<p class="wpms-email-sending-errors-banner__title"><?php echo wp_kses_post( $title ); ?></p>
+			</div>
+			<div class="wpms-email-sending-errors-banner__body"><?php $this->print_banner_body( $record, $doc_state, $connection_id ); ?></div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -515,7 +507,7 @@ class EmailSendingErrors {
 			'</div>',
 			esc_attr__( 'Copy error log', 'wp-mail-smtp' ),
 			esc_html__( 'Copied!', 'wp-mail-smtp' ),
-			$this->build_error_log( $record ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- build_error_log() returns wp_kses'd markup.
+			wp_kses_post( $this->build_error_log( $record ) )
 		);
 	}
 
@@ -673,7 +665,7 @@ class EmailSendingErrors {
 
 		echo '<ul>';
 		foreach ( $description as $cause ) {
-			echo '<li>' . wp_kses( $cause, $allowed_tags ) . '</li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<li>' . wp_kses( $cause, $allowed_tags ) . '</li>';
 		}
 		echo '</ul>';
 		echo '</div>';
@@ -1389,7 +1381,7 @@ class EmailSendingErrors {
 		);
 		echo '<ul>';
 		foreach ( $bullets as $bullet ) {
-			echo '<li>' . $bullet . '</li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<li>' . wp_kses( $bullet, $allowed_tags ) . '</li>';
 		}
 		echo '</ul>';
 		echo '</div>';

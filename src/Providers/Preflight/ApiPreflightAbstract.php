@@ -98,7 +98,9 @@ abstract class ApiPreflightAbstract extends PreflightAbstract {
 		$finding = $this->transport_finding( $response );
 
 		if ( $finding !== null ) {
-			throw new TransportFailure( $finding ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$failure = new TransportFailure( $finding );
+
+			throw $failure;
 		}
 
 		return $response;

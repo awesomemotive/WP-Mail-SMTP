@@ -13,6 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="wpms-dashboard-features-upsell-grid">
 	<?php foreach ( $tiles as $tile ) : ?>
-		<?php echo wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML. ?>
+		<?php wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true ); ?>
 	<?php endforeach; ?>
 </div>

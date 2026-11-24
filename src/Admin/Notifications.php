@@ -206,10 +206,56 @@ class Notifications {
 				continue;
 			}
 
-			$data[] = $notification;
+			$data[] = $this->sanitize( $notification );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Sanitize the plain-text parts of a notification before it is saved.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param array $notification Notification item.
+	 *
+	 * @return array
+	 */
+	private function sanitize( $notification ) {
+
+		foreach ( [ 'id', 'title' ] as $key ) {
+			if ( isset( $notification[ $key ] ) ) {
+				$notification[ $key ] = sanitize_text_field( $notification[ $key ] );
+			}
+		}
+
+		if ( isset( $notification['btns'] ) && is_array( $notification['btns'] ) ) {
+			$notification['btns'] = array_map( [ $this, 'sanitize_button' ], $notification['btns'] );
+		}
+
+		return $notification;
+	}
+
+	/**
+	 * Sanitize a notification button before it is saved.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param array $btn Button data.
+	 *
+	 * @return array
+	 */
+	private function sanitize_button( $btn ) {
+
+		if ( isset( $btn['text'] ) ) {
+			$btn['text'] = sanitize_text_field( $btn['text'] );
+		}
+
+		if ( isset( $btn['url'] ) && is_string( $btn['url'] ) ) {
+			$btn['url'] = esc_url_raw( $btn['url'] );
+		}
+
+		return $btn;
 	}
 
 	/**
@@ -448,7 +494,7 @@ class Notifications {
 						! empty( $btn['url'] ) ? esc_url( $btn['url'] ) : '',
 						$btn_type === 'main' ? 'primary' : 'secondary',
 						! empty( $btn['target'] ) && $btn['target'] === '_blank' ? ' target="_blank" rel="noopener noreferrer"' : '',
-						sanitize_text_field( $btn['text'] )
+						esc_html( $btn['text'] )
 					);
 				}
 				$buttons_html = ! empty( $buttons_html ) ? '<div class="wp-mail-smtp-notifications-buttons">' . $buttons_html . '</div>' : '';
@@ -461,10 +507,10 @@ class Notifications {
 					<div class="wp-mail-smtp-notifications-content">%2$s</div>
 					%3$s
 				</div>',
-				! empty( $notification['title'] ) ? sanitize_text_field( $notification['title'] ) : '',
+				! empty( $notification['title'] ) ? esc_html( $notification['title'] ) : '',
 				! empty( $notification['content'] ) ? wp_kses( wpautop( $notification['content'] ), $content_allowed_tags ) : '',
 				$buttons_html,
-				! empty( $notification['id'] ) ? esc_attr( sanitize_text_field( $notification['id'] ) ) : 0,
+				! empty( $notification['id'] ) ? esc_attr( $notification['id'] ) : 0,
 				$current_class
 			);
 
@@ -502,7 +548,7 @@ class Notifications {
 				<?php endif; ?>
 
 				<div class="wp-mail-smtp-notifications-messages">
-					<?php echo $notifications_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo wp_kses_post( $notifications_html ); ?>
 				</div>
 			</div>
 		</div>

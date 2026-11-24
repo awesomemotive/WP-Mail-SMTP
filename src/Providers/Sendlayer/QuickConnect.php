@@ -45,7 +45,19 @@ class QuickConnect {
 	 */
 	public function __construct() {
 
-		$this->usage = new QuickConnectUsage();
+		$this->usage = $this->create_usage();
+	}
+
+	/**
+	 * Create the Quick Connect usage tracker.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @return QuickConnectUsage
+	 */
+	protected function create_usage() {
+
+		return new QuickConnectUsage();
 	}
 
 	/**
@@ -255,7 +267,7 @@ class QuickConnect {
 		}
 
 		// Read the nonce from the GET query parameter.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( empty( $_GET['nonce'] ) ) {
 			wp_send_json_error(
 				[
@@ -279,7 +291,7 @@ class QuickConnect {
 			);
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$nonce     = sanitize_text_field( wp_unslash( $_GET['nonce'] ) );
 		$signature = hash_hmac( 'sha256', $nonce, $challenge_secret );
 
@@ -300,7 +312,6 @@ class QuickConnect {
 	 */
 	public function handle_auth_complete() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (
 			empty( $_GET['wp_mail_smtp_sendlayer_quick_connect_auth_complete'] ) ||
 			! wp_mail_smtp()->get_admin()->is_admin_page()
@@ -309,7 +320,6 @@ class QuickConnect {
 		}
 
 		// Resolve the return URL early so every exit path redirects to it.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$return_url = ! empty( $_GET['return_url'] )
 			? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['return_url'] ) ), wp_mail_smtp()->get_admin()->get_admin_page_url() )
 			: wp_mail_smtp()->get_admin()->get_admin_page_url();
@@ -319,7 +329,6 @@ class QuickConnect {
 		}
 
 		// Verify the nonce that was appended to the return URL during session init.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$nonce = isset( $_GET['nonce'] )
 			? sanitize_text_field( wp_unslash( $_GET['nonce'] ) )
 			: '';
@@ -387,7 +396,6 @@ class QuickConnect {
 		$sender_domain    = ! empty( $response_body['sender_domain'] ) ? sanitize_text_field( $response_body['sender_domain'] ) : '';
 		$is_shared_domain = ! empty( $response_body['is_shared_domain'] );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$mode = ! empty( $_GET['mode'] ) ? sanitize_key( $_GET['mode'] ) : '';
 		$mode = in_array( $mode, $this->get_allowed_modes(), true ) ? $mode : '';
 
@@ -541,7 +549,7 @@ class QuickConnect {
 	public function handle_disconnect() {
 
 		if (
-			! isset( $_GET['sendlayer_quick_connect_disconnect_nonce'] ) || // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			! isset( $_GET['sendlayer_quick_connect_disconnect_nonce'] ) ||
 			! wp_mail_smtp()->get_admin()->is_admin_page()
 		) {
 			return;
@@ -556,7 +564,7 @@ class QuickConnect {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( sanitize_key( $_GET['sendlayer_quick_connect_disconnect_nonce'] ), 'sendlayer_quick_connect_disconnect' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! wp_verify_nonce( sanitize_key( $_GET['sendlayer_quick_connect_disconnect_nonce'] ), 'sendlayer_quick_connect_disconnect' ) ) {
 			WP::add_admin_notice(
 				esc_html__( 'SendLayer disconnect failed. The nonce is invalid. Please try again.', 'wp-mail-smtp' ),
 				WP::ADMIN_NOTICE_ERROR

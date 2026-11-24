@@ -23,24 +23,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /*
- * Build an `id`, `class`, `data-*` and generic-attribute string, escaped piece by piece.
+ * Print an `id`, `class`, `data-*` and generic-attribute string, escaped piece by piece.
  */
-$build_attrs = static function ( string $id, array $classes, array $data = [], array $attrs = [] ): string {
+$render_attrs = static function ( string $id, array $classes, array $data = [], array $attrs = [] ): void {
 
-	$html  = $id !== '' ? 'id="' . esc_attr( $id ) . '" ' : '';
-	$html .= 'class="' . esc_attr( implode( ' ', array_filter( array_map( 'sanitize_html_class', $classes ) ) ) ) . '"';
+	if ( $id !== '' ) {
+		echo 'id="' . esc_attr( $id ) . '" ';
+	}
+
+	echo 'class="' . esc_attr( implode( ' ', array_filter( array_map( 'sanitize_html_class', $classes ) ) ) ) . '"';
 
 	foreach ( $data as $name => $value ) {
-		$html .= ' data-' . esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+		echo ' data-' . esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
 	}
 
 	foreach ( $attrs as $name => $value ) {
-		$html .= ' ' . esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+		echo ' ' . esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
 	}
-
-	return $html;
-};
-?>
+};?>
 <div class="wpms-dashboard-widget-settings" hidden>
 	<?php
 	foreach ( $fields as $field ) :
@@ -54,7 +54,7 @@ $build_attrs = static function ( string $id, array $classes, array $data = [], a
 			<p class="wpms-dashboard-widget-settings-label">
 				<label for="<?php echo esc_attr( $field_id ); ?>"><?php echo esc_html( $field['label'] ?? '' ); ?></label>
 			</p>
-			<select <?php echo $build_attrs( $field_id, [ 'wpms-dashboard-widget-settings-field' ], array_filter( [ 'locked-by' => (string) ( $field['locked_by'] ?? '' ) ] ), [ 'name' => $field_name ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $build_attrs() escapes every piece. ?>>
+			<select <?php $render_attrs( $field_id, [ 'wpms-dashboard-widget-settings-field' ], array_filter( [ 'locked-by' => (string) ( $field['locked_by'] ?? '' ) ] ), [ 'name' => $field_name ] ); ?>>
 				<?php foreach ( $options as $option_value => $option_label ) : ?>
 					<option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( (string) ( $field['value'] ?? '' ), (string) $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
 				<?php endforeach; ?>
@@ -77,7 +77,7 @@ $build_attrs = static function ( string $id, array $classes, array $data = [], a
 			<?php endif; ?>
 			<?php // Sentinel so a fully-unchecked list still submits an (empty) value; without it the field is omitted and the server restores all options. ?>
 			<input type="hidden" name="<?php echo esc_attr( $field_name ); ?>[]" value="">
-			<ul <?php echo $build_attrs( '', [ 'wpms-dashboard-widget-settings-list', 'wpms-dashboard-widget-settings-scrollbar', $panel ], $list_data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $build_attrs() escapes every piece. ?>>
+			<ul <?php $render_attrs( '', [ 'wpms-dashboard-widget-settings-list', 'wpms-dashboard-widget-settings-scrollbar', $panel ], $list_data ); ?>>
 				<?php foreach ( $options as $option_value => $option_label ) : ?>
 					<li>
 						<label>
@@ -95,7 +95,7 @@ $build_attrs = static function ( string $id, array $classes, array $data = [], a
 			<?php if ( ! empty( $field['label'] ) ) : ?>
 				<p class="wpms-dashboard-widget-settings-label"><?php echo esc_html( $field['label'] ); ?></p>
 			<?php endif; ?>
-			<div <?php echo $build_attrs( '', [ 'wpms-dashboard-widget-settings-group', 'wpms-dashboard-widget-settings-scrollbar', $panel ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $build_attrs() escapes every piece. ?>>
+			<div <?php $render_attrs( '', [ 'wpms-dashboard-widget-settings-group', 'wpms-dashboard-widget-settings-scrollbar', $panel ] ); ?>>
 				<?php foreach ( $options as $option_key => $option_label ) : ?>
 					<label class="wpms-dashboard-widget-settings-checkbox">
 						<input type="hidden" name="<?php echo esc_attr( $option_key ); ?>" value="0">
@@ -120,7 +120,7 @@ $build_attrs = static function ( string $id, array $classes, array $data = [], a
 		$reset_label   = __( 'Reset to Default Settings', 'wp-mail-smtp' );
 		$reset_classes = [ 'wpms-icon-btn', 'wpms-dashboard-widget-settings-reset', empty( $can_reset ) ? 'wp-mail-smtp-hide' : '' ];
 		?>
-		<button type="button" <?php echo $build_attrs( '', $reset_classes, [], [ 'title' => $reset_label ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $build_attrs() escapes every piece. ?>>
+		<button type="button" <?php $render_attrs( '', $reset_classes, [], [ 'title' => $reset_label ] ); ?>>
 			<i class="wpms:icon-[fa6-solid--rotate-left] wpms:w-[12px] wpms:h-[12px]" aria-hidden="true"></i>
 			<span class="screen-reader-text"><?php echo esc_html( $reset_label ); ?></span>
 		</button>

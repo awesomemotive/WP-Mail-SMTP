@@ -296,14 +296,14 @@ class TestTab extends PageAbstract {
 				?>
 				<button type="submit" class="wp-mail-smtp-btn wp-mail-smtp-btn-md <?php echo esc_attr( $btn ); ?>" <?php echo esc_attr( $disabled ); ?>>
 					<span><?php esc_html_e( 'Send Email', 'wp-mail-smtp' ); ?></span>
-					<?php echo wp_mail_smtp()->prepare_loader( 'white', 'sm' ); // phpcs:ignore ?>
+					<img src="<?php echo esc_url( wp_mail_smtp()->assets_url . '/images/loaders/loading-white.svg' ); ?>" alt="<?php esc_attr_e( 'Loading', 'wp-mail-smtp' ); ?>" class="wp-mail-smtp-loading wp-mail-smtp-loading-sm">
 				</button>
 				<?php echo wp_kses_post( $help_text ); ?>
 			</p>
 			<?php $this->post_form_hidden_field(); ?>
 		</form>
 
-		<?php if ( ! empty( $mailer ) && $mailer->is_mailer_complete() && isset( $_GET['auto-start'] ) ) : // phpcs:ignore ?>
+		<?php if ( ! empty( $mailer ) && $mailer->is_mailer_complete() && isset( $_GET['auto-start'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 			<script>
 				(function( $ ) {
 					var $button = $( '.wp-mail-smtp-tab-tools-test #email-test-form .wp-mail-smtp-btn' );
@@ -339,7 +339,7 @@ class TestTab extends PageAbstract {
 			</div>
 		<?php endif; ?>
 
-		<?php echo $this->domain_checker->get_results_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo wp_kses_post( $this->domain_checker->get_results_html() ); ?>
 
 		<div class="wp-mail-smtp-test-email-resend">
 			<a href="<?php echo esc_url( $this->get_link() ); ?>">

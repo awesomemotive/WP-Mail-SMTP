@@ -163,7 +163,7 @@ class Duplicator extends PartnerPlugin {
 
 		if ( $table_exists === false ) {
 			// Direct query required: no WP API exists for another plugin's custom tables.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
 
 			wp_cache_set( $table_cache_key, $table_exists, 'wp-mail-smtp', 60 );
@@ -176,7 +176,7 @@ class Duplicator extends PartnerPlugin {
 		$count = wp_cache_get( $count_cache_key, 'wp-mail-smtp' );
 
 		if ( $count === false ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 
 			wp_cache_set( $count_cache_key, $count, 'wp-mail-smtp', 60 );

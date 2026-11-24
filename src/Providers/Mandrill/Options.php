@@ -79,7 +79,6 @@ class Options extends OptionsAbstract {
 	 */
 	public function display_options() {
 
-		// phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound, WordPress.Security.NonceVerification.Recommended
 		$get_api_key_url = 'https://mandrillapp.com/settings/index/';
 		?>
 

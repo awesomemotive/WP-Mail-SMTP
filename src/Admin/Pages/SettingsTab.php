@@ -46,110 +46,17 @@ class SettingsTab extends PageAbstract {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Display the tab content.
+	 *
+	 * @since 1.0.0
 	 */
 	public function display() {
-
-		$options = Options::init();
 		?>
 
 		<form method="POST" action="" autocomplete="off" class="wp-mail-smtp-connection-settings-form">
 			<?php $this->wp_nonce_field(); ?>
 
-			<?php ob_start(); ?>
-
-			<!-- License Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading" id="wp-mail-smtp-setting-row-license-heading">
-				<div class="wp-mail-smtp-setting-field">
-					<h2><?php esc_html_e( 'License', 'wp-mail-smtp' ); ?></h2>
-
-					<p class="desc">
-						<?php esc_html_e( 'Your license key provides access to WP Mail SMTP Pro features, updates and support.', 'wp-mail-smtp' ); ?>
-					</p>
-				</div>
-			</div>
-
-			<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
-				<div class="wp-mail-smtp-upgrade-license-banner">
-					<p><?php echo wp_kses( __( 'You\'re using <strong>WP Mail SMTP Lite</strong> - no license needed. Enjoy!', 'wp-mail-smtp' ), [ 'strong' => [] ] ); ?> 🙂</p>
-
-					<p class="wp-mail-smtp-upgrade-license-banner__discount-line">
-						<?php
-						printf(
-							wp_kses( /* Translators: %s - discount value $50 */
-								__( 'As a valued WP Mail SMTP Lite user, you can enjoy an exclusive <strong>%s discount</strong>, automatically applied at checkout to unlock even more features!', 'wp-mail-smtp' ),
-								[
-									'strong' => [],
-									'br'     => [],
-								]
-							),
-							'$50'
-						);
-						?>
-					</p>
-
-					<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( 'general-license-key' ) ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-secondary wp-mail-smtp-upgrade-license-banner__upgrade-btn"><?php esc_html_e( 'Upgrade to Pro', 'wp-mail-smtp' ); ?></a>
-				</div>
-			<?php endif; ?>
-
-			<?php
-			/**
-			 * Fires before the License Key field.
-			 *
-			 * @since 4.10.0
-			 */
-			do_action( 'wp_mail_smtp_admin_pages_settings_tab_before_license_key' );
-			?>
-
-			<!-- License Key -->
-			<div id="wp-mail-smtp-setting-row-license_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-license_key wp-mail-smtp-clear">
-				<div class="wp-mail-smtp-setting-label">
-					<label for="wp-mail-smtp-setting-license_key"><?php esc_html_e( 'License Key', 'wp-mail-smtp' ); ?></label>
-				</div>
-				<div class="wp-mail-smtp-setting-field">
-					<?php do_action( 'wp_mail_smtp_admin_pages_settings_license_key', $options ); ?>
-				</div>
-			</div>
-
-			<!-- Mail Section Title -->
-			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc">
-				<div class="wp-mail-smtp-setting-field">
-					<h2><?php esc_html_e( 'Primary Connection', 'wp-mail-smtp' ); ?></h2>
-				</div>
-			</div>
-
-			<?php if ( ! is_network_admin() ) : ?>
-				<!-- Setup Wizard button -->
-				<div id="wp-mail-smtp-setting-row-setup-wizard-button" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
-					<div class="wp-mail-smtp-setting-label">
-						<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'Setup Wizard', 'wp-mail-smtp' ); ?></label>
-					</div>
-					<div class="wp-mail-smtp-setting-field">
-						<a href="<?php echo esc_url( SetupWizardLauncher::get_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">
-							<?php esc_html_e( 'Launch Setup Wizard', 'wp-mail-smtp' ); ?>
-						</a>
-
-						<p class="desc">
-							<?php esc_html_e( 'We\'ll guide you through each step needed to get WP Mail SMTP fully set up on your site.', 'wp-mail-smtp' ); ?>
-						</p>
-					</div>
-				</div>
-			<?php endif; ?>
-
-			<?php
-			$connection          = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
-			$connection_settings = new ConnectionSettings( $connection );
-
-			// Display connection settings.
-			$connection_settings->display();
-			?>
-
-			<?php $this->display_backup_connection_education(); ?>
-
-			<?php
-			$settings_content = apply_filters( 'wp_mail_smtp_admin_settings_tab_display', ob_get_clean() );
-			echo $settings_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			?>
+			<?php $this->display_sections(); ?>
 
 			<?php $this->display_save_btn(); ?>
 
@@ -158,6 +65,126 @@ class SettingsTab extends PageAbstract {
 		<?php
 		$this->display_wpforms();
 		$this->display_pro_banner();
+
+		if ( has_filter( 'wp_mail_smtp_admin_settings_tab_display' ) ) {
+			_deprecated_hook( 'wp_mail_smtp_admin_settings_tab_display', '4.10.5', 'wp_mail_smtp_admin_pages_settings_tab_display_sections_after' );
+		}
+	}
+
+	/**
+	 * Display the settings sections of the tab.
+	 *
+	 * @since 4.10.5
+	 */
+	protected function display_sections() {
+
+		$options = Options::init();
+		?>
+
+		<!-- License Section Title -->
+		<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading" id="wp-mail-smtp-setting-row-license-heading">
+			<div class="wp-mail-smtp-setting-field">
+				<h2><?php esc_html_e( 'License', 'wp-mail-smtp' ); ?></h2>
+
+				<p class="desc">
+					<?php esc_html_e( 'Your license key provides access to WP Mail SMTP Pro features, updates and support.', 'wp-mail-smtp' ); ?>
+				</p>
+			</div>
+		</div>
+
+		<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
+			<div class="wp-mail-smtp-upgrade-license-banner">
+				<p><?php echo wp_kses( __( 'You\'re using <strong>WP Mail SMTP Lite</strong> - no license needed. Enjoy!', 'wp-mail-smtp' ), [ 'strong' => [] ] ); ?> 🙂</p>
+
+				<p class="wp-mail-smtp-upgrade-license-banner__discount-line">
+					<?php
+					printf(
+						wp_kses( /* Translators: %s - discount value $50 */
+							__( 'As a valued WP Mail SMTP Lite user, you can enjoy an exclusive <strong>%s discount</strong>, automatically applied at checkout to unlock even more features!', 'wp-mail-smtp' ),
+							[
+								'strong' => [],
+								'br'     => [],
+							]
+						),
+						'$50'
+					);
+					?>
+				</p>
+
+				<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( 'general-license-key' ) ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-secondary wp-mail-smtp-upgrade-license-banner__upgrade-btn"><?php esc_html_e( 'Upgrade to Pro', 'wp-mail-smtp' ); ?></a>
+			</div>
+		<?php endif; ?>
+
+		<?php
+		/**
+		 * Fires before the License Key field.
+		 *
+		 * @since 4.10.0
+		 */
+		do_action( 'wp_mail_smtp_admin_pages_settings_tab_before_license_key' );
+		?>
+
+		<!-- License Key -->
+		<div id="wp-mail-smtp-setting-row-license_key" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-license_key wp-mail-smtp-clear">
+			<div class="wp-mail-smtp-setting-label">
+				<label for="wp-mail-smtp-setting-license_key"><?php esc_html_e( 'License Key', 'wp-mail-smtp' ); ?></label>
+			</div>
+			<div class="wp-mail-smtp-setting-field">
+				<?php
+				/**
+				 * Fires inside the License Key field.
+				 *
+				 * @since 1.5.0
+				 *
+				 * @param Options $options The plugin options.
+				 */
+				do_action( 'wp_mail_smtp_admin_pages_settings_license_key', $options ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+				?>
+			</div>
+		</div>
+
+		<!-- Mail Section Title -->
+		<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading no-desc">
+			<div class="wp-mail-smtp-setting-field">
+				<h2><?php esc_html_e( 'Primary Connection', 'wp-mail-smtp' ); ?></h2>
+			</div>
+		</div>
+
+		<?php if ( ! is_network_admin() ) : ?>
+			<!-- Setup Wizard button -->
+			<div id="wp-mail-smtp-setting-row-setup-wizard-button" class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-email wp-mail-smtp-clear">
+				<div class="wp-mail-smtp-setting-label">
+					<label for="wp-mail-smtp-setting-from_email"><?php esc_html_e( 'Setup Wizard', 'wp-mail-smtp' ); ?></label>
+				</div>
+				<div class="wp-mail-smtp-setting-field">
+					<a href="<?php echo esc_url( SetupWizardLauncher::get_url() ); ?>" class="wp-mail-smtp-btn wp-mail-smtp-btn-md wp-mail-smtp-btn-blueish">
+						<?php esc_html_e( 'Launch Setup Wizard', 'wp-mail-smtp' ); ?>
+					</a>
+
+					<p class="desc">
+						<?php esc_html_e( 'We\'ll guide you through each step needed to get WP Mail SMTP fully set up on your site.', 'wp-mail-smtp' ); ?>
+					</p>
+				</div>
+			</div>
+		<?php endif; ?>
+
+		<?php
+		$connection          = wp_mail_smtp()->get_connections_manager()->get_primary_connection();
+		$connection_settings = new ConnectionSettings( $connection );
+
+		// Display connection settings.
+		$connection_settings->display();
+		?>
+
+		<?php $this->display_backup_connection_education(); ?>
+
+		<?php
+		/**
+		 * Fires after the settings sections of the General tab.
+		 *
+		 * @since 4.10.5
+		 */
+		do_action( 'wp_mail_smtp_admin_pages_settings_tab_display_sections_after' );
 	}
 
 	/**
@@ -428,7 +455,7 @@ class SettingsTab extends PageAbstract {
 		 *
 		 * @param array $data Settings data.
 		 */
-		$data = apply_filters( 'wp_mail_smtp_settings_tab_process_post', $data );
+		$data = apply_filters( 'wp_mail_smtp_settings_tab_process_post', $data ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 
 		// All the sanitization is done in Options class.
 		Options::init()->set( $data, false, false );
@@ -436,8 +463,10 @@ class SettingsTab extends PageAbstract {
 		$connection_settings->post_process( $data, $old_data );
 
 		if ( $connection_settings->get_scroll_to() !== false ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-			wp_safe_redirect( sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) . $connection_settings->get_scroll_to() );
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$referer = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : '';
+
+			wp_safe_redirect( $referer . $connection_settings->get_scroll_to() );
 			exit;
 		}
 

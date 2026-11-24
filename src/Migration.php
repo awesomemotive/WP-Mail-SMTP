@@ -319,7 +319,6 @@ class Migration extends MigrationAbstract {
 			$not_in = 0;
 
 			if ( ! empty( $meta_ids ) ) {
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$not_in = $wpdb->prepare( implode( ',', array_fill( 0, count( $meta_ids ), '%d' ) ), $meta_ids );
 			}
 

@@ -123,23 +123,32 @@ class Summary {
 	 */
 	public function get_content() {
 
-		$content  = $this->get_header_html();
-		$content .= $this->get_main_html();
-		$content .= $this->get_footer_html();
+		ob_start();
 
-		return $content;
+		$this->render_content();
+
+		return ob_get_clean();
 	}
 
 	/**
-	 * Get summary report email header HTML.
+	 * Print summary report email content.
+	 *
+	 * @since 4.10.5
+	 */
+	public function render_content() {
+
+		$this->render_header();
+		$this->render_main();
+		$this->render_footer();
+	}
+
+	/**
+	 * Print summary report email header HTML.
 	 *
 	 * @since 3.0.0
-	 *
-	 * @return string
+	 * @since 4.10.5 Prints the header instead of returning its markup.
 	 */
-	private function get_header_html() {
-
-		ob_start();
+	private function render_header() {
 		?>
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -179,17 +188,15 @@ class Summary {
 		<tr style="padding: 0;vertical-align: top;text-align: left;">
 		<td align="left" valign="top" class="content dark-content-bg" style="word-wrap: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 60px;vertical-align: top;text-align: left;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #444444;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;margin: 0;mso-line-height-rule: exactly;line-height: 140%;font-size: 14px;background: #ffffff;border-radius: 6px;border-collapse: collapse !important;">
 		<?php
-		return ob_get_clean();
 	}
 
 	/**
-	 * Get summary report email footer HTML.
+	 * Print summary report email footer HTML.
 	 *
 	 * @since 3.0.0
-	 *
-	 * @return string
+	 * @since 4.10.5 Prints the footer instead of returning its markup.
 	 */
-	private function get_footer_html() {
+	private function render_footer() {
 
 		$settings_link = add_query_arg(
 			[ 'tab' => 'misc' ],
@@ -198,7 +205,6 @@ class Summary {
 
 		$link_style = "-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #72777c;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;padding: 0;margin: 0;text-align: left;mso-line-height-rule: exactly;line-height: 140%;text-decoration: underline;";
 
-		ob_start();
 		?>
 		</td>
 		</tr>
@@ -231,7 +237,6 @@ class Summary {
 		</body>
 		</html>
 		<?php
-		return ob_get_clean();
 	}
 
 	/**
@@ -243,6 +248,20 @@ class Summary {
 	 */
 	protected function get_main_html() {
 
+		ob_start();
+
+		$this->render_main();
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Print summary report email general content HTML.
+	 *
+	 * @since 4.10.5
+	 */
+	protected function render_main() {
+
 		$reports = new Reports();
 
 		$upgrade_link = wp_mail_smtp()->get_upgrade_link(
@@ -252,7 +271,6 @@ class Summary {
 			]
 		);
 
-		ob_start();
 		?>
 		<h6 class="main-heading dark-white-color" style="margin: 0;padding: 0;color: #444444;word-wrap: normal;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: bold;mso-line-height-rule: exactly;line-height: 22px;;text-align: left;font-size: 18px;margin-bottom: 10px;">
 			<?php esc_html_e( 'Hi there,', 'wp-mail-smtp' ); ?>
@@ -265,22 +283,22 @@ class Summary {
 			<tr style="padding: 0;vertical-align: top;text-align: left;">
 				<td class="stats-totals-item-wrapper" style="word-wrap: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 0px;vertical-align: top;text-align: left;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #444444;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;margin: 0;mso-line-height-rule: exactly;line-height: 140%;font-size: 14px;border-collapse: collapse !important;">
 					<?php
-					echo $this->get_stats_total_html( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					$this->render_stats_total(
 						__( 'Total Emails', 'wp-mail-smtp' ),
 						'icon-email.png',
-						$reports->get_total_emails_sent(), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						$reports->get_total_emails_sent() - $reports->get_total_weekly_emails_sent( 'previous' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						$reports->get_total_emails_sent(),
+						$reports->get_total_emails_sent() - $reports->get_total_weekly_emails_sent( 'previous' ),
 						'#809EB0'
 					);
 					?>
 				</td>
 				<td class="stats-totals-item-wrapper" style="word-wrap: break-word;-webkit-hyphens: auto;-moz-hyphens: auto;hyphens: auto;padding: 0px;vertical-align: top;text-align: right;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #444444;font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: normal;margin: 0;mso-line-height-rule: exactly;line-height: 140%;font-size: 14px;border-collapse: collapse !important;">
 					<?php
-					echo $this->get_stats_total_html( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					$this->render_stats_total(
 						__( 'Last week', 'wp-mail-smtp' ),
 						'icon-check.png',
-						$reports->get_total_weekly_emails_sent( 'previous' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						$reports->get_total_weekly_emails_sent( 'two_weeks_ago' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						$reports->get_total_weekly_emails_sent( 'previous' ),
+						$reports->get_total_weekly_emails_sent( 'two_weeks_ago' ),
 						'#6AA08B'
 					);
 					?>
@@ -327,7 +345,6 @@ class Summary {
 			</tr>
 		</table>
 		<?php
-		return ob_get_clean();
 	}
 
 	/**
@@ -346,14 +363,33 @@ class Summary {
 	 */
 	protected function get_stats_total_html( $title, $icon, $value, $prev_value, $color, $wrapper_style = '' ) {
 
+		ob_start();
+
+		$this->render_stats_total( $title, $icon, $value, $prev_value, $color, $wrapper_style );
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Print stats total block HTML.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param string $title         Heading.
+	 * @param string $icon          Icon file.
+	 * @param int    $value         Stats value.
+	 * @param int    $prev_value    Previous period stats value.
+	 * @param string $color         Heading text color.
+	 * @param string $wrapper_style Wrapper inline CSS styles.
+	 */
+	protected function render_stats_total( $title, $icon, $value, $prev_value, $color, $wrapper_style = '' ) {
+
 		$width = $this->get_stats_total_item_width();
 
 		$percent_change = $this->calc_percent_change( $value, $prev_value );
 
 		$images_dir_url = wp_mail_smtp()->assets_url . '/images/reports/email/';
 		$icon_width     = ( $icon === 'icon-email.png' ) ? 34 : 32;
-
-		ob_start();
 		?>
 		<table class="stats-total-item" style="border-spacing: 0;padding: 0;vertical-align: top;text-align: left;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;width: <?php echo intval( $width ); ?>px;display: inline-table;min-width:<?php echo intval( $width ); ?>px;" width="<?php echo intval( $width ); ?>">
 			<tr style="padding: 0;vertical-align: top;text-align: left;">
@@ -378,7 +414,6 @@ class Summary {
 			</tr>
 		</table>
 		<?php
-		return ob_get_clean();
 	}
 
 	/**

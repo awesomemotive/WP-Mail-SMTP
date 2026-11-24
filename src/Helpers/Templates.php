@@ -44,21 +44,35 @@ class Templates {
 	 */
 	public static function get_html( $template_name, $args = [], $extract = false ) {
 
+		ob_start();
+
+		self::display( $template_name, $args, $extract );
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Print a template.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param string $template_name Path relative to the plugin's templates directory, without extension.
+	 * @param array  $args          Variables the template consumes.
+	 * @param bool   $extract       Expose each key of $args as its own variable.
+	 */
+	public static function display( $template_name, $args = [], $extract = false ) {
+
 		$located = self::locate( $template_name . '.php' );
 
 		if ( $located === '' ) {
-			return '';
+			return;
 		}
 
 		if ( $extract ) {
-			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- The template contract is named variables, matching the ported source.
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 			extract( $args, EXTR_SKIP );
 		}
 
-		ob_start();
-
 		require $located;
-
-		return (string) ob_get_clean();
 	}
 }

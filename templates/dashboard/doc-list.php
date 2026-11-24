@@ -21,8 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 		<li>
 			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
-			echo wp_mail_smtp_render( 'dashboard/doc-link', $doc_link, true );
+			wp_mail_smtp_render( 'dashboard/doc-link', $doc_link, true );
 			?>
 		</li>
 	<?php endforeach; ?>

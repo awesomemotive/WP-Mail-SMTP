@@ -244,7 +244,20 @@ class Options {
 		static $instance;
 
 		if ( ! $instance ) {
-			$instance = new self();
+			/**
+			 * Filters the main options object, so it can be replaced before it is first created.
+			 *
+			 * Applied on the first options read, so callbacks have to be added before `plugins_loaded` fires.
+			 *
+			 * @since 4.10.5
+			 *
+			 * @param Options|null $instance Options object to use, null to create the default one.
+			 */
+			$instance = apply_filters( 'wp_mail_smtp_options_init', null );
+
+			if ( ! $instance instanceof self ) {
+				$instance = new self();
+			}
 		}
 
 		return $instance;
@@ -308,9 +321,7 @@ class Options {
 	 */
 	protected function populate_options() {
 
-		$options = $this->use_global_plugin_options()
-			? get_blog_option( get_main_site_id(), static::META_KEY, [] )
-			: get_option( static::META_KEY, [] );
+		$options = $this->get_stored_options();
 
 		/**
 		 * Filter the plugin options as they are read.
@@ -431,27 +442,6 @@ class Options {
 		}
 
 		return $this->is_main_options() ? apply_filters( 'wp_mail_smtp_options_get', $value, $group, $key ) : $value;
-	}
-
-	/**
-	 * Whether this install keeps its settings in the main site's record.
-	 *
-	 * @since 4.10.0
-	 *
-	 * @return bool
-	 */
-	private function use_global_plugin_options() {
-
-		/**
-		 * Filters whether the plugin settings are read from and saved to the main site's record.
-		 *
-		 * Applied on the first options read, so callbacks have to be added before `plugins_loaded` fires.
-		 *
-		 * @since 4.10.1
-		 *
-		 * @param bool $use_global_plugin_options Whether to use the main site's settings record.
-		 */
-		return (bool) apply_filters( 'wp_mail_smtp_options_use_global_plugin_options', false );
 	}
 
 	/**
@@ -1468,17 +1458,37 @@ class Options {
 		if ( $once ) {
 			add_option( static::META_KEY, $options, '', 'no' ); // Do not autoload these options.
 		} else {
-			if ( $this->use_global_plugin_options() ) {
-				update_blog_option( get_main_site_id(), static::META_KEY, $options );
-			} else {
-				update_option( static::META_KEY, $options, 'no' );
-			}
+			$this->update_stored_options( $options );
 		}
 
 		// Now we need to re-cache values of all instances.
 		foreach ( static::$update_observers as $observer ) {
 			$observer->populate_options();
 		}
+	}
+
+	/**
+	 * Read the options record from the database.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @return array
+	 */
+	protected function get_stored_options() {
+
+		return get_option( static::META_KEY, [] );
+	}
+
+	/**
+	 * Write the options record to the database.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param array $options Options to save.
+	 */
+	protected function update_stored_options( $options ) {
+
+		update_option( static::META_KEY, $options, 'no' ); // Do not autoload these options.
 	}
 
 	/**
@@ -1565,13 +1575,10 @@ class Options {
 	 */
 	protected function process_mailer_specific_options( $options ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Generic.Metrics.NestingLevel.MaxExceeded
 
-		if (
-			! empty( $options['mail']['mailer'] ) &&
-			isset( $options[ $options['mail']['mailer'] ] ) &&
-			in_array( $options['mail']['mailer'], self::$mailers, true )
-		) {
-
-			$mailer = $options['mail']['mailer'];
+		foreach ( self::$mailers as $mailer ) {
+			if ( ! isset( $options[ $mailer ] ) || ! is_array( $options[ $mailer ] ) ) {
+				continue;
+			}
 
 			foreach ( $options[ $mailer ] as $option_name => $option_value ) {
 				switch ( $option_name ) {
@@ -1622,6 +1629,7 @@ class Options {
 
 					case 'quick_connect': // sendlayer.
 					case 'is_shared_domain': // sendlayer.
+					case 'one_click_setup_enabled': // gmail/outlook.
 						$options[ $mailer ][ $option_name ] = (bool) $option_value;
 						break;
 
@@ -1630,9 +1638,18 @@ class Options {
 						break;
 
 					case 'access_token': // gmail/outlook/zoho, is an array.
-					case 'user_details': // outlook/zoho, is an array.
 						// These options don't support constants.
 						$options[ $mailer ][ $option_name ] = $option_value;
+						break;
+
+					case 'user_details': // gmail/outlook/zoho, is an array.
+						$options[ $mailer ][ $option_name ] = map_deep(
+							$option_value,
+							static function ( $value ) {
+
+								return is_string( $value ) ? sanitize_text_field( $value ) : $value;
+							}
+						);
 						break;
 				}
 			}

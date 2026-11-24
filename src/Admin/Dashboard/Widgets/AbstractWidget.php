@@ -83,61 +83,57 @@ abstract class AbstractWidget {
 	abstract public function get_state(): WidgetState;
 
 	/**
-	 * Render the widget body.
+	 * Print the widget body.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup.
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	abstract protected function render_body( string $variant, array $data ): string;
+	abstract protected function render_body( string $variant, array $data );
 
 	/**
-	 * Render the widget footer. Empty string hides the footer.
+	 * Print the widget footer. Printing nothing hides the footer.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup.
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_footer( string $variant, array $data ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
-
-		return '';
+	protected function render_footer( string $variant, array $data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
 	}
 
 	/**
-	 * Render the widget head (title row). Empty string renders get_title().
+	 * Print the widget head content: the title by default.
+	 *
+	 * The title row is only printed when the widget has a title or a settings menu,
+	 * so a widget with a head of its own keeps a title.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup, the title by default.
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_head( string $variant, array $data ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
+	protected function render_head( string $variant, array $data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
 
-		return '';
+		?>
+		<h2 class="wpms-card__title wpms-card__title--widget"><?php echo esc_html( $this->get_title() ); ?></h2>
+		<?php
 	}
 
 	/**
-	 * Render the trailing edge of the widget head, beside the title. Empty string
-	 * renders nothing. Overridable default.
+	 * Print the trailing edge of the widget head, beside the title. Nothing by default.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup.
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_head_aside( string $variant, array $data ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
-
-		return '';
+	protected function render_head_aside( string $variant, array $data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter -- Overridable default; the signature is the widget contract.
 	}
 
 	/**
@@ -157,36 +153,43 @@ abstract class AbstractWidget {
 	}
 
 	/**
-	 * Render the widget into the shared card shell.
+	 * Print the widget into the shared card shell.
+	 *
+	 * The shell template calls back into the widget for each part, so every part
+	 * prints its own escaped markup.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints the widget instead of returning its markup.
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
 	 *
-	 * @return string
+	 * @return string Always empty. Kept a string so callers written when it returned the markup do not fail.
 	 */
 	public function render( string $variant, array $data ): string {
 
 		$settings_schema = $this->get_settings_schema( $variant, $data );
+		$has_settings    = ! empty( $settings_schema );
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widget',
 			[
 				'id'             => $this->get_id(),
 				'variant'        => $variant,
 				'extra_classes'  => $this->get_extra_classes( $variant, $data ),
-				'title'          => $this->get_title(),
-				'head'           => $this->render_head( $variant, $data ),
-				'head_aside'     => $this->render_head_aside( $variant, $data ),
-				'has_settings'   => ! empty( $settings_schema ),
-				'settings'       => $this->render_settings( $settings_schema ),
-				'body'           => $this->render_body( $variant, $data ),
-				'footer'         => $this->render_footer( $variant, $data ),
+				'has_head'       => $this->get_title() !== '' || $has_settings,
+				'has_settings'   => $has_settings,
+				'head'           => fn() => $this->render_head( $variant, $data ),
+				'head_aside'     => fn() => $this->render_head_aside( $variant, $data ),
+				'settings'       => fn() => $this->render_settings( $settings_schema ),
+				'body'           => fn() => $this->render_body( $variant, $data ),
+				'footer'         => fn() => $this->render_footer( $variant, $data ),
 				'is_dismissible' => $this->is_dismissible(),
 			],
 			true
 		);
+
+		return '';
 	}
 
 	/**
@@ -218,21 +221,20 @@ abstract class AbstractWidget {
 	}
 
 	/**
-	 * Render the settings popover from a field schema via the shared template.
+	 * Print the settings popover from a field schema via the shared template.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup.
 	 *
 	 * @param array $fields Settings field schema.
-	 *
-	 * @return string
 	 */
-	private function render_settings( array $fields ): string {
+	private function render_settings( array $fields ): void {
 
 		if ( empty( $fields ) ) {
-			return '';
+			return;
 		}
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widget-settings',
 			[
 				'fields'    => $fields,

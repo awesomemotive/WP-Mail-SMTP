@@ -12,8 +12,8 @@
  * @var array  $rows           Log rows (Pro, data variant): subject, subject_attr, recipient,
  *                             mailer, date_sent, status ('sent'|'waiting'|'failed'),
  *                             status_label, edit_url, preview_url. `subject_attr` is the
- *                             subject already escaped for an attribute Thickbox reads back
- *                             into the DOM, so it is echoed as-is.
+ *                             subject with its entities double-encoded, because Thickbox
+ *                             reads the title attribute back into the DOM as HTML.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php if ( $variant === 'education' ) : ?>
 	<?php
-	echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+	wp_mail_smtp_render(
 		'dashboard/widget-overlay',
 		[
 			'title'  => esc_html__( 'View Email Logs', 'wp-mail-smtp' ),
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				'url'          => $education_url,
 				'target_blank' => true,
 			],
-			'teaser' => wp_mail_smtp_render( 'dashboard/teasers/email-log', [], true ),
+			'teaser' => 'email-log',
 		],
 		true
 	);
@@ -51,13 +51,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		];
 	}
 
-	echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+	wp_mail_smtp_render(
 		'dashboard/widget-overlay',
 		[
 			'title'  => esc_html__( 'No Emails Logged Yet', 'wp-mail-smtp' ),
 			'text'   => esc_html__( 'Once your site starts sending emails, your recent emails will show up here. Send a test email to make sure everything works.', 'wp-mail-smtp' ),
 			'cta'    => $cta,
-			'teaser' => wp_mail_smtp_render( 'dashboard/teasers/email-log', [], true ),
+			'teaser' => 'email-log',
 		],
 		true
 	);
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php if ( ! empty( $row['preview_url'] ) ) : ?>
 								<a href="<?php echo esc_url( $row['preview_url'] ); ?>"
 									class="thickbox wpms-dashboard-widget-email-log-view"
-									title="<?php echo $row['subject_attr']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the widget for Thickbox, which reads this attribute into the modal title as HTML. ?>"
+									title="<?php echo esc_attr( $row['subject_attr'] ); ?>"
 									aria-label="<?php echo esc_attr__( 'View email', 'wp-mail-smtp' ); ?>">
 									<i class="wpms:icon-[fa6-solid--eye] wpms:text-[14px]" aria-hidden="true"></i>
 								</a>

@@ -247,7 +247,7 @@ class Page {
 					<div class="wpms-setup-checklist-promo__grid">
 						<?php
 						foreach ( $features['tiles'] as $tile ) {
-							echo wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+							wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true );
 						}
 						?>
 					</div>
@@ -270,7 +270,7 @@ class Page {
 					<div class="wpms-setup-checklist-promo__grid">
 						<?php
 						foreach ( $growth_tools['tiles'] as $tile ) {
-							echo wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+							wp_mail_smtp_render( 'feature-tile', [ 'tile' => $tile ], true );
 						}
 						?>
 					</div>

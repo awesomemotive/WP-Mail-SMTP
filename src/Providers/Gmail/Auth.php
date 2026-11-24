@@ -268,7 +268,7 @@ class Auth extends AuthAbstract {
 			$redirect_url = SetupWizardLauncher::get_oauth_return_url( $wizard_variant, 'gmail' );
 		}
 
-		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! ( isset( $_GET['tab'] ) && $_GET['tab'] === 'auth' ) ) {
 			wp_safe_redirect( $redirect_url );
 			exit;
 		}
@@ -314,8 +314,8 @@ class Auth extends AuthAbstract {
 		$scope = '';
 		$error = '';
 
-		if ( isset( $_GET['error'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$error = sanitize_key( $_GET['error'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['error'] ) ) {
+			$error = sanitize_key( $_GET['error'] );
 		}
 
 		// In case of any error: display a message to a user.
@@ -338,13 +338,11 @@ class Auth extends AuthAbstract {
 		}
 
 		if ( isset( $_GET['code'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$code = urldecode( $_GET['code'] );
+			$code = urldecode( sanitize_text_field( wp_unslash( $_GET['code'] ) ) );
 		}
 
 		if ( isset( $_GET['scope'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$scope = $_GET['scope'];
+			$scope = sanitize_text_field( wp_unslash( $_GET['scope'] ) );
 
 			if ( self::use_self_oauth_redirect_url() ) {
 				$scope = urldecode( $scope );
@@ -512,14 +510,12 @@ class Auth extends AuthAbstract {
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$response = $gmail->users_settings_sendAs->listUsersSettingsSendAs( 'me' );
 
-			// phpcs:disable
 			$this->aliases = array_map(
-				function( $sendAsObject ) {
-					return $sendAsObject['sendAsEmail'];
+				function ( $send_as ) {
+					return $send_as['sendAsEmail'];
 				},
 				(array) $response->getSendAs()
 			);
-			// phpcs:enable
 
 		} catch ( Exception $exception ) {
 			DebugEvents::add_debug(

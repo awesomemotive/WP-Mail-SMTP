@@ -94,20 +94,20 @@ if ( is_multisite() ) {
 		switch_to_blog( $site->blog_id );
 
 		// Delete plugin settings.
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wp\_mail\_smtp%'" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wp\_mail\_smtp%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		// Delete plugin user meta.
-		$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		// Remove any transients we've left behind.
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		// Delete debug events table.
 		$debug_events_table = \WPMailSMTP\Admin\DebugEvents\DebugEvents::get_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $debug_events_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $debug_events_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		/*
 		 * Delete network site product announcements.
@@ -122,7 +122,7 @@ if ( is_multisite() ) {
 
 		// Delete queue table.
 		$queue_table = \WPMailSMTP\Queue\Queue::get_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $queue_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $queue_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Delete all queue attachments.
 		( new \WPMailSMTP\Queue\Attachments() )->delete_attachments();
@@ -137,24 +137,24 @@ if ( is_multisite() ) {
 
 			// Delete logs table.
 			$table = \WPMailSMTP\Pro\Emails\Logs\Logs::get_table_name();
-			$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB
+			$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 			// Delete attachments tables.
 			$attachment_files_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_attachment_files_table_name();
-			$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB
+			$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 			$email_attachments_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_email_attachments_table_name();
-			$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB
+			$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 			// Delete all attachments if any.
 			( new \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments() )->delete_all_attachments();
 
 			// Delete tracking tables.
 			$tracking_events_table = \WPMailSMTP\Pro\Emails\Logs\Tracking\Tracking::get_events_table_name();
-			$wpdb->query( "DROP TABLE IF EXISTS $tracking_events_table;" ); // phpcs:ignore WordPress.DB
+			$wpdb->query( "DROP TABLE IF EXISTS $tracking_events_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 			$tracking_links_table = \WPMailSMTP\Pro\Emails\Logs\Tracking\Tracking::get_links_table_name();
-			$wpdb->query( "DROP TABLE IF EXISTS $tracking_links_table;" ); // phpcs:ignore WordPress.DB
+			$wpdb->query( "DROP TABLE IF EXISTS $tracking_links_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 
 		/*
@@ -163,7 +163,7 @@ if ( is_multisite() ) {
 		( new \WPMailSMTP\Tasks\Tasks() )->remove_all();
 
 		$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Delete current sub-site wp-mail-smtp uploads folder.
 		\WPMailSMTP\Uploads::delete_upload_dir();
@@ -187,20 +187,20 @@ if ( is_multisite() ) {
 	}
 
 	// Delete plugin settings.
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wp\_mail\_smtp%'" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wp\_mail\_smtp%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 	// Delete plugin user meta.
-	$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 	// Remove any transients we've left behind.
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_site\_transient\_timeout\_wp\_mail\_smtp\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 	// Delete debug events table.
 	$debug_events_table = \WPMailSMTP\Admin\DebugEvents\DebugEvents::get_table_name();
-	$wpdb->query( "DROP TABLE IF EXISTS $debug_events_table;" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DROP TABLE IF EXISTS $debug_events_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 	/*
 	 * Remove product announcements.
@@ -214,7 +214,7 @@ if ( is_multisite() ) {
 
 	// Delete queue table.
 	$queue_table = \WPMailSMTP\Queue\Queue::get_table_name();
-	$wpdb->query( "DROP TABLE IF EXISTS $queue_table;" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DROP TABLE IF EXISTS $queue_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 	// Delete all queue attachments.
 	( new \WPMailSMTP\Queue\Attachments() )->delete_attachments();
@@ -229,24 +229,24 @@ if ( is_multisite() ) {
 
 		// Delete logs table.
 		$table = \WPMailSMTP\Pro\Emails\Logs\Logs::get_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Delete attachments tables.
 		$attachment_files_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_attachment_files_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $attachment_files_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$email_attachments_table = \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments::get_email_attachments_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $email_attachments_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Delete all attachments if any.
 		( new \WPMailSMTP\Pro\Emails\Logs\Attachments\Attachments() )->delete_all_attachments();
 
 		// Delete tracking tables.
 		$tracking_events_table = \WPMailSMTP\Pro\Emails\Logs\Tracking\Tracking::get_events_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $tracking_events_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $tracking_events_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$tracking_links_table = \WPMailSMTP\Pro\Emails\Logs\Tracking\Tracking::get_links_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS $tracking_links_table;" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DROP TABLE IF EXISTS $tracking_links_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/*
@@ -255,7 +255,7 @@ if ( is_multisite() ) {
 	( new \WPMailSMTP\Tasks\Tasks() )->remove_all();
 
 	$meta_table = \WPMailSMTP\Tasks\Meta::get_table_name();
-	$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB
+	$wpdb->query( "DROP TABLE IF EXISTS $meta_table;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 	// Delete wp-mail-smtp uploads folder.
 	\WPMailSMTP\Uploads::delete_upload_dir();

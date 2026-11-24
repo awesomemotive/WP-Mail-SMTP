@@ -80,7 +80,7 @@ class Finding {
 	public function __construct( $code, $field, $severity ) {
 
 		if ( ! in_array( $severity, [ self::ERROR, self::WARNING, self::INCONCLUSIVE ], true ) ) {
-			throw new InvalidArgumentException( 'Unknown preflight severity: ' . $severity ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new InvalidArgumentException( 'Unknown preflight severity.' );
 		}
 
 		$this->code     = $code;

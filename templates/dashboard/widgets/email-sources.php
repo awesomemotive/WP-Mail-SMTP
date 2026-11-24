@@ -10,7 +10,7 @@
  * @var string     $connect_url    Settings URL, connections tab.
  * @var string     $test_email_url Email test tool URL.
  * @var array|null $config         Donut/table config (Pro, data variant): all (name, total, share), palette, donutTotal.
- * @var string     $inline_cards   Rendered sending-source suggestion cards (Pro, data variant), shown below the chart.
+ * @var callable   $inline_cards   Prints the sending-source suggestion cards (Pro, data variant), shown below the chart.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php if ( $variant === 'education' ) : ?>
 	<?php
-	echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+	wp_mail_smtp_render(
 		'dashboard/widget-overlay',
 		[
 			'title'  => esc_html__( 'See Which Plugins Send Emails', 'wp-mail-smtp' ),
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				'url'          => $education_url,
 				'target_blank' => true,
 			],
-			'teaser' => wp_mail_smtp_render( 'dashboard/teasers/email-sources', [], true ),
+			'teaser' => 'email-sources',
 		],
 		true
 	);
@@ -48,13 +48,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		];
 	}
 
-	echo wp_mail_smtp_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_mail_smtp_render() returns escaped HTML.
+	wp_mail_smtp_render(
 		'dashboard/widget-overlay',
 		[
 			'title'  => esc_html__( 'No Email Source Data Yet', 'wp-mail-smtp' ),
 			'text'   => esc_html__( 'Sorry, there\'s not enough email data from this date range to show sources. Once your site sends more emails, sources will show up here.', 'wp-mail-smtp' ),
 			'cta'    => $cta,
-			'teaser' => wp_mail_smtp_render( 'dashboard/teasers/email-sources', [], true ),
+			'teaser' => 'email-sources',
 		],
 		true
 	);
@@ -105,5 +105,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 
-	<?php echo $inline_cards; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Pre-rendered and escaped by inline-card.php. ?>
+	<?php
+	if ( is_callable( $inline_cards ?? null ) ) {
+		$inline_cards();
+	}
+	?>
 <?php endif; ?>

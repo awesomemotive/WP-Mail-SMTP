@@ -27,16 +27,6 @@ if ( $action === 'active' ) {
 	$classes[] = 'is-active';
 }
 
-$attributes = '';
-
-if ( $action !== '' ) {
-	$attributes .= sprintf( ' data-action="%s"', esc_attr( $action ) );
-}
-
-if ( $plugin !== '' ) {
-	$attributes .= sprintf( ' data-plugin="%s"', esc_attr( $plugin ) );
-}
-
 // Assembled rather than echoed in place: the link is underlined, so whitespace between
 // the text and the glyph would render as an underlined gap.
 $label = esc_html( $text );
@@ -45,4 +35,4 @@ if ( $action === 'active' ) {
 	$label .= '<i class="wpms:icon-[fa6-regular--circle-check] wpms:w-[12px] wpms:h-[12px]" aria-hidden="true"></i>';
 }
 ?>
-<a class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" href="<?php echo esc_url( $url ); ?>"<?php echo $attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each attribute value is escaped above. ?>><?php echo $label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped text plus a literal glyph, assembled above. ?></a>
+<a class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" href="<?php echo esc_url( $url ); ?>"<?php echo $action === '' ? '' : ' data-action="' . esc_attr( $action ) . '"'; ?><?php echo $plugin === '' ? '' : ' data-plugin="' . esc_attr( $plugin ) . '"'; ?>><?php echo wp_kses_post( $label ); ?></a>

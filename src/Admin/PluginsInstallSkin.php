@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin;
 
 use Automatic_Upgrader_Skin;
+use Language_Pack_Upgrader;
 use WP_Error;
 
 /**
@@ -12,6 +13,7 @@ use WP_Error;
  * @since 1.7.1 Removed feedback() method override to be compatible with PHP5.3+ and WP5.3.
  * @since 3.11.0 Updated to extend Automatic_Upgrader_Skin.
  * @since 4.10.1 Notes a failure for the caller instead of answering the request with it.
+ * @since 4.10.5 Keeps the parent's header() and footer(), which buffer anything printed during the run.
  */
 class PluginsInstallSkin extends Automatic_Upgrader_Skin {
 
@@ -25,23 +27,6 @@ class PluginsInstallSkin extends Automatic_Upgrader_Skin {
 	private $failure = null;
 
 	/**
-	 * Empty out the header of its HTML content and only check to see if it has
-	 * been performed or not.
-	 *
-	 * @since 1.5.0
-	 */
-	public function header() {
-	}
-
-	/**
-	 * Empty out the footer of its HTML contents.
-	 *
-	 * @since 1.5.0
-	 */
-	public function footer() {
-	}
-
-	/**
 	 * Note a failure, leaving the reply to the caller.
 	 *
 	 * @since 1.5.0
@@ -51,7 +36,8 @@ class PluginsInstallSkin extends Automatic_Upgrader_Skin {
 	 */
 	public function error( $errors ) {
 
-		if ( is_wp_error( $errors ) ) {
+		// Core reuses this skin for the translation downloads that follow an install, and their failure is not the plugin's.
+		if ( is_wp_error( $errors ) && ! $this->upgrader instanceof Language_Pack_Upgrader ) {
 			$this->failure = $errors;
 		}
 	}

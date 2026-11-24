@@ -49,9 +49,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					?>
 					<li class="wpms-dashboard-checklist-overview-item">
 						<?php if ( $item_url !== '' ) : ?>
-							<a class="<?php echo esc_attr( $item_classes ); ?>" href="<?php echo esc_url( $item_url ); ?>"><?php echo $item_body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled above from an escaped title and literal classes. ?></a>
+							<a class="<?php echo esc_attr( $item_classes ); ?>" href="<?php echo esc_url( $item_url ); ?>"><?php echo wp_kses_post( $item_body ); ?></a>
 						<?php else : ?>
-							<span class="<?php echo esc_attr( $item_classes ); ?>"><?php echo $item_body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled above from an escaped title and literal classes. ?></span>
+							<span class="<?php echo esc_attr( $item_classes ); ?>"><?php echo wp_kses_post( $item_body ); ?></span>
 						<?php endif; ?>
 					</li>
 				<?php endforeach; ?>

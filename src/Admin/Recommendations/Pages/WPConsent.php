@@ -36,14 +36,16 @@ class WPConsent extends PageAbstract {
 	/**
 	 * Hooks.
 	 *
-	 * Removes WPConsent's onboarding redirect during AJAX to prevent it from
-	 * hijacking the status-check JSON response.
+	 * Removes WPConsent's onboarding redirect during the status-check AJAX request.
 	 *
 	 * @since 4.9.0
 	 */
 	public function hooks(): void {
 
-		if ( wp_doing_ajax() ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : '';
+
+		if ( wp_doing_ajax() && $action === 'wp_mail_smtp_page_check_' . static::get_plugin_name() . '_status' ) {
 			remove_action( 'admin_init', 'wpconsent_maybe_redirect_onboarding', 9999 );
 		}
 

@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Admin\Dashboard;
 
+
 // wpms:icon-[fa6-solid--bell] is built from an `icon` value, so it is named here for
 // Tailwind's scanner, which never sees it.
 /**
@@ -51,31 +52,22 @@ trait InlineCards {
 	}
 
 	/**
-	 * Render the resolved cards.
+	 * Print the resolved cards.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Prints instead of returning the markup.
 	 *
 	 * @param array $cards Cards from get_inline_cards().
-	 *
-	 * @return string
 	 */
-	protected function render_inline_cards( array $cards ): string {
+	protected function render_inline_cards( array $cards ) {
 
 		if ( empty( $cards ) ) {
-			return '';
+			return;
 		}
-
-		$html = '';
 
 		foreach ( $cards as $card ) {
-			$html .= (string) wp_mail_smtp_render(
-				'dashboard/inline-card',
-				[ 'card' => $card ],
-				true
-			);
+			wp_mail_smtp_render( 'dashboard/inline-card', [ 'card' => $card ], true );
 		}
-
-		return $html;
 	}
 
 	/**

@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$target_attrs = empty( $card['cta']['target_blank'] ) ? '' : ' target="_blank" rel="noopener noreferrer"';
 ?>
 <div class="wpms-dashboard-notice" data-card="<?php echo esc_attr( $card['id'] ); ?>">
 	<div class="wpms-icon-tile wpms-icon-tile--framed wpms-icon-tile--accent wpms-dashboard-notice__icon">
@@ -27,7 +26,7 @@ $target_attrs = empty( $card['cta']['target_blank'] ) ? '' : ' target="_blank" r
 
 			<a class="wpms-text-link wpms-text-link--arrow wpms-text-link--xs"
 				href="<?php echo esc_url( $card['cta']['url'] ); ?>"
-				<?php echo $target_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static attribute string built above. ?>>
+				<?php echo empty( $card['cta']['target_blank'] ) ? '' : 'target="_blank" rel="noopener noreferrer"'; ?>>
 				<span class="wpms-text-link__label"><?php echo esc_html( $card['cta']['label'] ); ?></span>
 				<i class="wpms-text-link__icon wpms:icon-[fa6-solid--arrow-right] wpms:w-[12px] wpms:h-[12px]" aria-hidden="true"></i>
 			</a>

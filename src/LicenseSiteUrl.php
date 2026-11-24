@@ -73,7 +73,7 @@ class LicenseSiteUrl {
 
 		global $wpdb;
 
-		$site_id  = WP::use_global_plugin_settings() ? get_main_site_id() : 0;
+		$site_id  = (int) WP::get_site_url_blog_id();
 		$switched = ! empty( $site_id ) && is_multisite() && $site_id !== get_current_blog_id();
 
 		if ( $switched ) {

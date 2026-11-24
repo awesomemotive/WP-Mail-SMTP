@@ -256,7 +256,7 @@ class QuickConnectUsage {
 	 * custom_domain) for WP::display_admin_notices() to render dashboard-wide.
 	 *
 	 * All three require a QC primary connection, the global-options capability (the QC
-	 * connection state is main-site-scoped in network-wide mode), and a not-bailed feature.
+	 * connection state can be shared by more than one site), and a not-bailed feature.
 	 *
 	 * @since 4.9.0
 	 */
@@ -633,7 +633,7 @@ class QuickConnectUsage {
 
 	/**
 	 * Read the consolidated state, merged over defaults so callers always get the full
-	 * shape (including the usage sub-array). Network-aware.
+	 * shape (including the usage sub-array).
 	 *
 	 * @since 4.9.0
 	 *
@@ -644,9 +644,7 @@ class QuickConnectUsage {
 	 */
 	private function get_state( $key = null, $default_value = null ) {
 
-		$stored = $this->is_network_scoped()
-			? get_blog_option( get_main_site_id(), self::STATE_OPTION, [] )
-			: get_option( self::STATE_OPTION, [] );
+		$stored = $this->get_stored_state();
 
 		if ( ! is_array( $stored ) ) {
 			$stored = [];
@@ -664,7 +662,7 @@ class QuickConnectUsage {
 
 	/**
 	 * Merge the changed keys over the current state and persist. Callers pass only the
-	 * keys they are changing. Non-autoloaded, network-aware.
+	 * keys they are changing.
 	 *
 	 * @since 4.9.0
 	 *
@@ -674,33 +672,30 @@ class QuickConnectUsage {
 
 		$state = array_merge( $this->get_state(), $changes );
 
-		if ( $this->is_network_scoped() ) {
-			update_blog_option( get_main_site_id(), self::STATE_OPTION, $state );
-
-			return;
-		}
-
-		update_option( self::STATE_OPTION, $state, false );
+		$this->update_stored_state( $state );
 	}
 
 	/**
-	 * Whether plugin state should be scoped to the network's main site.
+	 * Read the state record from the database.
 	 *
-	 * In network-wide mode the SendLayer connection lives on the main site, so every
-	 * sub-site must agree on one per-account view of the usage-notice state.
+	 * @since 4.10.5
 	 *
-	 * @since 4.9.0
-	 *
-	 * @return bool
+	 * @return mixed
 	 */
-	private function is_network_scoped() {
+	protected function get_stored_state() {
 
-		// Short-circuit on single-site before consulting the network setting, so the
-		// common path never touches main-site option reads.
-		if ( ! is_multisite() ) {
-			return false;
-		}
+		return get_option( self::STATE_OPTION, [] );
+	}
 
-		return WP::use_global_plugin_settings();
+	/**
+	 * Write the state record to the database. Non-autoloaded.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param array $state State to save.
+	 */
+	protected function update_stored_state( array $state ) {
+
+		update_option( self::STATE_OPTION, $state, false );
 	}
 }

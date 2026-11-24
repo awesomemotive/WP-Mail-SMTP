@@ -131,7 +131,6 @@ class Hosted {
 	 */
 	public function render_welcome( $fallback_url ) {
 
-		// JSON-encoded, not HTML-escaped: these are read as JavaScript string literals.
 		$settings = wp_json_encode(
 			[
 				'ajax_url'     => admin_url( 'admin-ajax.php' ),
@@ -152,8 +151,7 @@ class Hosted {
 		header( 'X-Content-Type-Options: nosniff' );
 		header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes what it prints.
-		echo wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'setup-wizard/welcome',
 			[
 				'settings'             => $settings,

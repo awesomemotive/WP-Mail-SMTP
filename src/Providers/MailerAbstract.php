@@ -484,12 +484,13 @@ abstract class MailerAbstract implements MailerInterface {
 
 		// Mail mailer has nothing to return.
 		if ( $this->connection_options->is_mailer_smtp() ) {
-			// phpcs:disable
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- PHPMailer property names.
 			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
 			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
 			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Helpers::pvar( $phpmailer->SMTPSecure );
 			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Helpers::pvar( $phpmailer->SMTPAutoTLS );
 			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Helpers::pvar( $phpmailer->SMTPAuth );
+
 			if ( ! empty( $phpmailer->SMTPOptions ) ) {
 				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . wp_json_encode( $phpmailer->SMTPOptions ) . '</code>';
 			}

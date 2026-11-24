@@ -77,12 +77,9 @@ class FeaturesUpsell extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_head( string $variant, array $data ): string {
+	protected function render_head( string $variant, array $data ) {
 
-		ob_start();
 		?>
 		<h2 class="wpms-card__title wpms-card__title--widget"><?php echo esc_html( $this->get_head_title( $variant ) ); ?></h2>
 		<?php if ( $variant === 'education' ) : ?>
@@ -100,8 +97,6 @@ class FeaturesUpsell extends AbstractWidget {
 			</span>
 		<?php endif; ?>
 		<?php
-
-		return (string) ob_get_clean();
 	}
 
 	/**
@@ -130,18 +125,16 @@ class FeaturesUpsell extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_body( string $variant, array $data ): string {
+	protected function render_body( string $variant, array $data ) {
 
 		$tiles = $this->get_tiles( $variant );
 
 		if ( empty( $tiles ) ) {
-			return '';
+			return;
 		}
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'dashboard/widgets/features-upsell',
 			[ 'tiles' => $tiles ],
 			true
@@ -156,14 +149,12 @@ class FeaturesUpsell extends AbstractWidget {
 	 *
 	 * @param string $variant Template variant.
 	 * @param array  $data    Aggregated data.
-	 *
-	 * @return string
 	 */
-	protected function render_footer( string $variant, array $data ): string {
+	protected function render_footer( string $variant, array $data ) {
 
 		$is_pro = $variant === 'data';
 
-		return (string) wp_mail_smtp_render(
+		wp_mail_smtp_render(
 			'card-footer',
 			[
 				'text' => esc_html__( 'Plus dozens of other powerful features to keep your WordPress emails hitting the inbox.', 'wp-mail-smtp' ),

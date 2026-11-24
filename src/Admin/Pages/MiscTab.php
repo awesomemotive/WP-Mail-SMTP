@@ -67,7 +67,7 @@ class MiscTab extends PageAbstract {
 			<!-- Section Title -->
 			<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading wp-mail-smtp-section-heading--has-divider no-desc">
 				<div class="wp-mail-smtp-setting-field">
-					<h2><?php echo $this->get_title(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>
+					<h2><?php echo esc_html( $this->get_title() ); ?></h2>
 				</div>
 			</div>
 
@@ -116,7 +116,7 @@ class MiscTab extends PageAbstract {
 					<p class="desc">
 						<?php
 						if ( $options->is_const_defined( 'general', 'do_not_send' ) ) {
-							echo $options->get_const_set_message( 'WPMS_DO_NOT_SEND' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo wp_kses_post( $options->get_const_set_message( 'WPMS_DO_NOT_SEND' ) );
 						} else {
 							printf(
 								wp_kses( /* translators: %s - The URL to the constants support article. */
@@ -316,7 +316,7 @@ class MiscTab extends PageAbstract {
 						}
 
 						if ( $options->is_const_defined( 'general', SummaryReportEmail::SETTINGS_SLUG ) ) {
-							echo '<br>' . $options->get_const_set_message( 'WPMS_SUMMARY_REPORT_EMAIL_DISABLED' ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo '<br>' . wp_kses_post( $options->get_const_set_message( 'WPMS_SUMMARY_REPORT_EMAIL_DISABLED' ) );
 						}
 						?>
 					</p>

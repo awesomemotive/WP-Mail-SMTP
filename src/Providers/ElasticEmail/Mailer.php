@@ -328,8 +328,8 @@ class Mailer extends MailerAbstract {
 			$filetype = str_replace( ';', '', trim( $attachment[4] ) );
 
 			$data[] = [
-				'Name'          => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-				'BinaryContent' => base64_encode( $file ),
+				'Name'          => empty( $attachment[2] ) ? 'file-' . wp_hash( microtime() ) . '.' . $filetype : trim( $attachment[2] ),
+				'BinaryContent' => base64_encode( $file ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'ContentType'   => $attachment[4],
 			];
 		}

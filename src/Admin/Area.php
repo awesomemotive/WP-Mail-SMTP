@@ -497,7 +497,7 @@ class Area {
 					</div>
 
 					<div class="wp-mail-smtp-setting-row-no-setting">
-						<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'network-settings', 'content' => '' ] ) ); // phpcs:ignore ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange">
+						<a href="<?php echo esc_url( wp_mail_smtp()->get_upgrade_link( [ 'medium' => 'network-settings', 'content' => '' ] ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-lg wp-mail-smtp-btn-orange">
 							<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 						</a>
 					</div>
@@ -1766,25 +1766,16 @@ class Area {
 			<?php foreach ( $links as $key => $item ) : ?>
 				<li>
 					<?php
-					$attrs = 'href="' . esc_url( $item['url'] ) . '"';
-
-					if ( isset( $item['target'] ) ) {
-						$attrs .= ' target="' . esc_attr( $item['target'] ) . '"';
-						$attrs .= ' rel="noopener noreferrer"';
-					}
-
-					$text    = esc_html( $item['text'] );
-					$divider = $links_count !== $key + 1 ? '<span>/</span>' : '';
-
 					printf(
-						'<a %1$s>%2$s</a>%3$s',
-						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						$attrs,
-						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						$text,
-						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						$divider
+						'<a href="%1$s"%2$s>%3$s</a>',
+						esc_url( $item['url'] ),
+						isset( $item['target'] ) ? ' target="' . esc_attr( $item['target'] ) . '" rel="noopener noreferrer"' : '',
+						esc_html( $item['text'] )
 					);
+
+					if ( $links_count !== $key + 1 ) {
+						echo '<span>/</span>';
+					}
 					?>
 				</li>
 			<?php endforeach; ?>

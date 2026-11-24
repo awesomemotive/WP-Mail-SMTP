@@ -4,7 +4,6 @@ namespace WPMailSMTP\SetupChecklist;
 
 use WPMailSMTP\Admin\Area;
 use WPMailSMTP\Admin\Dashboard\Page as DashboardPage;
-use WPMailSMTP\WP;
 
 /**
  * Setup Checklist admin menu item.
@@ -98,7 +97,7 @@ class Menu {
 		add_action( $menu_hook, [ $this, 'register' ], 11 );
 		add_action( $menu_hook, [ $this, 'reorder' ], PHP_INT_MAX );
 		add_action( 'admin_page_access_denied', [ $this, 'maybe_redirect_dismissed' ] );
-		add_action( 'admin_head', [ $this, 'print_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'print_styles' ] );
 	}
 
 	/**
@@ -130,7 +129,14 @@ class Menu {
 	 */
 	private function get_menu_hook(): string {
 
-		return WP::use_global_plugin_settings() ? 'network_admin_menu' : 'admin_menu';
+		/**
+		 * Filters the menu hook the Setup Checklist item is registered on.
+		 *
+		 * @since 4.10.5
+		 *
+		 * @param string $menu_hook Menu hook name.
+		 */
+		return (string) apply_filters( 'wp_mail_smtp_setup_checklist_menu_get_menu_hook', 'admin_menu' );
 	}
 
 	/**
@@ -181,9 +187,10 @@ class Menu {
 	}
 
 	/**
-	 * Output the inline menu styles on every admin screen the menu shows on.
+	 * Add the inline menu styles on every admin screen the menu shows on.
 	 *
 	 * @since 4.10.0
+	 * @since 4.10.5 Adds the styles through `wp_add_inline_style()` on `admin_enqueue_scripts`.
 	 */
 	public function print_styles(): void {
 
@@ -200,8 +207,7 @@ class Menu {
 			. $item . ' .wpms-setup-checklist-menu-progress{position:relative;width:100%;height:4px;background:#1D2327;border-radius:2px;overflow:hidden;}'
 			. $item . ' .wpms-setup-checklist-menu-progress-bar{display:block;height:4px;min-width:4px;background:#00BA37;border-radius:2px;}';
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		printf( '<style id="wpms-setup-checklist-menu-styles">%s</style>', $styles );
+		wp_add_inline_style( 'admin-menu', $styles );
 	}
 
 	/**

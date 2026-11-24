@@ -192,7 +192,7 @@ class Installer {
 	 *
 	 * @return bool
 	 */
-	private function prepare_filesystem( string $redirect_url ): bool { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks -- the remove_action() below is scoped to this one upgrader run; hooks() would remove it unconditionally.
+	private function prepare_filesystem( string $redirect_url ): bool {
 
 		// REST requests do not bootstrap the admin, so the file backing
 		// request_filesystem_credentials and WP_Filesystem may not be loaded.
@@ -211,9 +211,6 @@ class Installer {
 		if ( $creds === false ) {
 			return false;
 		}
-
-		// Translation downloads emit output that would corrupt the response.
-		remove_action( 'upgrader_process_complete', [ 'Language_Pack_Upgrader', 'async_upgrade' ], 20 );
 
 		return (bool) WP_Filesystem( $creds );
 	}

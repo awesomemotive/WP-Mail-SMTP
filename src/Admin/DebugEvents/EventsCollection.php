@@ -262,7 +262,9 @@ class EventsCollection implements \Countable, \Iterator {
 	 */
 	private function build_order() {
 
-		return 'ORDER BY ' . $this->params['orderby'] . ' ' . $this->params['order'];
+		$order = sanitize_sql_orderby( $this->params['orderby'] . ' ' . $this->params['order'] );
+
+		return 'ORDER BY ' . ( $order ? $order : 'id DESC' );
 	}
 
 	/**
@@ -275,7 +277,7 @@ class EventsCollection implements \Countable, \Iterator {
 	 */
 	private function build_limit() {
 
-		return 'LIMIT ' . $this->params['offset'] . ', ' . $this->params['per_page'];
+		return 'LIMIT ' . absint( $this->params['offset'] ) . ', ' . absint( $this->params['per_page'] );
 	}
 
 	/**

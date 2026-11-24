@@ -134,7 +134,7 @@ class Attachments {
 
 		$upload_path = $uploads_directory . $filename;
 
-		if ( file_put_contents( $upload_path, $file_content ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+		if ( file_put_contents( $upload_path, $file_content ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			return $upload_path;
 		}
 
